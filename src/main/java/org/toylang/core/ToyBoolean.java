@@ -1,0 +1,63 @@
+package org.toylang.core;
+
+public class ToyBoolean extends ToyObject {
+
+    public static ToyType TYPE = new ToyType(ToyBoolean.class);
+
+    private boolean value = false;
+
+    public ToyBoolean(boolean value) {
+        this.value = value;
+    }
+    @Override
+    public ToyObject getType() {
+        return TYPE;
+    }
+    @Override
+    public boolean isTrue() {
+        return value;
+    }
+    @Override
+    public ToyObject not() {
+        return new ToyBoolean(!value);
+    }
+    @Override
+    public Boolean toBoolean() {
+        return isTrue();
+    }
+    @Override
+    public Object toObject() {
+        return isTrue();
+    }
+
+    @Override
+    public String toString() {
+        return Boolean.toString(value);
+    }
+
+    @Override
+    public int compareTo(ToyObject o) {
+        if(!(o instanceof ToyBoolean))
+            throw new RuntimeException("Cannot compare boolean and "+o.getClass().getName());
+        ToyBoolean other = (ToyBoolean) o;
+        return (value == other.value) ? 0 : (value ? 1 : -1);
+    }
+    @Hidden
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+
+        ToyBoolean that = (ToyBoolean) o;
+
+        return value == that.value;
+    }
+    @Hidden
+    @Override
+    public int hashCode() {
+        int result = super.hashCode();
+        result = 31 * result + (value ? 1 : 0);
+        return result;
+    }
+}
