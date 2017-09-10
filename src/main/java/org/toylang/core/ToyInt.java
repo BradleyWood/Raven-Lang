@@ -27,15 +27,15 @@ public class ToyInt extends ToyObject {
     }
     @Override
     public int compareTo(ToyObject o) {
-        //ToyObject result = sub(o);
         if(!(o instanceof ToyInt))
             throw new RuntimeException("Cannot compare int with "+o.getClass().getName());
         return Integer.compare(value, ((ToyInt) o).value);
-
     }
     @Override
     public ToyObject add(ToyObject obj) {
-        if(obj instanceof ToyReal) {
+        if(obj instanceof ToyString) {
+            return new ToyString(toString() + obj.toString());
+        } else if(obj instanceof ToyReal) {
             return new ToyReal((double)value).add(obj);
         } else if(obj instanceof ToyInt) {
             int other = ((ToyInt) obj).getValue();
