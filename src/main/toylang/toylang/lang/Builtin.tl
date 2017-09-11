@@ -45,10 +45,18 @@ public fun readLine() {
     return scan.nextLine();
 }
 public fun vars() {
-    var current = Thread.currentThread();
-    var stackTrace = current.getStackTrace();
+    var stackTrace = Thread.currentThread().getStackTrace();
     var name = stackTrace.get(8);
     var clazz = Class.forName(name.getClassName());
     var fields = clazz.getDeclaredFields();
-    // create dict
+
+    var dict = {};
+    var i = 0;
+    while (i < len(fields)) {
+        var field = fields[i];
+        field.setAccessible(true);
+        dict.put(field.getName(), field.get(null));
+        i += 1;
+    }
+    return dict;
 }
