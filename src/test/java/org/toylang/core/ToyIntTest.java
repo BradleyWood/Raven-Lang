@@ -22,11 +22,6 @@ public class ToyIntTest {
     }
 
     @Test
-    public void testNotError() {
-        // maxInt cannot be negated
-    }
-
-    @Test
     public void isTrueTest() {
         ToyInt a = new ToyInt(0);
         assertTrue(!a.isTrue());
@@ -48,7 +43,6 @@ public class ToyIntTest {
 
         assertTrue(a.add(a).add(a).add(a).toInt() == 400);
 
-        // coercion
 
         assertTrue(a.add(str).equals(expected));
         assertTrue(a.add(new ToyReal(100.0)).equals(new ToyReal(200.0)));
