@@ -43,6 +43,7 @@ public class ToyIntTest {
 
         assertTrue(a.add(a).add(a).add(a).toInt() == 400);
 
+        // coercion
 
         assertTrue(a.add(str).equals(expected));
         assertTrue(a.add(new ToyReal(100.0)).equals(new ToyReal(200.0)));
@@ -202,7 +203,7 @@ public class ToyIntTest {
     @Test
     public void toObjectTest() {
         assertTrue(new ToyInt(100).toObject() instanceof Integer);
-        assertTrue(new ToyInt(-100).toObject().equals(new Integer(-100)));
+        assertTrue(new ToyInt(-100).toObject().equals(-100));
     }
 
     @Test
