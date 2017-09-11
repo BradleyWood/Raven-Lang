@@ -11,7 +11,12 @@ public class DictDefVisitor extends ToyLangBaseVisitor<DictDef> {
 
     @Override
     public DictDef visitDict(ToyLangParser.DictContext ctx) {
-        int size = ctx.dictParamList().dictParam().size();
+        int size = 0;
+        if(ctx.dictParamList() != null) {
+            if(ctx.dictParamList().dictParam() != null) {
+                size = ctx.dictParamList().dictParam().size();
+            }
+        }
         Expression[] keys = new Expression[size];
         Expression[] values = new Expression[size];
         for (int i = 0; i < size; i++) {
