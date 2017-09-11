@@ -6,7 +6,7 @@ grammar ToyLang;
 
 
 toyFile
-    :   packageDef? (importStatement*)? statement* EOF
+    :   packageDef? (importStatement*) statement* EOF
     ;
 statement
     :   block
@@ -49,7 +49,7 @@ annotationDeclaration
     :   AT INTER '{' (paramDef (',' paramDef)*)? '}'
     ;
 methodDeclaration
-    :   (annotation*)? (modifier*)? FUN IDENTIFIER '(' (paramDef (',' paramDef)*)? ')' block
+    :   (annotation*) (modifier*) FUN IDENTIFIER '(' (paramDef (',' paramDef)*)? ')' block
     ;
 paramDef
     :   IDENTIFIER
@@ -58,11 +58,11 @@ block
     :   '{' statement* '}'
     ;
 varDeclaration
-    :   (modifier*)? VAR IDENTIFIER ASSIGNMENT expression SEMI
-    |   (modifier*)? VAR IDENTIFIER SEMI
+    :   (modifier*) VAR IDENTIFIER ASSIGNMENT expression SEMI
+    |   (modifier*) VAR IDENTIFIER SEMI
     ;
 classDef
-    :   (modifier*)? CLASS IDENTIFIER ('(' paramList ')')? (':' paramList)? block
+    :   (modifier*) CLASS IDENTIFIER ('(' paramList ')')? (':' paramList)? block
     ;
 expression
     :   literal
