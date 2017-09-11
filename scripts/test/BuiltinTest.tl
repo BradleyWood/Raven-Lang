@@ -1,9 +1,9 @@
 package scripts.test;
 
 
-public var xd = 100;
+public var oneHundred = 100;
 
-public var brool = "gggg";
+public var testStr = "123";
 
 fun main() {
     println("Enter your name");
@@ -20,7 +20,7 @@ fun main() {
     println();
     println();
 
-    lst = [1000, 123, 54,1233,954, 191, 355, 641,4,7776, 11223,414417];
+    lst = [1000, 123, 54, 1233, 954, 191, 355, 641, 4, 7776, 11223, 414417];
     println("Lets sort these numbers...");
     println(lst);
     sort(lst);
@@ -29,5 +29,7 @@ fun main() {
 
     println();
     println();
-    println(vars());
+    var variables = vars();
+    println(variables["testStr"] + " 456");
+    println(variables);
 }
