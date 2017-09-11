@@ -3,8 +3,10 @@ package org.toylang.core;
 public class ToyBoolean extends ToyObject {
 
     public static ToyType TYPE = new ToyType(ToyBoolean.class);
+    public static final ToyBoolean TRUE = new ToyBoolean(true);
+    public static final ToyBoolean FALSE = new ToyBoolean(false);
 
-    private boolean value = false;
+    private boolean value;
 
     public ToyBoolean(boolean value) {
         this.value = value;
