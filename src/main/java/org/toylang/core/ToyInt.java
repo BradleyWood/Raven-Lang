@@ -94,6 +94,9 @@ public class ToyInt extends ToyObject {
             return new ToyReal((double)value).pow(obj);
         } else if(obj instanceof ToyInt) {
             int other = ((ToyInt) obj).getValue();
+            if(other < 0)
+                return new ToyReal((double)value).pow(new ToyReal(other));
+
             return new ToyInt((int)Math.pow(value, other));
         }
         return super.pow(obj);
