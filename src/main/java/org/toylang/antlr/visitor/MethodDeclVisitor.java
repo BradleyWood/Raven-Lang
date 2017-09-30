@@ -14,7 +14,17 @@ public class MethodDeclVisitor extends ToyLangBaseVisitor<Fun> {
     @Override
     public Fun visitMethodDeclaration(ToyLangParser.MethodDeclarationContext ctx) {
         QualifiedName name = new QualifiedName(ctx.IDENTIFIER().getText());
-        Block body = ctx.block().accept(BlockVisitor.INSTANCE);
+        Block body;
+        if(ctx.block() != null) {
+            body = ctx.block().accept(BlockVisitor.INSTANCE);
+        } else if(ctx.expression() != null) {
+            Return stmt = new Return(ctx.expression().accept(ExpressionVisitor.INSTANCE));
+            body = new Block(stmt);
+        } else {
+            System.err.println("ERROR: NO BODY FOR FUNCTION: "+name);
+            return null;
+        }
+
 
         ArrayList<VarDecl> params = new ArrayList<>();
         if(ctx.paramDef() != null) {

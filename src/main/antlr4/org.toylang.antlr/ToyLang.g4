@@ -50,6 +50,7 @@ annotationDeclaration
     ;
 methodDeclaration
     :   (annotation*) (modifier*) FUN IDENTIFIER '(' (paramDef (',' paramDef)*)? ')' block
+    |   FUN? IDENTIFIER '(' (paramDef (',' paramDef)*)? ')' ASSIGNMENT expression SEMI
     ;
 paramDef
     :   IDENTIFIER
