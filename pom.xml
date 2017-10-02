@@ -5,6 +5,8 @@
     <modelVersion>4.0.0</modelVersion>
 
     <properties>
+		<maven.compiler.source>1.8</maven.compiler.source>
+        <maven.compiler.target>1.8</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
@@ -49,13 +51,25 @@
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.5.1</version>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>2.6</version>
                 <configuration>
-                    <source>1.8</source>
-                    <target>1.8</target>
+                    <archive>
+                        <manifest>
+                            <addClasspath>true</addClasspath>
+                            <mainClass>org.toylang.core.Application</mainClass>
+                        </manifest>
+                    </archive>
                 </configuration>
             </plugin>
+			<plugin>
+				<groupId>com.excelsiorjet</groupId>
+				<artifactId>excelsior-jet-maven-plugin</artifactId>
+                <version>1.1.0</version>
+                <configuration>
+                    <mainClass>org.toylang.core.Application</mainClass>
+                </configuration>
+			</plugin>
         </plugins>
     </build>
 </project>
