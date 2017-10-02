@@ -42,7 +42,9 @@ public class ToyReal extends ToyObject {
     }
     @Override
     public ToyObject add(ToyObject obj) {
-        if(obj instanceof ToyReal) {
+        if(obj instanceof ToyString) {
+            return new ToyString(toString() + obj.toString());
+        } else if(obj instanceof ToyReal) {
             double other = ((ToyReal) obj).value;
             double result = value + other;
             return new ToyReal(result);
