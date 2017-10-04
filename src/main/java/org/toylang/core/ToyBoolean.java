@@ -11,22 +11,27 @@ public class ToyBoolean extends ToyObject {
     public ToyBoolean(boolean value) {
         this.value = value;
     }
+
     @Override
     public ToyObject getType() {
         return TYPE;
     }
+
     @Override
     public boolean isTrue() {
         return value;
     }
+
     @Override
     public ToyObject not() {
         return new ToyBoolean(!value);
     }
+
     @Override
     public Boolean toBoolean() {
         return isTrue();
     }
+
     @Override
     public Object toObject() {
         return isTrue();
@@ -38,12 +43,26 @@ public class ToyBoolean extends ToyObject {
     }
 
     @Override
+    public ToyObject EQ(ToyObject obj) {
+        if(obj instanceof ToyBoolean) {
+            return (value == ((ToyBoolean) obj).value) ? ToyBoolean.TRUE : ToyBoolean.FALSE;
+        }
+        return ToyBoolean.FALSE;
+    }
+
+    @Override
+    public ToyObject NE(ToyObject obj) {
+        return EQ(obj).not();
+    }
+
+    @Override
     public int compareTo(ToyObject o) {
-        if(!(o instanceof ToyBoolean))
-            throw new RuntimeException("Cannot compare boolean and "+o.getClass().getName());
+        if (!(o instanceof ToyBoolean))
+            throw new RuntimeException("Cannot compare boolean and " + o.getClass().getName());
         ToyBoolean other = (ToyBoolean) o;
         return (value == other.value) ? 0 : (value ? 1 : -1);
     }
+
     @Hidden
     @Override
     public boolean equals(Object o) {
@@ -55,6 +74,7 @@ public class ToyBoolean extends ToyObject {
 
         return value == that.value;
     }
+
     @Hidden
     @Override
     public int hashCode() {
