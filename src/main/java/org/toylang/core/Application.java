@@ -7,18 +7,23 @@ import org.toylang.compiler.Compiler;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Objects;
 
 public class Application {
 
 
-    public static void main(String[] args) throws Exception {
+    public static void main(String[] args) {
         try {
-            compile("D:/IdeaProjects/Toylang/src/main/toylang/toylang/lang/");
 
-            System.out.println("----------------------------------------------");
+            if(args.length >= 1) {
+                compile(args[0]);
+            } else {
+                compile("D:/IdeaProjects/Toylang/src/main/toylang/toylang/lang/");
 
-            compile("D:/IdeaProjects/Toylang/scripts/test/");
+                System.out.println("----------------------------------------------");
 
+                compile("D:/IdeaProjects/Toylang/scripts/test/");
+            }
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -29,7 +34,7 @@ public class Application {
         ToyParser parser;
         ToyTree tree;
         File file = new File(path);
-        for(File f : file.listFiles()) {
+        for(File f : Objects.requireNonNull(file.listFiles())) {
             parser = new ToyParser(f.getPath());
             tree = parser.parse();
             compiler = new Compiler(f.getPath(), f.getName().replace(".tl", ""), tree);
