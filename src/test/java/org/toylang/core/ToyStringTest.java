@@ -50,7 +50,6 @@ public class ToyStringTest {
         assertTrue(a.EQ(astr2).isTrue());
         assertTrue(!a.EQ(b).isTrue());
         assertTrue(!a.EQ(c).isTrue());
-        assertTrue(!a.EQ(null).isTrue());
     }
 
     @Test
@@ -64,7 +63,6 @@ public class ToyStringTest {
         assertTrue(!a.NE(astr2).isTrue());
         assertTrue(a.NE(b).isTrue());
         assertTrue(a.NE(c).isTrue());
-        assertTrue(a.NE(null).isTrue());
     }
 
     @Test
