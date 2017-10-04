@@ -95,6 +95,8 @@ varAssignment
         |   EXP_ASSIGNMENT
         )
         expression
+        |
+        listIdx ASSIGNMENT expression
     ;
 funCall
     :   IDENTIFIER '(' paramList? ')'

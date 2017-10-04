@@ -14,7 +14,6 @@ public class ExpressionVisitor extends ToyLangBaseVisitor<Expression> {
     public Expression visitExpression(ToyLangParser.ExpressionContext ctx) {
         Expression expr = null;
 
-
         if(ctx.expression().size() == 1 && ctx.qualifiedName() != null) {
             QualifiedName qn = ctx.qualifiedName().accept(QualifiedNameVisitor.INSTANCE);
             Expression preceeding = ctx.expression(0).accept(ExpressionVisitor.INSTANCE);
@@ -60,12 +59,7 @@ public class ExpressionVisitor extends ToyLangBaseVisitor<Expression> {
             expr = ctx.list().accept(ArrayDefVisitor.INSTANCE);
             expr.setLineNumber(ctx.list().start.getLine());
         } else if(ctx.listIdx() != null) {
-            QualifiedName lst = ctx.listIdx().qualifiedName().accept(QualifiedNameVisitor.INSTANCE);
-            Expression[] ia = new Expression[ctx.listIdx().expression().size()];
-            for(int i = 0; i < ia.length; i++) {
-                ia[i] = ctx.listIdx().expression(i).accept(ExpressionVisitor.INSTANCE);
-            }
-            expr = new ListIndex(lst, ia);
+            expr = ctx.listIdx().accept(ListIndexVisitor.INSTANCE);
             expr.setLineNumber(ctx.listIdx().start.getLine());
         } else if(ctx.funCall() != null) {
             // todo;

@@ -371,6 +371,10 @@ public class Method extends MethodVisitor implements Opcodes, TreeVisitor {
 
         switch (op.getOp()) {
             case ASSIGNMENT:
+                if(op.getLeft() instanceof ListIndex) {
+                    assignListIdx((ListIndex) op.getLeft());
+                    break;
+                }
                 int idx = findLocal(op.getLeft().toString());
                 if(idx != -1) {
                     mv.visitVarInsn(ASTORE, idx);
@@ -563,6 +567,18 @@ public class Method extends MethodVisitor implements Opcodes, TreeVisitor {
             expression.accept(this);
             visitMethodInsn(INVOKEVIRTUAL, Constants.TOYOBJ_NAME, "get","(" +Constants.TOYOBJ_SIG + ")"+Constants.TOYOBJ_SIG);
         }
+    }
+    private void assignListIdx(ListIndex idx) {
+        visitName(idx.getName());
+        for (int i = 0; i < idx.getIndex().length - 1; i++) {
+            Expression expression = idx.getIndex()[i];
+            expression.accept(this);
+            visitMethodInsn(INVOKEVIRTUAL, Constants.TOYOBJ_NAME, "get","(" +Constants.TOYOBJ_SIG + ")"+Constants.TOYOBJ_SIG);
+        }
+        visitInsn(SWAP);
+        idx.getIndex()[idx.getIndex().length - 1].accept(this);
+        visitInsn(SWAP);
+        visitMethodInsn(INVOKEVIRTUAL, Constants.TOYOBJ_NAME, "set","(" + Constants.TOYOBJ_SIG + Constants.TOYOBJ_SIG + ")"+Constants.TOYOBJ_SIG);
     }
 
     @Override

@@ -1,5 +1,6 @@
 package org.toylang.antlr.visitor;
 
+import org.toylang.antlr.Errors;
 import org.toylang.antlr.Operator;
 import org.toylang.antlr.ToyLangBaseVisitor;
 import org.toylang.antlr.ToyLangParser;
@@ -13,15 +14,22 @@ public class AssignmentVisitor extends ToyLangBaseVisitor<BinOp> {
 
     @Override
     public BinOp visitVarAssignment(ToyLangParser.VarAssignmentContext ctx) {
-        QualifiedName name = ctx.qualifiedName().accept(QualifiedNameVisitor.INSTANCE);
+        Expression lhs = null;
+        if(ctx.qualifiedName() != null) {
+            lhs = ctx.qualifiedName().accept(QualifiedNameVisitor.INSTANCE);
+        } else if(ctx.listIdx() != null) {
+            lhs = ctx.listIdx().accept(ListIndexVisitor.INSTANCE);
+        } else {
+            Errors.put("Illegal assignment: "+ctx.getText());
+        }
         Operator operator = getOperator(ctx);
         Expression value = ctx.accept(ExpressionVisitor.INSTANCE);
 
         if(operator != Operator.ASSIGNMENT) {
-            value = new BinOp(name, operator, value);
+            value = new BinOp(lhs, operator, value);
         }
 
-        return new BinOp(name, Operator.ASSIGNMENT, value);
+        return new BinOp(lhs, Operator.ASSIGNMENT, value);
     }
     private Operator getOperator(ToyLangParser.VarAssignmentContext ctx) {
         if(ctx.ASSIGNMENT() != null) {

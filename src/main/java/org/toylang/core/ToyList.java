@@ -53,9 +53,9 @@ public class ToyList extends ToyObject implements List {
     }
     @Override
     public ToyObject set(ToyObject index, ToyObject obj) {
-        if (obj instanceof ToyInt) {
-            int idx = ((ToyInt) obj).toInt();
-            if(idx < list.size()) {
+        if (index instanceof ToyInt) {
+            int idx = index.toInt();
+            if(idx < list.size() && idx >= 0) {
                 return list.set(idx , obj);
             }
         }
