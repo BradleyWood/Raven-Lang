@@ -70,11 +70,11 @@ public class ToyString extends ToyObject {
     }
 
     @Override
-    public Float toFloat() {
+    public Double toDouble() {
         try {
-            return Float.parseFloat(toString());
+            return Double.parseDouble(toString());
         } catch (Exception e) {
-            return super.toFloat();
+            return super.toDouble();
         }
     }
 
