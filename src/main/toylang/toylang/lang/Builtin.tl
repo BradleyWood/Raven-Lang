@@ -33,10 +33,10 @@ public fun len(obj) {
     return obj.size();
 }
 public fun int(obj) {
-    return Integer.parseInt(obj.toString());
+    return obj.toInt();
 }
 public fun real(obj) {
-    return Double.parseDouble(obj.toString());
+    return obj.toFloat();
 }
 public fun type(obj) {
     return obj.getType();
