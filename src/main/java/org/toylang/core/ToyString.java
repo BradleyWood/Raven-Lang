@@ -1,5 +1,7 @@
 package org.toylang.core;
 
+import java.awt.geom.Point2D;
+
 public class ToyString extends ToyObject {
 
     public static ToyType TYPE = new ToyType(ToyString.class);
@@ -10,27 +12,35 @@ public class ToyString extends ToyObject {
     public ToyString(String str) {
         this.str = str;
     }
+
     @Override
     public ToyObject getType() {
         return TYPE;
     }
+
     @Override
     public ToyObject add(ToyObject obj) {
         return new ToyString(str + obj);
     }
+
     @Override
     public ToyObject EQ(ToyObject obj) {
+        if (obj == null)
+            return ToyBoolean.FALSE;
         return new ToyBoolean(str.equals(obj.toString()));
     }
+
     @Override
     public ToyObject NE(ToyObject obj) {
         return EQ(obj).not();
     }
+
     @Hidden
     @Override
     public Object toObject() {
         return toString();
     }
+
     @Override
     public String toString() {
         return str;
@@ -43,12 +53,31 @@ public class ToyString extends ToyObject {
 
     @Override
     public int compareTo(ToyObject o) {
-        if(o instanceof ToyString) {
+        if (o instanceof ToyString) {
             String str = o.toString();
             return this.str.compareTo(str);
         }
-        throw new RuntimeException("Cannot compare String with "+o.getClass().getName());
+        throw new RuntimeException("Cannot compare String with " + o.getClass().getName());
     }
+
+    @Override
+    public Integer toInt() {
+        try {
+            return Integer.parseInt(toString());
+        } catch (Exception e) {
+            return super.toInt();
+        }
+    }
+
+    @Override
+    public Float toFloat() {
+        try {
+            return Float.parseFloat(toString());
+        } catch (Exception e) {
+            return super.toFloat();
+        }
+    }
+
     @Hidden
     @Override
     public boolean equals(Object o) {
@@ -59,6 +88,7 @@ public class ToyString extends ToyObject {
 
         return str != null ? str.equals(toyString.str) : toyString.str == null;
     }
+
     @Hidden
     @Override
     public int hashCode() {
