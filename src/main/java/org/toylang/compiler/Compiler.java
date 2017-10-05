@@ -106,7 +106,6 @@ public class Compiler {
             if(Errors.getErrorCount() > 0) {
                 Errors.printErrors();
             } else {
-                System.out.println("Writing "+classes.size() + " classes.");
                 for (String s : classes.keySet()) {
                     String file = BIN + "/" + s.replace(".", "/") + ".class";
                     byte[] data = classes.get(s).getBytes();
