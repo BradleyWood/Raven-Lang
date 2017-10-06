@@ -24,7 +24,9 @@ public class ToyBoolean extends ToyObject {
 
     @Override
     public ToyObject not() {
-        return new ToyBoolean(!value);
+        if(value)
+            return FALSE;
+        return TRUE;
     }
 
     @Override
