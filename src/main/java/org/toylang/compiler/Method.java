@@ -696,11 +696,9 @@ public class Method extends MethodVisitor implements Opcodes, TreeVisitor {
 
     public void putNull() {
         if (ctx.getName().equals("<clinit>")) {
-            mv.visitTypeInsn(NEW, "org/toylang/core/ToyNull");
-            mv.visitInsn(DUP);
-            mv.visitMethodInsn(INVOKESPECIAL, "org/toylang/core/ToyNull", "<init>", "()V", false);
+            mv.visitFieldInsn(GETSTATIC, Constants.TOYNULL_NAME, "NULL", Constants.TOYNULL_SIG);
         } else {
-            getConstant(new ToyNull());
+            getConstant(ToyNull.NULL);
         }
     }
 

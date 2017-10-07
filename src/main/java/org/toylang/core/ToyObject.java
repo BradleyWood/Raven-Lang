@@ -322,7 +322,7 @@ public class ToyObject implements Comparable<ToyObject> {
             return new ToyString((String) o);
         }
         if(o == null) {
-            return new ToyNull();
+            return ToyNull.NULL;
         }
         if(o instanceof List) {
             return new ToyList((List)o);

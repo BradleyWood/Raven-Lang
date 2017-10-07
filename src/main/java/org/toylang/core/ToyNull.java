@@ -5,8 +5,10 @@ public class ToyNull extends ToyObject {
     @Hidden
     public static final ToyType TYPE = new ToyType(ToyNull.class);
 
+    public static final ToyNull NULL = new ToyNull();
+
     @Hidden
-    public ToyNull() {
+    private ToyNull() {
     }
     @Override
     public ToyObject getType() {

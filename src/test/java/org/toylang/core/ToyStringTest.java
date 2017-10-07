@@ -20,10 +20,10 @@ public class ToyStringTest {
         ToyReal real = new ToyReal(-100.4201);
         ToyString aPlusReal = new ToyString("astring-100.4201");
 
-        ToyBoolean bool = new ToyBoolean(false);
+        ToyBoolean bool = ToyBoolean.FALSE;
         ToyString bPlusBool = new ToyString("bstringfalse");
 
-        ToyNull toyNull = new ToyNull();
+        ToyNull toyNull = ToyNull.NULL;
         ToyString aPlusNull = new ToyString("astringnull");
 
         ToyObject obj = new ToyObject(new Object());
@@ -43,7 +43,7 @@ public class ToyStringTest {
     public void EQTest() {
         ToyString a = new ToyString("astring");
         ToyString b = new ToyString("bstring");
-        ToyNull c = new ToyNull();
+        ToyNull c = ToyNull.NULL;
         ToyString astr2 = new ToyString("astring");
 
         assertTrue(a.EQ(a).isTrue());
@@ -56,7 +56,7 @@ public class ToyStringTest {
     public void NETest() {
         ToyString a = new ToyString("astring");
         ToyString b = new ToyString("bstring");
-        ToyNull c = new ToyNull();
+        ToyNull c = ToyNull.NULL;
         ToyString astr2 = new ToyString("astring");
 
         assertTrue(!a.NE(a).isTrue());

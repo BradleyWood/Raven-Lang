@@ -12,6 +12,7 @@ public class Constants {
     public static final String TOYSTRING_SIG = "Lorg/toylang/core/ToyString;";
 
     public static final String TOYNULL_NAME = "org/toylang/core/ToyNull";
+    public static final String TOYNULL_SIG = "Lorg/toylang/core/ToyNull;";
     public static final String TOYSTRING_NAME = "org/toylang/core/ToyString";
 
     public static final String BUILTIN_NAME = "toylang/lang/Builtin";
