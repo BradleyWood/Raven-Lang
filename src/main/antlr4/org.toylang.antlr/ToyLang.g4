@@ -10,6 +10,7 @@ toyFile
     ;
 statement
     :   block
+    |   forStatement
     |   varDeclaration
     |   annotationDeclaration
     |   methodDeclaration
@@ -32,6 +33,21 @@ ifStatement
     ;
 whileStatement
     :   WHILE expression statement
+    |   DO statement WHILE expression SEMI
+    ;
+forStatement
+    :   FOR '('? IDENTIFIER range ')'? statement
+    |   FOR '('? init=expression? SEMI cond=expression? SEMI after=paramList? ')'? statement
+    ;
+range
+    :   'range' expression (inc|dec) expression
+
+    ;
+inc
+    :   'upto'
+    |   'to'
+    ;
+dec :   'downto'
     ;
 importStatement
     :  'import' qualifiedName ('.' '*')? SEMI
@@ -183,6 +199,7 @@ ZeroToThree
 
 FUN     :   'fun';
 IF      :   'if';
+DO      :   'do';
 ELSE    :   'else';
 WHILE   :   'while';
 FOR     :   'for';
