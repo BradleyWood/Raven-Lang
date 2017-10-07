@@ -35,7 +35,7 @@ public class ExpressionVisitor extends ToyLangBaseVisitor<Expression> {
             expr.setLineNumber(ctx.funCall().start.getLine());
         } else if(ctx.literal() != null) {
             if(ctx.literal().number() != null) {
-                if(ctx.literal().number().getText().contains(".")) {
+                if(ctx.literal().number().getText().contains(".") || ctx.literal().number().getText().toLowerCase().contains("e")) {
                     expr = new Literal(new ToyReal(Double.parseDouble(ctx.literal().number().getText())));
                 } else {
                     expr = new Literal(new ToyInt(Integer.parseInt(ctx.literal().number().getText())));
