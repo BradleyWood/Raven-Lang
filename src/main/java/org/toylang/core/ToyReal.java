@@ -124,10 +124,10 @@ public class ToyReal extends ToyObject {
     public ToyObject GT(ToyObject obj) {
         if(obj instanceof ToyReal) {
             double other = ((ToyReal) obj).value;
-            return new ToyBoolean(value > other);
+            return value > other ? ToyBoolean.TRUE : ToyBoolean.FALSE;
         } else if(obj instanceof ToyInt) {
             double other = (double)((ToyInt) obj).getValue();
-            return new ToyBoolean(value > other);
+            return value > other ? ToyBoolean.TRUE : ToyBoolean.FALSE;
         }
         return super.GT(obj);
     }
@@ -135,10 +135,10 @@ public class ToyReal extends ToyObject {
     public ToyObject LT(ToyObject obj) {
         if(obj instanceof ToyReal) {
             double other = ((ToyReal) obj).value;
-            return new ToyBoolean(value < other);
+            return value < other ? ToyBoolean.TRUE : ToyBoolean.FALSE;
         } else if(obj instanceof ToyInt) {
             double other = (double)((ToyInt) obj).getValue();
-            return new ToyBoolean(value < other);
+            return value < other ? ToyBoolean.TRUE : ToyBoolean.FALSE;
         }
         return super.LT(obj);
     }
@@ -146,10 +146,10 @@ public class ToyReal extends ToyObject {
     public ToyObject GTE(ToyObject obj) {
         if(obj instanceof ToyReal) {
             double other = ((ToyReal) obj).value;
-            return new ToyBoolean(value >= other);
+            return value >= other ? ToyBoolean.TRUE : ToyBoolean.FALSE;
         } else if(obj instanceof ToyInt) {
             double other = (double)((ToyInt) obj).getValue();
-            return new ToyBoolean(value >= other);
+            return value >= other ? ToyBoolean.TRUE : ToyBoolean.FALSE;
         }
         return super.GTE(obj);
     }
@@ -157,10 +157,10 @@ public class ToyReal extends ToyObject {
     public ToyObject LTE(ToyObject obj) {
         if(obj instanceof ToyReal) {
             double other = ((ToyReal) obj).value;
-            return new ToyBoolean(value <= other);
+            return value <= other ? ToyBoolean.TRUE : ToyBoolean.FALSE;
         } else if(obj instanceof ToyInt) {
             double other = (double)((ToyInt) obj).getValue();
-            return new ToyBoolean(value <= other);
+            return value <= other ? ToyBoolean.TRUE : ToyBoolean.FALSE;
         }
         return super.LTE(obj);
     }
@@ -168,10 +168,10 @@ public class ToyReal extends ToyObject {
     public ToyObject EQ(ToyObject obj) {
         if(obj instanceof ToyReal) {
             double other = ((ToyReal) obj).value;
-            return new ToyBoolean(value == other);
+            return value == other ? ToyBoolean.TRUE : ToyBoolean.FALSE;
         } else if(obj instanceof ToyInt) {
             double other = (double)((ToyInt) obj).getValue();
-            return new ToyBoolean(value == other);
+            return value == other ? ToyBoolean.TRUE : ToyBoolean.FALSE;
         }
         return super.EQ(obj);
     }
@@ -179,10 +179,10 @@ public class ToyReal extends ToyObject {
     public ToyObject NE(ToyObject obj) {
         if(obj instanceof ToyReal) {
             double other = ((ToyReal) obj).value;
-            return new ToyBoolean(value != other);
+            return value != other ? ToyBoolean.TRUE : ToyBoolean.FALSE;
         } else if(obj instanceof ToyInt) {
             double other = (double)((ToyInt) obj).getValue();
-            return new ToyBoolean(value != other);
+            return value != other ? ToyBoolean.TRUE : ToyBoolean.FALSE;
         }
         return super.NE(obj);
     }

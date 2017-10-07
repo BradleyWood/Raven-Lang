@@ -8,7 +8,7 @@ public class ToyBoolean extends ToyObject {
 
     private boolean value;
 
-    public ToyBoolean(boolean value) {
+    private ToyBoolean(boolean value) {
         this.value = value;
     }
 

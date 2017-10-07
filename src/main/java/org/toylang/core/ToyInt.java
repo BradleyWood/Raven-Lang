@@ -108,7 +108,7 @@ public class ToyInt extends ToyObject {
             return new ToyReal(value).GT(obj);
         } else if(obj instanceof ToyInt) {
             int other = ((ToyInt) obj).getValue();
-            return new ToyBoolean(value > other);
+            return value > other ? ToyBoolean.TRUE : ToyBoolean.FALSE;
         }
         return super.GT(obj);
     }
@@ -119,7 +119,7 @@ public class ToyInt extends ToyObject {
             return new ToyReal(value).LT(obj);
         } else if(obj instanceof ToyInt) {
             int other = ((ToyInt) obj).getValue();
-            return new ToyBoolean(value < other);
+            return value < other ? ToyBoolean.TRUE : ToyBoolean.FALSE;
         }
         return super.LT(obj);
     }
@@ -130,7 +130,7 @@ public class ToyInt extends ToyObject {
             return new ToyReal(value).GTE(obj);
         } else if(obj instanceof ToyInt) {
             int other = ((ToyInt) obj).getValue();
-            return new ToyBoolean(value >= other);
+            return value >= other ? ToyBoolean.TRUE : ToyBoolean.FALSE;
         }
         return super.GTE(obj);
     }
@@ -141,7 +141,7 @@ public class ToyInt extends ToyObject {
             return new ToyReal(value).LTE(obj);
         } else if(obj instanceof ToyInt) {
             int other = ((ToyInt) obj).getValue();
-            return new ToyBoolean(value <= other);
+            return value <= other ? ToyBoolean.TRUE : ToyBoolean.FALSE;
         }
         return super.LTE(obj);
     }
@@ -152,7 +152,7 @@ public class ToyInt extends ToyObject {
             return new ToyReal(value).EQ(obj);
         } else if(obj instanceof ToyInt) {
             int other = ((ToyInt) obj).getValue();
-            return new ToyBoolean(value == other);
+            return value == other ? ToyBoolean.TRUE : ToyBoolean.FALSE;
         }
         return super.EQ(obj);
     }
@@ -163,7 +163,7 @@ public class ToyInt extends ToyObject {
             return new ToyReal(value).NE(obj);
         } else if(obj instanceof ToyInt) {
             int other = ((ToyInt) obj).getValue();
-            return new ToyBoolean(value != other);
+            return value != other ? ToyBoolean.TRUE : ToyBoolean.FALSE;
         }
         return super.NE(obj);
     }

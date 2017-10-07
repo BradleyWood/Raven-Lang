@@ -1,6 +1,5 @@
 package org.toylang.core;
 
-import java.awt.geom.Point2D;
 
 public class ToyString extends ToyObject {
 
@@ -27,7 +26,7 @@ public class ToyString extends ToyObject {
     public ToyObject EQ(ToyObject obj) {
         if (obj == null)
             return ToyBoolean.FALSE;
-        return new ToyBoolean(str.equals(obj.toString()));
+        return str.equals(obj.toString()) ? ToyBoolean.TRUE : ToyBoolean.FALSE;
     }
 
     @Override
@@ -62,20 +61,12 @@ public class ToyString extends ToyObject {
 
     @Override
     public Integer toInt() {
-        try {
-            return Integer.parseInt(toString());
-        } catch (Exception e) {
-            return super.toInt();
-        }
+        return Integer.parseInt(toString());
     }
 
     @Override
     public Double toDouble() {
-        try {
-            return Double.parseDouble(toString());
-        } catch (Exception e) {
-            return super.toDouble();
-        }
+        return Double.parseDouble(toString());
     }
 
     @Hidden

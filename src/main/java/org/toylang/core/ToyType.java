@@ -20,9 +20,9 @@ public class ToyType extends ToyObject {
     public ToyObject EQ(ToyObject obj) {
         if(obj instanceof ToyType) {
             ToyType type = (ToyType) obj;
-            return new ToyBoolean(this.type == type.type);
+            return this.type == type.type ? ToyBoolean.TRUE : ToyBoolean.FALSE;
         }
-        return new ToyBoolean(false);
+        return ToyBoolean.FALSE;
     }
     @Override
     public ToyObject NE(ToyObject obj) {

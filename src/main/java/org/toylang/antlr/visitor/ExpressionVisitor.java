@@ -46,9 +46,9 @@ public class ExpressionVisitor extends ToyLangBaseVisitor<Expression> {
             } else if(ctx.literal().getText().equals("null")) {
                 expr = new Literal(new ToyNull()); // use reference to null instead
             } else if(ctx.literal().getText().equals("true")) {
-                expr = new Literal(new ToyBoolean(true)); // use reference
+                expr = new Literal(ToyBoolean.TRUE); // use reference
             } else if(ctx.literal().getText().equals("false")) {
-                expr = new Literal(new ToyBoolean(false)); // use reference
+                expr = new Literal(ToyBoolean.FALSE); // use reference
             }
             assert expr != null;
             expr.setLineNumber(ctx.literal().start.getLine());

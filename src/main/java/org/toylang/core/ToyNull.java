@@ -31,7 +31,7 @@ public class ToyNull extends ToyObject {
 
     @Override
     public ToyObject EQ(ToyObject obj) {
-        return new ToyBoolean((obj == null) || (obj instanceof ToyNull));
+        return ((obj == null) || (obj instanceof ToyNull)) ? ToyBoolean.TRUE : ToyBoolean.FALSE;
     }
     @Override
     public ToyObject NE(ToyObject obj) {

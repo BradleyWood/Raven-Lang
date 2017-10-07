@@ -249,7 +249,8 @@ public class ToyObject implements Comparable<ToyObject> {
                         Object ret = method.invoke(obj, pa);
                         return toToyLang(ret);
                     } catch (IllegalAccessException | InvocationTargetException e) {
-                        e.printStackTrace();
+                        //e.printStackTrace();
+                        return new ToyError("error...");
                     }
                 }
             }
@@ -270,29 +271,33 @@ public class ToyObject implements Comparable<ToyObject> {
                 pa[i] = null;
                 continue;
             }
-            if(type.isAssignableFrom(ToyObject.class)) {
-                pa[i] = toToyLang(lst.get(i));
-            } else if(type.getName().equals(ToyObject.class.getName())) {
-                pa[i] = lst.get(i);
-            } else if(type == int.class) {
-                pa[i] = lst.get(i).toInt();
-            } else if(type == long.class) {
-                pa[i] = lst.get(i).toLong();
-            } else if(type == short.class) {
-                pa[i] = lst.get(i).toShort();
-            } else if(type == byte.class) {
-                pa[i] = lst.get(i).toByte();
-            } else if(type == float.class) {
-                pa[i] = lst.get(i).toFloat();
-            } else if(type == double.class) {
-                pa[i] = lst.get(i).toDouble();
-            } else if(type == boolean.class) {
-                pa[i] = lst.get(i).toBoolean();
-            } else {
-                pa[i] = lst.get(i).toObject();
-                if(!type.isAssignableFrom(pa[i].getClass())) {
-                    return null;
+            try {
+                if (type.isAssignableFrom(ToyObject.class)) {
+                    pa[i] = toToyLang(lst.get(i));
+                } else if (type.getName().equals(ToyObject.class.getName())) {
+                    pa[i] = lst.get(i);
+                } else if (type == int.class) {
+                    pa[i] = lst.get(i).toInt();
+                } else if (type == long.class) {
+                    pa[i] = lst.get(i).toLong();
+                } else if (type == short.class) {
+                    pa[i] = lst.get(i).toShort();
+                } else if (type == byte.class) {
+                    pa[i] = lst.get(i).toByte();
+                } else if (type == float.class) {
+                    pa[i] = lst.get(i).toFloat();
+                } else if (type == double.class) {
+                    pa[i] = lst.get(i).toDouble();
+                } else if (type == boolean.class) {
+                    pa[i] = lst.get(i).toBoolean();
+                } else {
+                    pa[i] = lst.get(i).toObject();
+                    if (!type.isAssignableFrom(pa[i].getClass())) {
+                        return null;
+                    }
                 }
+            } catch (Exception e) {
+                return null;
             }
             if(pa[i] == null)
                 return null;
@@ -311,7 +316,7 @@ public class ToyObject implements Comparable<ToyObject> {
             return new ToyReal((double) o);
         }
         if(o instanceof Boolean) {
-            return new ToyBoolean((boolean)o);
+            return ((boolean)o) ? ToyBoolean.TRUE : ToyBoolean.FALSE;
         }
         if(o instanceof String) {
             return new ToyString((String) o);

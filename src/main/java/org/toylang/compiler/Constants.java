@@ -23,6 +23,12 @@ public class Constants {
     public static final String TOY_DICT_NAME = "org/toylang/core/ToyDict";
     public static final String TOY_DICT_SIG = "Lorg/toylang/core/ToyDict;";
 
+    public static final String TOY_ERROR_NAME = "org/toylang/core/ToyError";
+    public static final String TOY_ERROR_SIG = "Lorg/toylang/core/ToyError;";
+
+    public static final String TOY_BOOLEAN_NAME = "org/toylang/core/ToyBoolean";
+    public static final String TOY_BOOLEAN_SIG = "Lorg/toylang/core/ToyBoolean;";
+
     private static LinkedList<ToyObject> CONSTANTS = new LinkedList<>();
 
     public static void addConstant(ToyObject literal) {

@@ -13,6 +13,11 @@ public class ToyError extends ToyObject {
         this.msg = msg;
     }
 
+    public ToyError(String msg) {
+        super(TYPE);
+        this.msg = new ToyString(msg);
+    }
+
     @Hidden
     @Override
     public boolean equals(Object o) {
@@ -25,7 +30,7 @@ public class ToyError extends ToyObject {
 
     @Override
     public ToyObject EQ(ToyObject obj) {
-        if(equals(obj))
+        if (equals(obj))
             return ToyBoolean.TRUE;
         return ToyBoolean.FALSE;
     }
