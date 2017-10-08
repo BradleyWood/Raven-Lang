@@ -4,7 +4,7 @@ import org.toylang.antlr.Errors;
 import org.toylang.antlr.ToyParser;
 import org.toylang.antlr.ToyTree;
 import org.toylang.antlr.ast.*;
-import org.toylang.core.ToyObject;
+import org.toylang.core.TLFile;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -40,7 +40,12 @@ public class Compiler {
         IMPORTS.add(this.name);
         trees.add(tree);
     }
-    public void compile() throws IOException {
+    public HashMap<String, byte[]> compile() throws IOException {
+        return compile(true);
+    }
+    public HashMap<String, byte[]> compile(boolean save) throws IOException {
+        HashMap<String, byte[]> classDefinitions = new HashMap<>();
+
         for (QualifiedName qualifiedName : tree.getImports()) {
             if(!IMPORTS.contains(qualifiedName.toString())) {
                 String file = findFile(qualifiedName);
@@ -109,14 +114,18 @@ public class Compiler {
                 for (String s : classes.keySet()) {
                     String file = BIN + "/" + s.replace(".", "/") + ".class";
                     byte[] data = classes.get(s).getBytes();
-                    File f = new File(file).getParentFile();
-                    f.mkdirs();
-                    FileOutputStream fos = new FileOutputStream(file);
-                    fos.write(data);
-                    fos.close();
+                    classDefinitions.put(s, data);
+                    if(save) {
+                        File f = new File(file).getParentFile();
+                        f.mkdirs();
+                        FileOutputStream fos = new FileOutputStream(file);
+                        fos.write(data);
+                        fos.close();
+                    }
                 }
             }
         }
+        return classDefinitions;
     }
     private final String findFile(QualifiedName name) {
         QualifiedName pack = tree.getPackage();
@@ -132,22 +141,14 @@ public class Compiler {
         return str;
     }
     public static void buildSymbolMap(Class clazz) {
-
+        boolean isToyLang = clazz.getDeclaredAnnotation(TLFile.class) != null;
         for (Method method : clazz.getMethods()) {
-            boolean isToyLang = true;
-            for (Class<?> aClass : method.getParameterTypes()) {
-                if(!aClass.isAssignableFrom(ToyObject.class))
-                    isToyLang = false;
-            }
-            if(!method.getReturnType().isAssignableFrom(ToyObject.class))
-                isToyLang = false;
             SymbolMap.FUN_MAP.put(clazz.getPackage().getName() + "." + method.getName(), new Fun(isToyLang ? new QualifiedName(method.getName()) : null,null,null,null));
         }
         for (Constructor constructor : clazz.getConstructors()) {
-
             // todo;
             if(Modifier.isProtected(constructor.getModifiers()) || Modifier.isPublic(constructor.getModifiers())) {
-                SymbolMap.CLASS_MAP.put(clazz.getName(), new ClassDef(null,null,null,null,null));
+                //SymbolMap.CLASS_MAP.put(clazz.getName(), new ClassDef(null,null,null,null,null));
                 break;
             }
         }

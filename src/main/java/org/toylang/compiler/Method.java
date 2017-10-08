@@ -332,17 +332,20 @@ public class Method extends MethodVisitor implements Opcodes, TreeVisitor {
                     // typically not imported
                 } else if (funcOwner != null) { // check if its an imported name
 
-                    String funName = expr.toString();//expr.toString().substring(funcOwner.length());
-                    if (!true) { // check if function is a toylang function or not
-                        // if its a java function and the name is not overloaded
-                        // convert the parameters and invoke it directly
-                        // visitMethodInsn(INVOKESTATIC, funcOwner, funName, sig.toString(), false);
+                    String funName = call.getName().toString();//expr.toString().substring(funcOwner.length());
+                    Fun f = SymbolMap.resolveFun(funcOwner, funName);
+                    // if the function can be resolved, it is a toylang function
+                    if (f != null) {
+                        for (Expression expression : call.getParams()) {
+                            expression.accept(this);
+                        }
+                        visitMethodInsn(INVOKESTATIC, funcOwner, funName, sig.toString(), false);
+                    } else {
+                        visitLdcInsn(Type.getType("L" + (funcOwner.replace(".", "/")) + ";"));
+                        visitLdcInsn(call.getName().toString());
+                        visitListDef(new ListDef(call.getParams()));
+                        visitMethodInsn(INVOKESTATIC, Constants.TOYOBJ_NAME, "invoke", "(" + Constants.CLASS_SIG + Constants.STRING_SIG + Constants.TOYOBJ_SIG + ")" + Constants.TOYOBJ_SIG, false);
                     }
-
-                    visitLdcInsn(Type.getType("L" + (funcOwner.replace(".", "/")) + ";"));
-                    visitLdcInsn(call.getName().toString());
-                    visitListDef(new ListDef(call.getParams()));
-                    visitMethodInsn(INVOKESTATIC, Constants.TOYOBJ_NAME, "invoke", "(" + Constants.CLASS_SIG + Constants.STRING_SIG + Constants.TOYOBJ_SIG + ")" + Constants.TOYOBJ_SIG, false);
                 } else {
                     //expr.accept(this);
                     //fieldOp((QualifiedName) expr, true);
