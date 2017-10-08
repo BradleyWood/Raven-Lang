@@ -30,6 +30,8 @@ public class Constants {
     public static final String TOY_BOOLEAN_NAME = "org/toylang/core/ToyBoolean";
     public static final String TOY_BOOLEAN_SIG = "Lorg/toylang/core/ToyBoolean;";
 
+    public static final String ANNOTATION_TLFILE_SIG = "Lorg/toylang/core/TLFile;";
+
     private static LinkedList<ToyObject> CONSTANTS = new LinkedList<>();
 
     public static void addConstant(ToyObject literal) {

@@ -51,6 +51,7 @@ public class ClassMaker {
         }
 
         cw.visit(V1_7, modifiers, def.getFullName(), def.getSignature(), def.getSuper().toString().replace(".", "/"), def.getInterfaces());
+        cw.visitAnnotation(Constants.ANNOTATION_TLFILE_SIG, true).visitEnd();
         cw.visitSource(def.getName().toString()+".tl", null);
 
         cw.visitField(ACC_PRIVATE + ACC_STATIC + ACC_FINAL, "__CONSTANTS__", "["+Constants.TOYOBJ_SIG, null, null);
