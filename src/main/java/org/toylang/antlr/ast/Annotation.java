@@ -19,4 +19,9 @@ public class Annotation extends Statement {
     public String toString() {
         return "@"+name;
     }
+
+    @Override
+    public void accept(TreeVisitor visitor) {
+        visitor.visitAnnotation(this);
+    }
 }

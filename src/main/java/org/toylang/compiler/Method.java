@@ -8,7 +8,6 @@ import org.toylang.antlr.ast.While;
 import org.toylang.core.*;
 
 import java.util.*;
-import java.util.regex.Pattern;
 
 
 public class Method extends MethodVisitor implements Opcodes, TreeVisitor {
@@ -358,9 +357,8 @@ public class Method extends MethodVisitor implements Opcodes, TreeVisitor {
 
                     expr.accept(this);
 
-                    visitLdcInsn(call.getName().toString());
-                    visitListDef(new ListDef(call.getParams()));
-                    visitMethodInsn(INVOKEVIRTUAL, Constants.TOYOBJ_NAME, "invoke", "(" + Constants.STRING_SIG + Constants.TOYOBJ_SIG + ")" + Constants.TOYOBJ_SIG, false);
+                    java.lang.reflect.Method m = isToyObjectFunction(call.getName().toString(), call.getParams().length);
+                    invokeVirtualFun(call, m);
                 }
             } else {
                 expr.accept(this);
@@ -370,9 +368,8 @@ public class Method extends MethodVisitor implements Opcodes, TreeVisitor {
                     visitLdcInsn(call.getParams()[0].toString());
                     visitMethodInsn(INVOKEVIRTUAL, Constants.TOYOBJ_NAME, "getField", "(" + Constants.STRING_SIG + ")" + Constants.TOYOBJ_SIG);
                 } else {
-                    visitLdcInsn(call.getName().toString());
-                    visitListDef(new ListDef(call.getParams()));
-                    visitMethodInsn(INVOKEVIRTUAL, Constants.TOYOBJ_NAME, "invoke", "(" + Constants.STRING_SIG + Constants.TOYOBJ_SIG + ")" + Constants.TOYOBJ_SIG, false);
+                    java.lang.reflect.Method m = isToyObjectFunction(call.getName().toString(), call.getParams().length);
+                    invokeVirtualFun(call, m);
                 }
             }
         } else {
@@ -393,6 +390,32 @@ public class Method extends MethodVisitor implements Opcodes, TreeVisitor {
         }
         if (call.pop())
             visitInsn(POP);
+    }
+
+    private void invokeVirtualFun(Call call, java.lang.reflect.Method m) {
+        if(m != null) {
+            String desc = Type.getMethodDescriptor(m);
+            Arrays.stream(call.getParams()).forEach(expression->expression.accept(this));
+            visitMethodInsn(INVOKEVIRTUAL, Constants.TOYOBJ_NAME, m.getName(), desc, false);
+            if(m.getReturnType() == int.class) {
+                visitMethodInsn(INVOKESTATIC, "java/lang/Integer", "valueOf", "(I)Ljava/lang/Integer;", false);
+            }
+            visitMethodInsn(INVOKESTATIC, "org/toylang/core/ToyObject", "toToyLang", "(Ljava/lang/Object;)Lorg/toylang/core/ToyObject;", false);
+        } else {
+            visitLdcInsn(call.getName().toString());
+            visitListDef(new ListDef(call.getParams()));
+            visitMethodInsn(INVOKEVIRTUAL, Constants.TOYOBJ_NAME, "invoke", "(" + Constants.STRING_SIG + Constants.TOYOBJ_SIG + ")" + Constants.TOYOBJ_SIG, false);
+        }
+    }
+
+    private java.lang.reflect.Method isToyObjectFunction(String name, int paramCount) {
+        for(java.lang.reflect.Method m : ToyObject.class.getDeclaredMethods()) {
+            if(m.getAnnotationsByType(Hidden.class).length > 0 && m.getParameterCount() != paramCount)
+                continue;
+            if(m.getName().equals(name))
+                return m;
+        }
+        return null;
     }
 
     private void invokeRegistered(Call call, String funName, String clazz) {
@@ -682,6 +705,12 @@ public class Method extends MethodVisitor implements Opcodes, TreeVisitor {
             visitMethodInsn(INVOKEVIRTUAL, Constants.TOYOBJ_NAME, "put", "(" + Constants.TOYOBJ_SIG + Constants.TOYOBJ_SIG + ")" + Constants.TOYOBJ_SIG, false);
         }
     }
+
+    @Override
+    public void visitAnnotation(Annotation annotation) {
+
+    }
+
     private boolean canRegisterMethod(String clazz, String name, int paramCount) {
         try {
             Class c = Class.forName(clazz);

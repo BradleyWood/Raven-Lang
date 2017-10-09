@@ -20,4 +20,5 @@ public interface TreeVisitor {
     void visitListIdx(ListIndex idx);
     void visitClassDef(ClassDef def);
     void visitDictDef(DictDef def);
+    void visitAnnotation(Annotation annotation);
 }
