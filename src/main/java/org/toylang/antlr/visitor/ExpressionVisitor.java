@@ -89,6 +89,8 @@ public class ExpressionVisitor extends ToyLangBaseVisitor<Expression> {
                 } else {
                     expr = new BinOp(new Literal(new ToyInt(0)), Operator.SUB, expr);
                 }
+            } else if(ctx.NOT() != null) {
+                expr = new BinOp(null, Operator.NOT, expr);
             }
         } else if(ctx.expression().size() == 2) {
             Expression left = ctx.expression(0).accept(ExpressionVisitor.INSTANCE);

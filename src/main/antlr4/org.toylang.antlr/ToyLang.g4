@@ -37,11 +37,10 @@ whileStatement
     ;
 forStatement
     :   FOR '('? IDENTIFIER range ')'? statement
-    |   FOR '('? init=expression? SEMI cond=expression? SEMI after=paramList? ')'? statement
+    |   FOR '('? (decl=varDeclaration? | (init=expression? SEMI)) cond=expression? SEMI after=paramList? ')'? statement
     ;
 range
     :   'range' expression (inc|dec) expression
-
     ;
 inc
     :   'upto'
@@ -90,7 +89,7 @@ expression
     |   listIdx
     |   list
     |   dict
-    |   (ADD|SUB) expression
+    |   (ADD|SUB|NOT) expression
     |   '(' expression ')'
     |   expression (EXP) expression
     |   expression (MULT|DIV|MOD) expression

@@ -433,7 +433,7 @@ public class Method extends MethodVisitor implements Opcodes, TreeVisitor {
 
     @Override
     public void visitBinOp(BinOp op) {
-        if (op.getOp() != Operator.ASSIGNMENT)
+        if (op.getOp() != Operator.ASSIGNMENT && op.getOp() != Operator.NOT)
             op.getLeft().accept(this);
 
         op.getRight().accept(this);
@@ -450,6 +450,9 @@ public class Method extends MethodVisitor implements Opcodes, TreeVisitor {
                 } else {
                     fieldOp((QualifiedName) op.getLeft(), false);
                 }
+                break;
+            case NOT:
+                visitMethodInsn(INVOKEVIRTUAL, Constants.TOYOBJ_NAME, "not", "()Lorg/toylang/core/ToyObject;", false);
                 break;
             case ADD:
                 visitMethodInsn(INVOKEVIRTUAL, Constants.TOYOBJ_NAME, "add", "(Lorg/toylang/core/ToyObject;)Lorg/toylang/core/ToyObject;", false);
