@@ -1,10 +1,14 @@
 package org.toylang.core;
 
+import java.lang.invoke.MethodType;
 import java.lang.reflect.*;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
+import java.util.function.Predicate;
+import java.util.stream.Stream;
 
 public class ToyObject implements Comparable<ToyObject> {
+
+    private static final HashMap<Integer, JavaMethod> methodCache = new HashMap<>();
 
     @Hidden
     private ToyType type;
@@ -194,9 +198,7 @@ public class ToyObject implements Comparable<ToyObject> {
                 }
             }
             return toToyLang(o);
-        } catch (NoSuchFieldException e) {
-            e.printStackTrace();
-        } catch (IllegalAccessException e) {
+        } catch (NoSuchFieldException | IllegalAccessException e) {
             e.printStackTrace();
         }
         throw new RuntimeException(obj+" has no attribute "+name);
@@ -234,28 +236,159 @@ public class ToyObject implements Comparable<ToyObject> {
         return invoke(clazz, null, name, params);
     }
     @Hidden
+    public ToyObject invokeV(int hash, ToyObject params) {
+        JavaMethod method = findMethod(hash);
+
+        if(method != null) {
+            Object[] pa = getParams(params, method.parameterTypes);
+            try {
+                method.mh.invoke(this, pa);
+            } catch (IllegalAccessException | InvocationTargetException e) {
+                e.printStackTrace();
+                return new ToyError("Error at call to "+this.getClass().getName()+"."+method.mh.getName()+"("+params+")");
+            }
+        }
+        throw new RuntimeException("Method not found: "+hash+":"+params);
+    }
+    public static ToyObject invoke(int hash, ToyObject params) {
+        JavaMethod jm = findMethod(hash);
+        if(jm != null) {
+            Object[] pa = getParams(params, jm.parameterTypes);
+            try {
+                return toToyLang(jm.mh.invoke(null, pa));
+            } catch (IllegalAccessException | InvocationTargetException e) {
+                e.printStackTrace();
+                return new ToyError(e.getMessage());
+            }
+        }
+        throw new RuntimeException("Method not found: "+hash);
+    }
+    @Hidden
     public static ToyObject invoke(Class clazz, Object obj, String name, ToyObject params) {
-        if(clazz != null && params instanceof ToyList) {
-            for (Method method : clazz.getMethods()) {
-                if(method.getAnnotationsByType(Hidden.class).length > 0)
-                    continue;
-                if(method.getName().equals(name) && method.getParameterCount() == params.size()) {
-                    Class<?>[] types = method.getParameterTypes();
-                    Object[]pa = getParams(params, types);
-                    if(pa == null)
-                        continue;
-                    // invoke
-                    try {
-                        Object ret = method.invoke(obj, pa);
-                        return toToyLang(ret);
-                    } catch (IllegalAccessException | InvocationTargetException e) {
-                        //e.printStackTrace();
-                        return new ToyError("error...");
-                    }
-                }
+        JavaMethod method = findMethod(clazz, name, params);
+        if(method != null) {
+            try {
+                Object[] pa = getParams(params, method.parameterTypes);
+                Object ret = method.mh.invoke(obj, pa);
+
+                return toToyLang(ret);
+            } catch (Throwable e) {
+                e.printStackTrace();
+                return new ToyError(e.getMessage());
             }
         }
         throw new RuntimeException("Method " + clazz.getName() + ":" + name + " not found.");
+    }
+    @Hidden
+    public static void registerMethod(Class clazz, String name, int paramCount) {
+        int found = 0;
+        Method m = null;
+        for (Method method : clazz.getDeclaredMethods()) {
+            if(method.getAnnotationsByType(Hidden.class).length > 0 || method.getParameterCount() != paramCount)
+                continue;
+            if(method.getName().equals(name)) {
+                found++;
+                m = method;
+            }
+        }
+        if(found != 1) {
+            if(found > 1)
+                throw new RuntimeException("Cannot register overloaded method: "+name);
+            else
+                throw new RuntimeException("Method not found: "+name);
+        } else {
+            int hash = Objects.hash(clazz.getName(), name, paramCount);
+            methodCache.put(hash, new JavaMethod(m, m.getParameterTypes()));
+        }
+    }
+
+    @Hidden
+    private static JavaMethod findMethod(int hash) {
+        return methodCache.get(hash);
+    }
+    @Hidden
+    private static JavaMethod findMethod(Class clazz, String name, ToyObject params) {
+        int hash = Objects.hash(clazz, name, params.size());
+        JavaMethod m = methodCache.get(hash);
+        if(m != null) {
+            return m;
+        }
+        LinkedList<Method> methods = new LinkedList<>();
+        Method found = null;
+        for (Method method : getAllMethods(clazz, false, false)) {
+            if(method.getAnnotationsByType(Hidden.class).length > 0 || method.getParameterCount() != params.size())
+                continue;
+            if(method.getName().equals(name)) {
+                methods.add(method);
+                Class<?>[] types = method.getParameterTypes();
+                Object[] pa = getParams(params, types);
+                if (pa == null)
+                    continue;
+                found = method;
+            }
+        }
+        if(found == null)
+            return null;
+
+        JavaMethod jm = new JavaMethod(found, found.getParameterTypes());
+        // MethodHandle methodHandle = mhLookup.unreflect(found);
+        // dont put overloaded functions into the map!
+        if(methods.size() == 1) {
+            methodCache.put(hash, jm);
+        }
+        return jm;
+    }
+    public static Collection<Method> getAllMethods(Class clazz,
+                                                   boolean includeAllPackageAndPrivateMethodsOfSuperclasses,
+                                                   boolean includeOverridenAndHidden) {
+
+        Predicate<Method> include = m -> !m.isBridge() && !m.isSynthetic() &&
+                Character.isJavaIdentifierStart(m.getName().charAt(0))
+                && m.getName().chars().skip(1).allMatch(Character::isJavaIdentifierPart);
+
+        Set<Method> methods = new LinkedHashSet<>();
+        Collections.addAll(methods, clazz.getMethods());
+        methods.removeIf(include.negate());
+        Stream.of(clazz.getDeclaredMethods()).filter(include).forEach(methods::add);
+
+        final int access=Modifier.PUBLIC|Modifier.PROTECTED|Modifier.PRIVATE;
+
+        Package p = clazz.getPackage();
+        if(!includeAllPackageAndPrivateMethodsOfSuperclasses) {
+            int pass = includeOverridenAndHidden?
+                    Modifier.PUBLIC|Modifier.PROTECTED: Modifier.PROTECTED;
+            include = include.and(m -> { int mod = m.getModifiers();
+                return (mod&pass)!=0
+                        || (mod&access)==0 && m.getDeclaringClass().getPackage()==p;
+            });
+        }
+        if(!includeOverridenAndHidden) {
+            Map<Object,Set<Package>> types = new HashMap<>();
+            final Set<Package> pkgIndependent = Collections.emptySet();
+            for(Method m: methods) {
+                int acc=m.getModifiers()&access;
+                if(acc==Modifier.PRIVATE) continue;
+                if(acc!=0) types.put(methodKey(m), pkgIndependent);
+                else types.computeIfAbsent(methodKey(m),x->new HashSet<>()).add(p);
+            }
+            include = include.and(m -> { int acc = m.getModifiers()&access;
+                return acc!=0? acc==Modifier.PRIVATE
+                        || types.putIfAbsent(methodKey(m), pkgIndependent)==null:
+                        noPkgOverride(m, types, pkgIndependent);
+            });
+        }
+        for(clazz=clazz.getSuperclass(); clazz!=null; clazz=clazz.getSuperclass())
+            Stream.of(clazz.getDeclaredMethods()).filter(include).forEach(methods::add);
+        return methods;
+    }
+    static boolean noPkgOverride(
+            Method m, Map<Object,Set<Package>> types, Set<Package> pkgIndependent) {
+        Set<Package> pkg = types.computeIfAbsent(methodKey(m), key -> new HashSet<>());
+        return pkg!=pkgIndependent && pkg.add(m.getDeclaringClass().getPackage());
+    }
+    private static Object methodKey(Method m) {
+        return Arrays.asList(m.getName(),
+                MethodType.methodType(m.getReturnType(), m.getParameterTypes()));
     }
     @Hidden
     private static Object[] getParams(ToyObject params, Class<?>[] types) {
@@ -364,5 +497,14 @@ public class ToyObject implements Comparable<ToyObject> {
         int result = type != null ? type.hashCode() : 0;
         result = 31 * result + (obj != null ? obj.hashCode() : 0);
         return result;
+    }
+    private static class JavaMethod {
+        Method mh;
+        Class<?>[] parameterTypes;
+
+        public JavaMethod(Method mh, Class<?>[] parameterTypes) {
+            this.mh = mh;
+            this.parameterTypes = parameterTypes;
+        }
     }
 }

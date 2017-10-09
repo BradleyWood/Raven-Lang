@@ -7,12 +7,13 @@ import org.toylang.antlr.ast.*;
 import org.toylang.antlr.ast.While;
 import org.toylang.core.*;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 import java.util.regex.Pattern;
 
 
 public class Method extends MethodVisitor implements Opcodes, TreeVisitor {
+
+    private static final LinkedList<ReflectiveMethod> reflectiveMethods = new LinkedList<>();
 
     private final List<Integer> lineNumbers = new ArrayList<>();
 
@@ -35,7 +36,6 @@ public class Method extends MethodVisitor implements Opcodes, TreeVisitor {
     }
 
     public void end() {
-        //visitMaxs(0,0);
         visitMaxs(0, 0);
         visitEnd();
     }
@@ -209,37 +209,37 @@ public class Method extends MethodVisitor implements Opcodes, TreeVisitor {
         Label end = new Label();
 
         ifStatement.getCondition().accept(this);
-        mv.visitMethodInsn(Opcodes.INVOKEVIRTUAL, Constants.TOYOBJ_NAME, "isTrue", "()Z", false);
+        visitMethodInsn(Opcodes.INVOKEVIRTUAL, Constants.TOYOBJ_NAME, "isTrue", "()Z", false);
 
         if (ifStatement.getElse() != null) {
-            mv.visitJumpInsn(Opcodes.IFEQ, else_);
+            visitJumpInsn(Opcodes.IFEQ, else_);
             ifStatement.getBody().accept(this);
-            mv.visitJumpInsn(Opcodes.GOTO, end);
+            visitJumpInsn(Opcodes.GOTO, end);
 
-            mv.visitLabel(else_);
+            visitLabel(else_);
             ifStatement.getElse().accept(this);
         } else {
-            mv.visitJumpInsn(Opcodes.IFEQ, end);
+            visitJumpInsn(Opcodes.IFEQ, end);
             ifStatement.getBody().accept(this);
         }
-        mv.visitLabel(end);
+        visitLabel(end);
     }
 
     @Override
     public void visitWhile(While whileStatement) {
         Label start = new Label();
         Label conditional = new Label();
-        mv.visitJumpInsn(Opcodes.GOTO, conditional);
-        mv.visitLabel(start);
+        visitJumpInsn(Opcodes.GOTO, conditional);
+        visitLabel(start);
 
 
         whileStatement.getBody().accept(this);
 
-        mv.visitLabel(conditional);
+        visitLabel(conditional);
 
         whileStatement.getCondition().accept(this);
-        mv.visitMethodInsn(Opcodes.INVOKEVIRTUAL, Constants.TOYOBJ_NAME, "isTrue", "()Z", false);
-        mv.visitJumpInsn(Opcodes.IFNE, start);
+        visitMethodInsn(Opcodes.INVOKEVIRTUAL, Constants.TOYOBJ_NAME, "isTrue", "()Z", false);
+        visitJumpInsn(Opcodes.IFNE, start);
     }
 
     @Override
@@ -249,15 +249,15 @@ public class Method extends MethodVisitor implements Opcodes, TreeVisitor {
             if (ret.getValue() != null) {
                 Errors.put("Cannot return value in main");
             }
-            mv.visitInsn(RETURN);
+            visitInsn(RETURN);
             return;
         }
         if (ret.getValue() != null) {
             ret.getValue().accept(this);
-            mv.visitInsn(ARETURN);
+            visitInsn(ARETURN);
         } else {
             putNull();
-            mv.visitInsn(ARETURN);
+            visitInsn(ARETURN);
         }
     }
 
@@ -341,16 +341,23 @@ public class Method extends MethodVisitor implements Opcodes, TreeVisitor {
                         }
                         visitMethodInsn(INVOKESTATIC, funcOwner, funName, sig.toString(), false);
                     } else {
-                        visitLdcInsn(Type.getType("L" + (funcOwner.replace(".", "/")) + ";"));
-                        visitLdcInsn(call.getName().toString());
-                        visitListDef(new ListDef(call.getParams()));
-                        visitMethodInsn(INVOKESTATIC, Constants.TOYOBJ_NAME, "invoke", "(" + Constants.CLASS_SIG + Constants.STRING_SIG + Constants.TOYOBJ_SIG + ")" + Constants.TOYOBJ_SIG, false);
+                        String clazz = funcOwner.replace("/", ".");
+                        if(canRegisterMethod(clazz, funName, call.getParams().length)) {
+                            invokeRegistered(call, funName, clazz);
+                            visitMethodInsn(INVOKESTATIC, Constants.TOYOBJ_NAME, "invoke", "(ILorg/toylang/core/ToyObject;)Lorg/toylang/core/ToyObject;");
+                        } else  {
+                            visitLdcInsn(Type.getType("L" + (funcOwner.replace(".", "/")) + ";"));
+                            visitLdcInsn(funName);
+                            visitListDef(new ListDef(call.getParams()));
+                            visitMethodInsn(INVOKESTATIC, Constants.TOYOBJ_NAME, "invoke", "(" + Constants.CLASS_SIG + Constants.STRING_SIG + Constants.TOYOBJ_SIG + ")" + Constants.TOYOBJ_SIG, false);
+                        }
                     }
                 } else {
                     //expr.accept(this);
                     //fieldOp((QualifiedName) expr, true);
+
                     expr.accept(this);
-                    // invoke virtual
+
                     visitLdcInsn(call.getName().toString());
                     visitListDef(new ListDef(call.getParams()));
                     visitMethodInsn(INVOKEVIRTUAL, Constants.TOYOBJ_NAME, "invoke", "(" + Constants.STRING_SIG + Constants.TOYOBJ_SIG + ")" + Constants.TOYOBJ_SIG, false);
@@ -388,6 +395,18 @@ public class Method extends MethodVisitor implements Opcodes, TreeVisitor {
             visitInsn(POP);
     }
 
+    private void invokeRegistered(Call call, String funName, String clazz) {
+        try {
+            Class cl = Class.forName(clazz);
+            reflectiveMethods.add(new ReflectiveMethod(cl, funName, call.getParams().length));
+
+            visitLdcInsn(Objects.hash(cl.getName(), funName, call.getParams().length));
+            visitListDef(new ListDef(call.getParams()));
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+    }
+
     @Override
     public void visitBlock(Block block) {
         block.getStatements().forEach(stmt -> stmt.accept(this));
@@ -403,7 +422,7 @@ public class Method extends MethodVisitor implements Opcodes, TreeVisitor {
             visitFieldInsn(PUTSTATIC, ctx.getOwner(), decl.getName().toString(), Constants.TOYOBJ_SIG);
         } else {
             locals.add(decl.getName().toString());
-            mv.visitVarInsn(ASTORE, findLocal(decl.getName().toString()));
+            visitVarInsn(ASTORE, findLocal(decl.getName().toString()));
         }
     }
 
@@ -427,46 +446,46 @@ public class Method extends MethodVisitor implements Opcodes, TreeVisitor {
                 }
                 int idx = findLocal(op.getLeft().toString());
                 if (idx != -1) {
-                    mv.visitVarInsn(ASTORE, idx);
+                    visitVarInsn(ASTORE, idx);
                 } else {
                     fieldOp((QualifiedName) op.getLeft(), false);
                 }
                 break;
             case ADD:
-                mv.visitMethodInsn(INVOKEVIRTUAL, Constants.TOYOBJ_NAME, "add", "(Lorg/toylang/core/ToyObject;)Lorg/toylang/core/ToyObject;", false);
+                visitMethodInsn(INVOKEVIRTUAL, Constants.TOYOBJ_NAME, "add", "(Lorg/toylang/core/ToyObject;)Lorg/toylang/core/ToyObject;", false);
                 break;
             case SUB:
-                mv.visitMethodInsn(INVOKEVIRTUAL, Constants.TOYOBJ_NAME, "sub", "(Lorg/toylang/core/ToyObject;)Lorg/toylang/core/ToyObject;", false);
+                visitMethodInsn(INVOKEVIRTUAL, Constants.TOYOBJ_NAME, "sub", "(Lorg/toylang/core/ToyObject;)Lorg/toylang/core/ToyObject;", false);
                 break;
             case MULT:
-                mv.visitMethodInsn(INVOKEVIRTUAL, Constants.TOYOBJ_NAME, "mul", "(Lorg/toylang/core/ToyObject;)Lorg/toylang/core/ToyObject;", false);
+                visitMethodInsn(INVOKEVIRTUAL, Constants.TOYOBJ_NAME, "mul", "(Lorg/toylang/core/ToyObject;)Lorg/toylang/core/ToyObject;", false);
                 break;
             case DIV:
-                mv.visitMethodInsn(INVOKEVIRTUAL, Constants.TOYOBJ_NAME, "div", "(Lorg/toylang/core/ToyObject;)Lorg/toylang/core/ToyObject;", false);
+                visitMethodInsn(INVOKEVIRTUAL, Constants.TOYOBJ_NAME, "div", "(Lorg/toylang/core/ToyObject;)Lorg/toylang/core/ToyObject;", false);
                 break;
             case MOD:
-                mv.visitMethodInsn(INVOKEVIRTUAL, Constants.TOYOBJ_NAME, "mod", "(Lorg/toylang/core/ToyObject;)Lorg/toylang/core/ToyObject;", false);
+                visitMethodInsn(INVOKEVIRTUAL, Constants.TOYOBJ_NAME, "mod", "(Lorg/toylang/core/ToyObject;)Lorg/toylang/core/ToyObject;", false);
                 break;
             case EXP:
-                mv.visitMethodInsn(INVOKEVIRTUAL, Constants.TOYOBJ_NAME, "pow", "(Lorg/toylang/core/ToyObject;)Lorg/toylang/core/ToyObject;", false);
+                visitMethodInsn(INVOKEVIRTUAL, Constants.TOYOBJ_NAME, "pow", "(Lorg/toylang/core/ToyObject;)Lorg/toylang/core/ToyObject;", false);
                 break;
             case GT:
-                mv.visitMethodInsn(INVOKEVIRTUAL, Constants.TOYOBJ_NAME, "GT", "(Lorg/toylang/core/ToyObject;)Lorg/toylang/core/ToyObject;", false);
+                visitMethodInsn(INVOKEVIRTUAL, Constants.TOYOBJ_NAME, "GT", "(Lorg/toylang/core/ToyObject;)Lorg/toylang/core/ToyObject;", false);
                 break;
             case LT:
-                mv.visitMethodInsn(INVOKEVIRTUAL, Constants.TOYOBJ_NAME, "LT", "(Lorg/toylang/core/ToyObject;)Lorg/toylang/core/ToyObject;", false);
+                visitMethodInsn(INVOKEVIRTUAL, Constants.TOYOBJ_NAME, "LT", "(Lorg/toylang/core/ToyObject;)Lorg/toylang/core/ToyObject;", false);
                 break;
             case GTE:
-                mv.visitMethodInsn(INVOKEVIRTUAL, Constants.TOYOBJ_NAME, "GTE", "(Lorg/toylang/core/ToyObject;)Lorg/toylang/core/ToyObject;", false);
+                visitMethodInsn(INVOKEVIRTUAL, Constants.TOYOBJ_NAME, "GTE", "(Lorg/toylang/core/ToyObject;)Lorg/toylang/core/ToyObject;", false);
                 break;
             case LTE:
-                mv.visitMethodInsn(INVOKEVIRTUAL, Constants.TOYOBJ_NAME, "LTE", "(Lorg/toylang/core/ToyObject;)Lorg/toylang/core/ToyObject;", false);
+                visitMethodInsn(INVOKEVIRTUAL, Constants.TOYOBJ_NAME, "LTE", "(Lorg/toylang/core/ToyObject;)Lorg/toylang/core/ToyObject;", false);
                 break;
             case EQ:
-                mv.visitMethodInsn(INVOKEVIRTUAL, Constants.TOYOBJ_NAME, "EQ", "(Lorg/toylang/core/ToyObject;)Lorg/toylang/core/ToyObject;", false);
+                visitMethodInsn(INVOKEVIRTUAL, Constants.TOYOBJ_NAME, "EQ", "(Lorg/toylang/core/ToyObject;)Lorg/toylang/core/ToyObject;", false);
                 break;
             case NE:
-                mv.visitMethodInsn(INVOKEVIRTUAL, Constants.TOYOBJ_NAME, "NE", "(Lorg/toylang/core/ToyObject;)Lorg/toylang/core/ToyObject;", false);
+                visitMethodInsn(INVOKEVIRTUAL, Constants.TOYOBJ_NAME, "NE", "(Lorg/toylang/core/ToyObject;)Lorg/toylang/core/ToyObject;", false);
                 break;
         }
     }
@@ -520,15 +539,7 @@ public class Method extends MethodVisitor implements Opcodes, TreeVisitor {
                     }
                 }
                 fieldOp(new QualifiedName(names[0]), true);
-                if (load) {
-                    visitLdcInsn(qname.toString());
-                    visitMethodInsn(INVOKEVIRTUAL, Constants.TOYOBJ_NAME, "getField", "(" + Constants.STRING_SIG + ")" + Constants.TOYOBJ_SIG);
-                } else {
-                    visitInsn(SWAP);
-                    visitLdcInsn(qname.toString());
-                    visitInsn(SWAP);
-                    visitMethodInsn(INVOKEVIRTUAL, Constants.TOYOBJ_NAME, "setField", "(" + Constants.STRING_SIG + Constants.TOYOBJ_SIG + ")" + Constants.TOYOBJ_SIG);
-                }
+                accessField(load, qname);
             }
         } else {
             String[] lst = name.getNames();
@@ -577,15 +588,7 @@ public class Method extends MethodVisitor implements Opcodes, TreeVisitor {
                                 qname.append(".");
                             }
                         }
-                        if (load) {
-                            visitLdcInsn(qname.toString());
-                            visitMethodInsn(INVOKEVIRTUAL, Constants.TOYOBJ_NAME, "getField", "(" + Constants.STRING_SIG + ")" + Constants.TOYOBJ_SIG);
-                        } else {
-                            visitInsn(SWAP);
-                            visitLdcInsn(qname.toString());
-                            visitInsn(SWAP);
-                            visitMethodInsn(INVOKEVIRTUAL, Constants.TOYOBJ_NAME, "setField", "(" + Constants.STRING_SIG + Constants.TOYOBJ_SIG + ")" + Constants.TOYOBJ_SIG);
-                        }
+                        accessField(load, qname);
                     } else {
                         visitFieldInsn(GET_OR_PUT, ctx.getOwner().replace(".", "/"), name.getNames()[1], Constants.TOYOBJ_SIG);
                     }
@@ -596,6 +599,18 @@ public class Method extends MethodVisitor implements Opcodes, TreeVisitor {
                 }
                 Errors.put("Variable not found " + ctx.getOwner() + ":" + name.toString());
             }
+        }
+    }
+
+    private void accessField(boolean load, StringBuilder qname) {
+        if (load) {
+            visitLdcInsn(qname.toString());
+            visitMethodInsn(INVOKEVIRTUAL, Constants.TOYOBJ_NAME, "getField", "(" + Constants.STRING_SIG + ")" + Constants.TOYOBJ_SIG);
+        } else {
+            visitInsn(SWAP);
+            visitLdcInsn(qname.toString());
+            visitInsn(SWAP);
+            visitMethodInsn(INVOKEVIRTUAL, Constants.TOYOBJ_NAME, "setField", "(" + Constants.STRING_SIG + Constants.TOYOBJ_SIG + ")" + Constants.TOYOBJ_SIG);
         }
     }
 
@@ -626,6 +641,7 @@ public class Method extends MethodVisitor implements Opcodes, TreeVisitor {
     }
 
     private void assignListIdx(ListIndex idx) {
+
         visitName(idx.getName());
         for (int i = 0; i < idx.getIndex().length - 1; i++) {
             Expression expression = idx.getIndex()[i];
@@ -636,6 +652,7 @@ public class Method extends MethodVisitor implements Opcodes, TreeVisitor {
         idx.getIndex()[idx.getIndex().length - 1].accept(this);
         visitInsn(SWAP);
         visitMethodInsn(INVOKEVIRTUAL, Constants.TOYOBJ_NAME, "set", "(" + Constants.TOYOBJ_SIG + Constants.TOYOBJ_SIG + ")" + Constants.TOYOBJ_SIG);
+        visitInsn(POP);
     }
 
     @Override
@@ -645,18 +662,36 @@ public class Method extends MethodVisitor implements Opcodes, TreeVisitor {
 
     @Override
     public void visitDictDef(DictDef def) {
-        mv.visitTypeInsn(NEW, Constants.TOY_DICT_NAME);
-        mv.visitInsn(DUP);
-        mv.visitMethodInsn(INVOKESPECIAL, Constants.TOY_DICT_NAME, "<init>", "()V", false);
+        visitTypeInsn(NEW, Constants.TOY_DICT_NAME);
+        visitInsn(DUP);
+        visitMethodInsn(INVOKESPECIAL, Constants.TOY_DICT_NAME, "<init>", "()V", false);
         Expression[] keys = def.getKeys();
         Expression[] values = def.getValues();
         for (int i = 0; i < keys.length; i++) {
             keys[i].accept(this);
             values[i].accept(this);
-            mv.visitMethodInsn(INVOKEVIRTUAL, Constants.TOYOBJ_NAME, "put", "(" + Constants.TOYOBJ_SIG + Constants.TOYOBJ_SIG + ")" + Constants.TOYOBJ_SIG, false);
+            visitMethodInsn(INVOKEVIRTUAL, Constants.TOYOBJ_NAME, "put", "(" + Constants.TOYOBJ_SIG + Constants.TOYOBJ_SIG + ")" + Constants.TOYOBJ_SIG, false);
         }
     }
-
+    private boolean canRegisterMethod(String clazz, String name, int paramCount) {
+        try {
+            Class c = Class.forName(clazz);
+            ToyObject.registerMethod(c, name, paramCount);
+            return true;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+    public void registerMethods() {
+        for (ReflectiveMethod reflectiveMethod : reflectiveMethods) {
+            visitLdcInsn(Type.getType(reflectiveMethod.clazz));
+            visitLdcInsn(reflectiveMethod.getName());
+            visitLdcInsn(reflectiveMethod.getParamCount());
+            visitMethodInsn(INVOKESTATIC, Constants.TOYOBJ_NAME, "registerMethod", "(Ljava/lang/Class;Ljava/lang/String;I)V", false);
+        }
+        reflectiveMethods.clear();
+    }
     public void writeConstants() {
         visitLdcInsn(Constants.getConstantCount());
         visitTypeInsn(ANEWARRAY, Constants.TOYOBJ_NAME);
@@ -697,53 +732,76 @@ public class Method extends MethodVisitor implements Opcodes, TreeVisitor {
         visitInsn(AALOAD);
     }
 
-    public void putNull() {
+    private void putNull() {
         if (ctx.getName().equals("<clinit>")) {
-            mv.visitFieldInsn(GETSTATIC, Constants.TOYNULL_NAME, "NULL", Constants.TOYNULL_SIG);
+            visitFieldInsn(GETSTATIC, Constants.TOYNULL_NAME, "NULL", Constants.TOYNULL_SIG);
         } else {
             getConstant(ToyNull.NULL);
         }
     }
 
-    public void putBoolean(ToyBoolean bool) {
+    private void putBoolean(ToyBoolean bool) {
         if (ctx.getName().equals("<clinit>")) {
-            mv.visitFieldInsn(GETSTATIC, Constants.TOY_BOOLEAN_NAME, bool.isTrue() ? "TRUE" : "FALSE", Constants.TOY_BOOLEAN_SIG);
+            visitFieldInsn(GETSTATIC, Constants.TOY_BOOLEAN_NAME, bool.isTrue() ? "TRUE" : "FALSE", Constants.TOY_BOOLEAN_SIG);
         } else {
             getConstant(bool);
         }
     }
 
-    public void putString(ToyString str) {
+    private void putString(ToyString str) {
         if (ctx.getName().equals("<clinit>")) {
-            mv.visitTypeInsn(NEW, "org/toylang/core/ToyString");
-            mv.visitInsn(DUP);
-            mv.visitLdcInsn(str.toString());
-            mv.visitMethodInsn(INVOKESPECIAL, "org/toylang/core/ToyString", "<init>", "(Ljava/lang/String;)V", false);
+            visitTypeInsn(NEW, "org/toylang/core/ToyString");
+            visitInsn(DUP);
+            visitLdcInsn(str.toString());
+            visitMethodInsn(INVOKESPECIAL, "org/toylang/core/ToyString", "<init>", "(Ljava/lang/String;)V", false);
 
         } else {
             getConstant(str);
         }
     }
 
-    public void putReal(ToyReal real) {
+    private void putReal(ToyReal real) {
         if (ctx.getName().equals("<clinit>")) {
-            mv.visitTypeInsn(NEW, "org/toylang/core/ToyReal");
-            mv.visitInsn(DUP);
-            mv.visitLdcInsn(real.getValue());
-            mv.visitMethodInsn(INVOKESPECIAL, "org/toylang/core/ToyReal", "<init>", "(D)V", false);
+            visitTypeInsn(NEW, "org/toylang/core/ToyReal");
+            visitInsn(DUP);
+            visitLdcInsn(real.getValue());
+            visitMethodInsn(INVOKESPECIAL, "org/toylang/core/ToyReal", "<init>", "(D)V", false);
         } else {
             getConstant(real);
         }
     }
 
-    public void putInt(ToyInt integer) {
+    private void putInt(ToyInt integer) {
         if (ctx.getName().equals("<clinit>")) {
-            mv.visitTypeInsn(NEW, "org/toylang/core/ToyInt");
-            mv.visitInsn(DUP);
-            mv.visitLdcInsn(integer.getValue());
-            mv.visitMethodInsn(INVOKESPECIAL, "org/toylang/core/ToyInt", "<init>", "(I)V", false);
+            visitTypeInsn(NEW, "org/toylang/core/ToyInt");
+            visitInsn(DUP);
+            visitLdcInsn(integer.getValue());
+            visitMethodInsn(INVOKESPECIAL, "org/toylang/core/ToyInt", "<init>", "(I)V", false);
         } else {
             getConstant(integer);
+        }
+    }
+    static class ReflectiveMethod {
+        Class clazz;
+        String name;
+        int paramCount;
+
+        ReflectiveMethod(Class clazz, String name, int paramCount) {
+            this.clazz = clazz;
+            this.name = name;
+            this.paramCount = paramCount;
+        }
+
+        public Class getClazz() {
+            return clazz;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public int getParamCount() {
+            return paramCount;
         }
     }
 }

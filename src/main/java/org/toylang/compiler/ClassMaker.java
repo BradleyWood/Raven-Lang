@@ -97,6 +97,7 @@ public class ClassMaker {
 
         if(context.getName().equals("<clinit>")) {
             method.writeConstants();
+            method.registerMethods();
         }
         method.visitCode();
         fun.accept(method);
