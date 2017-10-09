@@ -40,10 +40,12 @@ public class ForVisitor extends ToyLangBaseVisitor<Block> {
             block.append(loop);
 
         } else if(ctx.statement() != null) {
-            Expression init = new Expression();
+            Statement init = new Expression();
             Expression condition = new Literal(ToyBoolean.TRUE);
             if(ctx.init != null)
                 init = ctx.init.accept(ExpressionVisitor.INSTANCE);
+            else if(ctx.decl != null)
+                init = ctx.decl.accept(VarDeclVisitor.INSTANCE);
             if(ctx.cond != null)
                 condition = ctx.cond.accept(ExpressionVisitor.INSTANCE);
             block.append(init);

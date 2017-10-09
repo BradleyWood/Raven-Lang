@@ -44,7 +44,7 @@ public class ExpressionVisitor extends ToyLangBaseVisitor<Expression> {
                 String str = ctx.literal().stringLiteral().getText();
                 expr = new Literal(new ToyString(str.substring(1, str.length() - 1)));
             } else if(ctx.literal().getText().equals("null")) {
-                expr = new Literal(new ToyNull()); // use reference to null instead
+                expr = new Literal(ToyNull.NULL); // use reference to null instead
             } else if(ctx.literal().getText().equals("true")) {
                 expr = new Literal(ToyBoolean.TRUE); // use reference
             } else if(ctx.literal().getText().equals("false")) {
