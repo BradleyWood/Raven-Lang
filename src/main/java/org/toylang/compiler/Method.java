@@ -454,6 +454,12 @@ public class Method extends MethodVisitor implements Opcodes, TreeVisitor {
             case NOT:
                 visitMethodInsn(INVOKEVIRTUAL, Constants.TOYOBJ_NAME, "not", "()Lorg/toylang/core/ToyObject;", false);
                 break;
+            case AND:
+                visitMethodInsn(INVOKEVIRTUAL, Constants.TOYOBJ_NAME, "and", "(Lorg/toylang/core/ToyObject;)Lorg/toylang/core/ToyObject;", false);
+                break;
+            case OR:
+                visitMethodInsn(INVOKEVIRTUAL, Constants.TOYOBJ_NAME, "or", "(Lorg/toylang/core/ToyObject;)Lorg/toylang/core/ToyObject;", false);
+                break;
             case ADD:
                 visitMethodInsn(INVOKEVIRTUAL, Constants.TOYOBJ_NAME, "add", "(Lorg/toylang/core/ToyObject;)Lorg/toylang/core/ToyObject;", false);
                 break;

@@ -85,6 +85,12 @@ public class ToyObject implements Comparable<ToyObject> {
     public ToyObject not() {
         return null;
     }
+    public ToyObject and(ToyObject b) {
+        return (isTrue() && b.isTrue()) ? ToyBoolean.TRUE : ToyBoolean.FALSE;
+    }
+    public ToyObject or(ToyObject b) {
+        return (isTrue() || b.isTrue()) ? ToyBoolean.TRUE : ToyBoolean.FALSE;
+    }
     @Hidden
     public Integer toInt() {
         return null;
