@@ -70,4 +70,9 @@ public class Mapper implements TreeVisitor {
     public void visitDictDef(DictDef def) {
 
     }
+
+    @Override
+    public void visitAnnotation(Annotation annotation) {
+
+    }
 }

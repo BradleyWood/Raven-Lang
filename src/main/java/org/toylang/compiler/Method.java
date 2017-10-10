@@ -262,12 +262,22 @@ public class Method extends MethodVisitor implements Opcodes, TreeVisitor {
 
     @Override
     public void visitFun(Fun fun) {
-        if (ctx.getName().equals("main")) {
-            locals.add("args"); // todo; convert args to list of ToyObjects
-            // put toystring list at idx 1
-        }
-        for (VarDecl varDecl : fun.getParams()) {
-            locals.add(varDecl.getName().toString());
+        if (ctx.getName().equals("main") && ctx.isStatic()) {
+            locals.add(" args "); // todo; convert args to list of ToyObjects
+            VarDecl[] params = fun.getParams();
+            if(params.length > 1) {
+                Errors.put("Invalid main signature!");
+            } else if(params.length == 1) {
+                locals.add(params[0].getName().toString());
+                visitVarInsn(ALOAD, 0);
+                visitMethodInsn(INVOKESTATIC, "org/toylang/core/ToyObject", "toToyLang", "(Ljava/lang/Object;)Lorg/toylang/core/ToyObject;", false);
+                visitTypeInsn(CHECKCAST, "org/toylang/core/ToyList");
+                visitVarInsn(ASTORE, 1);
+            }
+        } else {
+            for (VarDecl varDecl : fun.getParams()) {
+                locals.add(varDecl.getName().toString());
+            }
         }
         fun.getBody().accept(this);
         Statement stmt = null;

@@ -91,7 +91,7 @@ public class ToyList extends ToyObject implements List {
         if (o instanceof ToyObject) {
             return list.add((ToyObject) o);
         } else {
-            return list.add(new ToyObject(o));
+            return list.add(ToyObject.toToyLang(o));
         }
     }
 
