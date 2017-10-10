@@ -7,6 +7,6 @@ import java.lang.annotation.RetentionPolicy;
 /**
  * Blocks reflective invocation
  */
-@interface Hidden {
+public @interface Hidden {
     
 }
