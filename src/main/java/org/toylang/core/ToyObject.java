@@ -34,64 +34,84 @@ public class ToyObject implements Comparable<ToyObject> {
     public ToyObject getType() {
         return type;
     }
+    @Hidden
     public boolean isTrue() {
+        if (obj instanceof Boolean) {
+            return (boolean) obj;
+        }
         return false;
     }
+    @Hidden
     public ToyObject set(ToyObject index, ToyObject obj) {
         return null;
     }
+    @Hidden
     public ToyObject get(ToyObject obj) {
         return null;
     }
+    @Hidden
     public ToyObject add(ToyObject obj) {
         return null;
     }
+    @Hidden
     public ToyObject sub(ToyObject obj) {
         return null;
     }
+    @Hidden
     public ToyObject mul(ToyObject obj) {
         return null;
     }
+    @Hidden
     public ToyObject div(ToyObject obj) {
         return null;
     }
+    @Hidden
     public ToyObject mod(ToyObject obj) {
         return null;
     }
+    @Hidden
     public ToyObject pow(ToyObject obj) {
         return null;
     }
+    @Hidden
     public ToyObject GT(ToyObject obj) {
         return null;
     }
+    @Hidden
     public ToyObject LT(ToyObject obj) {
         return null;
     }
+    @Hidden
     public ToyObject GTE(ToyObject obj) {
         return null;
     }
+    @Hidden
     public ToyObject LTE(ToyObject obj) {
         return null;
     }
+    @Hidden
     public ToyObject EQ(ToyObject obj) {
         return null;
     }
+    @Hidden
     public ToyObject NE(ToyObject obj) {
         return null;
     }
     public ToyObject put(ToyObject key, ToyObject value) {
         return null;
     }
+    @Hidden
     public ToyObject not() {
         return null;
     }
+    @Hidden
     public ToyObject and(ToyObject b) {
         return (isTrue() && b.isTrue()) ? ToyBoolean.TRUE : ToyBoolean.FALSE;
     }
+    @Hidden
     public ToyObject or(ToyObject b) {
         return (isTrue() || b.isTrue()) ? ToyBoolean.TRUE : ToyBoolean.FALSE;
     }
-    @Hidden
     public Integer toInt() {
         return null;
     }
@@ -111,7 +131,6 @@ public class ToyObject implements Comparable<ToyObject> {
     public Float toFloat() {
         return null;
     }
-    @Hidden
     public Double toDouble() {
         return null;
     }
