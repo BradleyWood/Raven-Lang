@@ -422,7 +422,7 @@ public class Method extends MethodVisitor implements Opcodes, TreeVisitor {
 
     private java.lang.reflect.Method isToyObjectFunction(String name, int paramCount) {
         for(java.lang.reflect.Method m : ToyObject.class.getDeclaredMethods()) {
-            if(m.getAnnotationsByType(Hidden.class).length > 0 && m.getParameterCount() != paramCount)
+            if(m.getAnnotation(Hidden.class) != null || m.getParameterCount() != paramCount)
                 continue;
             if(m.getName().equals(name))
                 return m;
