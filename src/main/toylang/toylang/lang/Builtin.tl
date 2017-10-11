@@ -8,20 +8,28 @@ import java.util.Scanner;
 import java.lang.Thread;
 import java.lang.Class;
 
+import org.toylang.core.ToyError;
+
 private var out = System.out;
 private var err = System.err;
 private var in = System.in;
 private var scan = Scanner(in);
 
 
+public fun isError(obj) {
+    return type(obj) == ToyError.TYPE;
+}
+public fun error(obj) {
+    return ToyError(str(obj));
+}
 public fun println(obj) {
-    out.println(obj.toString());
+    out.println(obj);
 }
 public fun println() {
     out.println();
 }
 public fun print(obj) {
-    out.println(obj.toString());
+    out.println(obj);
 }
 public fun str(obj) {
     return obj.toString();
@@ -36,7 +44,7 @@ public fun int(obj) {
     return obj.toInt();
 }
 public fun real(obj) {
-    return obj.toFloat();
+    return obj.toDouble();
 }
 public fun type(obj) {
     return obj.getType();
