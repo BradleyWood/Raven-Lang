@@ -7,6 +7,7 @@ import org.toylang.antlr.ast.*;
 import org.toylang.antlr.ast.While;
 import org.toylang.core.*;
 
+import java.lang.reflect.Constructor;
 import java.util.*;
 
 
@@ -295,9 +296,38 @@ public class Method extends MethodVisitor implements Opcodes, TreeVisitor {
     }
 
     public void newObj(QualifiedName clazz, Call call) {
+        try {
+            Class sc = Class.forName(clazz.toString().replace("/", "."));
+            Constructor constructor = getConstructor(sc, call.getParams().length);
+            if(constructor != null) {
+                // invoke directly since there is only one constructor with n params
+                String desc = Type.getConstructorDescriptor(constructor);
+                visitTypeInsn(NEW, clazz.toString());
+                visitInsn(DUP);
+                Arrays.stream(call.getParams()).forEach(expr -> expr.accept(this));
+                visitMethodInsn(INVOKESPECIAL, clazz.toString(), "<init>", desc, false);
+                visitMethodInsn(INVOKESTATIC, "org/toylang/core/ToyObject", "toToyLang", "(Ljava/lang/Object;)Lorg/toylang/core/ToyObject;", false);
+                return;
+            }
+        } catch (Exception ignored) {
+        }
+        // invoke reflective
         visitLdcInsn(Type.getType("L" + (clazz.toString().replace(".", "/")) + ";"));
         visitListDef(new ListDef(call.getParams()));
         visitMethodInsn(INVOKESTATIC, Constants.TOYOBJ_NAME, "newObj", "(" + Constants.CLASS_SIG + Constants.TOYOBJ_SIG + ")" + Constants.TOYOBJ_SIG, false);
+    }
+    private Constructor getConstructor(Class c, int paramCount) {
+        int count = 0;
+        Constructor found = null;
+        for (Constructor constructor : c.getConstructors()) {
+            if(constructor.getParameterCount() != paramCount)
+                continue;
+            found = constructor;
+            count++;
+        }
+        if(count == 1)
+            return found;
+        return null;
     }
 
     private String getPackage(String name) {
