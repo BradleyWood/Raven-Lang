@@ -368,7 +368,7 @@ public class Method extends MethodVisitor implements Opcodes, TreeVisitor {
                     expr.accept(this);
 
                     java.lang.reflect.Method m = isToyObjectFunction(call.getName().toString(), call.getParams().length);
-                    invokeVirtualFun(call, m);
+                    invokeFun(call, m);
                 }
             } else {
                 expr.accept(this);
@@ -379,7 +379,7 @@ public class Method extends MethodVisitor implements Opcodes, TreeVisitor {
                     visitMethodInsn(INVOKEVIRTUAL, Constants.TOYOBJ_NAME, "getField", "(" + Constants.STRING_SIG + ")" + Constants.TOYOBJ_SIG);
                 } else {
                     java.lang.reflect.Method m = isToyObjectFunction(call.getName().toString(), call.getParams().length);
-                    invokeVirtualFun(call, m);
+                    invokeFun(call, m);
                 }
             }
         } else {
@@ -402,7 +402,7 @@ public class Method extends MethodVisitor implements Opcodes, TreeVisitor {
             visitInsn(POP);
     }
 
-    private void invokeVirtualFun(Call call, java.lang.reflect.Method m) {
+    private void invokeFun(Call call, java.lang.reflect.Method m) {
         if(m != null) {
             String desc = Type.getMethodDescriptor(m);
             Arrays.stream(call.getParams()).forEach(expression->expression.accept(this));
@@ -410,7 +410,9 @@ public class Method extends MethodVisitor implements Opcodes, TreeVisitor {
             if(m.getReturnType() == int.class) {
                 visitMethodInsn(INVOKESTATIC, "java/lang/Integer", "valueOf", "(I)Ljava/lang/Integer;", false);
             }
-            visitMethodInsn(INVOKESTATIC, "org/toylang/core/ToyObject", "toToyLang", "(Ljava/lang/Object;)Lorg/toylang/core/ToyObject;", false);
+            if(!m.getReturnType().isAssignableFrom(ToyObject.class)) {
+                visitMethodInsn(INVOKESTATIC, "org/toylang/core/ToyObject", "toToyLang", "(Ljava/lang/Object;)Lorg/toylang/core/ToyObject;", false);
+            }
         } else {
             visitLdcInsn(call.getName().toString());
             visitListDef(new ListDef(call.getParams()));
