@@ -263,6 +263,9 @@ public class Method extends MethodVisitor implements Opcodes, TreeVisitor {
 
     @Override
     public void visitFun(Fun fun) {
+        if(!ctx.isStatic()) {
+            locals.add("this");
+        }
         if (ctx.getName().equals("main") && ctx.isStatic()) {
             locals.add(" args "); // todo; convert args to list of ToyObjects
             VarDecl[] params = fun.getParams();
@@ -275,7 +278,11 @@ public class Method extends MethodVisitor implements Opcodes, TreeVisitor {
                 visitTypeInsn(CHECKCAST, "org/toylang/core/ToyList");
                 visitVarInsn(ASTORE, 1);
             }
-        } else {
+        } else if(ctx.getName().equals("<init>")) {
+            visitVarInsn(ALOAD, 0);
+            visitMethodInsn(INVOKESPECIAL, ctx.getClassDef().getSuper().toString().replace(".", "/"), "<init>", "()V", false);
+        }
+        if(!ctx.getName().equals("main")) {
             for (VarDecl varDecl : fun.getParams()) {
                 locals.add(varDecl.getName().toString());
             }
@@ -630,8 +637,8 @@ public class Method extends MethodVisitor implements Opcodes, TreeVisitor {
                 } else {
                     VarDecl decl = ctx.getClassDef().findVar(name.toString());
                     if (decl != null) {
-                        // PUSH THIS ?
-                        visitVarInsn(LOAD_OR_STORE, 0);
+                        visitVarInsn(ALOAD, 0);
+                        visitInsn(SWAP);
                         int op = GETFIELD;
                         if (!load)
                             op = PUTFIELD;

@@ -82,6 +82,8 @@ public class Compiler {
                     classDef.setPackage(toyTree.getPackage());
                     String name = toyTree.getPackage().add(classDef.getName()).toString();
                     ClassMaker cm = new ClassMaker(classDef, toyTree.getImports());
+                    if(!name.equals(toyTree.getFullName().toString()))
+                        cm.make();
                     classes.put(name, cm);
                 }
                 QualifiedName name = toyTree.getFullName();
