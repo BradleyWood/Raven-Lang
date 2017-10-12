@@ -59,12 +59,6 @@ public class ClassMaker {
             defineField(staticVariable.getName().toString(), ACC_STATIC + staticVariable.modifiers());
         }
 
-        MethodContext staticContext = new MethodContext(def.getFullName(), null, imports, staticVariables, staticFunctions);
-        for(Fun staticFun : staticFunctions) {
-            staticContext.setName(staticFun.getName().toString());
-            defineMethod(staticContext, staticFun, ACC_STATIC + staticFun.modifiers());
-        }
-
         for (Statement statement : def.getFields()) {
             VarDecl decl = (VarDecl) statement;
             defineField(decl.getName().toString(), decl.modifiers());
@@ -81,6 +75,11 @@ public class ClassMaker {
         for (Fun fun : def.getMethods()) {
             classCtx.setName(fun.getName().toString());
             defineMethod(classCtx, fun, fun.modifiers());
+        }
+        MethodContext staticContext = new MethodContext(def.getFullName(), null, imports, staticVariables, staticFunctions);
+        for(Fun staticFun : staticFunctions) {
+            staticContext.setName(staticFun.getName().toString());
+            defineMethod(staticContext, staticFun, ACC_STATIC + staticFun.modifiers());
         }
         Constants.clear();
     }
