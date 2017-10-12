@@ -361,6 +361,7 @@ public class ToyObject implements Comparable<ToyObject> {
         if(methods.size() == 1) {
             methodCache.put(hash, jm);
         }
+        found.setAccessible(true);
         return jm;
     }
     public static Collection<Method> getAllMethods(Class clazz,
