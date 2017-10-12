@@ -95,11 +95,11 @@ public class ClassMaker {
 
         Method method = new Method(context, cw.visitMethod(modifiers, fun.getName().toString(), desc, null, fun.getExceptions()));
 
+        method.visitCode();
         if(context.getName().equals("<clinit>")) {
             method.writeConstants();
             method.registerMethods();
         }
-        method.visitCode();
         fun.accept(method);
         method.end();
     }
