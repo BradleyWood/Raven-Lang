@@ -6,6 +6,7 @@ import org.toylang.antlr.ToyLangParser;
 import org.toylang.antlr.ast.*;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 public class ClassDefVisitor extends ToyLangBaseVisitor<ClassDef> {
@@ -30,13 +31,12 @@ public class ClassDefVisitor extends ToyLangBaseVisitor<ClassDef> {
 
         List<Statement> statementList = new ArrayList<>();
 
-        boolean hasVarParams = false;
+        LinkedList<VarDecl> varParams = new LinkedList<>();
 
         if (ctx.fields != null) {
             for (int i = 0; i < ctx.fields.param().size(); i++) {
                 VarDecl decl = new VarDecl(new QualifiedName(ctx.fields.param(i).getText()), null, Modifier.PRIVATE);
-                statementList.add(decl);
-                hasVarParams = true;
+                varParams.add(decl);
             }
         }
         if (ctx.impl != null) {
@@ -54,7 +54,7 @@ public class ClassDefVisitor extends ToyLangBaseVisitor<ClassDef> {
         statementList.addAll(block.getStatements());
 
         ClassDef def = new ClassDef(modifiers, name, new QualifiedName(super_), interfaces, statementList);
-        def.setHasVarParams(hasVarParams);
+        def.setVarParams(varParams);
         return def;
     }
 

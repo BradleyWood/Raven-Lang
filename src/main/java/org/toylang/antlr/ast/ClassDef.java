@@ -5,6 +5,7 @@ import org.toylang.antlr.Operator;
 import org.toylang.antlr.ToyTree;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -17,8 +18,8 @@ public class ClassDef extends Statement {
     private QualifiedName package_;
     private final List<Statement> statements;
     private List<Fun> constructors = null;
+    private List<VarDecl> varParams = new LinkedList<>();
     private ToyTree sourceTree = null;
-    private boolean hasVarParams = false;
 
     public ClassDef(Modifier[] modifiers, String name, QualifiedName super_, String[] interfaces, List<Statement> statements) {
         this.statements = statements;
@@ -32,10 +33,16 @@ public class ClassDef extends Statement {
         this.package_ = package_;
     }
     public boolean hasVarParams() {
-        return hasVarParams;
+        return varParams.size() > 0;
     }
-    public void setHasVarParams(boolean hasVarParams) {
-        this.hasVarParams = hasVarParams;
+    public void addVarParam(VarDecl decl) {
+        varParams.add(decl);
+    }
+    public void setVarParams(List<VarDecl> varParams) {
+        this.varParams = varParams;
+    }
+    public List<VarDecl> getVarParams() {
+        return varParams;
     }
     public ToyTree getSourceTree() {
         return sourceTree;
@@ -119,17 +126,20 @@ public class ClassDef extends Statement {
                 }
             }
         }
+        statements.removeAll(constructors);
         // create a new constructor for the class parameters
         // check if the super class has a default constructor
         // otherwise we need explicit definition of constructor
-        boolean autoGenerate = hasVarParams;
-        int fieldCount = getFields().size();
+        boolean autoGenerate = hasVarParams();
         for (Fun constructor : constructors) {
-            if(constructor.getParams().length == fieldCount)
+            if(constructor.getParams().length == varParams.size()) {
                 autoGenerate = false;
+                break;
+            }
         }
-        if(autoGenerate && fieldCount > 0) {
+        if(autoGenerate && varParams.size() > 0) {
             Fun con = createConstructor();
+            System.out.println(getName() + " : create constructor");
             constructors.add(con);
         }
         return constructors;
