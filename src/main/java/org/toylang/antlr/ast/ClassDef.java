@@ -2,6 +2,7 @@ package org.toylang.antlr.ast;
 
 import org.toylang.antlr.Modifier;
 import org.toylang.antlr.Operator;
+import org.toylang.antlr.ToyTree;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,6 +17,7 @@ public class ClassDef extends Statement {
     private QualifiedName package_;
     private final List<Statement> statements;
     private List<Fun> constructors = null;
+    private ToyTree sourceTree = null;
 
     public ClassDef(Modifier[] modifiers, String name, QualifiedName super_, String[] interfaces, List<Statement> statements) {
         this.statements = statements;
@@ -27,6 +29,12 @@ public class ClassDef extends Statement {
     public ClassDef(Modifier[] modifiers, QualifiedName package_, String name, QualifiedName super_, String[] interfaces, List<Statement> statements) {
         this(modifiers, name, super_, interfaces, statements);
         this.package_ = package_;
+    }
+    public ToyTree getSourceTree() {
+        return sourceTree;
+    }
+    public void setSourceTree(ToyTree sourceTree) {
+        this.sourceTree = sourceTree;
     }
     @Override
     public void accept(TreeVisitor visitor) {
@@ -48,6 +56,13 @@ public class ClassDef extends Statement {
         return name;
     }
     public QualifiedName getSuper() {
+        if(sourceTree != null) {
+            for (QualifiedName qualifiedName : sourceTree.getImports()) {
+                if(qualifiedName.toString().endsWith(super_.toString())) {
+                    return qualifiedName;
+                }
+            }
+        }
         return super_;
     }
     public List<Statement> getFields() {

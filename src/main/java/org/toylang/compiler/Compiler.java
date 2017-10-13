@@ -80,8 +80,10 @@ public class Compiler {
             for (ToyTree toyTree : trees) {
                 for (ClassDef classDef : toyTree.getClasses()) {
                     classDef.setPackage(toyTree.getPackage());
+                    classDef.setSourceTree(toyTree);
                     String name = toyTree.getPackage().add(classDef.getName()).toString();
                     ClassMaker cm = new ClassMaker(classDef, toyTree.getImports());
+                    toyTree.addImport(toyTree.getPackage().add(classDef.getName()));
                     if(!name.equals(toyTree.getFullName().toString())) {
                         Fun clinit = new Fun(new QualifiedName("<clinit>"), new Block(), null, null, null);
                         cm.addStaticMethods(clinit);
