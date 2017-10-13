@@ -13,15 +13,16 @@ public class ClassDefVisitor extends ToyLangBaseVisitor<ClassDef> {
     private ClassDefVisitor() {
 
     }
+
     @Override
     public ClassDef visitClassDef(ToyLangParser.ClassDefContext ctx) {
         Modifier[] modifiers = new Modifier[0];
         String super_ = "java/lang/Object";
         String[] interfaces = new String[0];
 
-        if(ctx.modifier() != null) {
+        if (ctx.modifier() != null) {
             modifiers = new Modifier[ctx.modifier().size()];
-            for(int i = 0; i < modifiers.length; i++) {
+            for (int i = 0; i < modifiers.length; i++) {
                 modifiers[i] = Modifier.getModifier(ctx.modifier(i).getText());
             }
         }
@@ -29,15 +30,18 @@ public class ClassDefVisitor extends ToyLangBaseVisitor<ClassDef> {
 
         List<Statement> statementList = new ArrayList<>();
 
-        if(ctx.fields != null) {
+        boolean hasVarParams = false;
+
+        if (ctx.fields != null) {
             for (int i = 0; i < ctx.fields.param().size(); i++) {
                 VarDecl decl = new VarDecl(new QualifiedName(ctx.fields.param(i).getText()), null, Modifier.PRIVATE);
                 statementList.add(decl);
+                hasVarParams = true;
             }
         }
-        if(ctx.impl != null) {
+        if (ctx.impl != null) {
             int size = ctx.impl.param().size();
-            if(size > 0) {
+            if (size > 0) {
                 super_ = ctx.impl.param(0).getText();
                 interfaces = new String[size - 1];
                 for (int i = 1; i < size; i++) {
@@ -49,7 +53,10 @@ public class ClassDefVisitor extends ToyLangBaseVisitor<ClassDef> {
         Block block = ctx.block().accept(BlockVisitor.INSTANCE);
         statementList.addAll(block.getStatements());
 
-        return new ClassDef(modifiers, name, new QualifiedName(super_), interfaces, statementList);
+        ClassDef def = new ClassDef(modifiers, name, new QualifiedName(super_), interfaces, statementList);
+        def.setHasVarParams(hasVarParams);
+        return def;
     }
+
     public static ClassDefVisitor INSTANCE = new ClassDefVisitor();
 }

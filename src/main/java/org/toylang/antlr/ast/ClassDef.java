@@ -18,6 +18,7 @@ public class ClassDef extends Statement {
     private final List<Statement> statements;
     private List<Fun> constructors = null;
     private ToyTree sourceTree = null;
+    private boolean hasVarParams = false;
 
     public ClassDef(Modifier[] modifiers, String name, QualifiedName super_, String[] interfaces, List<Statement> statements) {
         this.statements = statements;
@@ -29,6 +30,12 @@ public class ClassDef extends Statement {
     public ClassDef(Modifier[] modifiers, QualifiedName package_, String name, QualifiedName super_, String[] interfaces, List<Statement> statements) {
         this(modifiers, name, super_, interfaces, statements);
         this.package_ = package_;
+    }
+    public boolean hasVarParams() {
+        return hasVarParams;
+    }
+    public void setHasVarParams(boolean hasVarParams) {
+        this.hasVarParams = hasVarParams;
     }
     public ToyTree getSourceTree() {
         return sourceTree;
@@ -115,7 +122,7 @@ public class ClassDef extends Statement {
         // create a new constructor for the class parameters
         // check if the super class has a default constructor
         // otherwise we need explicit definition of constructor
-        boolean autoGenerate = true;
+        boolean autoGenerate = hasVarParams;
         int fieldCount = getFields().size();
         for (Fun constructor : constructors) {
             if(constructor.getParams().length == fieldCount)
