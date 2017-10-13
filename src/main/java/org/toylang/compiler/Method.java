@@ -316,7 +316,7 @@ public class Method extends MethodVisitor implements Opcodes, TreeVisitor {
                 visitMethodInsn(INVOKESTATIC, "org/toylang/core/ToyObject", "toToyLang", "(Ljava/lang/Object;)Lorg/toylang/core/ToyObject;", false);
                 return;
             }
-        } catch (Exception ignored) {
+        } catch (Throwable ignored) {
         }
         // invoke reflective
         visitLdcInsn(Type.getType("L" + (clazz.toString().replace(".", "/")) + ";"));
@@ -638,7 +638,8 @@ public class Method extends MethodVisitor implements Opcodes, TreeVisitor {
                     VarDecl decl = ctx.getClassDef().findVar(name.toString());
                     if (decl != null) {
                         visitVarInsn(ALOAD, 0);
-                        visitInsn(SWAP);
+                        if(!load)
+                            visitInsn(SWAP);
                         int op = GETFIELD;
                         if (!load)
                             op = PUTFIELD;
