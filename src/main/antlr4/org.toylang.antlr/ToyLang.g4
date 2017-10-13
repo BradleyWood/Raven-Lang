@@ -78,7 +78,7 @@ varDeclaration
     |   (modifier*) VAR IDENTIFIER SEMI
     ;
 classDef
-    :   (modifier*) CLASS IDENTIFIER ('(' paramList ')')? (':' paramList)? block
+    :   (modifier*) CLASS IDENTIFIER ('(' fields=paramList ')')? (':' impl=paramList)? block
     ;
 expression
     :   literal

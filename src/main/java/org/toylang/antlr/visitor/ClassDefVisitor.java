@@ -29,22 +29,19 @@ public class ClassDefVisitor extends ToyLangBaseVisitor<ClassDef> {
 
         List<Statement> statementList = new ArrayList<>();
 
-        if(ctx.paramList() != null) {
-            if(ctx.paramList().size() > 0) {
-                for (int i = 0; i < ctx.paramList(0).param().size(); i++) {
-                    VarDecl decl = new VarDecl(new QualifiedName(ctx.paramList(0).param(i).getText()), null, Modifier.PRIVATE);
-                    statementList.add(decl);
-
-                }
+        if(ctx.fields != null) {
+            for (int i = 0; i < ctx.fields.param().size(); i++) {
+                VarDecl decl = new VarDecl(new QualifiedName(ctx.fields.param(i).getText()), null, Modifier.PRIVATE);
+                statementList.add(decl);
             }
-            if(ctx.paramList().size() > 1) {
-                int size = ctx.paramList(1).param().size();
-                if(size > 0) {
-                    super_ = ctx.paramList(1).param(0).getText();
-                    interfaces = new String[size - 1];
-                    for (int i = 1; i < size; i++) {
-                        interfaces[i - 1] = ctx.paramList(1).param(i).getText();
-                    }
+        }
+        if(ctx.impl != null) {
+            int size = ctx.impl.param().size();
+            if(size > 0) {
+                super_ = ctx.impl.param(0).getText();
+                interfaces = new String[size - 1];
+                for (int i = 1; i < size; i++) {
+                    interfaces[i - 1] = ctx.impl.param(i).getText();
                 }
             }
         }
