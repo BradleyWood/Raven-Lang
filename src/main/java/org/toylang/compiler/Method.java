@@ -306,8 +306,7 @@ public class Method extends MethodVisitor implements Opcodes, TreeVisitor {
         try {
             Class sc = Class.forName(clazz.toString().replace("/", "."));
             Constructor constructor = getConstructor(sc, call.getParams().length);
-            if(constructor != null) {
-                // invoke directly since there is only one constructor with n params
+            if(constructor != null && call.getParams().length == 0) {
                 String desc = Type.getConstructorDescriptor(constructor);
                 visitTypeInsn(NEW, clazz.toString());
                 visitInsn(DUP);
@@ -608,7 +607,7 @@ public class Method extends MethodVisitor implements Opcodes, TreeVisitor {
 
         String[] names = name.getNames();
         int localIdx = findLocal(names[0]);
-        if (localIdx != -1) {
+        if (localIdx != -1 && !names[0].equals("this")) {
             if (names.length == 1) {
                 visitVarInsn(LOAD_OR_STORE, localIdx);
             } else {
@@ -623,10 +622,7 @@ public class Method extends MethodVisitor implements Opcodes, TreeVisitor {
                 accessField(load, qname);
             }
         } else {
-            String[] lst = name.getNames();
-            if (lst.length == 0) {
-                Errors.put("Invalid name in method: " + ctx.getOwner() + ":" + ctx.getName());
-            } else if (lst.length == 1) {
+            if (names.length == 1) {
                 if (ctx.isStatic()) {
                     // check if it exists
                     if (ctx.findStaticVar(name.toString()) != null) {
@@ -661,23 +657,28 @@ public class Method extends MethodVisitor implements Opcodes, TreeVisitor {
                 }
                 VarDecl decl = ctx.findStaticVar(name.getNames()[0]);
                 if (decl != null) { // static field
-                    if (names.length > 1) {
-                        visitFieldInsn(GETSTATIC, ctx.getOwner().replace(".", "/"), name.getNames()[1], Constants.TOYOBJ_SIG);
-                        StringBuilder qname = new StringBuilder();
-                        for (int i = 1; i < names.length; i++) {
-                            qname.append(names[i]);
-                            if (i + 1 < names.length) {
-                                qname.append(".");
-                            }
+                    visitFieldInsn(GETSTATIC, ctx.getOwner().replace(".", "/"), names[1], Constants.TOYOBJ_SIG);
+                    StringBuilder qname = new StringBuilder();
+                    for (int i = 1; i < names.length; i++) {
+                        qname.append(names[i]);
+                        if (i + 1 < names.length) {
+                            qname.append(".");
                         }
-                        accessField(load, qname);
-                    } else {
-                        visitFieldInsn(GET_OR_PUT, ctx.getOwner().replace(".", "/"), name.getNames()[1], Constants.TOYOBJ_SIG);
                     }
-                } else if (!ctx.isStatic()) {
-                    // non static var in non static context
-                    // get or put field...
-
+                    accessField(load, qname);
+                } else if(names[0].equals("this") && !ctx.isStatic()){
+                    visitVarInsn(ALOAD, 0);
+                    visitFieldInsn(GET_OR_PUT, ctx.getOwner().replace(".", "/"), names[1], Constants.TOYOBJ_SIG);
+                    StringBuilder qname = new StringBuilder();
+                    for (int i = 2; i < names.length; i++) {
+                        qname.append(names[i]);
+                        if (i + 1 < names.length) {
+                            qname.append(".");
+                        }
+                    }
+                    if(2 < names.length)
+                        accessField(load, qname);
+                    return;
                 }
                 Errors.put("Variable not found " + ctx.getOwner() + ":" + name.toString());
             }
