@@ -73,7 +73,9 @@ public class Method extends MethodVisitor implements TreeVisitor, Opcodes {
 
     @Override
     public void visitReturn(Return ret) {
-        visitLine(ret.getValue());
+        if(ret.getValue() != null)
+            visitLine(ret.getValue());
+
         if (ctx.getName().equals("main")) {
             if (ret.getValue() != null) {
                 Errors.put("Cannot return value in main");
