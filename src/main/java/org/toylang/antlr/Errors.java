@@ -1,10 +1,10 @@
 package org.toylang.antlr;
 
-import java.util.ArrayList;
+import java.util.LinkedList;
 
 public class Errors {
 
-    private static final ArrayList<String> ERRORS = new ArrayList<String>();
+    private static final LinkedList<String> ERRORS = new LinkedList<>();
 
     public static void put(String error) {
         ERRORS.add(error);
@@ -14,11 +14,10 @@ public class Errors {
     }
     public static void printErrors() {
         if(getErrorCount() > 0) {
-            System.out.println("--------------ERRORS--------------");
             for (String error : ERRORS) {
                 System.err.println("Error: "+error);
             }
-            System.out.println("--------------ERRORS--------------");
+            System.err.println();
         }
     }
 }

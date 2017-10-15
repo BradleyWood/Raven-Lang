@@ -19,8 +19,6 @@ public class AssignmentVisitor extends ToyLangBaseVisitor<BinOp> {
             lhs = ctx.qualifiedName().accept(QualifiedNameVisitor.INSTANCE);
         } else if(ctx.listIdx() != null) {
             lhs = ctx.listIdx().accept(ListIndexVisitor.INSTANCE);
-        } else {
-            Errors.put("Illegal assignment: "+ctx.getText());
         }
         Operator operator = getOperator(ctx);
         Expression value = ctx.accept(ExpressionVisitor.INSTANCE);
@@ -47,7 +45,7 @@ public class AssignmentVisitor extends ToyLangBaseVisitor<BinOp> {
         } else if(ctx.EXP_ASSIGNMENT() != null) {
             return Operator.EXP;
         } else {
-            System.err.println("Unknown assignment operator: "+ctx.getText());
+            Errors.put("at line " + ctx.start.getLine() + ":" + ctx.start.getCharPositionInLine() + " illegal assignment");
         }
         return null;
     }
