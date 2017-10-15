@@ -263,8 +263,10 @@ public class Method extends MethodVisitor implements TreeVisitor, Opcodes {
     private void invokeRegistered(String owner, String funName, Expression[] params) {
         try {
             Class cl = Class.forName(owner);
-            reflectiveMethods.add(new ReflectiveMethod(cl, funName, params.length));
-
+            ReflectiveMethod method = new ReflectiveMethod(cl, funName, params.length);
+            if (!reflectiveMethods.contains(method)) {
+                reflectiveMethods.add(method);
+            }
             visitLdcInsn(Objects.hash(cl.getName(), funName, params.length));
             visitListDef(new ListDef(params));
         } catch (ClassNotFoundException e) {
@@ -680,6 +682,21 @@ public class Method extends MethodVisitor implements TreeVisitor, Opcodes {
             this.clazz = clazz;
             this.name = name;
             this.paramCount = paramCount;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            ReflectiveMethod that = (ReflectiveMethod) o;
+            return paramCount == that.paramCount &&
+                    Objects.equals(clazz, that.clazz) &&
+                    Objects.equals(name, that.name);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(clazz, name, paramCount);
         }
 
         private Class getClazz() {
