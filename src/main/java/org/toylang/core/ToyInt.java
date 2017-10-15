@@ -212,12 +212,12 @@ public class ToyInt extends ToyObject {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        if (!super.equals(o)) return false;
-
-        ToyInt toyInt = (ToyInt) o;
-
-        return value == toyInt.value;
+        if(o instanceof ToyObject) {
+            ToyObject eq = EQ((ToyObject)o);
+            if(eq != null)
+                return eq.isTrue();
+        }
+        return false;
     }
     @Hidden
     @Override

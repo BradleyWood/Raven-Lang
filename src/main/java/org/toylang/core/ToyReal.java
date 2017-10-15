@@ -232,11 +232,12 @@ public class ToyReal extends ToyObject {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        ToyReal toyReal = (ToyReal) o;
-
-        return Double.compare(toyReal.value, value) == 0;
+        if(o instanceof ToyObject) {
+            ToyObject eq = EQ((ToyObject)o);
+            if(eq != null)
+                return eq.isTrue();
+        }
+        return false;
     }
     @Hidden
     @Override
