@@ -289,7 +289,7 @@ public class ToyObject implements Comparable<ToyObject> {
         if(method != null) {
             Object[] pa = getParams(params, method.parameterTypes);
             try {
-                method.mh.invoke(this, pa);
+                return toToyLang(method.mh.invoke(this, pa));
             } catch (IllegalAccessException | InvocationTargetException e) {
                 e.printStackTrace();
                 return new ToyError("Error at call to "+this.getClass().getName()+"."+method.mh.getName()+"("+params+")");
@@ -297,6 +297,7 @@ public class ToyObject implements Comparable<ToyObject> {
         }
         throw new RuntimeException("Method not found: "+hash+":"+params);
     }
+    @Hidden
     public static ToyObject invoke(int hash, ToyObject params) {
         JavaMethod jm = findMethod(hash);
         if(jm != null) {
@@ -304,7 +305,7 @@ public class ToyObject implements Comparable<ToyObject> {
             try {
                 return toToyLang(jm.mh.invoke(null, pa));
             } catch (IllegalAccessException | InvocationTargetException e) {
-                e.printStackTrace();
+                e.getCause().printStackTrace();
                 return new ToyError(e.getMessage());
             }
         }
@@ -320,7 +321,7 @@ public class ToyObject implements Comparable<ToyObject> {
 
                 return toToyLang(ret);
             } catch (Throwable e) {
-                e.printStackTrace();
+                e.getCause().printStackTrace();
                 return new ToyError(e.getMessage());
             }
         }
@@ -471,6 +472,8 @@ public class ToyObject implements Comparable<ToyObject> {
                     pa[i] = lst.get(i).toDouble();
                 } else if (type == boolean.class) {
                     pa[i] = lst.get(i).toBoolean();
+                } else if(type == Object[].class) {
+                    pa[i] = lst.toArray();
                 } else {
                     pa[i] = lst.get(i).toObject();
                     if (!type.isAssignableFrom(pa[i].getClass())) {
