@@ -185,22 +185,44 @@ public class ToyObject implements Comparable<ToyObject> {
                 o = getField(o.getClass(), names[i]);
             }
             Field f = o.getClass().getField(name);
-            if(f.getType().isAssignableFrom(ToyObject.class)) {
-                f.setAccessible(true);
-                f.set(o, value);
-                return;
-            } else {
-                Object[] javaValue = getParams(new ToyList().add(value), new Class<?>[] {f.getType()});
-                if(javaValue != null) {
-                    f.set(o, javaValue[0]);
-                    return;
-                }
-            }
+            if (setField(value, o, f)) return;
         } catch (NoSuchFieldException | IllegalAccessException e) {
             e.printStackTrace();
         }
         throw new RuntimeException(obj + " has no attribute " + name);
     }
+    @Hidden
+    public void setField(Class clazz, String name, ToyObject value) {
+        try {
+            String[] names = name.split("\\.");
+            Object o = obj;
+            for(int i = 0; i < names.length - 1; i ++) {
+                o = getField(o.getClass(), names[i]);
+            }
+            Field f = clazz.getField(name);
+            if (setField(value, o, f)) return;
+        } catch (NoSuchFieldException | IllegalAccessException e) {
+            e.printStackTrace();
+        }
+        throw new RuntimeException(obj + " has no attribute " + name);
+    }
+
+    @Hidden
+    private boolean setField(ToyObject value, Object o, Field f) throws IllegalAccessException {
+        if(f.getType().isAssignableFrom(ToyObject.class)) {
+            f.setAccessible(true);
+            f.set(o, value);
+            return true;
+        } else {
+            Object[] javaValue = getParams(new ToyList().add(value), new Class<?>[] {f.getType()});
+            if(javaValue != null) {
+                f.set(o, javaValue[0]);
+                return true;
+            }
+        }
+        return false;
+    }
+
     @Hidden
     public ToyObject getField(String name) {
         try {

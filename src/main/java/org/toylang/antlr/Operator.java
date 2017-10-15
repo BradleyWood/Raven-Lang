@@ -2,38 +2,39 @@ package org.toylang.antlr;
 
 public enum Operator {
 
-    ASSIGNMENT("="),
-    PLUS_EQUALS("+="),
-    MINUS_EQUALS("-="),
-    TIMES_EQUALS("*="),
-    DIV_EQUALS("/="),
-    MOD_EQUALS("%="),
+    ASSIGNMENT("=", "ASS"),
+    PLUS_EQUALS("+=", ""),
+    MINUS_EQUALS("-=", ""),
+    TIMES_EQUALS("*=", ""),
+    DIV_EQUALS("/=", ""),
+    MOD_EQUALS("%=", ""),
 
-    ADD("+"),
-    SUB("-"),
-    MULT("*"),
-    DIV("/"),
-    EXP("**"),
-    MOD("%"),
+    ADD("+", "add"),
+    SUB("-", "sub"),
+    MULT("*", "mul"),
+    DIV("/", "div"),
+    EXP("**", "pow"),
+    MOD("%", "mod"),
 
 
-    NOT("!"),
-    GT(">"),
-    LT("<"),
-    GTE(">="),
-    LTE("<="),
-    EQ("=="),
-    NE("!="),
-    AND("&&"),
-    OR("||"),
-
-    ;
+    NOT("!", "not"),
+    GT(">", "GT"),
+    LT("<", "LT"),
+    GTE(">=", "GTE"),
+    LTE("<=", "LTE"),
+    EQ("==", "EQ"),
+    NE("!=", "NE"),
+    AND("&&", "and"),
+    OR("||", "or"),;
 
     public final String op;
+    public final String name;
 
-    Operator(String op) {
+    Operator(String op, String name) {
         this.op = op;
+        this.name = name;
     }
+
     @Override
     public String toString() {
         return op;

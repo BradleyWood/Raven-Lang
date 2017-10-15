@@ -4,203 +4,32 @@ import org.objectweb.asm.*;
 import org.toylang.antlr.Errors;
 import org.toylang.antlr.Operator;
 import org.toylang.antlr.ast.*;
-import org.toylang.antlr.ast.While;
 import org.toylang.core.*;
 
-import java.lang.reflect.Constructor;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.Objects;
 
-
-public class Method extends MethodVisitor implements Opcodes, TreeVisitor {
+public class Method extends MethodVisitor implements TreeVisitor, Opcodes {
 
     private static final LinkedList<ReflectiveMethod> reflectiveMethods = new LinkedList<>();
 
-    private final List<Integer> lineNumbers = new ArrayList<>();
-
     private final ArrayList<String> locals = new ArrayList<>();
+    private final ArrayList<Integer> lineNumbers = new ArrayList<>();
+
+
     private final MethodContext ctx;
-    private final MethodVisitor mv;
 
-    public Method(MethodContext ctx, MethodVisitor mv) {
-        super(ASM5);
+    public Method(final MethodContext ctx, final MethodVisitor mv) {
+        super(ASM5, mv);
         this.ctx = ctx;
-        this.mv = mv;
-    }
-
-    public void visitLine(Expression stmt) {
-        int line = stmt.getLineNumber();
-        if (line >= 0 && !lineNumbers.contains(line)) {
-            visitLineNumber(line, new Label());
-            lineNumbers.add(line);
-        }
-    }
-
-    public void end() {
-        visitMaxs(0, 0);
-        visitEnd();
-    }
-
-    /**
-     * @param name The name of the local var
-     * @return The idx or -1 if not found
-     */
-    public int findLocal(String name) {
-        return locals.indexOf(name);
-    }
-
-    @Override
-    public void visitParameter(String s, int i) {
-        mv.visitParameter(s, i);
-    }
-
-    @Override
-    public AnnotationVisitor visitAnnotationDefault() {
-        return mv.visitAnnotationDefault();
-    }
-
-    @Override
-    public AnnotationVisitor visitAnnotation(String s, boolean b) {
-        return mv.visitAnnotation(s, b);
-    }
-
-    @Override
-    public AnnotationVisitor visitTypeAnnotation(int i, TypePath typePath, String s, boolean b) {
-        return mv.visitTypeAnnotation(i, typePath, s, b);
-    }
-
-    @Override
-    public AnnotationVisitor visitParameterAnnotation(int i, String s, boolean b) {
-        return mv.visitParameterAnnotation(i, s, b);
-    }
-
-    @Override
-    public void visitAttribute(Attribute attribute) {
-        mv.visitAttribute(attribute);
-    }
-
-    @Override
-    public void visitCode() {
-        mv.visitCode();
-    }
-
-    @Override
-    public void visitFrame(int i, int i1, Object[] objects, int i2, Object[] objects1) {
-        mv.visitFrame(i, i1, objects, i2, objects1);
-    }
-
-    @Override
-    public void visitInsn(int i) {
-        mv.visitInsn(i);
-    }
-
-    @Override
-    public void visitIntInsn(int i, int i1) {
-        mv.visitIntInsn(i, i1);
-    }
-
-    @Override
-    public void visitVarInsn(int i, int i1) {
-        mv.visitVarInsn(i, i1);
-    }
-
-    @Override
-    public void visitTypeInsn(int i, String s) {
-        mv.visitTypeInsn(i, s);
-    }
-
-    @Override
-    public void visitFieldInsn(int i, String s, String s1, String s2) {
-        mv.visitFieldInsn(i, s, s1, s2);
-    }
-
-    @Override
-    public void visitMethodInsn(int i, String s, String s1, String s2) {
-        mv.visitMethodInsn(i, s, s1, s2);
-    }
-
-    @Override
-    public void visitMethodInsn(int i, String s, String s1, String s2, boolean b) {
-        mv.visitMethodInsn(i, s, s1, s2, b);
-    }
-
-    @Override
-    public void visitInvokeDynamicInsn(String s, String s1, Handle handle, Object... objects) {
-        mv.visitInvokeDynamicInsn(s, s1, handle, objects);
-    }
-
-    @Override
-    public void visitJumpInsn(int i, Label label) {
-        mv.visitJumpInsn(i, label);
-    }
-
-    @Override
-    public void visitLabel(Label label) {
-        mv.visitLabel(label);
-    }
-
-    @Override
-    public void visitLdcInsn(Object o) {
-        mv.visitLdcInsn(o);
-    }
-
-    @Override
-    public void visitIincInsn(int i, int i1) {
-        mv.visitIincInsn(i, i1);
-    }
-
-    @Override
-    public void visitTableSwitchInsn(int i, int i1, Label label, Label... labels) {
-        mv.visitTableSwitchInsn(i, i1, label, labels);
-    }
-
-    @Override
-    public void visitLookupSwitchInsn(Label label, int[] ints, Label[] labels) {
-        mv.visitLookupSwitchInsn(label, ints, labels);
-    }
-
-    @Override
-    public void visitMultiANewArrayInsn(String s, int i) {
-        mv.visitMultiANewArrayInsn(s, i);
-    }
-
-    @Override
-    public AnnotationVisitor visitInsnAnnotation(int i, TypePath typePath, String s, boolean b) {
-        return mv.visitInsnAnnotation(i, typePath, s, b);
-    }
-
-    @Override
-    public void visitTryCatchBlock(Label label, Label label1, Label label2, String s) {
-        mv.visitTryCatchBlock(label, label1, label2, s);
-    }
-
-    @Override
-    public AnnotationVisitor visitTryCatchAnnotation(int i, TypePath typePath, String s, boolean b) {
-        return mv.visitTryCatchAnnotation(i, typePath, s, b);
-    }
-
-    @Override
-    public void visitLocalVariable(String s, String s1, String s2, Label label, Label label1, int i) {
-        mv.visitLocalVariable(s, s1, s2, label, label1, i);
-    }
-
-    @Override
-    public AnnotationVisitor visitLocalVariableAnnotation(int i, TypePath typePath, Label[] labels, Label[] labels1, int[] ints, String s, boolean b) {
-        return mv.visitLocalVariableAnnotation(i, typePath, labels, labels1, ints, s, b);
-    }
-
-    @Override
-    public void visitLineNumber(int i, Label label) {
-        mv.visitLineNumber(i, label);
-    }
-
-    @Override
-    public void visitMaxs(int i, int i1) {
-        mv.visitMaxs(i, i1);
     }
 
     @Override
     public void visitEnd() {
-        mv.visitEnd();
+        visitMaxs(0, 0);
+        super.visitEnd();
     }
 
     @Override
@@ -261,32 +90,49 @@ public class Method extends MethodVisitor implements Opcodes, TreeVisitor {
         }
     }
 
-    @Override
-    public void visitFun(Fun fun) {
-        if(!ctx.isStatic()) {
-            locals.add("this");
+    private void visitLine(Expression stmt) {
+        int line = stmt.getLineNumber();
+        if (line >= 0 && !lineNumbers.contains(line)) {
+            visitLineNumber(line, new Label());
+            lineNumbers.add(line);
         }
-        if (ctx.getName().equals("main") && ctx.isStatic()) {
-            locals.add(" args "); // todo; convert args to list of ToyObjects
-            VarDecl[] params = fun.getParams();
-            if(params.length > 1) {
+    }
+
+    private void visitParams(VarDecl[] params) {
+        if (!ctx.isStatic()) {
+            locals.add("this");
+        } else if (ctx.getName().equals("main")) {
+            locals.add(" args ");
+            if (params.length > 1) {
                 Errors.put("Invalid main signature!");
-            } else if(params.length == 1) {
+            } else if (params.length == 1) {
                 locals.add(params[0].getName().toString());
                 visitVarInsn(ALOAD, 0);
-                visitMethodInsn(INVOKESTATIC, "org/toylang/core/ToyObject", "toToyLang", "(Ljava/lang/Object;)Lorg/toylang/core/ToyObject;", false);
-                visitTypeInsn(CHECKCAST, "org/toylang/core/ToyList");
+                visitMethodInsn(INVOKESTATIC, getInternalName(ToyObject.class), "toToyLang", getDesc(ToyObject.class, "toToyLang", Object.class), false);
+                visitTypeInsn(CHECKCAST, getInternalName(ToyList.class));
                 visitVarInsn(ASTORE, 1);
             }
-        } else if(ctx.getName().equals("<init>")) {
+        } else if (ctx.getName().equals("<init>")) {
             visitVarInsn(ALOAD, 0);
             visitMethodInsn(INVOKESPECIAL, ctx.getClassDef().getSuper().toString().replace(".", "/"), "<init>", "()V", false);
         }
-        if(!ctx.getName().equals("main")) {
-            for (VarDecl varDecl : fun.getParams()) {
-                locals.add(varDecl.getName().toString());
-            }
+        if (ctx.getName().equals("main") && ctx.isStatic()) {
+            return;
         }
+        for (VarDecl varDecl : params) {
+            locals.add(varDecl.getName().toString());
+        }
+    }
+
+    @Override
+    public void visitFun(Fun fun) {
+        visitParams(fun.getParams());
+
+        if (fun.getName().toString().equals("<clinit>")) {
+            writeConstants();
+            registerMethods();
+        }
+
         fun.getBody().accept(this);
         Statement stmt = null;
         int idx = fun.getBody().getStatements().size() - 1;
@@ -302,179 +148,249 @@ public class Method extends MethodVisitor implements Opcodes, TreeVisitor {
         }
     }
 
-    public void newObj(QualifiedName clazz, Call call) {
-        try {
-            Class sc = Class.forName(clazz.toString().replace("/", "."));
-            Constructor constructor = getConstructor(sc, call.getParams().length);
-            if(constructor != null && call.getParams().length == 0) {
-                String desc = Type.getConstructorDescriptor(constructor);
-                visitTypeInsn(NEW, clazz.toString());
-                visitInsn(DUP);
-                Arrays.stream(call.getParams()).forEach(expr -> expr.accept(this));
-                visitMethodInsn(INVOKESPECIAL, clazz.toString(), "<init>", desc, false);
-                visitMethodInsn(INVOKESTATIC, "org/toylang/core/ToyObject", "toToyLang", "(Ljava/lang/Object;)Lorg/toylang/core/ToyObject;", false);
-                return;
-            }
-        } catch (Throwable ignored) {
+    private String getFunDescriptor(Expression[] params) {
+        StringBuilder sig = new StringBuilder("(");
+        for (Expression varDecl : params) {
+            sig.append(Constants.TOYOBJ_SIG);
         }
-        // invoke reflective
-        visitLdcInsn(Type.getType("L" + (clazz.toString().replace(".", "/")) + ";"));
-        visitListDef(new ListDef(call.getParams()));
-        visitMethodInsn(INVOKESTATIC, Constants.TOYOBJ_NAME, "newObj", "(" + Constants.CLASS_SIG + Constants.TOYOBJ_SIG + ")" + Constants.TOYOBJ_SIG, false);
-    }
-    private Constructor getConstructor(Class c, int paramCount) {
-        int count = 0;
-        Constructor found = null;
-        for (Constructor constructor : c.getConstructors()) {
-            if(constructor.getParameterCount() != paramCount)
-                continue;
-            found = constructor;
-            count++;
-        }
-        if(count == 1)
-            return found;
-        return null;
-    }
-
-    private String getPackage(String name) {
-        int idx = name.lastIndexOf('.');
-
-        while (idx != -1) {
-            name = name.substring(0, idx);
-            if (Package.getPackage(name) != null) {
-                return name;
-            }
-            idx = name.lastIndexOf('.');
-        }
-        return null;
-    }
-
-    private String getImportedName(String name) {
-        for (QualifiedName qualifiedName : ctx.getImports()) {
-            if (qualifiedName.toString().endsWith(name)) {
-                return qualifiedName.toString().replace(".", "/");
-            }
-        }
-        return null;
+        sig.append(")" + Constants.TOYOBJ_SIG);
+        return sig.toString();
     }
 
     @Override
     public void visitFunCall(Call call) {
         visitLine(call);
-        StringBuilder sig = new StringBuilder("(");
-        for (Expression varDecl : call.getParams()) {
-            sig.append(Constants.TOYOBJ_SIG);
-        }
-        sig.append(")" + Constants.TOYOBJ_SIG);
+
+        String desc = getFunDescriptor(call.getParams());
 
         if (call.getPrecedingExpr() != null) {
-            Expression expr = call.getPrecedingExpr();
-            if (expr instanceof QualifiedName) {
-                String pack = getPackage(expr.toString());
-                String funcOwner = getImportedName(expr.toString());
-                if (pack != null) {
-                    // package . Class . Fun
-                    // typically not imported
-                } else if (funcOwner != null) { // check if its an imported name
-
-                    String funName = call.getName().toString();//expr.toString().substring(funcOwner.length());
-                    Fun f = SymbolMap.resolveFun(funcOwner, funName);
-                    // if the function can be resolved, it is a toylang function
-                    if (f != null) {
-                        for (Expression expression : call.getParams()) {
-                            expression.accept(this);
-                        }
-                        visitMethodInsn(INVOKESTATIC, funcOwner, funName, sig.toString(), false);
-                    } else {
-                        String clazz = funcOwner.replace("/", ".");
-                        if(canRegisterMethod(clazz, funName, call.getParams().length)) {
-                            invokeRegistered(call, funName, clazz);
-                            visitMethodInsn(INVOKESTATIC, Constants.TOYOBJ_NAME, "invoke", "(ILorg/toylang/core/ToyObject;)Lorg/toylang/core/ToyObject;");
-                        } else  {
-                            visitLdcInsn(Type.getType("L" + (funcOwner.replace(".", "/")) + ";"));
-                            visitLdcInsn(funName);
-                            visitListDef(new ListDef(call.getParams()));
-                            visitMethodInsn(INVOKESTATIC, Constants.TOYOBJ_NAME, "invoke", "(" + Constants.CLASS_SIG + Constants.STRING_SIG + Constants.TOYOBJ_SIG + ")" + Constants.TOYOBJ_SIG, false);
-                        }
-                    }
+            final Expression precedingExpr = call.getPrecedingExpr();
+            if (precedingExpr instanceof QualifiedName) {
+                String owner = getInternalNameFromImports(precedingExpr.toString());
+                if (owner != null) {
+                    resolveStaticFun(owner, call.getName().toString(), desc, call.getParams());
                 } else {
-                    //expr.accept(this);
-                    //fieldOp((QualifiedName) expr, true);
-
-                    expr.accept(this);
-
-                    java.lang.reflect.Method m = isToyObjectFunction(call.getName().toString(), call.getParams().length);
-                    invokeFun(call, m);
+                    precedingExpr.accept(this);
+                    java.lang.reflect.Method method = isToyObjectFunction(call.getName().toString(), call.getParams().length);
+                    if (method != null) {
+                        invokeVirtualFun(call.getName().toString(), call.getParams(), method);
+                    } else {
+                        invokeVirtualFun(call.getName().toString(), call.getParams());
+                    }
                 }
             } else {
-                expr.accept(this);
-                // invoke virtual
-                // we should have some object on the stack
-                if (call.getName().toString().equals("getField")) {
-                    visitLdcInsn(call.getParams()[0].toString());
-                    visitMethodInsn(INVOKEVIRTUAL, Constants.TOYOBJ_NAME, "getField", "(" + Constants.STRING_SIG + ")" + Constants.TOYOBJ_SIG);
+                precedingExpr.accept(this);
+                java.lang.reflect.Method method = isToyObjectFunction(call.getName().toString(), call.getParams().length);
+                if (method != null) {
+                    invokeVirtualFun(call.getName().toString(), call.getParams(), method);
                 } else {
-                    java.lang.reflect.Method m = isToyObjectFunction(call.getName().toString(), call.getParams().length);
-                    invokeFun(call, m);
+                    invokeVirtualFun(call.getName().toString(), call.getParams());
                 }
             }
         } else {
-            String clazz = getImportedName(call.getName().toString());
+            String clazz = getInternalNameFromImports(call.getName().toString());
             if (clazz != null) {
-                // invoke constructor
-                newObj(new QualifiedName(clazz), call);
+                newObject(clazz, call.getParams());
             } else {
-                String owner = ctx.getOwner();
+                String funOwner = ctx.getOwner();
                 if (Builtin.isBuiltin(call.getName(), call.getParams().length)) {
-                    owner = Constants.BUILTIN_NAME;
+                    funOwner = Constants.BUILTIN_NAME;
                 }
-                for (Expression expression : call.getParams()) {
-                    expression.accept(this);
-                }
-                visitMethodInsn(INVOKESTATIC, owner, call.getName().toString(), sig.toString(), false);
+                invokeStaticMethod_D(funOwner, call.getName().toString(), desc, call.getParams());
             }
         }
-        if (call.pop())
-            visitInsn(POP);
-    }
 
-    private void invokeFun(Call call, java.lang.reflect.Method m) {
-        if(m != null) {
-            String desc = Type.getMethodDescriptor(m);
-            Arrays.stream(call.getParams()).forEach(expression->expression.accept(this));
-            visitMethodInsn(INVOKEVIRTUAL, Constants.TOYOBJ_NAME, m.getName(), desc, false);
-            if(m.getReturnType() == int.class) {
-                visitMethodInsn(INVOKESTATIC, "java/lang/Integer", "valueOf", "(I)Ljava/lang/Integer;", false);
-            }
-            if(!m.getReturnType().isAssignableFrom(ToyObject.class)) {
-                visitMethodInsn(INVOKESTATIC, "org/toylang/core/ToyObject", "toToyLang", "(Ljava/lang/Object;)Lorg/toylang/core/ToyObject;", false);
-            }
-        } else {
-            visitLdcInsn(call.getName().toString());
-            visitListDef(new ListDef(call.getParams()));
-            visitMethodInsn(INVOKEVIRTUAL, Constants.TOYOBJ_NAME, "invoke", "(" + Constants.STRING_SIG + Constants.TOYOBJ_SIG + ")" + Constants.TOYOBJ_SIG, false);
+        // occurs when the result of the expression is not used
+        if (call.pop()) {
+            visitInsn(POP);
         }
     }
 
     private java.lang.reflect.Method isToyObjectFunction(String name, int paramCount) {
-        for(java.lang.reflect.Method m : ToyObject.class.getDeclaredMethods()) {
-            if(m.getAnnotation(Hidden.class) != null || m.getParameterCount() != paramCount)
+        for (java.lang.reflect.Method m : ToyObject.class.getDeclaredMethods()) {
+            if (m.getAnnotation(Hidden.class) != null || m.getParameterCount() != paramCount)
                 continue;
-            if(m.getName().equals(name))
+            if (m.getName().equals(name))
                 return m;
         }
         return null;
     }
 
-    private void invokeRegistered(Call call, String funName, String clazz) {
-        try {
-            Class cl = Class.forName(clazz);
-            reflectiveMethods.add(new ReflectiveMethod(cl, funName, call.getParams().length));
+    private void resolveStaticFun(String funOwner, String funName, String desc, Expression[] params) {
+        Fun f = SymbolMap.resolveFun(funOwner, funName);
+        // if the function can be resolved, it is a toylang function
+        if (f != null) {
+            invokeStaticMethod_D(funOwner, funName, desc, params);
+        } else {
+            String clazz = funOwner.replace("/", ".");
+            if (canRegisterMethod(clazz, funName, params.length)) {
+                invokeRegistered(clazz, funName, params);
+                visitMethodInsn(INVOKESTATIC, Constants.TOYOBJ_NAME, "invoke", getDesc(ToyObject.class, "invoke", int.class, ToyObject.class), false);
+            } else {
+                visitLdcInsn(Type.getType("L" + (funOwner.replace(".", "/")) + ";"));
+                visitLdcInsn(funName);
+                visitListDef(new ListDef(params));
+                visitMethodInsn(INVOKESTATIC, Constants.TOYOBJ_NAME, "invoke", getDesc(ToyObject.class, "invoke", Class.class, String.class, ToyObject.class), false);
+            }
+        }
+    }
 
-            visitLdcInsn(Objects.hash(cl.getName(), funName, call.getParams().length));
-            visitListDef(new ListDef(call.getParams()));
+    private void invokeStaticMethod_D(String owner, String name, String desc, Expression[] params) {
+        for (Expression param : params) {
+            param.accept(this);
+        }
+        visitMethodInsn(INVOKESTATIC, owner, name, desc, false);
+    }
+
+    private void invokeVirtualFun(String name, Expression[] params) {
+        visitLdcInsn(name);
+        visitListDef(new ListDef(params));
+        visitMethodInsn(INVOKEVIRTUAL, Constants.TOYOBJ_NAME, "invoke", getDesc(ToyObject.class, "invoke", String.class, ToyObject.class), false);
+    }
+
+    private void invokeVirtualFun(String name, Expression[] params, java.lang.reflect.Method method) {
+        String desc = Type.getMethodDescriptor(method);
+        Arrays.stream(params).forEach(expression -> expression.accept(this));
+        visitMethodInsn(INVOKEVIRTUAL, Constants.TOYOBJ_NAME, name, desc, false);
+        if (method.getReturnType() == int.class) {
+            visitMethodInsn(INVOKESTATIC, getInternalName(Integer.class), "valueOf", getDesc(Integer.class, "valueOf", int.class), false);
+        }
+        if (!method.getReturnType().isAssignableFrom(ToyObject.class)) {
+            visitMethodInsn(INVOKESTATIC, getInternalName(ToyObject.class), "toToyLang", getDesc(ToyObject.class, "toToyLang", Object.class), false);
+        }
+    }
+
+    private void invokeRegistered(String owner, String funName, Expression[] params) {
+        try {
+            Class cl = Class.forName(owner);
+            reflectiveMethods.add(new ReflectiveMethod(cl, funName, params.length));
+
+            visitLdcInsn(Objects.hash(cl.getName(), funName, params.length));
+            visitListDef(new ListDef(params));
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
+        }
+    }
+
+    private void newObject(String owner, Expression[] params) {
+        visitLdcInsn(Type.getType("L" + (owner.replace(".", "/")) + ";"));
+        visitListDef(new ListDef(params));
+        visitMethodInsn(INVOKESTATIC, Constants.TOYOBJ_NAME, "newObj", getDesc(ToyObject.class, "newObj", Class.class, ToyObject.class), false);
+    }
+
+    private boolean canRegisterMethod(String owner, String name, int paramCount) {
+        try {
+            Class c = Class.forName(owner);
+            ToyObject.registerMethod(c, name, paramCount);
+            return true;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    @Override
+    public void visitName(QualifiedName name) {
+        accessField(name, true);
+    }
+
+    private void accessField(QualifiedName name, boolean load) {
+        visitLine(name);
+
+        String[] names = name.getNames();
+        int localIdx = findLocal(names[0]);
+
+        if (localIdx != -1 && !names[0].equals("this")) {
+            switch (names.length) {
+                case 1:
+                    visitVarInsn(load ? ALOAD : ASTORE, localIdx);
+                    break;
+                default:
+                    visitFieldInsn(GETSTATIC, ctx.getOwner().replace(".", "/"), names[1], Constants.TOYOBJ_SIG);
+                    StringBuilder qname = new StringBuilder();
+                    String[] nn = Arrays.copyOfRange(names, 1, names.length);
+                    Arrays.stream(nn).forEach(qname::append);
+                    accessField(new QualifiedName(names[0]), true);
+                    accessVirtualField(qname.toString(), load);
+                    break;
+            }
+        } else {
+            String importedClass = getInternalNameFromImports(names[0]);
+            VarDecl decl = ctx.findStaticVar(names[0]);
+            switch (names.length) {
+                case 1:
+                    if (decl == null) {
+                        Errors.put("Variable not found " + ctx.getOwner() + " "+ names[0]);
+                    } else if (ctx.isStatic()) {
+                        accessStaticField(ctx.getOwner(), decl.getName().toString(), load);
+                    } else {
+                        VarDecl var = ctx.getClassDef().findVar(name.toString());
+                        if (var != null) {
+                            accessVirtualField(var, load);
+                        } else {
+                            Errors.put("Variable not found " + name.toString());
+                        }
+                    }
+                    break;
+                default:
+                    if (importedClass != null) {
+                        accessStaticField(importedClass, names[1], load);
+                    } else {
+                        if (decl != null) {
+                            visitFieldInsn(GETSTATIC, ctx.getOwner().replace(".", "/"), names[1], Constants.TOYOBJ_SIG);
+                            StringBuilder qname = new StringBuilder();
+                            String[] nn = Arrays.copyOfRange(names, 1, names.length);
+                            Arrays.stream(nn).forEach(qname::append);
+                            accessVirtualField(qname.toString(), load);
+                        }
+                    }
+                    break;
+            }
+        }
+    }
+
+    private void accessStaticField(String owner, String name, boolean load) {
+        try {
+            Class clazz = Class.forName(owner.replace("/", "."));
+            if (!clazz.getField(name).getType().isAssignableFrom(ToyObject.class)) {
+                visitLdcInsn(Type.getType("L" + (owner) + ";"));
+                visitLdcInsn(name);
+                if (load) {
+                    visitMethodInsn(INVOKESTATIC, getDesc(ToyObject.class), "getField", getDesc(ToyObject.class, "getField", Class.class, String.class), false);
+                } else {
+                    System.err.println("ERROR");
+                    visitMethodInsn(INVOKESTATIC, getDesc(ToyObject.class), "getField", getDesc(ToyObject.class, "setField", Class.class, String.class, ToyObject.class), false);
+                }
+                return;
+            }
+        } catch (Exception e) {
+
+        }
+        visitFieldInsn(load ? GETSTATIC : PUTSTATIC, owner, name, getDesc(ToyObject.class));
+    }
+
+    private void accessVirtualField(VarDecl var, boolean load) {
+        int idx = findLocal("this");
+        if (idx != 0) {
+            Errors.put("Cannot access field in non static context: " + var.getName());
+            return;
+        }
+        visitVarInsn(ALOAD, idx);
+        if (!load) {
+            visitInsn(SWAP);
+        }
+        visitFieldInsn(load ? GETFIELD : PUTFIELD, ctx.getOwner(), var.getName().toString(), getDesc(ToyObject.class));
+    }
+
+    private void accessVirtualField(String name, boolean load) {
+        if (load) {
+            visitLdcInsn(name);
+            visitMethodInsn(INVOKEVIRTUAL, Constants.TOYOBJ_NAME, "getField", getDesc(ToyObject.class, "getField", String.class), false);
+        } else {
+            visitInsn(SWAP);
+            visitLdcInsn(name);
+            visitInsn(SWAP);
+            visitMethodInsn(INVOKEVIRTUAL, Constants.TOYOBJ_NAME, "setField", getDesc(ToyObject.class, "setField", String.class, ToyObject.class), false);
         }
     }
 
@@ -485,16 +401,21 @@ public class Method extends MethodVisitor implements Opcodes, TreeVisitor {
 
     @Override
     public void visitVarDecl(VarDecl decl) {
-        if (decl.getInitialValue() != null)
+        if (decl.getInitialValue() != null) {
             decl.getInitialValue().accept(this);
-        else
+        } else {
             putNull();
+        }
         if (ctx.getName().equals("<clinit>")) {
             visitFieldInsn(PUTSTATIC, ctx.getOwner(), decl.getName().toString(), Constants.TOYOBJ_SIG);
         } else {
             locals.add(decl.getName().toString());
             visitVarInsn(ASTORE, findLocal(decl.getName().toString()));
         }
+    }
+
+    private int findLocal(String name) {
+        return locals.indexOf(name);
     }
 
     @Override
@@ -519,53 +440,14 @@ public class Method extends MethodVisitor implements Opcodes, TreeVisitor {
                 if (idx != -1) {
                     visitVarInsn(ASTORE, idx);
                 } else {
-                    fieldOp((QualifiedName) op.getLeft(), false);
+                    accessField((QualifiedName) op.getLeft(), false);
                 }
                 break;
             case NOT:
-                visitMethodInsn(INVOKEVIRTUAL, Constants.TOYOBJ_NAME, "not", "()Lorg/toylang/core/ToyObject;", false);
+                visitMethodInsn(INVOKEVIRTUAL, Constants.TOYOBJ_NAME, op.getOp().name, getDesc(ToyObject.class, op.getOp().name), false);
                 break;
-            case AND:
-                visitMethodInsn(INVOKEVIRTUAL, Constants.TOYOBJ_NAME, "and", "(Lorg/toylang/core/ToyObject;)Lorg/toylang/core/ToyObject;", false);
-                break;
-            case OR:
-                visitMethodInsn(INVOKEVIRTUAL, Constants.TOYOBJ_NAME, "or", "(Lorg/toylang/core/ToyObject;)Lorg/toylang/core/ToyObject;", false);
-                break;
-            case ADD:
-                visitMethodInsn(INVOKEVIRTUAL, Constants.TOYOBJ_NAME, "add", "(Lorg/toylang/core/ToyObject;)Lorg/toylang/core/ToyObject;", false);
-                break;
-            case SUB:
-                visitMethodInsn(INVOKEVIRTUAL, Constants.TOYOBJ_NAME, "sub", "(Lorg/toylang/core/ToyObject;)Lorg/toylang/core/ToyObject;", false);
-                break;
-            case MULT:
-                visitMethodInsn(INVOKEVIRTUAL, Constants.TOYOBJ_NAME, "mul", "(Lorg/toylang/core/ToyObject;)Lorg/toylang/core/ToyObject;", false);
-                break;
-            case DIV:
-                visitMethodInsn(INVOKEVIRTUAL, Constants.TOYOBJ_NAME, "div", "(Lorg/toylang/core/ToyObject;)Lorg/toylang/core/ToyObject;", false);
-                break;
-            case MOD:
-                visitMethodInsn(INVOKEVIRTUAL, Constants.TOYOBJ_NAME, "mod", "(Lorg/toylang/core/ToyObject;)Lorg/toylang/core/ToyObject;", false);
-                break;
-            case EXP:
-                visitMethodInsn(INVOKEVIRTUAL, Constants.TOYOBJ_NAME, "pow", "(Lorg/toylang/core/ToyObject;)Lorg/toylang/core/ToyObject;", false);
-                break;
-            case GT:
-                visitMethodInsn(INVOKEVIRTUAL, Constants.TOYOBJ_NAME, "GT", "(Lorg/toylang/core/ToyObject;)Lorg/toylang/core/ToyObject;", false);
-                break;
-            case LT:
-                visitMethodInsn(INVOKEVIRTUAL, Constants.TOYOBJ_NAME, "LT", "(Lorg/toylang/core/ToyObject;)Lorg/toylang/core/ToyObject;", false);
-                break;
-            case GTE:
-                visitMethodInsn(INVOKEVIRTUAL, Constants.TOYOBJ_NAME, "GTE", "(Lorg/toylang/core/ToyObject;)Lorg/toylang/core/ToyObject;", false);
-                break;
-            case LTE:
-                visitMethodInsn(INVOKEVIRTUAL, Constants.TOYOBJ_NAME, "LTE", "(Lorg/toylang/core/ToyObject;)Lorg/toylang/core/ToyObject;", false);
-                break;
-            case EQ:
-                visitMethodInsn(INVOKEVIRTUAL, Constants.TOYOBJ_NAME, "EQ", "(Lorg/toylang/core/ToyObject;)Lorg/toylang/core/ToyObject;", false);
-                break;
-            case NE:
-                visitMethodInsn(INVOKEVIRTUAL, Constants.TOYOBJ_NAME, "NE", "(Lorg/toylang/core/ToyObject;)Lorg/toylang/core/ToyObject;", false);
+            default:
+                visitMethodInsn(INVOKEVIRTUAL, Constants.TOYOBJ_NAME, op.getOp().name, getDesc(ToyObject.class, op.getOp().name, ToyObject.class), false);
                 break;
         }
     }
@@ -592,125 +474,15 @@ public class Method extends MethodVisitor implements Opcodes, TreeVisitor {
         }
     }
 
-    private void getJavaObject(String owner, String name) {
-        visitTypeInsn(NEW, Constants.TOYOBJ_NAME);
-        visitInsn(DUP);
-        visitFieldInsn(GETSTATIC, owner, name, "Ljava/lang/Object;");
-        visitMethodInsn(INVOKESPECIAL, Constants.TOYOBJ_NAME, "<init>", "(Ljava/lang/Object;)V", false);
-    }
-
-    public void fieldOp(QualifiedName name, boolean load) {
-        visitLine(name);
-
-        int LOAD_OR_STORE = load ? ALOAD : ASTORE;
-        int GET_OR_PUT = load ? GETSTATIC : PUTSTATIC;
-
-        String[] names = name.getNames();
-        int localIdx = findLocal(names[0]);
-        if (localIdx != -1 && !names[0].equals("this")) {
-            if (names.length == 1) {
-                visitVarInsn(LOAD_OR_STORE, localIdx);
-            } else {
-                StringBuilder qname = new StringBuilder();
-                for (int i = 1; i < names.length; i++) {
-                    qname.append(names[i]);
-                    if (i + 1 < names.length) {
-                        qname.append(".");
-                    }
-                }
-                fieldOp(new QualifiedName(names[0]), true);
-                accessField(load, qname);
-            }
-        } else {
-            if (names.length == 1) {
-                if (ctx.isStatic()) {
-                    // check if it exists
-                    if (ctx.findStaticVar(name.toString()) != null) {
-                        visitFieldInsn(GET_OR_PUT, ctx.getOwner(), name.toString(), Constants.TOYOBJ_SIG);//todo;
-                    } else {
-                        Errors.put("Variable not found " + ctx.getOwner() + ":" + name.toString());
-                    }
-                } else {
-                    VarDecl decl = ctx.getClassDef().findVar(name.toString());
-                    if (decl != null) {
-                        visitVarInsn(ALOAD, 0);
-                        if(!load)
-                            visitInsn(SWAP);
-                        int op = GETFIELD;
-                        if (!load)
-                            op = PUTFIELD;
-                        visitFieldInsn(op, ctx.getOwner(), name.toString(), Constants.TOYOBJ_SIG);//todo;
-                    }
-                }
-            } else {
-                // ClassFile.Static
-                String imp = getImportedName(names[0]);
-                if (imp != null) {
-                    if (load) {
-                        visitLdcInsn(Type.getType("L" + (imp.replace(".", "/")) + ";"));
-                        visitLdcInsn(name.getNames()[1]);
-                        visitMethodInsn(INVOKESTATIC, Constants.TOYOBJ_NAME, "getField", "(" + Constants.CLASS_SIG + Constants.STRING_SIG + ")" + Constants.TOYOBJ_SIG);
-                    } else {
-                        visitFieldInsn(GET_OR_PUT, imp.replace(".", "/"), name.getNames()[1], Constants.TOYOBJ_SIG);
-                    } // TODO TODO TODO
-                    return;
-                }
-                VarDecl decl = ctx.findStaticVar(name.getNames()[0]);
-                if (decl != null) { // static field
-                    visitFieldInsn(GETSTATIC, ctx.getOwner().replace(".", "/"), names[1], Constants.TOYOBJ_SIG);
-                    StringBuilder qname = new StringBuilder();
-                    for (int i = 1; i < names.length; i++) {
-                        qname.append(names[i]);
-                        if (i + 1 < names.length) {
-                            qname.append(".");
-                        }
-                    }
-                    accessField(load, qname);
-                } else if(names[0].equals("this") && !ctx.isStatic()){
-                    visitVarInsn(ALOAD, 0);
-                    visitFieldInsn(GET_OR_PUT, ctx.getOwner().replace(".", "/"), names[1], Constants.TOYOBJ_SIG);
-                    StringBuilder qname = new StringBuilder();
-                    for (int i = 2; i < names.length; i++) {
-                        qname.append(names[i]);
-                        if (i + 1 < names.length) {
-                            qname.append(".");
-                        }
-                    }
-                    if(2 < names.length)
-                        accessField(load, qname);
-                    return;
-                }
-                Errors.put("Variable not found " + ctx.getOwner() + ":" + name.toString());
-            }
-        }
-    }
-
-    private void accessField(boolean load, StringBuilder qname) {
-        if (load) {
-            visitLdcInsn(qname.toString());
-            visitMethodInsn(INVOKEVIRTUAL, Constants.TOYOBJ_NAME, "getField", "(" + Constants.STRING_SIG + ")" + Constants.TOYOBJ_SIG);
-        } else {
-            visitInsn(SWAP);
-            visitLdcInsn(qname.toString());
-            visitInsn(SWAP);
-            visitMethodInsn(INVOKEVIRTUAL, Constants.TOYOBJ_NAME, "setField", "(" + Constants.STRING_SIG + Constants.TOYOBJ_SIG + ")" + Constants.TOYOBJ_SIG);
-        }
-    }
-
-    @Override
-    public void visitName(QualifiedName name) {
-        fieldOp(name, true);
-    }
-
     @Override
     public void visitListDef(ListDef def) {
-        visitTypeInsn(NEW, "org/toylang/core/ToyList");
+        visitTypeInsn(NEW, getInternalName(ToyList.class));
         visitInsn(DUP);
-        visitMethodInsn(INVOKESPECIAL, "org/toylang/core/ToyList", "<init>", "()V", false);
+        visitMethodInsn(INVOKESPECIAL, getInternalName(ToyList.class), "<init>", "()V", false);
 
         for (Expression expression : def.getExpressions()) {
             expression.accept(this);
-            visitMethodInsn(INVOKEVIRTUAL, "org/toylang/core/ToyObject", "add", "(Lorg/toylang/core/ToyObject;)Lorg/toylang/core/ToyObject;", false);
+            visitMethodInsn(INVOKEVIRTUAL, getInternalName(ToyObject.class), "add", getDesc(ToyList.class, "add", ToyObject.class), false);
         }
     }
 
@@ -719,23 +491,8 @@ public class Method extends MethodVisitor implements Opcodes, TreeVisitor {
         visitName(idx.getName());
         for (Expression expression : idx.getIndex()) {
             expression.accept(this);
-            visitMethodInsn(INVOKEVIRTUAL, Constants.TOYOBJ_NAME, "get", "(" + Constants.TOYOBJ_SIG + ")" + Constants.TOYOBJ_SIG);
+            visitMethodInsn(INVOKEVIRTUAL, Constants.TOYOBJ_NAME, "get", getDesc(ToyObject.class, "get", ToyObject.class), false);
         }
-    }
-
-    private void assignListIdx(ListIndex idx) {
-
-        visitName(idx.getName());
-        for (int i = 0; i < idx.getIndex().length - 1; i++) {
-            Expression expression = idx.getIndex()[i];
-            expression.accept(this);
-            visitMethodInsn(INVOKEVIRTUAL, Constants.TOYOBJ_NAME, "get", "(" + Constants.TOYOBJ_SIG + ")" + Constants.TOYOBJ_SIG);
-        }
-        visitInsn(SWAP);
-        idx.getIndex()[idx.getIndex().length - 1].accept(this);
-        visitInsn(SWAP);
-        visitMethodInsn(INVOKEVIRTUAL, Constants.TOYOBJ_NAME, "set", "(" + Constants.TOYOBJ_SIG + Constants.TOYOBJ_SIG + ")" + Constants.TOYOBJ_SIG);
-        visitInsn(POP);
     }
 
     @Override
@@ -747,32 +504,36 @@ public class Method extends MethodVisitor implements Opcodes, TreeVisitor {
     public void visitDictDef(DictDef def) {
         visitTypeInsn(NEW, Constants.TOY_DICT_NAME);
         visitInsn(DUP);
-        visitMethodInsn(INVOKESPECIAL, Constants.TOY_DICT_NAME, "<init>", "()V", false);
+        visitMethodInsn(INVOKESPECIAL, getInternalName(ToyDict.class), "<init>", "()V", false);
         Expression[] keys = def.getKeys();
         Expression[] values = def.getValues();
         for (int i = 0; i < keys.length; i++) {
             keys[i].accept(this);
             values[i].accept(this);
-            visitMethodInsn(INVOKEVIRTUAL, Constants.TOYOBJ_NAME, "put", "(" + Constants.TOYOBJ_SIG + Constants.TOYOBJ_SIG + ")" + Constants.TOYOBJ_SIG, false);
+            visitMethodInsn(INVOKEVIRTUAL, Constants.TOYOBJ_NAME, "put", getDesc(ToyDict.class, "put", ToyObject.class, ToyObject.class), false);
         }
     }
 
     @Override
     public void visitAnnotation(Annotation annotation) {
-
+        System.err.println("Annotations are not implemented");
     }
 
-    private boolean canRegisterMethod(String clazz, String name, int paramCount) {
-        try {
-            Class c = Class.forName(clazz);
-            ToyObject.registerMethod(c, name, paramCount);
-            return true;
-        } catch (Exception e) {
-            e.printStackTrace();
-            return false;
+    private void assignListIdx(ListIndex idx) {
+        visitName(idx.getName());
+        for (int i = 0; i < idx.getIndex().length - 1; i++) {
+            Expression expression = idx.getIndex()[i];
+            expression.accept(this);
+            visitMethodInsn(INVOKEVIRTUAL, getInternalName(ToyObject.class), "get", getDesc(ToyObject.class, "get", ToyObject.class), false);
         }
+        visitInsn(SWAP);
+        idx.getIndex()[idx.getIndex().length - 1].accept(this);
+        visitInsn(SWAP);
+        visitMethodInsn(INVOKEVIRTUAL, Constants.TOYOBJ_NAME, "set", getDesc(ToyObject.class, "set", ToyObject.class, ToyObject.class), false);
+        visitInsn(POP);
     }
-    public void registerMethods() {
+
+    private void registerMethods() {
         for (ReflectiveMethod reflectiveMethod : reflectiveMethods) {
             visitLdcInsn(Type.getType(reflectiveMethod.clazz));
             visitLdcInsn(reflectiveMethod.getName());
@@ -781,6 +542,7 @@ public class Method extends MethodVisitor implements Opcodes, TreeVisitor {
         }
         reflectiveMethods.clear();
     }
+
     public void writeConstants() {
         visitLdcInsn(Constants.getConstantCount());
         visitTypeInsn(ANEWARRAY, Constants.TOYOBJ_NAME);
@@ -805,12 +567,12 @@ public class Method extends MethodVisitor implements Opcodes, TreeVisitor {
             visitInsn(AASTORE);
             i++;
         }
-        visitFieldInsn(PUTSTATIC, ctx.getOwner(), "__CONSTANTS__", "[" + Constants.TOYOBJ_SIG);
+        visitFieldInsn(PUTSTATIC, ctx.getOwner(), "__CONSTANTS__", getDesc(ToyObject[].class));
     }
 
     private void getConstant(ToyObject obj) {
         int idx = Constants.getConstants().indexOf(obj);
-        visitFieldInsn(GETSTATIC, ctx.getOwner(), "__CONSTANTS__", "[" + Constants.TOYOBJ_SIG);
+        visitFieldInsn(GETSTATIC, ctx.getOwner(), "__CONSTANTS__", getDesc(ToyObject[].class));
 
         if (idx >= 0) {
             visitLdcInsn(idx);
@@ -823,7 +585,7 @@ public class Method extends MethodVisitor implements Opcodes, TreeVisitor {
 
     private void putNull() {
         if (ctx.getName().equals("<clinit>")) {
-            visitFieldInsn(GETSTATIC, Constants.TOYNULL_NAME, "NULL", Constants.TOYNULL_SIG);
+            visitFieldInsn(GETSTATIC, getInternalName(ToyNull.NULL), "NULL", getDesc(ToyNull.NULL));
         } else {
             getConstant(ToyNull.NULL);
         }
@@ -831,7 +593,7 @@ public class Method extends MethodVisitor implements Opcodes, TreeVisitor {
 
     private void putBoolean(ToyBoolean bool) {
         if (ctx.getName().equals("<clinit>")) {
-            visitFieldInsn(GETSTATIC, Constants.TOY_BOOLEAN_NAME, bool.isTrue() ? "TRUE" : "FALSE", Constants.TOY_BOOLEAN_SIG);
+            visitFieldInsn(GETSTATIC, getInternalName(bool), bool.isTrue() ? "TRUE" : "FALSE", getDesc(bool));
         } else {
             getConstant(bool);
         }
@@ -839,11 +601,10 @@ public class Method extends MethodVisitor implements Opcodes, TreeVisitor {
 
     private void putString(ToyString str) {
         if (ctx.getName().equals("<clinit>")) {
-            visitTypeInsn(NEW, "org/toylang/core/ToyString");
+            visitTypeInsn(NEW, getInternalName(str));
             visitInsn(DUP);
             visitLdcInsn(str.toString());
-            visitMethodInsn(INVOKESPECIAL, "org/toylang/core/ToyString", "<init>", "(Ljava/lang/String;)V", false);
-
+            visitMethodInsn(INVOKESPECIAL, getInternalName(str), "<init>", "(Ljava/lang/String;)V", false);
         } else {
             getConstant(str);
         }
@@ -851,10 +612,10 @@ public class Method extends MethodVisitor implements Opcodes, TreeVisitor {
 
     private void putReal(ToyReal real) {
         if (ctx.getName().equals("<clinit>")) {
-            visitTypeInsn(NEW, "org/toylang/core/ToyReal");
+            visitTypeInsn(NEW, getInternalName(real));
             visitInsn(DUP);
             visitLdcInsn(real.getValue());
-            visitMethodInsn(INVOKESPECIAL, "org/toylang/core/ToyReal", "<init>", "(D)V", false);
+            visitMethodInsn(INVOKESPECIAL, getInternalName(real), "<init>", "(D)V", false);
         } else {
             getConstant(real);
         }
@@ -862,34 +623,74 @@ public class Method extends MethodVisitor implements Opcodes, TreeVisitor {
 
     private void putInt(ToyInt integer) {
         if (ctx.getName().equals("<clinit>")) {
-            visitTypeInsn(NEW, "org/toylang/core/ToyInt");
+            visitTypeInsn(NEW, getInternalName(integer));
             visitInsn(DUP);
             visitLdcInsn(integer.getValue());
-            visitMethodInsn(INVOKESPECIAL, "org/toylang/core/ToyInt", "<init>", "(I)V", false);
+            visitMethodInsn(INVOKESPECIAL, getInternalName(integer), "<init>", "(I)V", false);
         } else {
             getConstant(integer);
         }
     }
-    static class ReflectiveMethod {
-        Class clazz;
-        String name;
-        int paramCount;
 
-        ReflectiveMethod(Class clazz, String name, int paramCount) {
+    private String getInternalName(Object obj) {
+        return Type.getType(obj.getClass()).getInternalName();
+    }
+
+    private String getDesc(Object obj) {
+        return Type.getType(obj.getClass()).getDescriptor();
+    }
+
+    private String getInternalName(Class c) {
+        return Type.getType(c).getInternalName();
+    }
+
+    private String getDesc(Class c) {
+        return Type.getType(c).getDescriptor();
+    }
+
+    private String getDesc(java.lang.reflect.Method m) {
+        return Type.getMethodDescriptor(m);
+    }
+
+    private String getDesc(Class<?> c, String methodName, Class... params) {
+        try {
+            return Type.getMethodDescriptor(c.getMethod(methodName, params));
+        } catch (NoSuchMethodException e) {
+            e.printStackTrace();
+            Errors.put("Cannot find builtin method: " + c.getName() + "." + methodName);
+        }
+        return null;
+    }
+
+    private String getInternalNameFromImports(String name) {
+        for (QualifiedName qualifiedName : ctx.getImports()) {
+            if (qualifiedName.toString().endsWith(name)) {
+                return qualifiedName.toString().replace(".", "/");
+            }
+        }
+        return null;
+    }
+
+    private static class ReflectiveMethod {
+        private Class clazz;
+        private String name;
+        private int paramCount;
+
+        private ReflectiveMethod(Class clazz, String name, int paramCount) {
             this.clazz = clazz;
             this.name = name;
             this.paramCount = paramCount;
         }
 
-        public Class getClazz() {
+        private Class getClazz() {
             return clazz;
         }
 
-        public String getName() {
+        private String getName() {
             return name;
         }
 
-        public int getParamCount() {
+        private int getParamCount() {
             return paramCount;
         }
     }
