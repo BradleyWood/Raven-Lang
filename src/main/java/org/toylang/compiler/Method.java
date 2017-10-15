@@ -502,7 +502,7 @@ public class Method extends MethodVisitor implements TreeVisitor, Opcodes {
 
     @Override
     public void visitDictDef(DictDef def) {
-        visitTypeInsn(NEW, Constants.TOY_DICT_NAME);
+        visitTypeInsn(NEW, getInternalName(ToyDict.class));
         visitInsn(DUP);
         visitMethodInsn(INVOKESPECIAL, getInternalName(ToyDict.class), "<init>", "()V", false);
         Expression[] keys = def.getKeys();
