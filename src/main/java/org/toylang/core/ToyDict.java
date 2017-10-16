@@ -16,7 +16,7 @@ public class ToyDict extends ToyObject implements Map<ToyObject, ToyObject> {
 
     @Override
     public ToyObject getType() {
-        return super.getType();
+        return TYPE;
     }
 
     @Override
