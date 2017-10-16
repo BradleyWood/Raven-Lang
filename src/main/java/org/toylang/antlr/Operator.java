@@ -25,7 +25,14 @@ public enum Operator {
     EQ("==", "EQ"),
     NE("!=", "NE"),
     AND("&&", "and"),
-    OR("||", "or"),;
+    OR("||", "or"),
+    BT_AND("&", ""),
+    BT_OR("|", ""),
+    BT_XOR("^", ""),
+    BT_LS("<<", ""),
+    BT_RS(">>", ""),
+    BT_ARS(">>>", ""),
+    BT_NOT("~", "");
 
     public final String op;
     public final String name;

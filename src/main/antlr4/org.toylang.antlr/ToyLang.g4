@@ -330,7 +330,25 @@ MOD
 EXP
     : '**'
     ;
-CARET
+BT_LS
+    : '<<'
+    ;
+BT_RS
+    : '>>'
+    ;
+BT_ARS
+    : '>>>'
+    ;
+BT_NOT
+    : '~'
+    ;
+BT_AND
+    : '&'
+    ;
+BT_OR
+    : '|'
+    ;
+BT_XOR
     : '^'
     ;
 ADD_ASSIGNMENT
