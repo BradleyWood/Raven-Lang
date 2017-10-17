@@ -21,24 +21,26 @@ fun ifTest3() {
     var i = 3;
 
     if(i == 1) {
-        Assert.assertEqual(i, 3);
+        Assert.fail();
     } else if(i == 2) {
-        Assert.assertEqual(i, 3);
+        Assert.fail();
     } else if(i == 3) {
-        Assert.assertEqual(i, 3);
+        return;
     } else if(i == 4) {
-        Assert.assertEqual(i, 3);
+        Assert.fail();
     } else {
-        Assert.assertEqual(i, 3);
+        Assert.fail();
     }
+    Assert.fail("no branch executed");
 }
 
 fun ifTest4() {
     var i = 4;
     if(i == 1) {
-        Assert.assertEqual(i, 4);
+        Assert.fail();
     } else {
-        Assert.assertEqual(i, 4);
+        return;
     }
+    Assert.fail("no branch executed");
 }
 
