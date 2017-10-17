@@ -24,4 +24,10 @@ public class Assert {
             fail(a + " is not equal to " + b);
         }
     }
+
+    public static void assertNotEqual(Object a, Object b) {
+        if (a.equals(b)) {
+            fail(a + " is equal to " + b);
+        }
+    }
 }

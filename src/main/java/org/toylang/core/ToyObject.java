@@ -91,6 +91,9 @@ public class ToyObject implements Comparable<ToyObject> {
     }
     @Hidden
     public ToyObject EQ(ToyObject obj) {
+        if(this.obj != null && obj.obj != null) {
+            return this.obj.equals(obj.obj) ? ToyBoolean.TRUE : ToyBoolean.FALSE;
+        }
         return null;
     }
     @Hidden
