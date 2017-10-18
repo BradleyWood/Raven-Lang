@@ -15,6 +15,7 @@ statement
     |   annotationDeclaration
     |   methodDeclaration
     |   ifStatement
+    |   goStatement
     |   whileStatement
     |   returnStatement
     |   classDef
@@ -30,6 +31,9 @@ returnStatement
     ;
 ifStatement
     :   IF expression statement (ELSE statement)?
+    ;
+goStatement
+    :   GO funCall SEMI
     ;
 whileStatement
     :   WHILE expression statement
@@ -199,6 +203,7 @@ ZeroToThree
 FUN     :   'fun';
 IF      :   'if';
 DO      :   'do';
+GO      :   'go';
 ELSE    :   'else';
 WHILE   :   'while';
 FOR     :   'for';
