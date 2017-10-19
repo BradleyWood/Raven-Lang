@@ -3,9 +3,7 @@ package org.toylang.antlr.visitor;
 import org.toylang.antlr.Errors;
 import org.toylang.antlr.ToyLangBaseVisitor;
 import org.toylang.antlr.ToyLangParser;
-import org.toylang.antlr.ast.Call;
-import org.toylang.antlr.ast.QualifiedName;
-import org.toylang.antlr.ast.Statement;
+import org.toylang.antlr.ast.*;
 
 
 public class StatementVisitor extends ToyLangBaseVisitor<Statement> {
@@ -40,6 +38,17 @@ public class StatementVisitor extends ToyLangBaseVisitor<Statement> {
             } else if(stmt instanceof QualifiedName){
                 Errors.put("Not a statement: "+stmt.toString());
             }
+        } else if(ctx.goStatement() != null) {
+            QualifiedName name = new QualifiedName(ctx.goStatement().funCall().IDENTIFIER().getText());
+            Expression[] expressions = new Expression[0];
+            if(ctx.goStatement().funCall().paramList() != null)
+                expressions = new Expression[ctx.goStatement().funCall().paramList().param().size()];
+            for(int i = 0; i < expressions.length; i++) {
+                expressions[i] = ctx.goStatement().funCall().paramList().param(i).accept(ExpressionVisitor.INSTANCE);
+            }
+            Call go = new Call(name, expressions);
+            go.setLineNumber(ctx.goStatement().funCall().start.getLine());
+            stmt = new Go(go);
         } else if(ctx.SEMI() != null) {
             // empty statement
             stmt = new Statement();

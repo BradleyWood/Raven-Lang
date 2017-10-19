@@ -21,4 +21,5 @@ public interface TreeVisitor {
     void visitClassDef(ClassDef def);
     void visitDictDef(DictDef def);
     void visitAnnotation(Annotation annotation);
+    void visitGo(Go go);
 }

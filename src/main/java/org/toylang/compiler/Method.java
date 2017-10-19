@@ -5,6 +5,7 @@ import org.toylang.antlr.Errors;
 import org.toylang.antlr.Operator;
 import org.toylang.antlr.ast.*;
 import org.toylang.core.*;
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -157,6 +158,11 @@ public class Method extends MethodVisitor implements TreeVisitor, Opcodes {
         }
         sig.append(")" + Constants.TOYOBJ_SIG);
         return sig.toString();
+    }
+
+    @Override
+    public void visitGo(Go go) {
+        throw new NotImplementedException();
     }
 
     @Override

@@ -75,4 +75,9 @@ public class Mapper implements TreeVisitor {
     public void visitAnnotation(Annotation annotation) {
 
     }
+
+    @Override
+    public void visitGo(Go go) {
+
+    }
 }
