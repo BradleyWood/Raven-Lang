@@ -74,3 +74,17 @@ fun typeTest() {
     val = true;
     Assert.assertEqual(type(val), ToyBoolean.TYPE);
 }
+
+fun sumTest() {
+    var lst = [10, 10, 100, 1000, 100000];
+    Assert.assertEqual(sum(lst), 101120);
+    lst = ["a", "b", "c", "d"];
+    Assert.assertEqual(sum(lst), "abcd");
+}
+
+fun revsereTest() {
+    var lst = [10, 10, 100, 1000, 100000];
+    var reversed = [100000, 1000, 100, 10, 10];
+    Assert.assertEqual(reverse(lst), reversed);
+    Assert.assertTrue(isError(reverse("abc")));
+}
