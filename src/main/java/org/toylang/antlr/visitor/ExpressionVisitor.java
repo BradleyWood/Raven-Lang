@@ -4,7 +4,7 @@ import org.toylang.antlr.Operator;
 import org.toylang.antlr.ToyLangBaseVisitor;
 import org.toylang.antlr.ToyLangParser;
 import org.toylang.antlr.ast.*;
-import org.toylang.core.*;
+import org.toylang.core.wrappers.*;
 
 public class ExpressionVisitor extends ToyLangBaseVisitor<Expression> {
 
@@ -36,19 +36,19 @@ public class ExpressionVisitor extends ToyLangBaseVisitor<Expression> {
         } else if(ctx.literal() != null) {
             if(ctx.literal().number() != null) {
                 if(ctx.literal().number().getText().contains(".") || ctx.literal().number().getText().toLowerCase().contains("e")) {
-                    expr = new Literal(new ToyReal(Double.parseDouble(ctx.literal().number().getText())));
+                    expr = new Literal(new TReal(Double.parseDouble(ctx.literal().number().getText())));
                 } else {
-                    expr = new Literal(new ToyInt(Integer.parseInt(ctx.literal().number().getText())));
+                    expr = new Literal(new TInt(Integer.parseInt(ctx.literal().number().getText())));
                 }
             } else if(ctx.literal().stringLiteral() != null) {
                 String str = ctx.literal().stringLiteral().getText();
-                expr = new Literal(new ToyString(str.substring(1, str.length() - 1)));
+                expr = new Literal(new TString(str.substring(1, str.length() - 1)));
             } else if(ctx.literal().getText().equals("null")) {
-                expr = new Literal(ToyNull.NULL); // use reference to null instead
+                expr = new Literal(TNull.NULL); // use reference to null instead
             } else if(ctx.literal().getText().equals("true")) {
-                expr = new Literal(ToyBoolean.TRUE); // use reference
+                expr = new Literal(TBoolean.TRUE); // use reference
             } else if(ctx.literal().getText().equals("false")) {
-                expr = new Literal(ToyBoolean.FALSE); // use reference
+                expr = new Literal(TBoolean.FALSE); // use reference
             }
             assert expr != null;
             expr.setLineNumber(ctx.literal().start.getLine());
@@ -87,7 +87,7 @@ public class ExpressionVisitor extends ToyLangBaseVisitor<Expression> {
                 if(expr instanceof Literal) {
                     expr = new Literal(((Literal) expr).getValue().not()); // negate numbers at compile time
                 } else {
-                    expr = new BinOp(new Literal(new ToyInt(0)), Operator.SUB, expr);
+                    expr = new BinOp(new Literal(new TInt(0)), Operator.SUB, expr);
                 }
             } else if(ctx.NOT() != null) {
                 expr = new BinOp(null, Operator.NOT, expr);

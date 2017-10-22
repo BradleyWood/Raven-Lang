@@ -4,10 +4,8 @@ import org.toylang.antlr.Operator;
 import org.toylang.antlr.ToyLangBaseVisitor;
 import org.toylang.antlr.ToyLangParser;
 import org.toylang.antlr.ast.*;
-import org.toylang.core.ToyBoolean;
-import org.toylang.core.ToyInt;
-import org.toylang.core.ToyNull;
-import org.toylang.core.ToyObject;
+import org.toylang.core.wrappers.TBoolean;
+import org.toylang.core.wrappers.TInt;
 
 import java.util.Arrays;
 
@@ -34,14 +32,14 @@ public class ForVisitor extends ToyLangBaseVisitor<Block> {
             body.append(ctx.statement().accept(StatementVisitor.INSTANCE));
 
 
-            body.append(new BinOp(name, Operator.ASSIGNMENT, new BinOp(name, Operator.ADD, new Literal(new ToyInt(inc ? 1 : -1)))));
+            body.append(new BinOp(name, Operator.ASSIGNMENT, new BinOp(name, Operator.ADD, new Literal(new TInt(inc ? 1 : -1)))));
 
             While loop = new While(condition, body);
             block.append(loop);
 
         } else if(ctx.statement() != null) {
             Statement init = new Expression();
-            Expression condition = new Literal(ToyBoolean.TRUE);
+            Expression condition = new Literal(TBoolean.TRUE);
             if(ctx.init != null)
                 init = ctx.init.accept(ExpressionVisitor.INSTANCE);
             else if(ctx.decl != null)

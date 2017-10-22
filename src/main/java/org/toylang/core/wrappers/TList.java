@@ -4,35 +4,35 @@ import org.toylang.core.Hidden;
 
 import java.util.*;
 
-public class ToyList extends ToyObject implements List {
+public class TList extends TObject implements List {
 
     @Hidden
-    public static ToyType TYPE = new ToyType(ToyList.class);
+    public static TType TYPE = new TType(TList.class);
     @Hidden
-    private ArrayList<ToyObject> list;
+    private ArrayList<TObject> list;
 
-    public ToyList() {
+    public TList() {
         list = new ArrayList<>();
     }
 
     @Hidden
-    public ToyList(ToyObject[] objects) {
+    public TList(TObject[] objects) {
         this();
         list.addAll(Arrays.asList(objects));
     }
 
-    public List<ToyObject> getList() {
+    public List<TObject> getList() {
         return list;
     }
 
     @Hidden
-    public ToyList(List<Object> obj) {
+    public TList(List<Object> obj) {
         this();
         addAll(obj);
     }
 
     @Override
-    public ToyObject getType() {
+    public TObject getType() {
         return TYPE;
     }
 
@@ -57,22 +57,22 @@ public class ToyList extends ToyObject implements List {
     }
 
     @Override
-    public ToyObject add(ToyObject obj) {
+    public TObject add(TObject obj) {
         list.add(obj);
         return this;
     }
 
     @Override
-    public ToyObject set(ToyObject index, ToyObject obj) {
-        if (index instanceof ToyInt) {
+    public TObject set(TObject index, TObject obj) {
+        if (index instanceof TInt) {
             return list.set(index.toInt(), obj);
         }
         return super.set(index, obj);
     }
 
     @Override
-    public ToyObject get(ToyObject obj) {
-        if (obj instanceof ToyInt) {
+    public TObject get(TObject obj) {
+        if (obj instanceof TInt) {
             return list.get(obj.toInt());
         }
         return super.get(obj);
@@ -90,10 +90,10 @@ public class ToyList extends ToyObject implements List {
 
     @Override
     public boolean add(Object o) {
-        if (o instanceof ToyObject) {
-            return list.add((ToyObject) o);
+        if (o instanceof TObject) {
+            return list.add((TObject) o);
         } else {
-            return list.add(ToyObject.toToyLang(o));
+            return list.add(TObject.toToyLang(o));
         }
     }
 
@@ -133,19 +133,19 @@ public class ToyList extends ToyObject implements List {
 
     @Override
     public Object set(int index, Object element) {
-        if (element instanceof ToyObject) {
-            return list.set(index, (ToyObject) element);
+        if (element instanceof TObject) {
+            return list.set(index, (TObject) element);
         } else {
-            return list.set(index, new ToyObject(element));
+            return list.set(index, new TObject(element));
         }
     }
 
     @Override
     public void add(int index, Object element) {
-        if (element instanceof ToyObject) {
-            list.add(index, (ToyObject) element);
+        if (element instanceof TObject) {
+            list.add(index, (TObject) element);
         } else {
-            list.add(index, new ToyObject(element));
+            list.add(index, new TObject(element));
         }
     }
 
@@ -220,7 +220,7 @@ public class ToyList extends ToyObject implements List {
         if (o == null || getClass() != o.getClass()) return false;
         if (!super.equals(o)) return false;
 
-        ToyList toyList = (ToyList) o;
+        TList toyList = (TList) o;
 
         return list != null ? list.equals(toyList.list) : toyList.list == null;
     }

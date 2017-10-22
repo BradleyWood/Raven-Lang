@@ -1,15 +1,15 @@
 package org.toylang.antlr.ast;
 
-import org.toylang.core.ToyObject;
+import org.toylang.core.wrappers.TObject;
 
 public class Literal extends Expression {
 
-    private final ToyObject value;
+    private final TObject value;
 
-    public Literal(ToyObject value) {
+    public Literal(TObject value) {
         this.value = value;
     }
-    public ToyObject getValue() {
+    public TObject getValue() {
         return value;
     }
 

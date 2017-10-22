@@ -2,18 +2,18 @@ package org.toylang.core.wrappers;
 
 import org.toylang.core.Hidden;
 
-public class ToyNull extends ToyObject {
+public class TNull extends TObject {
 
     @Hidden
-    public static final ToyType TYPE = new ToyType(ToyNull.class);
+    public static final TType TYPE = new TType(TNull.class);
 
-    public static final ToyNull NULL = new ToyNull();
+    public static final TNull NULL = new TNull();
 
     @Hidden
-    private ToyNull() {
+    private TNull() {
     }
     @Override
-    public ToyObject getType() {
+    public TObject getType() {
         return TYPE;
     }
     @Override
@@ -27,18 +27,18 @@ public class ToyNull extends ToyObject {
     }
 
     @Override
-    public int compareTo(ToyObject o) {
-        if(!(o instanceof ToyNull))
+    public int compareTo(TObject o) {
+        if(!(o instanceof TNull))
             return 0;
         throw new RuntimeException("Cannot compare null with "+o.getClass().getName());
     }
 
     @Override
-    public ToyObject EQ(ToyObject obj) {
-        return ((obj == null) || (obj instanceof ToyNull)) ? ToyBoolean.TRUE : ToyBoolean.FALSE;
+    public TObject EQ(TObject obj) {
+        return ((obj == null) || (obj instanceof TNull)) ? TBoolean.TRUE : TBoolean.FALSE;
     }
     @Override
-    public ToyObject NE(ToyObject obj) {
+    public TObject NE(TObject obj) {
         return EQ(obj).not();
     }
     @Override
@@ -48,6 +48,6 @@ public class ToyNull extends ToyObject {
     @Hidden
     @Override
     public boolean equals(Object o) {
-        return o instanceof ToyNull;
+        return o instanceof TNull;
     }
 }

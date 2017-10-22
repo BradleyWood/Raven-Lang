@@ -8,8 +8,8 @@ import java.util.Scanner;
 import java.lang.Thread;
 import java.lang.Class;
 
-import org.toylang.core.ToyError;
-import org.toylang.core.ToyList;
+import org.toylang.core.wrappers.TError;
+import org.toylang.core.wrappers.TList;
 
 private var out = System.out;
 private var err = System.err;
@@ -18,11 +18,11 @@ private var scan = Scanner(in);
 
 
 public fun isError(obj) {
-    return type(obj) == ToyError.TYPE;
+    return type(obj) == TError.TYPE;
 }
 
 public fun error(obj) {
-    return ToyError(str(obj));
+    return TError(str(obj));
 }
 public fun println(obj) {
     out.println(obj);
@@ -82,8 +82,8 @@ public fun vars() {
 }
 
 public fun reverse(lst) {
-    if (type(lst) != ToyList.TYPE) {
-        return error("Illegal arguments of type: " + type(lst) + " expected: " + ToyList.TYPE);
+    if (type(lst) != TList.TYPE) {
+        return error("Illegal arguments of type: " + type(lst) + " expected: " + TList.TYPE);
     }
     var n = len(lst);
     var tmp;

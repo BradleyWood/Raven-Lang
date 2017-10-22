@@ -8,32 +8,32 @@ import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
-public class ToyObject implements Comparable<ToyObject> {
+public class TObject implements Comparable<TObject> {
 
     private static final HashMap<Integer, JavaMethod> methodCache = new HashMap<>();
 
     @Hidden
-    private ToyType type;
+    private TType type;
     @Hidden
     private Object obj = null;
 
     @Hidden
-    protected ToyObject() {
+    protected TObject() {
     }
     @Hidden
-    public ToyObject(Object obj) {
+    public TObject(Object obj) {
         this.obj = obj;
-        this.type = new ToyType(obj.getClass());
+        this.type = new TType(obj.getClass());
     }
     @Hidden
-    public ToyObject(ToyType type) {
+    public TObject(TType type) {
         this.type = type;
     }
     @Hidden
-    public void setType(ToyType type) {
+    public void setType(TType type) {
         this.type = type;
     }
-    public ToyObject getType() {
+    public TObject getType() {
         return type;
     }
     @Hidden
@@ -44,78 +44,78 @@ public class ToyObject implements Comparable<ToyObject> {
         return false;
     }
     @Hidden
-    public ToyObject set(ToyObject index, ToyObject obj) {
+    public TObject set(TObject index, TObject obj) {
         return null;
     }
     @Hidden
-    public ToyObject get(ToyObject obj) {
+    public TObject get(TObject obj) {
         return null;
     }
     @Hidden
-    public ToyObject add(ToyObject obj) {
+    public TObject add(TObject obj) {
         return null;
     }
     @Hidden
-    public ToyObject sub(ToyObject obj) {
+    public TObject sub(TObject obj) {
         return null;
     }
     @Hidden
-    public ToyObject mul(ToyObject obj) {
+    public TObject mul(TObject obj) {
         return null;
     }
     @Hidden
-    public ToyObject div(ToyObject obj) {
+    public TObject div(TObject obj) {
         return null;
     }
     @Hidden
-    public ToyObject mod(ToyObject obj) {
+    public TObject mod(TObject obj) {
         return null;
     }
     @Hidden
-    public ToyObject pow(ToyObject obj) {
+    public TObject pow(TObject obj) {
         return null;
     }
     @Hidden
-    public ToyObject GT(ToyObject obj) {
+    public TObject GT(TObject obj) {
         return null;
     }
     @Hidden
-    public ToyObject LT(ToyObject obj) {
+    public TObject LT(TObject obj) {
         return null;
     }
     @Hidden
-    public ToyObject GTE(ToyObject obj) {
+    public TObject GTE(TObject obj) {
         return null;
     }
     @Hidden
-    public ToyObject LTE(ToyObject obj) {
+    public TObject LTE(TObject obj) {
         return null;
     }
     @Hidden
-    public ToyObject EQ(ToyObject obj) {
+    public TObject EQ(TObject obj) {
         if(this.obj != null && obj.obj != null) {
-            return this.obj.equals(obj.obj) ? ToyBoolean.TRUE : ToyBoolean.FALSE;
+            return this.obj.equals(obj.obj) ? TBoolean.TRUE : TBoolean.FALSE;
         }
         return null;
     }
     @Hidden
-    public ToyObject NE(ToyObject obj) {
+    public TObject NE(TObject obj) {
         return null;
     }
-    public ToyObject put(ToyObject key, ToyObject value) {
-        return null;
-    }
-    @Hidden
-    public ToyObject not() {
+    public TObject put(TObject key, TObject value) {
         return null;
     }
     @Hidden
-    public ToyObject and(ToyObject b) {
-        return (isTrue() && b.isTrue()) ? ToyBoolean.TRUE : ToyBoolean.FALSE;
+    public TObject not() {
+        return null;
     }
     @Hidden
-    public ToyObject or(ToyObject b) {
-        return (isTrue() || b.isTrue()) ? ToyBoolean.TRUE : ToyBoolean.FALSE;
+    public TObject and(TObject b) {
+        return (isTrue() && b.isTrue()) ? TBoolean.TRUE : TBoolean.FALSE;
+    }
+    @Hidden
+    public TObject or(TObject b) {
+        return (isTrue() || b.isTrue()) ? TBoolean.TRUE : TBoolean.FALSE;
     }
     public Integer toInt() {
         return null;
@@ -155,7 +155,7 @@ public class ToyObject implements Comparable<ToyObject> {
         throw new RuntimeException(this+" cannot be converted to array");
     }
     @Hidden
-    public static ToyObject newObj(Class clazz, ToyObject params) {
+    public static TObject newObj(Class clazz, TObject params) {
         try {
             if(clazz.getAnnotationsByType(Hidden.class).length == 0) {
                 for (Constructor<?> constructor : clazz.getConstructors()) {
@@ -167,12 +167,12 @@ public class ToyObject implements Comparable<ToyObject> {
                         if (pa == null)
                             continue;
                         for (int i = 0; i < pa.length; i++) {
-                            //System.out.println(pa[i] + " " + pa[i].getClass() + " " + " : " + types[i] + " : " + params.get(new ToyInt(i)));
+                            //System.out.println(pa[i] + " " + pa[i].getClass() + " " + " : " + types[i] + " : " + params.get(new TInt(i)));
                         }
                         Object o = constructor.newInstance(pa);
-                        if (ToyObject.class.isAssignableFrom(o.getClass()))
-                            return (ToyObject) o;
-                        return new ToyObject(o);
+                        if (TObject.class.isAssignableFrom(o.getClass()))
+                            return (TObject) o;
+                        return new TObject(o);
                     }
                 }
             }
@@ -182,7 +182,7 @@ public class ToyObject implements Comparable<ToyObject> {
         throw new RuntimeException("Constructor " + clazz.getName() + " not found.");
     }
     @Hidden
-    public void setField(String name, ToyObject value) {
+    public void setField(String name, TObject value) {
         try {
             String[] names = name.split("\\.");
             Object o = obj;
@@ -197,7 +197,7 @@ public class ToyObject implements Comparable<ToyObject> {
         throw new RuntimeException(obj + " has no attribute " + name);
     }
     @Hidden
-    public void setField(Class clazz, String name, ToyObject value) {
+    public void setField(Class clazz, String name, TObject value) {
         try {
             String[] names = name.split("\\.");
             Object o = obj;
@@ -213,13 +213,13 @@ public class ToyObject implements Comparable<ToyObject> {
     }
 
     @Hidden
-    private boolean setField(ToyObject value, Object o, Field f) throws IllegalAccessException {
-        if(f.getType().isAssignableFrom(ToyObject.class)) {
+    private boolean setField(TObject value, Object o, Field f) throws IllegalAccessException {
+        if(f.getType().isAssignableFrom(TObject.class)) {
             f.setAccessible(true);
             f.set(o, value);
             return true;
         } else {
-            Object[] javaValue = getParams(new ToyList().add(value), new Class<?>[] {f.getType()});
+            Object[] javaValue = getParams(new TList().add(value), new Class<?>[] {f.getType()});
             if(javaValue != null) {
                 f.set(o, javaValue[0]);
                 return true;
@@ -229,7 +229,7 @@ public class ToyObject implements Comparable<ToyObject> {
     }
 
     @Hidden
-    public ToyObject getField(String name) {
+    public TObject getField(String name) {
         try {
             String[] names = name.split("\\.");
             if(names.length == 0)
@@ -256,7 +256,7 @@ public class ToyObject implements Comparable<ToyObject> {
         throw new RuntimeException(obj+" has no attribute "+name);
     }
     @Hidden
-    public static ToyObject getField(Class clazz, String name) {
+    public static TObject getField(Class clazz, String name) {
         try {
             String[] names = name.split("\\.");
             if(names.length == 0)
@@ -269,14 +269,14 @@ public class ToyObject implements Comparable<ToyObject> {
             Object o = f.get(null);
             if(names.length == 1)
                 return toToyLang(o);
-            return new ToyObject(o).getField(name.substring(names[0].length()));
+            return new TObject(o).getField(name.substring(names[0].length()));
         } catch (IllegalAccessException | NoSuchFieldException e) {
             e.printStackTrace();
         }
         throw new RuntimeException("Attribute is not accessible: "+clazz.getName()+":"+name);
     }
     @Hidden
-    public final ToyObject invoke(String name, ToyObject params) {
+    public final TObject invoke(String name, TObject params) {
         if(name.equals("getType"))
             return getType();
         if(obj == null)
@@ -284,11 +284,11 @@ public class ToyObject implements Comparable<ToyObject> {
         return invoke(obj.getClass(), obj,  name, params);
     }
     @Hidden
-    public static ToyObject invoke(Class clazz, String name, ToyObject params) {
+    public static TObject invoke(Class clazz, String name, TObject params) {
         return invoke(clazz, null, name, params);
     }
     @Hidden
-    public ToyObject invokeV(int hash, ToyObject params) {
+    public TObject invokeV(int hash, TObject params) {
         JavaMethod method = findMethod(hash);
 
         if(method != null) {
@@ -297,13 +297,13 @@ public class ToyObject implements Comparable<ToyObject> {
                 return toToyLang(method.mh.invoke(this, pa));
             } catch (IllegalAccessException | InvocationTargetException e) {
                 e.printStackTrace();
-                return new ToyError("Error at call to "+this.getClass().getName()+"."+method.mh.getName()+"("+params+")");
+                return new TError("Error at call to "+this.getClass().getName()+"."+method.mh.getName()+"("+params+")");
             }
         }
         throw new RuntimeException("Method not found: "+hash+":"+params);
     }
     @Hidden
-    public static ToyObject invoke(int hash, ToyObject params) {
+    public static TObject invoke(int hash, TObject params) {
         JavaMethod jm = findMethod(hash);
         if(jm != null) {
             Object[] pa = getParams(params, jm.parameterTypes);
@@ -311,13 +311,13 @@ public class ToyObject implements Comparable<ToyObject> {
                 return toToyLang(jm.mh.invoke(null, pa));
             } catch (IllegalAccessException | InvocationTargetException e) {
                 e.getCause().printStackTrace();
-                return new ToyError(e.getMessage());
+                return new TError(e.getMessage());
             }
         }
         throw new RuntimeException("Method not found: "+hash);
     }
     @Hidden
-    public static ToyObject invoke(Class clazz, Object obj, String name, ToyObject params) {
+    public static TObject invoke(Class clazz, Object obj, String name, TObject params) {
         JavaMethod method = findMethod(clazz, name, params);
         if(method != null) {
             try {
@@ -327,7 +327,7 @@ public class ToyObject implements Comparable<ToyObject> {
                 return toToyLang(ret);
             } catch (Throwable e) {
                 e.getCause().printStackTrace();
-                return new ToyError(e.getMessage());
+                return new TError(e.getMessage());
             }
         }
         throw new RuntimeException("Method " + clazz.getName() + ":" + name + " not found.");
@@ -360,7 +360,7 @@ public class ToyObject implements Comparable<ToyObject> {
         return methodCache.get(hash);
     }
     @Hidden
-    private static JavaMethod findMethod(Class clazz, String name, ToyObject params) {
+    private static JavaMethod findMethod(Class clazz, String name, TObject params) {
         int hash = Objects.hash(clazz, name, params.size());
         JavaMethod m = methodCache.get(hash);
         if(m != null) {
@@ -445,23 +445,23 @@ public class ToyObject implements Comparable<ToyObject> {
                 MethodType.methodType(m.getReturnType(), m.getParameterTypes()));
     }
     @Hidden
-    private static Object[] getParams(ToyObject params, Class<?>[] types) {
-        if(!(params instanceof ToyList))
+    private static Object[] getParams(TObject params, Class<?>[] types) {
+        if(!(params instanceof TList))
             return null;
 
-        List<ToyObject> lst = ((ToyList)params).getList();
+        List<TObject> lst = ((TList)params).getList();
 
         Object[] pa = new Object[params.size()];
         for(int i = 0; i < types.length; i++) {
             Class<?> type = types[i];
-            if(lst.get(i) instanceof ToyNull) {
+            if(lst.get(i) instanceof TNull) {
                 pa[i] = null;
                 continue;
             }
             try {
-                if (type.isAssignableFrom(ToyObject.class)) {
+                if (type.isAssignableFrom(TObject.class)) {
                     pa[i] = toToyLang(lst.get(i));
-                } else if (type.getName().equals(ToyObject.class.getName())) {
+                } else if (type.getName().equals(TObject.class.getName())) {
                     pa[i] = lst.get(i);
                 } else if (type == int.class) {
                     pa[i] = lst.get(i).toInt();
@@ -494,37 +494,37 @@ public class ToyObject implements Comparable<ToyObject> {
         return pa;
     }
     @Hidden
-    public static ToyObject toToyLang(Object o) {
-        if(o instanceof ToyObject)
-            return (ToyObject) o;
+    public static TObject toToyLang(Object o) {
+        if(o instanceof TObject)
+            return (TObject) o;
 
         if(o instanceof Integer || o instanceof Long || o instanceof Short || o instanceof Byte) {
-            return new ToyInt((int) o);
+            return new TInt((int) o);
         }
         if(o instanceof Float || o instanceof Double) {
-            return new ToyReal((double) o);
+            return new TReal((double) o);
         }
         if(o instanceof Boolean) {
-            return ((boolean)o) ? ToyBoolean.TRUE : ToyBoolean.FALSE;
+            return ((boolean)o) ? TBoolean.TRUE : TBoolean.FALSE;
         }
         if(o instanceof String) {
-            return new ToyString((String) o);
+            return new TString((String) o);
         }
         if(o == null) {
-            return ToyNull.NULL;
+            return TNull.NULL;
         }
         if(o instanceof List) {
-            return new ToyList((List)o);
+            return new TList((List)o);
         }
         if(o.getClass().isArray()) {
-            ToyList lst = new ToyList();
+            TList lst = new TList();
             Object[] objA = (Object[])o;
             lst.addAll(Arrays.asList(objA));
             return lst;
         }
-        if(ToyObject.class.isAssignableFrom(o.getClass()))
-            return (ToyObject) o;
-        return new ToyObject(o);
+        if(TObject.class.isAssignableFrom(o.getClass()))
+            return (TObject) o;
+        return new TObject(o);
     }
 
     @Override
@@ -532,7 +532,7 @@ public class ToyObject implements Comparable<ToyObject> {
         return (obj != null ? obj.toString() : "[INVALID-OBJECT]");
     }
     @Override
-    public int compareTo(ToyObject o) {
+    public int compareTo(TObject o) {
         if(obj instanceof Comparable && o.obj instanceof Comparable) {
             return ((Comparable)obj).compareTo(o.obj);
         }
@@ -543,7 +543,7 @@ public class ToyObject implements Comparable<ToyObject> {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        ToyObject toyObject = (ToyObject) o;
+        TObject toyObject = (TObject) o;
 
         if (type != null ? !type.equals(toyObject.type) : toyObject.type != null) return false;
         return obj != null ? obj.equals(toyObject.obj) : toyObject.obj == null;

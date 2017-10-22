@@ -63,12 +63,12 @@ public class Fun extends Statement {
         if(!getName().toString().equals("main")) {
             desc = new StringBuilder("(");
             for (VarDecl ignored : getParams()) {
-                desc.append(Constants.TOYOBJ_SIG);
+                desc.append(Constants.TOBJ_SIG);
             }
             if(name.toString().equals("<init>")) {
                 desc.append(")V");
             } else {
-                desc.append(")" + Constants.TOYOBJ_SIG);
+                desc.append(")" + Constants.TOBJ_SIG);
             }
         }
         if(getName().toString().equals("<clinit>"))

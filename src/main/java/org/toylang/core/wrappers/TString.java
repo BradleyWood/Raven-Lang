@@ -3,36 +3,36 @@ package org.toylang.core.wrappers;
 
 import org.toylang.core.Hidden;
 
-public class ToyString extends ToyObject {
+public class TString extends TObject {
 
-    public static ToyType TYPE = new ToyType(ToyString.class);
+    public static TType TYPE = new TType(TString.class);
     @Hidden
     private final String str;
 
     @Hidden
-    public ToyString(String str) {
+    public TString(String str) {
         this.str = str;
     }
 
     @Override
-    public ToyObject getType() {
+    public TObject getType() {
         return TYPE;
     }
 
     @Override
-    public ToyObject add(ToyObject obj) {
-        return new ToyString(str + obj);
+    public TObject add(TObject obj) {
+        return new TString(str + obj);
     }
 
     @Override
-    public ToyObject EQ(ToyObject obj) {
+    public TObject EQ(TObject obj) {
         if (obj == null)
-            return ToyBoolean.FALSE;
-        return str.equals(obj.toString()) ? ToyBoolean.TRUE : ToyBoolean.FALSE;
+            return TBoolean.FALSE;
+        return str.equals(obj.toString()) ? TBoolean.TRUE : TBoolean.FALSE;
     }
 
     @Override
-    public ToyObject NE(ToyObject obj) {
+    public TObject NE(TObject obj) {
         return EQ(obj).not();
     }
 
@@ -53,8 +53,8 @@ public class ToyString extends ToyObject {
     }
 
     @Override
-    public int compareTo(ToyObject o) {
-        if (o instanceof ToyString) {
+    public int compareTo(TObject o) {
+        if (o instanceof TString) {
             String str = o.toString();
             return this.str.compareTo(str);
         }
@@ -77,7 +77,7 @@ public class ToyString extends ToyObject {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        ToyString toyString = (ToyString) o;
+        TString toyString = (TString) o;
 
         return str != null ? str.equals(toyString.str) : toyString.str == null;
     }

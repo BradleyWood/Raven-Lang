@@ -56,7 +56,7 @@ public class ClassMaker {
         cw.visitAnnotation(Constants.ANNOTATION_TLFILE_SIG, true).visitEnd();
         cw.visitSource(def.getName().toString() + ".tl", null);
 
-        cw.visitField(ACC_PRIVATE + ACC_STATIC + ACC_FINAL, "__CONSTANTS__", "[" + Constants.TOYOBJ_SIG, null, null);
+        cw.visitField(ACC_PRIVATE + ACC_STATIC + ACC_FINAL, "__CONSTANTS__", "[" + Constants.TOBJ_SIG, null, null);
         for (VarDecl staticVariable : staticVariables) {
             defineField(staticVariable.getName().toString(), ACC_STATIC + staticVariable.modifiers());
         }
@@ -87,7 +87,7 @@ public class ClassMaker {
     }
 
     private void defineField(String name, int modifiers) {
-        cw.visitField(modifiers, name, Constants.TOYOBJ_SIG, null, null);
+        cw.visitField(modifiers, name, Constants.TOBJ_SIG, null, null);
     }
 
     private void defineMethod(MethodContext context, Fun fun, int modifiers) {

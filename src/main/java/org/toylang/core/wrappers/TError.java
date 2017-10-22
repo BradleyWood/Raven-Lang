@@ -4,20 +4,20 @@ import org.toylang.core.Hidden;
 
 import java.util.Objects;
 
-public class ToyError extends ToyObject {
+public class TError extends TObject {
 
-    public static final ToyType TYPE = new ToyType(ToyError.class);
+    public static final TType TYPE = new TType(TError.class);
 
-    private final ToyString msg;
+    private final TString msg;
 
-    public ToyError(ToyString msg) {
+    public TError(TString msg) {
         super(TYPE);
         this.msg = msg;
     }
 
-    public ToyError(String msg) {
+    public TError(String msg) {
         super(TYPE);
-        this.msg = new ToyString(msg);
+        this.msg = new TString(msg);
     }
 
     @Hidden
@@ -26,19 +26,19 @@ public class ToyError extends ToyObject {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         if (!super.equals(o)) return false;
-        ToyError toyError = (ToyError) o;
+        TError toyError = (TError) o;
         return Objects.equals(msg, toyError.msg);
     }
 
     @Override
-    public ToyObject EQ(ToyObject obj) {
+    public TObject EQ(TObject obj) {
         if (equals(obj))
-            return ToyBoolean.TRUE;
-        return ToyBoolean.FALSE;
+            return TBoolean.TRUE;
+        return TBoolean.FALSE;
     }
 
     @Override
-    public ToyObject NE(ToyObject obj) {
+    public TObject NE(TObject obj) {
         return EQ(obj).not();
     }
 

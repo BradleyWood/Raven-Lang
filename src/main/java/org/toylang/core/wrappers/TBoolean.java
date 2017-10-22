@@ -2,20 +2,20 @@ package org.toylang.core.wrappers;
 
 import org.toylang.core.Hidden;
 
-public class ToyBoolean extends ToyObject {
+public class TBoolean extends TObject {
 
-    public static ToyType TYPE = new ToyType(ToyBoolean.class);
-    public static final ToyBoolean TRUE = new ToyBoolean(true);
-    public static final ToyBoolean FALSE = new ToyBoolean(false);
+    public static TType TYPE = new TType(TBoolean.class);
+    public static final TBoolean TRUE = new TBoolean(true);
+    public static final TBoolean FALSE = new TBoolean(false);
 
     private boolean value;
 
-    private ToyBoolean(boolean value) {
+    private TBoolean(boolean value) {
         this.value = value;
     }
 
     @Override
-    public ToyObject getType() {
+    public TObject getType() {
         return TYPE;
     }
 
@@ -25,7 +25,7 @@ public class ToyBoolean extends ToyObject {
     }
 
     @Override
-    public ToyObject not() {
+    public TObject not() {
         if(value)
             return FALSE;
         return TRUE;
@@ -47,23 +47,23 @@ public class ToyBoolean extends ToyObject {
     }
 
     @Override
-    public ToyObject EQ(ToyObject obj) {
-        if(obj instanceof ToyBoolean) {
-            return (value == ((ToyBoolean) obj).value) ? ToyBoolean.TRUE : ToyBoolean.FALSE;
+    public TObject EQ(TObject obj) {
+        if(obj instanceof TBoolean) {
+            return (value == ((TBoolean) obj).value) ? TBoolean.TRUE : TBoolean.FALSE;
         }
-        return ToyBoolean.FALSE;
+        return TBoolean.FALSE;
     }
 
     @Override
-    public ToyObject NE(ToyObject obj) {
+    public TObject NE(TObject obj) {
         return EQ(obj).not();
     }
 
     @Override
-    public int compareTo(ToyObject o) {
-        if (!(o instanceof ToyBoolean))
+    public int compareTo(TObject o) {
+        if (!(o instanceof TBoolean))
             throw new RuntimeException("Cannot compare boolean and " + o.getClass().getName());
-        ToyBoolean other = (ToyBoolean) o;
+        TBoolean other = (TBoolean) o;
         return (value == other.value) ? 0 : (value ? 1 : -1);
     }
 
@@ -74,7 +74,7 @@ public class ToyBoolean extends ToyObject {
         if (o == null || getClass() != o.getClass()) return false;
         if (!super.equals(o)) return false;
 
-        ToyBoolean that = (ToyBoolean) o;
+        TBoolean that = (TBoolean) o;
 
         return value == that.value;
     }

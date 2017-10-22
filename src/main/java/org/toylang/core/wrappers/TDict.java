@@ -5,27 +5,27 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-public class ToyDict extends ToyObject implements Map<ToyObject, ToyObject> {
+public class TDict extends TObject implements Map<TObject, TObject> {
 
-    public static final ToyType TYPE = new ToyType(ToyType.class);
+    public static final TType TYPE = new TType(TType.class);
 
-    private final HashMap<ToyObject, ToyObject> map = new HashMap<>();
+    private final HashMap<TObject, TObject> map = new HashMap<>();
 
-    public ToyDict() {
+    public TDict() {
     }
 
     @Override
-    public ToyObject getType() {
+    public TObject getType() {
         return TYPE;
     }
 
     @Override
-    public ToyObject set(ToyObject index, ToyObject obj) {
+    public TObject set(TObject index, TObject obj) {
         return put(index, obj);
     }
 
     @Override
-    public ToyObject get(ToyObject obj) {
+    public TObject get(TObject obj) {
         return map.get(obj);
     }
 
@@ -50,23 +50,23 @@ public class ToyDict extends ToyObject implements Map<ToyObject, ToyObject> {
     }
 
     @Override
-    public ToyObject get(Object key) {
+    public TObject get(Object key) {
         return get(toToyLang(key));
     }
 
     @Override
-    public ToyObject put(ToyObject key, ToyObject value) {
+    public TObject put(TObject key, TObject value) {
         map.put(toToyLang(key), toToyLang(value));
         return this;
     }
 
     @Override
-    public ToyObject remove(Object key) {
+    public TObject remove(Object key) {
         return map.remove(toToyLang(key));
     }
 
     @Override
-    public void putAll(Map<? extends ToyObject, ? extends ToyObject> m) {
+    public void putAll(Map<? extends TObject, ? extends TObject> m) {
         map.putAll(m);
     }
 
@@ -76,17 +76,17 @@ public class ToyDict extends ToyObject implements Map<ToyObject, ToyObject> {
     }
 
     @Override
-    public Set<ToyObject> keySet() {
+    public Set<TObject> keySet() {
         return map.keySet();
     }
 
     @Override
-    public Collection<ToyObject> values() {
+    public Collection<TObject> values() {
         return map.values();
     }
 
     @Override
-    public Set<Entry<ToyObject, ToyObject>> entrySet() {
+    public Set<Entry<TObject, TObject>> entrySet() {
         return map.entrySet();
     }
 

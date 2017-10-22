@@ -2,32 +2,32 @@ package org.toylang.core.wrappers;
 
 import org.toylang.core.Hidden;
 
-public class ToyType extends ToyObject {
+public class TType extends TObject {
 
     @Hidden
-    public static ToyType TYPE = new ToyType(ToyType.class);
+    public static TType TYPE = new TType(TType.class);
 
     @Hidden
     private final Class<?> type;
 
     @Hidden
-    public ToyType(Class<?> type) {
+    public TType(Class<?> type) {
         this.type = type;
     }
     @Override
-    public ToyObject getType() {
+    public TObject getType() {
         return TYPE;
     }
     @Override
-    public ToyObject EQ(ToyObject obj) {
-        if(obj instanceof ToyType) {
-            ToyType type = (ToyType) obj;
-            return this.type == type.type ? ToyBoolean.TRUE : ToyBoolean.FALSE;
+    public TObject EQ(TObject obj) {
+        if(obj instanceof TType) {
+            TType type = (TType) obj;
+            return this.type == type.type ? TBoolean.TRUE : TBoolean.FALSE;
         }
-        return ToyBoolean.FALSE;
+        return TBoolean.FALSE;
     }
     @Override
-    public ToyObject NE(ToyObject obj) {
+    public TObject NE(TObject obj) {
         return EQ(obj).not();
     }
     @Override
@@ -40,7 +40,7 @@ public class ToyType extends ToyObject {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        ToyType toyType = (ToyType) o;
+        TType toyType = (TType) o;
 
         return type != null ? type.equals(toyType.type) : toyType.type == null;
     }

@@ -2,20 +2,20 @@ package org.toylang.core.wrappers;
 
 import org.toylang.core.Hidden;
 
-public class ToyReal extends ToyObject {
+public class TReal extends TObject {
 
-    public static final ToyType TYPE = new ToyType(ToyReal.class);
+    public static final TType TYPE = new TType(TReal.class);
     @Hidden
-    private static final ToyReal ZERO = new ToyReal(0.0);
+    private static final TReal ZERO = new TReal(0.0);
 
     @Hidden
     private double value;
 
-    public ToyReal(double value) {
+    public TReal(double value) {
         this.value = value;
     }
     @Override
-    public ToyObject getType() {
+    public TObject getType() {
         return TYPE;
     }
     @Hidden
@@ -27,14 +27,14 @@ public class ToyReal extends ToyObject {
         return value != 0.0;
     }
     @Override
-    public ToyReal not() {
-        return new ToyReal(-value);
+    public TReal not() {
+        return new TReal(-value);
     }
 
     @Override
-    public int compareTo(ToyObject o) {
-        ToyObject result = sub(o);
-        if(result instanceof ToyNull)
+    public int compareTo(TObject o) {
+        TObject result = sub(o);
+        if(result instanceof TNull)
             throw new RuntimeException("Cannot compare real with "+o.getClass().getName());
         if(result.LT(ZERO).isTrue())
             return -1;
@@ -43,148 +43,148 @@ public class ToyReal extends ToyObject {
         return 0;
     }
     @Override
-    public ToyObject add(ToyObject obj) {
-        if(obj instanceof ToyString) {
-            return new ToyString(toString() + obj.toString());
-        } else if(obj instanceof ToyReal) {
-            double other = ((ToyReal) obj).value;
+    public TObject add(TObject obj) {
+        if(obj instanceof TString) {
+            return new TString(toString() + obj.toString());
+        } else if(obj instanceof TReal) {
+            double other = ((TReal) obj).value;
             double result = value + other;
-            return new ToyReal(result);
-        } else if(obj instanceof ToyInt) {
-            double other = (double)((ToyInt) obj).getValue();
+            return new TReal(result);
+        } else if(obj instanceof TInt) {
+            double other = (double)((TInt) obj).getValue();
             double result = value + other;
-            return new ToyReal(result);
+            return new TReal(result);
         }
         return super.add(obj);
     }
     @Override
-    public ToyObject sub(ToyObject obj) {
-        if(obj instanceof ToyReal) {
-            double other = ((ToyReal) obj).value;
+    public TObject sub(TObject obj) {
+        if(obj instanceof TReal) {
+            double other = ((TReal) obj).value;
             double result = value - other;
-            return new ToyReal(result);
-        } else if(obj instanceof ToyInt) {
-            double other = (double)((ToyInt) obj).getValue();
+            return new TReal(result);
+        } else if(obj instanceof TInt) {
+            double other = (double)((TInt) obj).getValue();
             double result = value - other;
-            return new ToyReal(result);
+            return new TReal(result);
         }
         return super.sub(obj);
     }
     @Override
-    public ToyObject mul(ToyObject obj) {
-        if(obj instanceof ToyReal) {
-            double other = ((ToyReal) obj).value;
+    public TObject mul(TObject obj) {
+        if(obj instanceof TReal) {
+            double other = ((TReal) obj).value;
             double result = value * other;
-            return new ToyReal(result);
-        } else if(obj instanceof ToyInt) {
-            double other = (double)((ToyInt) obj).getValue();
+            return new TReal(result);
+        } else if(obj instanceof TInt) {
+            double other = (double)((TInt) obj).getValue();
             double result = value * other;
-            return new ToyReal(result);
+            return new TReal(result);
         }
         return super.mul(obj);
     }
     @Override
-    public ToyObject div(ToyObject obj) {
-        if(obj instanceof ToyReal) {
-            double other = ((ToyReal) obj).value;
+    public TObject div(TObject obj) {
+        if(obj instanceof TReal) {
+            double other = ((TReal) obj).value;
             double result = value / other;
-            return new ToyReal(result);
-        } else if(obj instanceof ToyInt) {
-            double other = (double)((ToyInt) obj).getValue();
+            return new TReal(result);
+        } else if(obj instanceof TInt) {
+            double other = (double)((TInt) obj).getValue();
             double result = value / other;
-            return new ToyReal(result);
+            return new TReal(result);
         }
         return super.div(obj);
     }
     @Override
-    public ToyObject mod(ToyObject obj) {
-        if(obj instanceof ToyReal) {
-            double other = ((ToyReal) obj).value;
+    public TObject mod(TObject obj) {
+        if(obj instanceof TReal) {
+            double other = ((TReal) obj).value;
             double result = value % other;
-            return new ToyReal(result);
-        } else if(obj instanceof ToyInt) {
-            double other = (double)((ToyInt) obj).getValue();
+            return new TReal(result);
+        } else if(obj instanceof TInt) {
+            double other = (double)((TInt) obj).getValue();
             double result = value % other;
-            return new ToyReal(result);
+            return new TReal(result);
         }
         return super.mod(obj);
     }
     @Override
-    public ToyObject pow(ToyObject obj) {
-        if(obj instanceof ToyReal) {
-            double other = ((ToyReal) obj).value;
+    public TObject pow(TObject obj) {
+        if(obj instanceof TReal) {
+            double other = ((TReal) obj).value;
             double result = Math.pow(value, other);
-            return new ToyReal(result);
-        } else if(obj instanceof ToyInt) {
-            double other = (double)((ToyInt) obj).getValue();
+            return new TReal(result);
+        } else if(obj instanceof TInt) {
+            double other = (double)((TInt) obj).getValue();
             double result = Math.pow(value, other);
-            return new ToyReal(result);
+            return new TReal(result);
         }
         return super.pow(obj);
     }
     @Override
-    public ToyObject GT(ToyObject obj) {
-        if(obj instanceof ToyReal) {
-            double other = ((ToyReal) obj).value;
-            return value > other ? ToyBoolean.TRUE : ToyBoolean.FALSE;
-        } else if(obj instanceof ToyInt) {
-            double other = (double)((ToyInt) obj).getValue();
-            return value > other ? ToyBoolean.TRUE : ToyBoolean.FALSE;
+    public TObject GT(TObject obj) {
+        if(obj instanceof TReal) {
+            double other = ((TReal) obj).value;
+            return value > other ? TBoolean.TRUE : TBoolean.FALSE;
+        } else if(obj instanceof TInt) {
+            double other = (double)((TInt) obj).getValue();
+            return value > other ? TBoolean.TRUE : TBoolean.FALSE;
         }
         return super.GT(obj);
     }
     @Override
-    public ToyObject LT(ToyObject obj) {
-        if(obj instanceof ToyReal) {
-            double other = ((ToyReal) obj).value;
-            return value < other ? ToyBoolean.TRUE : ToyBoolean.FALSE;
-        } else if(obj instanceof ToyInt) {
-            double other = (double)((ToyInt) obj).getValue();
-            return value < other ? ToyBoolean.TRUE : ToyBoolean.FALSE;
+    public TObject LT(TObject obj) {
+        if(obj instanceof TReal) {
+            double other = ((TReal) obj).value;
+            return value < other ? TBoolean.TRUE : TBoolean.FALSE;
+        } else if(obj instanceof TInt) {
+            double other = (double)((TInt) obj).getValue();
+            return value < other ? TBoolean.TRUE : TBoolean.FALSE;
         }
         return super.LT(obj);
     }
     @Override
-    public ToyObject GTE(ToyObject obj) {
-        if(obj instanceof ToyReal) {
-            double other = ((ToyReal) obj).value;
-            return value >= other ? ToyBoolean.TRUE : ToyBoolean.FALSE;
-        } else if(obj instanceof ToyInt) {
-            double other = (double)((ToyInt) obj).getValue();
-            return value >= other ? ToyBoolean.TRUE : ToyBoolean.FALSE;
+    public TObject GTE(TObject obj) {
+        if(obj instanceof TReal) {
+            double other = ((TReal) obj).value;
+            return value >= other ? TBoolean.TRUE : TBoolean.FALSE;
+        } else if(obj instanceof TInt) {
+            double other = (double)((TInt) obj).getValue();
+            return value >= other ? TBoolean.TRUE : TBoolean.FALSE;
         }
         return super.GTE(obj);
     }
     @Override
-    public ToyObject LTE(ToyObject obj) {
-        if(obj instanceof ToyReal) {
-            double other = ((ToyReal) obj).value;
-            return value <= other ? ToyBoolean.TRUE : ToyBoolean.FALSE;
-        } else if(obj instanceof ToyInt) {
-            double other = (double)((ToyInt) obj).getValue();
-            return value <= other ? ToyBoolean.TRUE : ToyBoolean.FALSE;
+    public TObject LTE(TObject obj) {
+        if(obj instanceof TReal) {
+            double other = ((TReal) obj).value;
+            return value <= other ? TBoolean.TRUE : TBoolean.FALSE;
+        } else if(obj instanceof TInt) {
+            double other = (double)((TInt) obj).getValue();
+            return value <= other ? TBoolean.TRUE : TBoolean.FALSE;
         }
         return super.LTE(obj);
     }
     @Override
-    public ToyObject EQ(ToyObject obj) {
-        if(obj instanceof ToyReal) {
-            double other = ((ToyReal) obj).value;
-            return value == other ? ToyBoolean.TRUE : ToyBoolean.FALSE;
-        } else if(obj instanceof ToyInt) {
-            double other = (double)((ToyInt) obj).getValue();
-            return value == other ? ToyBoolean.TRUE : ToyBoolean.FALSE;
+    public TObject EQ(TObject obj) {
+        if(obj instanceof TReal) {
+            double other = ((TReal) obj).value;
+            return value == other ? TBoolean.TRUE : TBoolean.FALSE;
+        } else if(obj instanceof TInt) {
+            double other = (double)((TInt) obj).getValue();
+            return value == other ? TBoolean.TRUE : TBoolean.FALSE;
         }
         return super.EQ(obj);
     }
     @Override
-    public ToyObject NE(ToyObject obj) {
-        if(obj instanceof ToyReal) {
-            double other = ((ToyReal) obj).value;
-            return value != other ? ToyBoolean.TRUE : ToyBoolean.FALSE;
-        } else if(obj instanceof ToyInt) {
-            double other = (double)((ToyInt) obj).getValue();
-            return value != other ? ToyBoolean.TRUE : ToyBoolean.FALSE;
+    public TObject NE(TObject obj) {
+        if(obj instanceof TReal) {
+            double other = ((TReal) obj).value;
+            return value != other ? TBoolean.TRUE : TBoolean.FALSE;
+        } else if(obj instanceof TInt) {
+            double other = (double)((TInt) obj).getValue();
+            return value != other ? TBoolean.TRUE : TBoolean.FALSE;
         }
         return super.NE(obj);
     }
@@ -234,8 +234,8 @@ public class ToyReal extends ToyObject {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if(o instanceof ToyObject) {
-            ToyObject eq = EQ((ToyObject)o);
+        if(o instanceof TObject) {
+            TObject eq = EQ((TObject)o);
             if(eq != null)
                 return eq.isTrue();
         }
