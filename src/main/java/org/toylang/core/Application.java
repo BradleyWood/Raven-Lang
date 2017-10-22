@@ -11,10 +11,7 @@ import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.URL;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class Application {
@@ -33,10 +30,7 @@ public class Application {
                 compile("/src/main/toylang/toylang/lang/", true);
 
                 System.out.println("----------------------------------------------");
-
-                compile("/scripts/test/", true);
             }
-
         } catch (IOException | NoSuchMethodException | ClassNotFoundException | IllegalAccessException | InvocationTargetException e) {
             e.printStackTrace();
         }
@@ -44,7 +38,6 @@ public class Application {
 
     public static void compileAndTest(String path) throws IOException, ClassNotFoundException {
         path = path.replace("/", "\\");
-        File file = new File(path);
 
         HashMap<String, byte[]> classes = compile(path, true);
 
@@ -100,18 +93,26 @@ public class Application {
     }
 
     public static HashMap<String, byte[]> compile(String path, boolean save) throws IOException {
-        Compiler compiler;
-        ToyParser parser;
-        ToyTree tree;
         File file = new File(new File(".").getCanonicalPath(), path);
-        HashMap<String, byte[]> classes = null;
-        for (File f : Objects.requireNonNull(file.listFiles())) {
+
+        HashMap<String, byte[]> classes = new HashMap<>();
+        LinkedList<File> files = new LinkedList<>();
+
+        if (!file.isDirectory()) {
+            files.add(file);
+        } else {
+            File[] fs = file.listFiles();
+            if (fs != null)
+                files.addAll(Arrays.asList(fs));
+        }
+
+        for (File f : files) {
             if (!f.getAbsolutePath().endsWith(".tl"))
                 continue;
-            parser = new ToyParser(f.getPath());
-            tree = parser.parse();
-            compiler = new Compiler(f.getAbsolutePath(), f.getName().replace(".tl", ""), tree);
-            classes = compiler.compile(save);
+            ToyParser parser = new ToyParser(f.getPath());
+            ToyTree tree = parser.parse();
+            Compiler compiler = new Compiler(f.getAbsolutePath(), f.getName().replace(".tl", ""), tree);
+            classes.putAll(compiler.compile(save));
         }
         if (Errors.getErrorCount() == 0) {
             System.out.println("Compilation Completed Successfully!");
