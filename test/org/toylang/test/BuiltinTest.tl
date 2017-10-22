@@ -1,13 +1,13 @@
 package org.toylang.test;
 
-import org.toylang.core.ToyString;
-import org.toylang.core.ToyNull;
-import org.toylang.core.ToyInt;
-import org.toylang.core.ToyReal;
-import org.toylang.core.ToyList;
-import org.toylang.core.ToyDict;
-import org.toylang.core.ToyBoolean;
-import org.toylang.core.ToyType;
+import org.toylang.core.wrappers.TString;
+import org.toylang.core.wrappers.TNull;
+import org.toylang.core.wrappers.TInt;
+import org.toylang.core.wrappers.TReal;
+import org.toylang.core.wrappers.TList;
+import org.toylang.core.wrappers.TDict;
+import org.toylang.core.wrappers.TBoolean;
+import org.toylang.core.wrappers.TType;
 import org.toylang.test.Assert;
 
 
@@ -60,19 +60,19 @@ fun varsTest() {
 
 fun typeTest() {
     var val = null;
-    Assert.assertEqual(type(val), ToyNull.TYPE);
+    Assert.assertEqual(type(val), TNull.TYPE);
     val = "";
-    Assert.assertEqual(type(val), ToyString.TYPE);
+    Assert.assertEqual(type(val), TString.TYPE);
     val = 40;
-    Assert.assertEqual(type(val), ToyInt.TYPE);
+    Assert.assertEqual(type(val), TInt.TYPE);
     val = 0.01;
-    Assert.assertEqual(type(val), ToyReal.TYPE);
+    Assert.assertEqual(type(val), TReal.TYPE);
     val = [];
-    Assert.assertEqual(type(val), ToyList.TYPE);
+    Assert.assertEqual(type(val), TList.TYPE);
     val = {};
-    Assert.assertEqual(type(val), ToyDict.TYPE);
+    Assert.assertEqual(type(val), TDict.TYPE);
     val = true;
-    Assert.assertEqual(type(val), ToyBoolean.TYPE);
+    Assert.assertEqual(type(val), TBoolean.TYPE);
 }
 
 fun sumTest() {
