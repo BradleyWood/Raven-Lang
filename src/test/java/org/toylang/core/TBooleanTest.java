@@ -5,7 +5,7 @@ import org.toylang.core.wrappers.TBoolean;
 
 import static org.junit.Assert.*;
 
-public class ToyBooleanTest {
+public class TBooleanTest {
 
     @Test
     public void isTrueTest() {

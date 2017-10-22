@@ -7,7 +7,7 @@ import org.toylang.core.wrappers.TString;
 
 import static org.junit.Assert.*;
 
-public class ToyIntTest {
+public class TIntTest {
 
     @Test
     public void getValueTest() {

@@ -7,7 +7,7 @@ import org.toylang.core.wrappers.*;
 import static org.junit.Assert.*;
 
 
-public class ToyStringTest {
+public class TStringTest {
 
     @Test
     public void addTest() {
