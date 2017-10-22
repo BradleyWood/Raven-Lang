@@ -1,4 +1,6 @@
-package org.toylang.core;
+package org.toylang.core.wrappers;
+
+import org.toylang.core.Hidden;
 
 import java.lang.invoke.MethodType;
 import java.lang.reflect.*;

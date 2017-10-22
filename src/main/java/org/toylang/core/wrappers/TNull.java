@@ -1,4 +1,6 @@
-package org.toylang.core;
+package org.toylang.core.wrappers;
+
+import org.toylang.core.Hidden;
 
 public class ToyNull extends ToyObject {
 

@@ -1,4 +1,4 @@
-package org.toylang.core;
+package org.toylang.core.wrappers;
 
 import java.util.Collection;
 import java.util.HashMap;

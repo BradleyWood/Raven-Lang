@@ -1,5 +1,7 @@
-package org.toylang.core;
+package org.toylang.core.wrappers;
 
+
+import org.toylang.core.Hidden;
 
 public class ToyString extends ToyObject {
 
