@@ -9,16 +9,6 @@ public class Builtin {
 
     private static ArrayList<Builtin> builtins = new ArrayList<>();
 
-    static {
-        try {
-            Class<?> builtin = Class.forName("toylang.lang.Builtin");
-            for (Method method : builtin.getMethods()) {
-                builtins.add(new Builtin(method.getName(), method.getParameterCount()));
-            }
-        } catch (ClassNotFoundException e) {
-        }
-    }
-
     private String name;
     private int numParams;
 
@@ -26,12 +16,26 @@ public class Builtin {
         this.name = name;
         this.numParams = numParams;
     }
+
     public static boolean isBuiltin(QualifiedName name, int numParams) {
+        if(builtins.size() == 0) {
+            loadBuiltins();
+        }
         for (Builtin builtin : builtins) {
-            if(builtin.name.equals(name.toString()) && builtin.numParams == numParams)
+            if (builtin.name.equals(name.toString()) && builtin.numParams == numParams)
                 return true;
         }
         return false;
+    }
+
+    private static void loadBuiltins() {
+        try {
+            Class<?> builtin = Class.forName("toylang.lang.Builtin");
+            for (Method method : builtin.getMethods()) {
+                builtins.add(new Builtin(method.getName(), method.getParameterCount()));
+            }
+        } catch (ClassNotFoundException e) {
+        }
     }
 
 }
