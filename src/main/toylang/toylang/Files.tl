@@ -1,5 +1,6 @@
 package toylang;
 
+import java.io.File;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.FileInputStream;
@@ -9,7 +10,7 @@ import java.io.OutputStreamWriter;
 
 // Returns a list containing each line
 // fully reads file
-public fun readFile(path) {
+public fun readLines(path) {
     var fis = FileInputStream(path);
     var reader = InputStreamReader(fis);
     var br = BufferedReader(reader);
@@ -24,7 +25,7 @@ public fun readFile(path) {
 }
 
 // write each line to the file;
-public fun writeFile(path, lines) {
+public fun writeLines(path, lines) {
     var fos = FileOutputStream(path);
     var writer = OutputStreamWriter(fos);
     var bw = BufferedWriter(writer);
@@ -34,4 +35,23 @@ public fun writeFile(path, lines) {
         bw.newLine();
     }
     bw.close();
+}
+
+// open for writing
+public fun openR(path) {
+    var file = File(path);
+    if !(file.exists()) {
+        return error("The system cannot find the path specified: " + path);
+    }
+    return FileInputStream(path);
+}
+
+// open for writing
+public fun openW(path) {
+    var file = File(path);
+    return FileOutputStream(path);
+}
+
+public fun close(file) {
+    file.close();
 }
