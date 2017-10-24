@@ -27,7 +27,7 @@ public class Application {
                     compile(args[0], true);
                 }
             } else {
-                compile("/src/main/toylang/toylang/lang/", true);
+                compile("/src/main/toylang/toylang/", true);
 
                 System.out.println("----------------------------------------------");
             }

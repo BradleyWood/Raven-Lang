@@ -30,7 +30,7 @@ public class Builtin {
 
     private static void loadBuiltins() {
         try {
-            Class<?> builtin = Class.forName("toylang.lang.Builtin");
+            Class<?> builtin = Class.forName("toylang.Builtin");
             for (Method method : builtin.getMethods()) {
                 builtins.add(new Builtin(method.getName(), method.getParameterCount()));
             }

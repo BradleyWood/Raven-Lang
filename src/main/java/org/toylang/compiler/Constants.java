@@ -10,7 +10,7 @@ public class Constants {
     public static final String TOBJ_SIG = "Lorg/toylang/core/wrappers/TObject;";
     public static final String TOBJ_NAME = "org/toylang/core/wrappers/TObject";
 
-    public static final String BUILTIN_NAME = "toylang/lang/Builtin";
+    public static final String BUILTIN_NAME = "toylang/Builtin";
     public static final String ANNOTATION_TLFILE_SIG = "Lorg/toylang/core/TLFile;";
 
     private static LinkedList<TObject> CONSTANTS = new LinkedList<>();

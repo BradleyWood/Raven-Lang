@@ -1,4 +1,4 @@
-package toylang.lang;
+package toylang;
 
 import java.lang.System;
 import java.lang.Integer;
