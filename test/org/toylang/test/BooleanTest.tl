@@ -9,3 +9,8 @@ fun boolTest1() {
 fun boolTest2() {
     Assert.assertEqual(false, false);
 }
+
+fun boolTest3() {
+    Assert.assertNotEqual(true, false);
+    Assert.assertNotEqual(false, true);
+}
