@@ -1,2 +1,3 @@
-# ToyLang
-A toy language for the jvm
+# JVMLang
+A test language for the jvm.
+
