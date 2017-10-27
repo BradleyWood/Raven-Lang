@@ -167,6 +167,16 @@ public class Method extends MethodVisitor implements TreeVisitor, Opcodes {
     }
 
     @Override
+    public void visitContinue() {
+        
+    }
+
+    @Override
+    public void visitBreak() {
+
+    }
+
+    @Override
     public void visitFunCall(Call call) {
         visitLine(call);
 

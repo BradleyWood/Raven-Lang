@@ -22,4 +22,6 @@ public interface TreeVisitor {
     void visitDictDef(DictDef def);
     void visitAnnotation(Annotation annotation);
     void visitGo(Go go);
+    void visitContinue();
+    void visitBreak();
 }

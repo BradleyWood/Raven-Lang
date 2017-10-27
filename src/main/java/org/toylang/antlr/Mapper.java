@@ -80,4 +80,14 @@ public class Mapper implements TreeVisitor {
     public void visitGo(Go go) {
 
     }
+
+    @Override
+    public void visitContinue() {
+
+    }
+
+    @Override
+    public void visitBreak() {
+
+    }
 }
