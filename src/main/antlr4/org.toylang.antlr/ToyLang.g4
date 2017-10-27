@@ -20,6 +20,8 @@ statement
     |   returnStatement
     |   classDef
     |   expression SEMI
+    |   CONTINUE SEMI
+    |   BREAK SEMI
     |   SEMI
     ;
 packageDef
@@ -209,12 +211,14 @@ WHILE   :   'while';
 FOR     :   'for';
 VAR     :   'var';
 TRUE    :   'true';
+BREAK   :   'break';
 FALSE   :   'false';
 RETURN  :   'return';
 CLASS   :   'class';
 PUB     :   'public';
 PRIV    :   'private';
 PACK    :   'package';
+CONTINUE:   'continue';
 ANNO    :   'annotation';
 INTER   :   'interface';
 
