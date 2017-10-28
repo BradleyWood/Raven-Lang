@@ -8,10 +8,7 @@ import org.toylang.core.*;
 import org.toylang.core.wrappers.*;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.LinkedList;
-import java.util.Objects;
+import java.util.*;
 
 public class Method extends MethodVisitor implements TreeVisitor, Opcodes {
 
@@ -19,6 +16,9 @@ public class Method extends MethodVisitor implements TreeVisitor, Opcodes {
 
     private final ArrayList<String> locals = new ArrayList<>();
     private final ArrayList<Integer> lineNumbers = new ArrayList<>();
+
+    private final Stack<Label> continueLabels = new Stack<>();
+    private final Stack<Label> breakLabels = new Stack<>();
 
 
     private final MethodContext ctx;
@@ -57,12 +57,51 @@ public class Method extends MethodVisitor implements TreeVisitor, Opcodes {
     }
 
     @Override
+    public void visitFor(For forStatement) {
+        Label start = new Label();
+        Label conditional = new Label();
+        Label after = new Label();
+        Label end = new Label();
+
+        continueLabels.push(after);
+        breakLabels.push(end);
+
+        forStatement.getInit().accept(this);
+
+        visitJumpInsn(GOTO, conditional);
+        visitLabel(start);
+
+        forStatement.getBody().accept(this);
+
+        visitLabel(after);
+        forStatement.getAfter().accept(this);
+
+        visitLabel(conditional);
+
+        forStatement.getCondition().accept(this);
+        visitMethodInsn(Opcodes.INVOKEVIRTUAL, Constants.TOBJ_NAME, "isTrue", "()Z", false);
+        visitJumpInsn(Opcodes.IFNE, start);
+        visitLabel(end);
+
+        continueLabels.pop();
+        breakLabels.pop();
+
+        if (forStatement.getInit() instanceof VarDecl) {
+            locals.remove(((VarDecl) forStatement.getInit()).getName().toString());
+        }
+    }
+
+    @Override
     public void visitWhile(While whileStatement) {
         Label start = new Label();
         Label conditional = new Label();
-        visitJumpInsn(Opcodes.GOTO, conditional);
-        visitLabel(start);
+        Label end = new Label();
 
+        continueLabels.push(conditional);
+        breakLabels.push(end);
+
+        visitJumpInsn(GOTO, conditional);
+        visitLabel(start);
 
         whileStatement.getBody().accept(this);
 
@@ -71,6 +110,10 @@ public class Method extends MethodVisitor implements TreeVisitor, Opcodes {
         whileStatement.getCondition().accept(this);
         visitMethodInsn(Opcodes.INVOKEVIRTUAL, Constants.TOBJ_NAME, "isTrue", "()Z", false);
         visitJumpInsn(Opcodes.IFNE, start);
+        visitLabel(end);
+
+        continueLabels.pop();
+        breakLabels.pop();
     }
 
     @Override
@@ -168,12 +211,20 @@ public class Method extends MethodVisitor implements TreeVisitor, Opcodes {
 
     @Override
     public void visitContinue() {
-        
+        if(continueLabels.size() == 0) {
+            Errors.put("Continue not allowed here");
+        } else {
+            visitJumpInsn(GOTO, continueLabels.peek());
+        }
     }
 
     @Override
     public void visitBreak() {
-
+        if(breakLabels.size() == 0) {
+            Errors.put("Break not allowed here");
+        } else {
+            visitJumpInsn(GOTO, breakLabels.peek());
+        }
     }
 
     @Override

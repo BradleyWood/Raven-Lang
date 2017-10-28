@@ -9,15 +9,15 @@ import org.toylang.core.wrappers.TInt;
 
 import java.util.Arrays;
 
-public class ForVisitor extends ToyLangBaseVisitor<Block> {
+public class ForVisitor extends ToyLangBaseVisitor<For> {
 
     private ForVisitor() {
     }
 
     @Override
-    public Block visitForStatement(ToyLangParser.ForStatementContext ctx) {
-        Block block = new Block();
+    public For visitForStatement(ToyLangParser.ForStatementContext ctx) {
         Block body = new Block();
+        Block after = new Block();
 
         if (ctx.range() != null) {
             QualifiedName name = new QualifiedName(ctx.IDENTIFIER().getText());
@@ -25,18 +25,16 @@ public class ForVisitor extends ToyLangBaseVisitor<Block> {
 
             Range range = ctx.range().accept(RangeVisitor.INSTANCE);
 
-            block.append(new VarDecl(name, range.getStart()));
+            VarDecl init = new VarDecl(name, range.getStart());
 
             Expression condition = new BinOp(name, inc ? Operator.LT : Operator.GT, range.getEnd());
 
             body.append(ctx.statement().accept(StatementVisitor.INSTANCE));
 
 
-            body.append(new BinOp(name, Operator.ASSIGNMENT, new BinOp(name, Operator.ADD, new Literal(new TInt(inc ? 1 : -1)))));
+            after.append(new BinOp(name, Operator.ASSIGNMENT, new BinOp(name, Operator.ADD, new Literal(new TInt(inc ? 1 : -1)))));
 
-            While loop = new While(condition, body);
-            block.append(loop);
-
+            return new For(init, condition, body, after);
         } else if(ctx.statement() != null) {
             Statement init = new Expression();
             Expression condition = new Literal(TBoolean.TRUE);
@@ -46,19 +44,17 @@ public class ForVisitor extends ToyLangBaseVisitor<Block> {
                 init = ctx.decl.accept(VarDeclVisitor.INSTANCE);
             if(ctx.cond != null)
                 condition = ctx.cond.accept(ExpressionVisitor.INSTANCE);
-            block.append(init);
 
             int size = ctx.paramList().param() != null ? ctx.paramList().param().size() : 0;
-            Expression[] after = new Expression[size];
-            for(int i = 0; i < after.length; i++) {
-                after[i] = ctx.paramList().param(i).accept(ExpressionVisitor.INSTANCE);
+            Expression[] af = new Expression[size];
+            for(int i = 0; i < af.length; i++) {
+                af[i] = ctx.paramList().param(i).accept(ExpressionVisitor.INSTANCE);
             }
             body.append(ctx.statement().accept(StatementVisitor.INSTANCE));
-            Arrays.stream(after).forEach(body::append);
-            While loop = new While(condition, body);
-            block.append(loop);
+            Arrays.stream(af).forEach(after::append);
+            return new For(init, condition, body, after);
         }
-        return block;
+        return null;
     }
 
     public static final ForVisitor INSTANCE = new ForVisitor();

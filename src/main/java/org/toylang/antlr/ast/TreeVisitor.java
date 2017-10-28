@@ -4,6 +4,7 @@ package org.toylang.antlr.ast;
 public interface TreeVisitor {
 
     void visitIf(If ifStatement);
+    void visitFor(For forStatement);
     void visitWhile(While whileStatement);
     void visitReturn(Return ret);
     void visitFun(Fun fun);

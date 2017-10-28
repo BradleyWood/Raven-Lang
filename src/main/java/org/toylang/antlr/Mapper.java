@@ -16,6 +16,12 @@ public class Mapper implements TreeVisitor {
     @Override
     public void visitIf(If ifStatement) {
     }
+
+    @Override
+    public void visitFor(For forStatement) {
+
+    }
+
     @Override
     public void visitWhile(While whileStatement) {
     }

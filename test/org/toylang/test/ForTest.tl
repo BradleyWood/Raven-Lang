@@ -4,14 +4,17 @@ import org.toylang.test.Assert;
 
 
 fun testRange1() {
-    for i range 0 to 5;
-    Assert.assertEqual(i, 5);
+    var j = 0;
+    for i range 5 to 10 j += 1;
+    Assert.assertEqual(5, j);
 }
 
 fun testRange2() {
-    var n = 100;
-    for i range 0 to n;
-    Assert.assertEqual(n, i);
+    var n = 0;
+    for i range 10 downto n {
+        n += 1;
+    }
+    Assert.assertEqual(5, n);
 }
 
 fun testRange3() {
@@ -20,7 +23,6 @@ fun testRange3() {
         n += 1;
     }
     Assert.assertEqual(n, 100);
-    Assert.assertEqual(i, 0);
 }
 
 fun testRange4() {
@@ -29,22 +31,24 @@ fun testRange4() {
         n += 1;
     }
     Assert.assertEqual(n, 100);
-    Assert.assertEqual(i, 100);
 }
 
 fun forTest1() {
-    for (var i = 0; i < 100; i += 1);
-    Assert.assertEqual(i, 100);
+    var j = 0;
+    for (var i = 0; i < 100; i += 1, j += 1);
+    Assert.assertEqual(100, j);
 }
 
 fun forTest2() {
-    for var i = 0; i < 100; i+=1;
-    Assert.assertEqual(i, 100);
+    var j = 0;
+    for var i = 0; i < 100; i+=1, j += 1;
+    Assert.assertEqual(100, j);
 }
 
 fun forTest3() {
-    for var i = 0; i < 100; i+=2, i-=1;
-    Assert.assertEqual(i, 100);
+    var j = 0;
+    for var i = 0; i < 100; i+=2, i-=1, j+= 1;
+    Assert.assertEqual(100, j);
 }
 
 fun forTest4() {
@@ -53,7 +57,6 @@ fun forTest4() {
         n += 1;
     }
     Assert.assertEqual(n, 100);
-    Assert.assertEqual(i, 100);
 }
 
 fun forTest5() {
@@ -62,5 +65,4 @@ fun forTest5() {
         n -= 1;
     }
     Assert.assertEqual(n, 0);
-    Assert.assertEqual(i, 100);
 }
