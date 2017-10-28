@@ -35,7 +35,7 @@ fun testRange4() {
 
 fun forTest1() {
     var j = 0;
-    for (var i = 0; i < 100; i += 1, j += 1);
+    for var i = 0; i < 100; i += 1, j += 1;
     Assert.assertEqual(100, j);
 }
 
