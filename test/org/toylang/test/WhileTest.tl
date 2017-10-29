@@ -24,3 +24,19 @@ fun whileTest3() {
     }
     Assert.assertEqual(str, "aaaa");
 }
+
+fun doWhileTest() {
+    var counter = 0;
+    do {
+        counter += 1;
+    } while (counter < 10);
+    Assert.assertEqual(10, counter);
+}
+
+fun doWhileTest2() {
+    var counter = 0;
+        do {
+            counter += 1;
+        } while (false);
+    Assert.assertEqual(1, counter);
+}

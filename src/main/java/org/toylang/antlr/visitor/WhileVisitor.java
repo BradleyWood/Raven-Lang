@@ -15,7 +15,7 @@ public class WhileVisitor extends ToyLangBaseVisitor<While> {
         Expression condition = ctx.expression().accept(ExpressionVisitor.INSTANCE);
         Statement body = ctx.statement().accept(StatementVisitor.INSTANCE);
 
-        return new While(condition, body);
+        return new While(condition, body, ctx.DO() != null);
     }
     public static final WhileVisitor INSTANCE = new WhileVisitor();
 }

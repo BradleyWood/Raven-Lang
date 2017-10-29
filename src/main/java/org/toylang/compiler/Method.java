@@ -100,7 +100,9 @@ public class Method extends MethodVisitor implements TreeVisitor, Opcodes {
         continueLabels.push(conditional);
         breakLabels.push(end);
 
-        visitJumpInsn(GOTO, conditional);
+        if (!whileStatement.isDoWhile())
+            visitJumpInsn(GOTO, conditional);
+        
         visitLabel(start);
 
         whileStatement.getBody().accept(this);
