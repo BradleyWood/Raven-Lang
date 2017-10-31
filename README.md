@@ -9,6 +9,30 @@ compiled and tested several programs.
 The main goal is create a fast jvm language that lacks the verbosity
 of java while maintaining full interoperability.
 
+## Building and Running
+
+```
+mvn compile assembly:single
+```
+
+Run once from the root directory to build the builtin (.tl) files
+
+```
+java -jar target/toylang-1.0-SNAPSHOT-jar-with-dependencies.jar
+```
+
+Then re-assemble the jar
+
+```
+mvn assembly:single
+```
+
+To run a test script
+
+```
+java -jar toylang-1.0-SNAPSHOT-jar-with-dependencies.jar <path to script>.tl
+```
+
 #### Wrapper types
 
 Types are wrapped to enforce type conversion. Below is a list of wrapper types.
