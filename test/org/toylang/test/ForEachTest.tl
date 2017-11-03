@@ -19,3 +19,11 @@ fun forEachTest2() {
     }
     Assert.assertEqual(11100, sum);
 }
+
+fun forEachTest3() {
+    var sum = 0;
+    for (i : [100, 1000, 10000]) {
+        sum += i;
+    }
+    Assert.assertEqual(11100, sum);
+}

@@ -66,3 +66,27 @@ fun forTest5() {
     }
     Assert.assertEqual(n, 0);
 }
+
+fun forTest6() {
+    var n = 0;
+    for (var i = 0; i < 100; i+=1, n+=1) {
+        n -= 1;
+    }
+    Assert.assertEqual(n, 0);
+}
+
+fun forTest7() {
+    var n = 0;
+    for ((var i = 0; i < 100; i+=1, n+=1)) {
+        n -= 1;
+    }
+    Assert.assertEqual(n, 0);
+}
+
+fun testRange8() {
+    var n = 0;
+    for (((i range 100 downto 0))) {
+        n += 1;
+    }
+    Assert.assertEqual(n, 100);
+}
