@@ -42,9 +42,13 @@ whileStatement
     |   DO statement WHILE expression SEMI
     ;
 forStatement
-    :   FOR IDENTIFIER COLON expression statement
-    |   FOR IDENTIFIER range statement
-    |   FOR (decl=varDeclaration? | (init=expression? SEMI)) cond=expression? SEMI after=paramList? statement
+    :   FOR forControl statement
+    ;
+forControl
+    :   '(' forControl ')'
+    |   IDENTIFIER COLON expression
+    |   IDENTIFIER range
+    |   (decl=varDeclaration? | (init=expression? SEMI)) cond=expression? SEMI after=paramList?
     ;
 range
     :   'range' expression (inc|dec) expression
