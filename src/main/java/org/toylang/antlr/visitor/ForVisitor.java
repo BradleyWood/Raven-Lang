@@ -20,13 +20,19 @@ public class ForVisitor extends ToyLangBaseVisitor<For> {
         Block body = new Block();
         Block after = new Block();
 
-        if (ctx.forControl().COLON() != null) {
+        ToyLangParser.ForControlContext forControl = ctx.forControl();
+
+        while (forControl.forControl() != null) {
+            forControl = forControl.forControl();
+        }
+
+        if (forControl.COLON() != null) {
             Random r = new Random();
             VarDecl init = new VarDecl(new QualifiedName(String.valueOf(r.nextInt())), new Literal(new TInt(0)));
-            QualifiedName name = new QualifiedName(ctx.forControl().IDENTIFIER().getText());
+            QualifiedName name = new QualifiedName(forControl.IDENTIFIER().getText());
             body.append(new VarDecl(name, null));
 
-            Expression iterable = ctx.forControl().expression(0).accept(ExpressionVisitor.INSTANCE);
+            Expression iterable = forControl.expression(0).accept(ExpressionVisitor.INSTANCE);
             QualifiedName iterableName;
             if (!(iterable instanceof QualifiedName)) {
                 iterableName = new QualifiedName(String.valueOf(r.nextInt()));
@@ -41,11 +47,11 @@ public class ForVisitor extends ToyLangBaseVisitor<For> {
             after.append(new BinOp(init.getName(), Operator.ASSIGNMENT, new BinOp(init.getName(), Operator.ADD, new Literal(new TInt(1)))));
 
             return new For(init, condition, body, after);
-        } else if (ctx.forControl().range() != null) {
-            QualifiedName name = new QualifiedName(ctx.forControl().IDENTIFIER().getText());
-            boolean inc = ctx.forControl().range().inc() != null;
+        } else if (forControl.range() != null) {
+            QualifiedName name = new QualifiedName(forControl.IDENTIFIER().getText());
+            boolean inc = forControl.range().inc() != null;
 
-            Range range = ctx.forControl().range().accept(RangeVisitor.INSTANCE);
+            Range range = forControl.range().accept(RangeVisitor.INSTANCE);
 
             VarDecl init = new VarDecl(name, range.getStart());
 
@@ -61,16 +67,16 @@ public class ForVisitor extends ToyLangBaseVisitor<For> {
             Statement init = new Expression();
             Expression condition = new Literal(TBoolean.TRUE);
             if (ctx.forControl().init != null)
-                init = ctx.forControl().init.accept(ExpressionVisitor.INSTANCE);
-            else if (ctx.forControl().decl != null)
-                init = ctx.forControl().decl.accept(VarDeclVisitor.INSTANCE);
-            if (ctx.forControl().cond != null)
-                condition = ctx.forControl().cond.accept(ExpressionVisitor.INSTANCE);
+                init = forControl.init.accept(ExpressionVisitor.INSTANCE);
+            else if (forControl.decl != null)
+                init = forControl.decl.accept(VarDeclVisitor.INSTANCE);
+            if (forControl.cond != null)
+                condition = forControl.cond.accept(ExpressionVisitor.INSTANCE);
 
-            int size = ctx.forControl().paramList().param() != null ? ctx.forControl().paramList().param().size() : 0;
+            int size = forControl.paramList() != null ? forControl.paramList().param() != null ? forControl.paramList().param().size() : 0 : 0;
             Expression[] af = new Expression[size];
             for (int i = 0; i < af.length; i++) {
-                af[i] = ctx.forControl().paramList().param(i).accept(ExpressionVisitor.INSTANCE);
+                af[i] = forControl.paramList().param(i).accept(ExpressionVisitor.INSTANCE);
             }
             body.append(ctx.statement().accept(StatementVisitor.INSTANCE));
             Arrays.stream(af).forEach(after::append);
