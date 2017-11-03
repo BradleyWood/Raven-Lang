@@ -57,11 +57,14 @@ public class Application {
                                 method.invoke(null);
                             } catch (IllegalAccessException | InvocationTargetException e) {
                                 e.getCause().printStackTrace();
-                                fails.getAndIncrement();
+                                if (!method.getName().toLowerCase().contains("exception"))
+                                    fails.getAndIncrement();
                             }
                             Assert.errors.forEach(error -> {
-                                error.printStackTrace();
-                                fails.getAndIncrement();
+                                if (method.getName().toLowerCase().contains("fail")) {
+                                    error.printStackTrace();
+                                    fails.getAndIncrement();
+                                }
                             });
                             Assert.errors.clear();
                         }
