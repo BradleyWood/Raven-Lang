@@ -147,6 +147,10 @@ public class ClassDef extends Statement {
             }
         }
         statements.removeAll(constructors);
+
+        if (superParams != null) {
+            constructors.add(new Constructor(superParams));
+        }
         // create a new constructor for the class parameters
         // check if the super class has a default constructor
         // otherwise we need explicit definition of constructor
