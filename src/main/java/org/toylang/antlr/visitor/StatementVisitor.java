@@ -17,6 +17,8 @@ public class StatementVisitor extends ToyLangBaseVisitor<Statement> {
         Statement stmt = null;
         if(ctx.block() != null) {
             stmt = ctx.block().accept(BlockVisitor.INSTANCE);
+        } else if(ctx.constructor() != null) {
+            stmt = ctx.constructor().accept(ConstructorVisitor.INSTANCE);
         } else if(ctx.CONTINUE() != null) {
             stmt = new Continue();
         } else if(ctx.BREAK() != null) {
