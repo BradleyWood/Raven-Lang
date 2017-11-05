@@ -98,7 +98,9 @@ public class ClassDef extends Statement {
     }
 
     public List<Statement> getFields() {
-        return statements.stream().filter(stmt -> (stmt instanceof VarDecl)).collect(Collectors.toList());
+        List<Statement> fields = statements.stream().filter(stmt -> (stmt instanceof VarDecl)).collect(Collectors.toList());
+        fields.addAll(varParams);
+        return fields;
     }
 
     public VarDecl findVar(String name) {
@@ -150,6 +152,7 @@ public class ClassDef extends Statement {
 
         if (superParams != null) {
             constructors.add(new Constructor(superParams));
+            return constructors;
         }
         // create a new constructor for the class parameters
         // check if the super class has a default constructor
@@ -170,15 +173,15 @@ public class ClassDef extends Statement {
     }
 
     private Constructor createConstructor() {
-        List<Statement> fields = getFields();
+        List<VarDecl> fields = getVarParams();
 
         VarDecl[] params_ = new VarDecl[fields.size()];
         Block body = new Block();
 
         for (int i = 0; i < params_.length; i++) {
-            QualifiedName funParamName = new QualifiedName(((VarDecl) fields.get(i)).getName().toString() + "_");
+            QualifiedName funParamName = new QualifiedName(fields.get(i).getName().toString() + "_");
             params_[i] = new VarDecl(funParamName, null);
-            body.append(new BinOp(((VarDecl) fields.get(i)).getName(), Operator.ASSIGNMENT, funParamName));
+            body.append(new BinOp(fields.get(i).getName(), Operator.ASSIGNMENT, funParamName));
         }
         return new Constructor(new Modifier[] {Modifier.PUBLIC}, body, params_);
     }
