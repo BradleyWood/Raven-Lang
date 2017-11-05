@@ -4,6 +4,8 @@ import org.objectweb.asm.Type;
 import org.toylang.antlr.Modifier;
 import org.toylang.core.wrappers.TObject;
 
+import java.util.LinkedList;
+
 public class Constructor extends Statement {
 
     public static Constructor DEFAULT = new Constructor(new Modifier[]{Modifier.PUBLIC}, null);
@@ -15,6 +17,7 @@ public class Constructor extends Statement {
 
     /**
      * Long hand constructor definition with no-param super constructor
+     *
      * @param modifiers
      * @param body
      * @param params
@@ -28,12 +31,19 @@ public class Constructor extends Statement {
 
     /**
      * Short hand non-default constructor definition
+     *
      * @param params
      */
     public Constructor(Expression... params) {
-        this.modifiers = new Modifier[] {Modifier.PUBLIC};
+        this.modifiers = new Modifier[]{Modifier.PUBLIC};
         this.body = null;
-        this.params = null;
+        LinkedList<VarDecl> p = new LinkedList<>();
+        for (int i = 0; i < params.length; i++) {
+            if(params[i] instanceof QualifiedName) {
+                p.add(new VarDecl((QualifiedName) params[i], null, null));
+            }
+        }
+        this.params = p.toArray(new VarDecl[p.size()]);
         this.superParams = params;
     }
 
@@ -60,6 +70,14 @@ public class Constructor extends Statement {
     public String getDesc() {
         StringBuilder stringBuilder = new StringBuilder("(");
         for (VarDecl ignored : getParams()) {
+            stringBuilder.append(Type.getType(TObject.class).getDescriptor());
+        }
+        return stringBuilder.append(")V").toString();
+    }
+
+    public String getSuperConstructorDesc() {
+        StringBuilder stringBuilder = new StringBuilder("(");
+        for (Expression ignored : getSuperParams()) {
             stringBuilder.append(Type.getType(TObject.class).getDescriptor());
         }
         return stringBuilder.append(")V").toString();
