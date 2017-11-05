@@ -63,7 +63,8 @@ importStatement
     :  'import' qualifiedName ('.' '*')? SEMI
     ;
 qualifiedName
-    :   IDENTIFIER ('.' IDENTIFIER)*
+    :   THIS
+    |   IDENTIFIER ('.' IDENTIFIER)*
     ;
 modifier
     :   (PUB|PRIV)
