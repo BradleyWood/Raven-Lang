@@ -99,7 +99,7 @@ public class ClassMaker {
         for (Modifier modifier : constructor.getModifiers()) {
             modifiers += modifier.getModifier();
         }
-        ClassConstructor cc = new ClassConstructor(ctx, cw.visitMethod(modifiers, "<init>", "", constructor.getDesc(), null));\
+        ClassConstructor cc = new ClassConstructor(ctx, cw.visitMethod(modifiers, "<init>", "", constructor.getDesc(), null));
         cc.visitCode();
         cc.visitConstructor(constructor);
         cc.visitEnd();
