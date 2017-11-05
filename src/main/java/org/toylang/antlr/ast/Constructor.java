@@ -1,6 +1,8 @@
 package org.toylang.antlr.ast;
 
+import org.objectweb.asm.Type;
 import org.toylang.antlr.Modifier;
+import org.toylang.core.wrappers.TObject;
 
 public class Constructor extends Statement {
 
@@ -53,5 +55,13 @@ public class Constructor extends Statement {
 
     public boolean isShorthand() {
         return superParams != null;
+    }
+
+    public String getDesc() {
+        StringBuilder stringBuilder = new StringBuilder("(");
+        for (VarDecl ignored : getParams()) {
+            stringBuilder.append(Type.getType(TObject.class).getDescriptor());
+        }
+        return stringBuilder.append(")V").toString();
     }
 }

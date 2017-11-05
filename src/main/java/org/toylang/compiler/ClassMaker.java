@@ -36,14 +36,14 @@ public class ClassMaker {
      * @param name The name of the Class
      */
     public ClassMaker(QualifiedName pack, String name, List<QualifiedName> imports) {
-        this(new ClassDef(new Modifier[]{Modifier.PUBLIC}, pack, name, OBJECT, new String[0], new ArrayList<>()), imports);
+        this(new ClassDef(new Modifier[]{Modifier.PUBLIC}, pack, name, OBJECT, new QualifiedName[0], new ArrayList<>()), imports);
     }
 
     /**
      * For use in a repl for live interp
      */
     public ClassMaker(List<QualifiedName> imports) {
-        this(new ClassDef(new Modifier[]{Modifier.PUBLIC}, "Repl", OBJECT, new String[0], new ArrayList<>()), imports);
+        this(new ClassDef(new Modifier[]{Modifier.PUBLIC}, new QualifiedName("repl"), "Repl", OBJECT, new QualifiedName[0], new ArrayList<>()), imports);
     }
 
     public void make() {
@@ -51,8 +51,12 @@ public class ClassMaker {
         for (Modifier modifier : def.getModifiers()) {
             modifiers += modifier.getModifier();
         }
+        String[] interfaces = new String[def.getInterfaces().length];
+        for (int i = 0; i < def.getInterfaces().length; i++) {
+            interfaces[i] = def.getInterfaces()[i].toString().replace(".", "/");
+        }
 
-        cw.visit(V1_7, modifiers, def.getFullName(), def.getSignature(), def.getSuper().toString().replace(".", "/"), def.getInterfaces());
+        cw.visit(V1_7, modifiers, def.getFullName(), def.getSignature(), def.getSuper().toString().replace(".", "/"), interfaces);
         cw.visitAnnotation(Constants.ANNOTATION_TLFILE_SIG, true).visitEnd();
         cw.visitSource(def.getName().toString() + ".tl", null);
 
@@ -65,14 +69,14 @@ public class ClassMaker {
             VarDecl decl = (VarDecl) statement;
             defineField(decl.getName().toString(), decl.modifiers());
         }
-        List<Fun> constructors = def.getConstructors();
+        List<Constructor> constructors = def.getConstructors();
 
         if (constructors.size() == 0)
             putDefaultConstructor();
 
         MethodContext classCtx = new MethodContext(def.getFullName(), "<init>", imports, staticVariables, staticFunctions, def);
-        for (Fun constructor : constructors) {
-            defineMethod(classCtx, constructor, constructor.modifiers());
+        for (Constructor constructor : constructors) {
+            defineConstructor(classCtx, constructor);
         }
         for (Fun fun : def.getMethods()) {
             classCtx.setName(fun.getName().toString());
@@ -88,6 +92,17 @@ public class ClassMaker {
 
     private void defineField(String name, int modifiers) {
         cw.visitField(modifiers, name, Constants.TOBJ_SIG, null, null);
+    }
+
+    private void defineConstructor(MethodContext ctx, Constructor constructor) {
+        int modifiers = 0;
+        for (Modifier modifier : constructor.getModifiers()) {
+            modifiers += modifier.getModifier();
+        }
+        ClassConstructor cc = new ClassConstructor(ctx, cw.visitMethod(modifiers, "<init>", "", constructor.getDesc(), null));\
+        cc.visitCode();
+        cc.visitConstructor(constructor);
+        cc.visitEnd();
     }
 
     private void defineMethod(MethodContext context, Fun fun, int modifiers) {
