@@ -34,3 +34,15 @@ fun continueTest3() {
         Assert.fail("Continue failed");
     }
 }
+
+fun continueTest4() {
+    var i = 0;
+    var j = 0;
+    while (i < 10) {
+        i += 1;
+        if(i == 5)
+            continue;
+        j += 1;
+    }
+    Assert.assertEqual(5, j);
+}

@@ -26,3 +26,14 @@ fun breakTest2() {
     }
     Assert.assertEqual(1275, sum);
 }
+
+fun breakTest3() {
+    var i = 0;
+    while (i < 10) {
+        i += 1;
+        if (i == 5) {
+            break;
+        }
+    }
+    Assert.assertEqual(5, i);
+}
