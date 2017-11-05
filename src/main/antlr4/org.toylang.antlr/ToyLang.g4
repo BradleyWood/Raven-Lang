@@ -92,7 +92,9 @@ classDef
     :   (modifier*) CLASS IDENTIFIER ('(' fields=paramList ')')? (':' impl=paramList)? block
     ;
 expression
-    :   literal
+    :   THIS '.' expression
+    |   SUPER '.' expression
+    |   literal
     |   expression '.' qualifiedName
     |   expression '.' funCall
     |   funCall
@@ -126,6 +128,8 @@ varAssignment
     ;
 funCall
     :   IDENTIFIER '(' paramList? ')'
+    |   SUPER   '(' paramList? ')'
+    |   THIS '(' paramList? ')'
     ;
 paramList
     :   param (',' param)*
@@ -212,14 +216,16 @@ IF      :   'if';
 DO      :   'do';
 GO      :   'go';
 ELSE    :   'else';
-WHILE   :   'while';
 FOR     :   'for';
 VAR     :   'var';
+THIS    :   'this';
 TRUE    :   'true';
+WHILE   :   'while';
 BREAK   :   'break';
 FALSE   :   'false';
-RETURN  :   'return';
+SUPER   :   'super';
 CLASS   :   'class';
+RETURN  :   'return';
 PUB     :   'public';
 PRIV    :   'private';
 PACK    :   'package';
