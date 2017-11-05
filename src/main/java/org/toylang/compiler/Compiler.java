@@ -15,6 +15,7 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 public class Compiler {
 
@@ -31,7 +32,7 @@ public class Compiler {
 
     public Compiler(String file, String name, ToyTree tree) {
         this.file = new File(file);
-        if(tree.getPackage() != null) {
+        if (tree.getPackage() != null) {
             this.name = tree.getPackage().toString() + "." + name;
         } else {
             this.name = name;
@@ -40,17 +41,19 @@ public class Compiler {
         IMPORTS.add(this.name);
         trees.add(tree);
     }
+
     public HashMap<String, byte[]> compile() throws IOException {
         return compile(true);
     }
+
     public HashMap<String, byte[]> compile(boolean save) throws IOException {
         HashMap<String, byte[]> classDefinitions = new HashMap<>();
 
         for (QualifiedName qualifiedName : tree.getImports()) {
-            if(!IMPORTS.contains(qualifiedName.toString())) {
+            if (!IMPORTS.contains(qualifiedName.toString())) {
                 String file = findFile(qualifiedName);
 
-                if(file != null) {
+                if (file != null) {
                     try {
                         ToyParser parser = new ToyParser(file);
                         ToyTree tree = parser.parse();
@@ -71,9 +74,9 @@ public class Compiler {
             }
         }
 
-        if(Errors.getErrorCount() > 0) {
+        if (Errors.getErrorCount() > 0) {
             Errors.printErrors();
-            System.err.println("Compilation failed with "+Errors.getErrorCount() + " errors.");
+            System.err.println("Compilation failed with " + Errors.getErrorCount() + " errors.");
         } else {
             // no errors... generate code
             HashMap<String, ClassMaker> classes = new HashMap<>();
@@ -82,10 +85,18 @@ public class Compiler {
                     classDef.setPackage(toyTree.getPackage());
                     classDef.setSourceTree(toyTree);
                     String name = toyTree.getPackage().add(classDef.getName()).toString();
-                    ClassMaker cm = new ClassMaker(classDef, toyTree.getImports());
+
+                    List<QualifiedName> lst = toyTree.getImports();
+
+                    for (ClassDef cd : toyTree.getClasses()) {
+                        if (cd != classDef) {
+                            lst.add(toyTree.getPackage().add(classDef.getName()));
+                        }
+                    }
+                    ClassMaker cm = new ClassMaker(classDef, lst);
                     toyTree.addImport(toyTree.getPackage().add(classDef.getName()));
-                    if(!name.equals(toyTree.getFullName().toString())) {
-                        Fun clinit = new Fun(new QualifiedName("<clinit>"), new Block(), null, null, null);
+                    if (!name.equals(toyTree.getFullName().toString())) {
+                        Fun clinit = new Fun(new QualifiedName("<clinit>"), new Block(), null, null);
                         cm.addStaticMethods(clinit);
                         cm.make();
                     }
@@ -94,7 +105,7 @@ public class Compiler {
                 QualifiedName name = toyTree.getFullName();
                 ClassMaker cm;
                 // find the correct class to put that statics in
-                if(classes.containsKey(name.toString())) {
+                if (classes.containsKey(name.toString())) {
                     cm = classes.get(name.toString());
                 } else {
                     cm = new ClassMaker(toyTree.getPackage(), toyTree.getName().toString(), toyTree.getImports());
@@ -103,26 +114,27 @@ public class Compiler {
                 Block b = new Block();
                 Fun clinit = new Fun(new QualifiedName("<clinit>"), b, null, null, null);
                 for (Statement statement : toyTree.getStatements()) {
-                    if(statement instanceof VarDecl) {
+                    if (statement instanceof VarDecl) {
                         cm.addStaticFields((VarDecl) statement);
                     }
-                    if(!(statement instanceof Fun)) {
+                    if (!(statement instanceof Fun)) {
                         b.append(statement);
                     } else {
-                        cm.addStaticMethods((Fun)statement);
+                        cm.addStaticMethods((Fun) statement);
                     }
                 }
                 cm.addStaticMethods(clinit); // clinit MUST be the last to be added
                 cm.make();
             }
-            if(Errors.getErrorCount() > 0) {
+            if (Errors.getErrorCount() > 0) {
                 Errors.printErrors();
+                classDefinitions.clear();
             } else {
                 for (String s : classes.keySet()) {
                     String file = BIN + "/" + s.replace(".", "/") + ".class";
                     byte[] data = classes.get(s).getBytes();
                     classDefinitions.put(s, data);
-                    if(save) {
+                    if (save) {
                         File f = new File(file).getParentFile();
                         f.mkdirs();
                         FileOutputStream fos = new FileOutputStream(file);
@@ -134,34 +146,36 @@ public class Compiler {
         }
         return classDefinitions;
     }
+
     private final String findFile(QualifiedName name) {
         QualifiedName pack = tree.getPackage();
         File basePath = file.getParentFile();
-        if(pack != null) {
+        if (pack != null) {
             for (int i = 0; i < pack.getNames().length; i++) {
                 basePath = basePath.getParentFile();
             }
         }
-        String str = basePath.getPath() + "/" +(name.toString().replace('.', '/')) + ".tl";
-        if(!new File(str).exists())
+        String str = basePath.getPath() + "/" + (name.toString().replace('.', '/')) + ".tl";
+        if (!new File(str).exists())
             return null;
         return str;
     }
+
     public static void buildSymbolMap(Class clazz) {
         boolean isToyLang = clazz.getDeclaredAnnotation(TLFile.class) != null;
         for (Method method : clazz.getMethods()) {
-            SymbolMap.FUN_MAP.put(clazz.getPackage().getName() + "." + method.getName(), new Fun(isToyLang ? new QualifiedName(method.getName()) : null,null,null,null));
+            SymbolMap.FUN_MAP.put(clazz.getPackage().getName() + "." + method.getName(), new Fun(isToyLang ? new QualifiedName(method.getName()) : null, null, null, null));
         }
         for (Constructor constructor : clazz.getConstructors()) {
             // todo;
-            if(Modifier.isProtected(constructor.getModifiers()) || Modifier.isPublic(constructor.getModifiers())) {
+            if (Modifier.isProtected(constructor.getModifiers()) || Modifier.isPublic(constructor.getModifiers())) {
                 //SymbolMap.CLASS_MAP.put(clazz.getName(), new ClassDef(null,null,null,null,null));
                 break;
             }
         }
         // todo;
         for (Field field : clazz.getFields()) {
-            if(Modifier.isStatic(field.getModifiers())) {
+            if (Modifier.isStatic(field.getModifiers())) {
                 //SymbolMap.VARIABLE_MAP.put(clazz.getPackage().getName() + "." + field.getName(), new VarDecl(null,null,null));
             }
         }
