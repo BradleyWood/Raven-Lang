@@ -7,27 +7,31 @@ public class QualifiedName extends Expression {
     public QualifiedName(String... names) {
         this.names = names;
     }
+
     public String[] getNames() {
         return names;
     }
+
     @Override
     public String toString() {
-        if(names == null || names.length == 0)
+        if (names == null || names.length == 0)
             return null;
-        String qualifiedName = "";
+        StringBuilder qualifiedName = new StringBuilder();
         for (String name : names) {
-            qualifiedName += name + ".";
+            qualifiedName.append(name).append(".");
         }
         return qualifiedName.substring(0, qualifiedName.length() - 1);
     }
+
     public QualifiedName add(String name) {
         String[] sa = new String[names.length + 1];
-        for(int i = 0; i < names.length;i++) {
+        for (int i = 0; i < names.length; i++) {
             sa[i] = names[i];
         }
         sa[names.length] = name;
         return new QualifiedName(sa);
     }
+
     public void update(QualifiedName name) {
         this.names = name.getNames();
     }
@@ -35,7 +39,7 @@ public class QualifiedName extends Expression {
     public QualifiedName add(QualifiedName name) {
         String[] sa = new String[names.length + name.getNames().length];
         int i;
-        for(i = 0; i < names.length;i++) {
+        for (i = 0; i < names.length; i++) {
             sa[i] = names[i];
         }
         for (String s : name.getNames()) {
@@ -50,6 +54,7 @@ public class QualifiedName extends Expression {
         //System.out.println("Visited qn: "+toString());
         visitor.visitName(this);
     }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -57,6 +62,7 @@ public class QualifiedName extends Expression {
         QualifiedName that = (QualifiedName) o;
         return toString().toString().equals(that.toString());
     }
+
     @Override
     public int hashCode() {
         return toString().hashCode();
