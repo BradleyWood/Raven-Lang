@@ -79,6 +79,9 @@ methodDeclaration
     :   (annotation*) (modifier*) FUN IDENTIFIER '(' (paramDef (',' paramDef)*)? ')' block
     |   FUN? IDENTIFIER '(' (paramDef (',' paramDef)*)? ')' ASSIGNMENT expression SEMI
     ;
+constructor
+    :   (annotation*) (modifier*) CONSTRUCTOR '(' (paramDef (',' paramDef)*)? ')' block
+    ;
 paramDef
     :   IDENTIFIER
     ;
@@ -233,7 +236,7 @@ PACK    :   'package';
 CONTINUE:   'continue';
 ANNO    :   'annotation';
 INTER   :   'interface';
-
+CONSTRUCTOR :   'constructor';
 
 NULL    :   'null';
 
