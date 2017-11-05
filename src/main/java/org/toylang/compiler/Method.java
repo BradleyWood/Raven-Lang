@@ -14,14 +14,14 @@ public class Method extends MethodVisitor implements TreeVisitor, Opcodes {
 
     private static final LinkedList<ReflectiveMethod> reflectiveMethods = new LinkedList<>();
 
-    private final ArrayList<String> locals = new ArrayList<>();
+    protected final ArrayList<String> locals = new ArrayList<>();
     private final ArrayList<Integer> lineNumbers = new ArrayList<>();
 
     private final Stack<Label> continueLabels = new Stack<>();
     private final Stack<Label> breakLabels = new Stack<>();
 
 
-    private final MethodContext ctx;
+    protected final MethodContext ctx;
 
     public Method(final MethodContext ctx, final MethodVisitor mv) {
         super(ASM5, mv);
@@ -393,9 +393,7 @@ public class Method extends MethodVisitor implements TreeVisitor, Opcodes {
             VarDecl decl = ctx.findStaticVar(names[0]);
             switch (names.length) {
                 case 1:
-                    if (decl == null) {
-                        Errors.put("Variable not found " + ctx.getOwner() + " "+ names[0]);
-                    } else if (ctx.isStatic()) {
+                    if (ctx.isStatic()) {
                         accessStaticField(ctx.getOwner(), decl.getName().toString(), load);
                     } else {
                         VarDecl var = ctx.getClassDef().findVar(name.toString());
