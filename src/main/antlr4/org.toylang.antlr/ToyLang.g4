@@ -14,6 +14,7 @@ statement
     |   varDeclaration
     |   annotationDeclaration
     |   methodDeclaration
+    |   constructor
     |   ifStatement
     |   goStatement
     |   whileStatement
