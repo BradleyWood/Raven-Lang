@@ -14,116 +14,136 @@ public class ClassDef extends Statement {
     private final Modifier[] modifiers;
     private final QualifiedName name;
     private final QualifiedName super_;
-    private final String[] interfaces;
+    private final QualifiedName[] interfaces;
     private QualifiedName package_;
     private final List<Statement> statements;
-    private List<Fun> constructors = null;
+    private Expression[] superParams = null;
+    private List<Constructor> constructors = null;
     private List<VarDecl> varParams = new LinkedList<>();
     private ToyTree sourceTree = null;
 
-    public ClassDef(Modifier[] modifiers, String name, QualifiedName super_, String[] interfaces, List<Statement> statements) {
+    public ClassDef(Modifier[] modifiers, String name, Inheritance inh, List<Statement> statements) {
         this.statements = statements;
         this.modifiers = modifiers;
-        this.interfaces = interfaces;
+        this.interfaces = inh.getInterfaces();
+        this.superParams = inh.getSuperParams();
         this.name = new QualifiedName(name);
-        this.super_ = super_;
+        this.superParams = inh.getSuperParams();
+        this.super_ = inh.getSuperClass();
     }
-    public ClassDef(Modifier[] modifiers, QualifiedName package_, String name, QualifiedName super_, String[] interfaces, List<Statement> statements) {
-        this(modifiers, name, super_, interfaces, statements);
+
+    public ClassDef(Modifier[] modifiers, QualifiedName package_, String name, QualifiedName super_, QualifiedName[] interfaces, List<Statement> statements) {
+        this(modifiers, name, new Inheritance(super_, null, interfaces), statements);
         this.package_ = package_;
     }
+
     public boolean hasVarParams() {
         return varParams.size() > 0;
     }
+
     public void addVarParam(VarDecl decl) {
         varParams.add(decl);
     }
+
     public void setVarParams(List<VarDecl> varParams) {
         this.varParams = varParams;
     }
+
     public List<VarDecl> getVarParams() {
         return varParams;
     }
+
     public ToyTree getSourceTree() {
         return sourceTree;
     }
+
     public void setSourceTree(ToyTree sourceTree) {
         this.sourceTree = sourceTree;
     }
+
     @Override
     public void accept(TreeVisitor visitor) {
         visitor.visitClassDef(this);
     }
+
     public QualifiedName getPackage() {
         return package_;
     }
+
     public void setPackage(QualifiedName package_) {
         this.package_ = package_;
     }
+
     public List<Statement> getStatements() {
         return statements;
     }
+
     public Modifier[] getModifiers() {
         return modifiers;
     }
+
     public QualifiedName getName() {
         return name;
     }
+
     public QualifiedName getSuper() {
-        if(sourceTree != null) {
+        if (sourceTree != null) {
             for (QualifiedName qualifiedName : sourceTree.getImports()) {
-                if(qualifiedName.toString().endsWith(super_.toString())) {
+                if (qualifiedName.toString().endsWith(super_.toString())) {
                     return qualifiedName;
                 }
             }
         }
         return super_;
     }
+
     public List<Statement> getFields() {
         return statements.stream().filter(stmt -> (stmt instanceof VarDecl)).collect(Collectors.toList());
     }
+
     public VarDecl findVar(String name) {
         for (Statement statement : getFields()) {
             VarDecl decl = (VarDecl) statement;
-            if(decl.getName().toString().equals(name))
+            if (decl.getName().toString().equals(name))
                 return decl;
         }
         return null;
     }
+
     public List<Fun> getMethods() {
         List<Fun> methods = new ArrayList<>();
         for (Statement statement : statements) {
-            if(statement instanceof Fun) {
-                Fun fun = (Fun)statement;
-                if(!fun.getName().toString().equals(name.toString()))
+            if (statement instanceof Fun) {
+                Fun fun = (Fun) statement;
+                if (!fun.getName().toString().equals(name.toString()))
                     methods.add(fun);
             }
         }
         return methods;
     }
+
     public String getFullName() {
-        if(package_ == null)
+        if (package_ == null)
             return name.toString();
-        return (package_.toString() + "."+ name).replace(".", "/");
+        return (package_.toString() + "." + name).replace(".", "/");
     }
+
     public String getSignature() {
         return "L" + getFullName() + ";";
     }
-    public String[] getInterfaces() {
+
+    public QualifiedName[] getInterfaces() {
         return interfaces;
     }
-    public List<Fun> getConstructors() {
-        if(constructors != null)
+
+    public List<Constructor> getConstructors() {
+        if (constructors != null)
             return constructors;
 
         constructors = new ArrayList<>();
-        for(Statement stmt : statements) {
-            if(stmt instanceof Fun) {
-                Fun fun = (Fun)stmt;
-                if(fun.getName().toString().equals(name.toString())) {
-                    fun.setName("<init>");
-                    constructors.add(fun);
-                }
+        for (Statement stmt : statements) {
+            if (stmt instanceof Constructor) {
+                constructors.add((Constructor) stmt);
             }
         }
         statements.removeAll(constructors);
@@ -131,30 +151,31 @@ public class ClassDef extends Statement {
         // check if the super class has a default constructor
         // otherwise we need explicit definition of constructor
         boolean autoGenerate = hasVarParams();
-        for (Fun constructor : constructors) {
-            if(constructor.getParams().length == varParams.size()) {
+        for (Constructor constructor : constructors) {
+            if (constructor.getParams().length == varParams.size()) {
                 autoGenerate = false;
                 break;
             }
         }
-        if(autoGenerate && varParams.size() > 0) {
-            Fun con = createConstructor();
+        if (autoGenerate && varParams.size() > 0) {
+            Constructor con = createConstructor();
             System.out.println(getName() + " : create constructor");
             constructors.add(con);
         }
         return constructors;
     }
-    private Fun createConstructor() {
+
+    private Constructor createConstructor() {
         List<Statement> fields = getFields();
 
         VarDecl[] params_ = new VarDecl[fields.size()];
         Block body = new Block();
 
-        for(int i = 0; i < params_.length; i++) {
-            QualifiedName funParamName = new QualifiedName(((VarDecl)fields.get(i)).getName().toString()+"_");
+        for (int i = 0; i < params_.length; i++) {
+            QualifiedName funParamName = new QualifiedName(((VarDecl) fields.get(i)).getName().toString() + "_");
             params_[i] = new VarDecl(funParamName, null);
-            body.append(new BinOp(((VarDecl)fields.get(i)).getName(), Operator.ASSIGNMENT, funParamName));
+            body.append(new BinOp(((VarDecl) fields.get(i)).getName(), Operator.ASSIGNMENT, funParamName));
         }
-        return new Fun(new QualifiedName("<init>"), body, new Modifier[] {Modifier.PUBLIC}, new String[0], params_);
+        return new Constructor(new Modifier[] {Modifier.PUBLIC}, body, params_);
     }
 }

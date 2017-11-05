@@ -4,6 +4,7 @@ import org.toylang.antlr.Modifier;
 import org.toylang.antlr.ToyLangBaseVisitor;
 import org.toylang.antlr.ToyLangParser;
 import org.toylang.antlr.ast.*;
+import org.toylang.compiler.ClassMaker;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -18,8 +19,7 @@ public class ClassDefVisitor extends ToyLangBaseVisitor<ClassDef> {
     @Override
     public ClassDef visitClassDef(ToyLangParser.ClassDefContext ctx) {
         Modifier[] modifiers = new Modifier[0];
-        String super_ = "java/lang/Object";
-        String[] interfaces = new String[0];
+        QualifiedName super_ = ClassMaker.OBJECT;
 
         if (ctx.modifier() != null) {
             modifiers = new Modifier[ctx.modifier().size()];
@@ -29,8 +29,6 @@ public class ClassDefVisitor extends ToyLangBaseVisitor<ClassDef> {
         }
         String name = ctx.IDENTIFIER().getText();
 
-        List<Statement> statementList = new ArrayList<>();
-
         LinkedList<VarDecl> varParams = new LinkedList<>();
 
         if (ctx.fields != null) {
@@ -39,21 +37,15 @@ public class ClassDefVisitor extends ToyLangBaseVisitor<ClassDef> {
                 varParams.add(decl);
             }
         }
-        if (ctx.impl != null) {
-            int size = ctx.impl.param().size();
-            if (size > 0) {
-                super_ = ctx.impl.param(0).getText();
-                interfaces = new String[size - 1];
-                for (int i = 1; i < size; i++) {
-                    interfaces[i - 1] = ctx.impl.param(i).getText();
-                }
-            }
+        Inheritance inh = new Inheritance(super_, null, null);
+        if (ctx.inheritance() != null) {
+            inh = ctx.inheritance().accept(InheritanceVisitor.INSTANCE);
         }
 
         Block block = ctx.block().accept(BlockVisitor.INSTANCE);
-        statementList.addAll(block.getStatements());
+        List<Statement> statementList = new ArrayList<>(block.getStatements());
 
-        ClassDef def = new ClassDef(modifiers, name, new QualifiedName(super_), interfaces, statementList);
+        ClassDef def = new ClassDef(modifiers, name, inh, statementList);
         def.setVarParams(varParams);
         return def;
     }
