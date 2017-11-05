@@ -94,7 +94,19 @@ varDeclaration
     |   (modifier*) VAR IDENTIFIER SEMI
     ;
 classDef
-    :   (modifier*) CLASS IDENTIFIER ('(' fields=paramList ')')? (':' impl=paramList)? block
+    :   (modifier*) CLASS IDENTIFIER ('(' fields=paramList ')')? inheritance? block
+    ;
+inheritance
+    :   ext? impl?
+    ;
+ext
+    :   EXTENDS qualifiedName ('(' paramList ')')?
+    ;
+impl
+    :   IMPL interfaceList
+    ;
+interfaceList
+    :   qualifiedName (',' qualifiedName)*
     ;
 expression
     :   THIS '.' expression
@@ -232,6 +244,8 @@ SUPER   :   'super';
 CLASS   :   'class';
 RETURN  :   'return';
 PUB     :   'public';
+EXTENDS :   'extends';
+IMPL    :   'impl' | 'implements';
 PRIV    :   'private';
 PACK    :   'package';
 CONTINUE:   'continue';
