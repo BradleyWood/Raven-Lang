@@ -1,11 +1,11 @@
 package org.toylang.antlr.ast;
 
-import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 public class Block extends Statement {
 
-    private final List<Statement> statements = new ArrayList<>();
+    private final LinkedList<Statement> statements = new LinkedList<>();
 
     public Block(Statement... statements) {
         for (Statement statement : statements) {
@@ -15,6 +15,11 @@ public class Block extends Statement {
     public void append(Statement statement) {
         statements.add(statement);
     }
+
+    public void addBefore(Statement statement) {
+        statements.addFirst(statement);
+    }
+
     public List<Statement> getStatements() {
         return statements;
     }
