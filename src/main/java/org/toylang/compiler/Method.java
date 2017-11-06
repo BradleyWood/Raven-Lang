@@ -267,8 +267,16 @@ public class Method extends MethodVisitor implements TreeVisitor, Opcodes {
                 String funOwner = ctx.getOwner();
                 if (Builtin.isBuiltin(call.getName(), call.getParams().length)) {
                     funOwner = Constants.BUILTIN_NAME;
+                    invokeStaticMethod_D(funOwner, call.getName().toString(), desc, call.getParams());
+                } else {
+                    if (ctx.isStatic()) {
+                        invokeStaticMethod_D(funOwner, call.getName().toString(), desc, call.getParams());
+                    } else {
+                        visitVarInsn(ALOAD, locals.indexOf("this"));
+                        Arrays.stream(call.getParams()).forEach(param -> param.accept(this));
+                        visitMethodInsn(INVOKEVIRTUAL, funOwner, call.getName().toString(), desc, false);
+                    }
                 }
-                invokeStaticMethod_D(funOwner, call.getName().toString(), desc, call.getParams());
             }
         }
 
