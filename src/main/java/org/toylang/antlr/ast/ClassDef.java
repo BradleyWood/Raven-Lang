@@ -22,6 +22,8 @@ public class ClassDef extends Statement {
     private List<VarDecl> varParams = new LinkedList<>();
     private ToyTree sourceTree = null;
 
+    private List<Fun> methods = null;
+
     public ClassDef(Modifier[] modifiers, String name, Inheritance inh, List<Statement> statements) {
         this.statements = statements;
         this.modifiers = modifiers;
@@ -113,6 +115,8 @@ public class ClassDef extends Statement {
     }
 
     public List<Fun> getMethods() {
+        if (methods != null)
+            return methods;
         List<Fun> methods = new ArrayList<>();
         for (Statement statement : statements) {
             if (statement instanceof Fun) {
@@ -121,7 +125,9 @@ public class ClassDef extends Statement {
                     methods.add(fun);
             }
         }
-        return methods;
+        methods.addAll(createGetters());
+        methods.addAll(createSetters());
+        return this.methods = methods;
     }
 
     public String getFullName() {
@@ -166,7 +172,6 @@ public class ClassDef extends Statement {
         }
         if (autoGenerate && varParams.size() > 0) {
             Constructor con = createConstructor();
-            System.out.println(getName() + " : create constructor");
             constructors.add(con);
         }
         return constructors;
@@ -183,6 +188,29 @@ public class ClassDef extends Statement {
             params_[i] = new VarDecl(funParamName, null);
             body.append(new BinOp(fields.get(i).getName(), Operator.ASSIGNMENT, funParamName));
         }
-        return new Constructor(new Modifier[] {Modifier.PUBLIC}, body, params_);
+        return new Constructor(new Modifier[]{Modifier.PUBLIC}, body, params_);
+    }
+
+    private List<Fun> createGetters() {
+        LinkedList<Fun> getters = new LinkedList<>();
+        for (VarDecl decl : getVarParams()) {
+            Block block = new Block();
+            block.append(new Return(decl.getName()));
+            Fun f = new Fun(new QualifiedName("get"+decl.getName()), block, new Modifier[]{Modifier.PUBLIC}, null);
+            getters.add(f);
+        }
+        return getters;
+    }
+
+    private List<Fun> createSetters() {
+        LinkedList<Fun> setters = new LinkedList<>();
+        for (VarDecl decl : getVarParams()) {
+            Block block = new Block();
+            VarDecl param = new VarDecl(new QualifiedName(decl.getName().toString() + "_"), null, null);
+            block.append(new BinOp(decl.getName(), Operator.ASSIGNMENT, param.getName()));
+            Fun f = new Fun(new QualifiedName("set"+decl.getName()), block, new Modifier[]{Modifier.PUBLIC}, null, param);
+            setters.add(f);
+        }
+        return setters;
     }
 }
