@@ -209,11 +209,17 @@ public class TBigInt extends TObject {
 
     @Override
     public boolean equals(Object o) {
+        if (o instanceof TObject) {
+            BigInteger bigInt = ((TObject) o).toBigInt();
+            if (bigInt != null) {
+                return value.equals(bigInt);
+            }
+        }
         return super.equals(o);
     }
 
     @Override
     public int hashCode() {
-        return super.hashCode();
+        return value.hashCode();
     }
 }
