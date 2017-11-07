@@ -1,6 +1,7 @@
 package org.toylang.antlr.ast;
 
 import org.toylang.antlr.Modifier;
+import org.toylang.core.wrappers.TNull;
 
 public class VarDecl extends Statement {
 
@@ -28,7 +29,7 @@ public class VarDecl extends Statement {
         return mod;
     }
     public Expression getInitialValue() {
-        return initialValue;
+        return initialValue != null ? initialValue : new Literal(TNull.NULL);
     }
     @Override
     public void accept(TreeVisitor visitor) {
