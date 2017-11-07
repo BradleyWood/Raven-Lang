@@ -4,6 +4,7 @@ import org.toylang.core.Hidden;
 
 import java.lang.invoke.MethodType;
 import java.lang.reflect.*;
+import java.math.BigInteger;
 import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
@@ -165,6 +166,7 @@ public class TObject implements Comparable<TObject> {
         return null;
     }
 
+    @Hidden
     public Double toDouble() {
         return null;
     }
@@ -172,6 +174,11 @@ public class TObject implements Comparable<TObject> {
     @Hidden
     public Boolean toBoolean() {
         throw new RuntimeException(this + " cannot be converted to boolean");
+    }
+
+    @Hidden
+    public BigInteger toBigInt() {
+        return null;
     }
 
     public int size() {
@@ -527,6 +534,8 @@ public class TObject implements Comparable<TObject> {
                     pa[i] = lst.get(i).toDouble();
                 } else if (type == boolean.class) {
                     pa[i] = lst.get(i).toBoolean();
+                } else if (type == BigInteger.class) {
+                    pa[i] = lst.get(i).toBigInt();
                 } else if (type == Object[].class) {
                     pa[i] = lst.toArray();
                 } else {
@@ -548,7 +557,9 @@ public class TObject implements Comparable<TObject> {
     public static TObject toToyLang(Object o) {
         if (o instanceof TObject)
             return (TObject) o;
-
+        if (o instanceof BigInteger) {
+            return new TBigInt((BigInteger) o);
+        }
         if (o instanceof Integer || o instanceof Long || o instanceof Short || o instanceof Byte) {
             return new TInt((int) o);
         }

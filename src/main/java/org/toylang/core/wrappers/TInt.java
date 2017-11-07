@@ -2,6 +2,8 @@ package org.toylang.core.wrappers;
 
 import org.toylang.core.Hidden;
 
+import java.math.BigInteger;
+
 public class TInt extends TObject {
 
     public static TType TYPE = new TType(TInt.class);
@@ -48,6 +50,8 @@ public class TInt extends TObject {
         } else if (obj instanceof TInt) {
             int other = ((TInt) obj).getValue();
             return new TInt(value + other);
+        } else if (obj instanceof TBigInt) {
+            return obj.add(this);
         }
         return super.add(obj);
     }
@@ -59,6 +63,8 @@ public class TInt extends TObject {
         } else if (obj instanceof TInt) {
             int other = ((TInt) obj).getValue();
             return new TInt(value - other);
+        } else if (obj instanceof TBigInt) {
+            return obj.add(this);
         }
         return super.sub(obj);
     }
@@ -70,6 +76,8 @@ public class TInt extends TObject {
         } else if (obj instanceof TInt) {
             int other = ((TInt) obj).getValue();
             return new TInt(value * other);
+        } else if (obj instanceof TBigInt) {
+            return obj.add(this);
         }
         return super.mul(obj);
     }
@@ -81,6 +89,8 @@ public class TInt extends TObject {
         } else if (obj instanceof TInt) {
             int other = ((TInt) obj).getValue();
             return new TInt(value / other);
+        } else if (obj instanceof TBigInt) {
+            return obj.add(this);
         }
         return super.div(obj);
     }
@@ -92,6 +102,8 @@ public class TInt extends TObject {
         } else if (obj instanceof TInt) {
             int other = ((TInt) obj).getValue();
             return new TInt(value % other);
+        } else if (obj instanceof TBigInt) {
+            return obj.add(this);
         }
         return super.mod(obj);
     }
@@ -106,6 +118,8 @@ public class TInt extends TObject {
                 return new TReal((double) value).pow(new TReal(other));
 
             return new TInt((int) Math.pow(value, other));
+        } else if (obj instanceof TBigInt) {
+            return obj.add(this);
         }
         return super.pow(obj);
     }
@@ -117,6 +131,8 @@ public class TInt extends TObject {
         } else if (obj instanceof TInt) {
             int other = ((TInt) obj).getValue();
             return value > other ? TBoolean.TRUE : TBoolean.FALSE;
+        } else if (obj instanceof TBigInt) {
+            return obj.add(this);
         }
         return super.GT(obj);
     }
@@ -128,6 +144,8 @@ public class TInt extends TObject {
         } else if (obj instanceof TInt) {
             int other = ((TInt) obj).getValue();
             return value < other ? TBoolean.TRUE : TBoolean.FALSE;
+        } else if (obj instanceof TBigInt) {
+            return obj.add(this);
         }
         return super.LT(obj);
     }
@@ -139,6 +157,8 @@ public class TInt extends TObject {
         } else if (obj instanceof TInt) {
             int other = ((TInt) obj).getValue();
             return value >= other ? TBoolean.TRUE : TBoolean.FALSE;
+        } else if (obj instanceof TBigInt) {
+            return obj.add(this);
         }
         return super.GTE(obj);
     }
@@ -150,6 +170,8 @@ public class TInt extends TObject {
         } else if (obj instanceof TInt) {
             int other = ((TInt) obj).getValue();
             return value <= other ? TBoolean.TRUE : TBoolean.FALSE;
+        } else if (obj instanceof TBigInt) {
+            return obj.add(this);
         }
         return super.LTE(obj);
     }
@@ -161,6 +183,8 @@ public class TInt extends TObject {
         } else if (obj instanceof TInt) {
             int other = ((TInt) obj).getValue();
             return value == other ? TBoolean.TRUE : TBoolean.FALSE;
+        } else if (obj instanceof TBigInt) {
+            return obj.add(this);
         }
         return super.EQ(obj);
     }
@@ -172,8 +196,15 @@ public class TInt extends TObject {
         } else if (obj instanceof TInt) {
             int other = ((TInt) obj).getValue();
             return value != other ? TBoolean.TRUE : TBoolean.FALSE;
+        } else if (obj instanceof TBigInt) {
+            return obj.add(this);
         }
         return super.NE(obj);
+    }
+
+    @Override
+    public BigInteger toBigInt() {
+        return BigInteger.valueOf(value);
     }
 
     @Override
