@@ -44,5 +44,5 @@ fun continueTest4() {
             continue;
         j += 1;
     }
-    Assert.assertEqual(5, j);
+    Assert.assertEqual(9, j);
 }

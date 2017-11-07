@@ -61,7 +61,7 @@ public class Application {
                                     fails.getAndIncrement();
                             }
                             Assert.errors.forEach(error -> {
-                                if (method.getName().toLowerCase().contains("fail")) {
+                                if (!method.getName().toLowerCase().contains("fail")) {
                                     error.printStackTrace();
                                     fails.getAndIncrement();
                                 }
