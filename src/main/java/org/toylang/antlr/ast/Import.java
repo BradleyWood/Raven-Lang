@@ -11,10 +11,12 @@ public class Import extends Statement {
     public QualifiedName getName() {
         return name;
     }
+
     @Override
     public void accept(TreeVisitor visitor) {
         visitor.visitImport(this);
     }
+
     @Override
     public String toString() {
         return "import " + name.toString() + ";";

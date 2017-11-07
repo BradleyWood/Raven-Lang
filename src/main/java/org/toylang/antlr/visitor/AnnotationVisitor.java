@@ -8,20 +8,22 @@ import org.toylang.antlr.ast.QualifiedName;
 
 public class AnnotationVisitor extends ToyLangBaseVisitor<Annotation> {
 
-    private AnnotationVisitor() {}
+    private AnnotationVisitor() {
+    }
 
     @Override
     public Annotation visitAnnotation(ToyLangParser.AnnotationContext ctx) {
         QualifiedName name = ctx.qualifiedName().accept(QualifiedNameVisitor.INSTANCE);
         Expression[] params = new Expression[0];
 
-        if(ctx.paramDef() != null) {
+        if (ctx.paramDef() != null) {
             params = new Expression[ctx.paramDef().size()];
-            for(int i = 0; i < params.length; i++) {
+            for (int i = 0; i < params.length; i++) {
                 params[i] = ctx.paramDef(i).accept(ExpressionVisitor.INSTANCE);
             }
         }
         return new Annotation(name.toString(), params);
     }
+
     public static final AnnotationVisitor INSTANCE = new AnnotationVisitor();
 }

@@ -12,9 +12,11 @@ public class Statement extends AST {
     public List<Annotation> getAnnotations() {
         return annotations;
     }
+
     public void addAnnotation(Annotation annotation) {
         annotations.add(annotation);
     }
+
     @Override
     public void accept(TreeVisitor visitor) {
         //throw new RuntimeException("Invalid Node");

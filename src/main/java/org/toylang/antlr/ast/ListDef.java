@@ -7,6 +7,7 @@ public class ListDef extends Expression {
     public ListDef(Expression... expressions) {
         this.expressions = expressions;
     }
+
     public Expression[] getExpressions() {
         return expressions;
     }
@@ -15,6 +16,7 @@ public class ListDef extends Expression {
     public void accept(TreeVisitor visitor) {
         visitor.visitListDef(this);
     }
+
     @Override
     public String toString() {
         String str = "[ ";

@@ -9,12 +9,15 @@ public class ListIndex extends Expression {
         this.name = name;
         this.index = index;
     }
+
     public QualifiedName getName() {
         return name;
     }
+
     public Expression[] getIndex() {
         return index;
     }
+
     @Override
     public void accept(TreeVisitor visitor) {
         visitor.visitListIdx(this);

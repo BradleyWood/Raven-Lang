@@ -9,6 +9,7 @@ public class Literal extends Expression {
     public Literal(TObject value) {
         this.value = value;
     }
+
     public TObject getValue() {
         return value;
     }

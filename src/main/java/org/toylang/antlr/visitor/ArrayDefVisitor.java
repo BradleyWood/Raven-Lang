@@ -7,17 +7,20 @@ import org.toylang.antlr.ast.ListDef;
 
 public class ArrayDefVisitor extends ToyLangBaseVisitor<ListDef> {
 
-    private ArrayDefVisitor() {}
+    private ArrayDefVisitor() {
+    }
+
     @Override
     public ListDef visitList(ToyLangParser.ListContext ctx) {
-        if(ctx.paramList() != null) {
+        if (ctx.paramList() != null) {
             Expression[] expra = new Expression[ctx.paramList().param().size()];
-            for(int i = 0; i < expra.length; i++) {
+            for (int i = 0; i < expra.length; i++) {
                 expra[i] = ctx.paramList().param(i).accept(ExpressionVisitor.INSTANCE);
             }
             return new ListDef(expra);
         }
         return new ListDef();
     }
+
     public static ArrayDefVisitor INSTANCE = new ArrayDefVisitor();
 }

@@ -102,7 +102,7 @@ public class Method extends MethodVisitor implements TreeVisitor, Opcodes {
 
         if (!whileStatement.isDoWhile())
             visitJumpInsn(GOTO, conditional);
-        
+
         visitLabel(start);
 
         whileStatement.getBody().accept(this);
@@ -120,7 +120,7 @@ public class Method extends MethodVisitor implements TreeVisitor, Opcodes {
 
     @Override
     public void visitReturn(Return ret) {
-        if(ret.getValue() != null)
+        if (ret.getValue() != null)
             visitLine(ret.getValue());
 
         if (ctx.getName().equals("main")) {
@@ -213,7 +213,7 @@ public class Method extends MethodVisitor implements TreeVisitor, Opcodes {
 
     @Override
     public void visitContinue() {
-        if(continueLabels.size() == 0) {
+        if (continueLabels.size() == 0) {
             Errors.put("Continue not allowed here");
         } else {
             visitJumpInsn(GOTO, continueLabels.peek());
@@ -222,7 +222,7 @@ public class Method extends MethodVisitor implements TreeVisitor, Opcodes {
 
     @Override
     public void visitBreak() {
-        if(breakLabels.size() == 0) {
+        if (breakLabels.size() == 0) {
             Errors.put("Break not allowed here");
         } else {
             visitJumpInsn(GOTO, breakLabels.peek());

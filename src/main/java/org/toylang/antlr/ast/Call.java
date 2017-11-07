@@ -13,6 +13,7 @@ public class Call extends Expression {
         this.name = name;
         this.params = params;
     }
+
     public Call(Expression precedingExpr, QualifiedName name, Expression... params) {
         this.precedingExpr = precedingExpr;
         this.name = name;
@@ -22,15 +23,19 @@ public class Call extends Expression {
     public Expression getPrecedingExpr() {
         return precedingExpr;
     }
+
     public QualifiedName getName() {
         return name;
     }
+
     public void setQualifiedName(QualifiedName name) {
         this.name = name;
     }
+
     public Expression[] getParams() {
         return params;
     }
+
     /**
      * Sometimes the return value is not used and it must be popped off the stack
      *
@@ -43,15 +48,17 @@ public class Call extends Expression {
     public void setPop(boolean pop) {
         this.pop = pop;
     }
+
     @Override
     public void accept(TreeVisitor visitor) {
         //super.accept(visitor);
         visitor.visitFunCall(this);
     }
+
     @Override
     public String toString() {
         StringBuilder builder = new StringBuilder();
         Arrays.stream(params).forEach(builder::append);
-        return "{"+precedingExpr + " . "+ name.toString() + "(" + builder.toString() + ");}";
+        return "{" + precedingExpr + " . " + name.toString() + "(" + builder.toString() + ");}";
     }
 }

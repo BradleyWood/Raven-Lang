@@ -7,22 +7,23 @@ public enum Modifier {
 
     PUBLIC(ACC_PUBLIC),
     PRIVATE(ACC_PRIVATE),
-    OPEN(-ACC_FINAL)
-    ;
+    OPEN(-ACC_FINAL);
     int modifier;
 
     Modifier(int modifier) {
         this.modifier = modifier;
     }
+
     public int getModifier() {
         return modifier;
     }
+
     public static Modifier getModifier(String name) {
-        if(name.equals("public")) {
+        if (name.equals("public")) {
             return PUBLIC;
-        } else if(name.equals("private")) {
+        } else if (name.equals("private")) {
             return PRIVATE;
-        } else if(name.equals("open")) {
+        } else if (name.equals("open")) {
             return OPEN;
         }
         return null;

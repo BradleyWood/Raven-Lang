@@ -8,5 +8,5 @@ import java.lang.annotation.RetentionPolicy;
  * Blocks reflective invocation
  */
 public @interface Hidden {
-    
+
 }

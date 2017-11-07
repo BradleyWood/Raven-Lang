@@ -15,12 +15,15 @@ public class VarDecl extends Statement {
         this.initialValue = initialValue;
         this.modifiers = modifiers;
     }
+
     public QualifiedName getName() {
         return name;
     }
+
     public Modifier[] getModifiers() {
         return modifiers;
     }
+
     public int modifiers() {
         int mod = 0;
         for (Modifier modifier : getModifiers()) {
@@ -28,9 +31,11 @@ public class VarDecl extends Statement {
         }
         return mod;
     }
+
     public Expression getInitialValue() {
         return initialValue != null ? initialValue : new Literal(TNull.NULL);
     }
+
     @Override
     public void accept(TreeVisitor visitor) {
         visitor.visitVarDecl(this);

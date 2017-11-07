@@ -26,7 +26,7 @@ public class TBoolean extends TObject {
 
     @Override
     public TObject not() {
-        if(value)
+        if (value)
             return FALSE;
         return TRUE;
     }
@@ -48,7 +48,7 @@ public class TBoolean extends TObject {
 
     @Override
     public TObject EQ(TObject obj) {
-        if(obj instanceof TBoolean) {
+        if (obj instanceof TBoolean) {
             return (value == ((TBoolean) obj).value) ? TBoolean.TRUE : TBoolean.FALSE;
         }
         return TBoolean.FALSE;

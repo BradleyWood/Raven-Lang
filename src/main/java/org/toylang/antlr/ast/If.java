@@ -11,19 +11,24 @@ public class If extends Statement {
         this.body = body;
         this.else_ = else_;
     }
+
     public Expression getCondition() {
         return condition;
     }
+
     public Statement getBody() {
         return body;
     }
+
     public Statement getElse() {
         return else_;
     }
+
     @Override
     public void accept(TreeVisitor visitor) {
         visitor.visitIf(this);
     }
+
     @Override
     public String toString() {
         return "if(" + condition.toString() + ")" + body.toString() +

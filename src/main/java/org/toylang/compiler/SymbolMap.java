@@ -14,7 +14,7 @@ public class SymbolMap {
 
     public static VarDecl resolveVar(String file, String name) {
         String QName = file + "." + name;
-        if(QName.contains("/")) {
+        if (QName.contains("/")) {
             QName = QName.replaceAll("/", ".");
         }
         for (String s : VARIABLE_MAP.keySet()) {
@@ -24,13 +24,15 @@ public class SymbolMap {
         }
         return null;
     }
+
     private static String getName(String file, String name) {
         String QName = file + "." + name;
-        if(QName.contains("/")) {
+        if (QName.contains("/")) {
             QName = QName.replaceAll("/", ".");
         }
         return QName;
     }
+
     public static Fun resolveFun(String file, String name) {
         String QName = getName(file, name);
         for (String s : FUN_MAP.keySet()) {
@@ -40,6 +42,7 @@ public class SymbolMap {
         }
         return null;
     }
+
     public static Fun resolveFun(String file, String name, int numParams) {
         String QName = getName(file, name);
         for (String s : FUN_MAP.keySet()) {
@@ -50,6 +53,7 @@ public class SymbolMap {
         }
         return null;
     }
+
     public static ClassDef resolveClass(String file, String name) {
         String QName = getName(file, name);
         for (String s : CLASS_MAP.keySet()) {

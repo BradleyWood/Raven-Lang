@@ -9,16 +9,20 @@ public class UnaryOp extends Expression {
         this.op = op;
         this.expr = expr;
     }
+
     public int getOp() {
         return op;
     }
+
     public Expression getExpr() {
         return expr;
     }
+
     @Override
     public void accept(TreeVisitor visitor) {
         visitor.visitUnaryOp(this);
     }
+
     @Override
     public String toString() {
         return op + expr.toString();

@@ -8,7 +8,8 @@ import org.toylang.antlr.ast.While;
 
 public class WhileVisitor extends ToyLangBaseVisitor<While> {
 
-    private WhileVisitor() {}
+    private WhileVisitor() {
+    }
 
     @Override
     public While visitWhileStatement(ToyLangParser.WhileStatementContext ctx) {
@@ -17,5 +18,6 @@ public class WhileVisitor extends ToyLangBaseVisitor<While> {
 
         return new While(condition, body, ctx.DO() != null);
     }
+
     public static final WhileVisitor INSTANCE = new WhileVisitor();
 }

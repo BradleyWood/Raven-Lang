@@ -7,11 +7,14 @@ import org.toylang.antlr.ast.VarDecl;
 
 public class ParamDefVisitor extends ToyLangBaseVisitor<VarDecl> {
 
-    private ParamDefVisitor() {}
+    private ParamDefVisitor() {
+    }
+
     @Override
     public VarDecl visitParamDef(ToyLangParser.ParamDefContext ctx) {
         VarDecl decl = new VarDecl(new QualifiedName(ctx.IDENTIFIER().getText()), null);
         return decl;
     }
+
     public static final ParamDefVisitor INSTANCE = new ParamDefVisitor();
 }

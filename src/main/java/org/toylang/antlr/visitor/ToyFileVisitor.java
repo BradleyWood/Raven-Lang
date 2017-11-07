@@ -18,17 +18,17 @@ public class ToyFileVisitor extends ToyLangBaseVisitor<ToyTree> {
 
         ToyTree tree = new ToyTree(statements);
 
-        if(ctx.packageDef() != null) {
+        if (ctx.packageDef() != null) {
             tree.setPackage(ctx.packageDef().qualifiedName().accept(QualifiedNameVisitor.INSTANCE));
         }
-        if(ctx.importStatement() != null) {
+        if (ctx.importStatement() != null) {
             ctx.importStatement().forEach(imp -> tree.addImport(imp.qualifiedName().accept(QualifiedNameVisitor.INSTANCE)));
 
         }
         ctx.statement().forEach(stmtCtx -> {
             Statement s = stmtCtx.accept(StatementVisitor.INSTANCE);
-            if(s != null) {
-                if(s instanceof Fun)
+            if (s != null) {
+                if (s instanceof Fun)
                     functions.add(s);
                 else
                     statements.add(s);

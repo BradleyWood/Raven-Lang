@@ -14,26 +14,31 @@ public class TType extends TObject {
     public TType(Class<?> type) {
         this.type = type;
     }
+
     @Override
     public TObject getType() {
         return TYPE;
     }
+
     @Override
     public TObject EQ(TObject obj) {
-        if(obj instanceof TType) {
+        if (obj instanceof TType) {
             TType type = (TType) obj;
             return this.type == type.type ? TBoolean.TRUE : TBoolean.FALSE;
         }
         return TBoolean.FALSE;
     }
+
     @Override
     public TObject NE(TObject obj) {
         return EQ(obj).not();
     }
+
     @Override
     public String toString() {
         return type.getTypeName();
     }
+
     @Hidden
     @Override
     public boolean equals(Object o) {
@@ -44,6 +49,7 @@ public class TType extends TObject {
 
         return type != null ? type.equals(toyType.type) : toyType.type == null;
     }
+
     @Hidden
     @Override
     public int hashCode() {

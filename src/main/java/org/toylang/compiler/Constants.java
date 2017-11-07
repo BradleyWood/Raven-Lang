@@ -18,12 +18,15 @@ public class Constants {
     public static void addConstant(TObject literal) {
         CONSTANTS.add(literal);
     }
+
     public static List<TObject> getConstants() {
         return CONSTANTS;
     }
+
     public static int getConstantCount() {
         return CONSTANTS.size();
     }
+
     public static void clear() {
         CONSTANTS.clear();
     }

@@ -9,15 +9,18 @@ public class Annotation extends Statement {
         this.name = name;
         this.params = params;
     }
+
     public String getName() {
         return name;
     }
+
     public Expression[] getParams() {
         return params;
     }
+
     @Override
     public String toString() {
-        return "@"+name;
+        return "@" + name;
     }
 
     @Override

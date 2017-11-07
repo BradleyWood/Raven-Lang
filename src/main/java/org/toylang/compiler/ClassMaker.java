@@ -110,7 +110,7 @@ public class ClassMaker {
 
         if (fun.getName().toString().equals("main"))
             modifiers += ACC_PUBLIC;
-        
+
         Method method = new Method(context, cw.visitMethod(modifiers, fun.getName().toString(), desc, null, fun.getExceptions()));
         fun.getAnnotations().forEach(annotation -> annotation.accept(method));
 

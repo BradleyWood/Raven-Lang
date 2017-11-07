@@ -18,7 +18,7 @@ public class Builtin {
     }
 
     public static boolean isBuiltin(QualifiedName name, int numParams) {
-        if(builtins.size() == 0) {
+        if (builtins.size() == 0) {
             loadBuiltins();
         }
         for (Builtin builtin : builtins) {

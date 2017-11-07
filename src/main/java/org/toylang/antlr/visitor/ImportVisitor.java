@@ -7,12 +7,13 @@ import org.toylang.antlr.ast.QualifiedName;
 
 public class ImportVisitor extends ToyLangBaseVisitor<Import> {
 
-    private ImportVisitor(){}
+    private ImportVisitor() {
+    }
 
     @Override
     public Import visitImportStatement(ToyLangParser.ImportStatementContext ctx) {
         QualifiedName name = null;
-        if(ctx.qualifiedName() != null)
+        if (ctx.qualifiedName() != null)
             name = ctx.qualifiedName().accept(QualifiedNameVisitor.INSTANCE);
         return new Import(name);
     }

@@ -7,9 +7,11 @@ public class Timer {
     public Timer() {
         start = System.currentTimeMillis();
     }
+
     public int elapsed() {
-        return (int)(System.currentTimeMillis() - start);
+        return (int) (System.currentTimeMillis() - start);
     }
+
     public void reset() {
         start = System.currentTimeMillis();
     }

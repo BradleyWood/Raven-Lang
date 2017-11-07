@@ -7,13 +7,14 @@ import org.toylang.antlr.ast.Expression;
 
 public class DictDefVisitor extends ToyLangBaseVisitor<DictDef> {
 
-    private DictDefVisitor() {}
+    private DictDefVisitor() {
+    }
 
     @Override
     public DictDef visitDict(ToyLangParser.DictContext ctx) {
         int size = 0;
-        if(ctx.dictParamList() != null) {
-            if(ctx.dictParamList().dictParam() != null) {
+        if (ctx.dictParamList() != null) {
+            if (ctx.dictParamList().dictParam() != null) {
                 size = ctx.dictParamList().dictParam().size();
             }
         }

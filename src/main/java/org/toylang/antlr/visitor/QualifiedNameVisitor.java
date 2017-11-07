@@ -10,7 +10,8 @@ import java.util.List;
 
 public class QualifiedNameVisitor extends ToyLangBaseVisitor<QualifiedName> {
 
-    private QualifiedNameVisitor() {}
+    private QualifiedNameVisitor() {
+    }
 
     @Override
     public QualifiedName visitQualifiedName(ToyLangParser.QualifiedNameContext ctx) {
@@ -20,5 +21,6 @@ public class QualifiedNameVisitor extends ToyLangBaseVisitor<QualifiedName> {
         }
         return new QualifiedName(list.toArray(new String[list.size()]));
     }
+
     public static QualifiedNameVisitor INSTANCE = new QualifiedNameVisitor();
 }

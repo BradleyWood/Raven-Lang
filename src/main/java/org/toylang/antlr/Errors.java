@@ -9,13 +9,15 @@ public class Errors {
     public static void put(String error) {
         ERRORS.add(error);
     }
+
     public static int getErrorCount() {
         return ERRORS.size();
     }
+
     public static void printErrors() {
-        if(getErrorCount() > 0) {
+        if (getErrorCount() > 0) {
             for (String error : ERRORS) {
-                System.err.println("Error: "+error);
+                System.err.println("Error: " + error);
             }
             System.err.println();
         }

@@ -7,16 +7,18 @@ import org.toylang.antlr.ast.Return;
 
 public class ReturnVisitor extends ToyLangBaseVisitor<Return> {
 
-    private ReturnVisitor() {}
+    private ReturnVisitor() {
+    }
 
     @Override
     public Return visitReturnStatement(ToyLangParser.ReturnStatementContext ctx) {
         Expression expression = null;
 
-        if(ctx.expression() != null)
+        if (ctx.expression() != null)
             expression = ctx.expression().accept(ExpressionVisitor.INSTANCE);
 
         return new Return(expression);
     }
+
     public static final ReturnVisitor INSTANCE = new ReturnVisitor();
 }

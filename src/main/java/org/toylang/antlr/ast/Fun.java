@@ -21,57 +21,66 @@ public class Fun extends Statement {
         this.params = params;
 
 
-        if(this.params == null)
+        if (this.params == null)
             this.params = new VarDecl[0];
     }
+
     public QualifiedName getName() {
         return name;
     }
+
     public Block getBody() {
         return body;
     }
+
     public VarDecl[] getParams() {
         return params;
     }
+
     public void setName(String name) {
         this.name = new QualifiedName(name);
     }
+
     @Override
     public void accept(TreeVisitor visitor) {
         visitor.visitFun(this);
     }
+
     @Override
     public String toString() {
         StringBuilder builder = new StringBuilder();
         Arrays.stream(params).forEach(param -> builder.append(param).append(", "));
-        return "fun " + name + "(" + builder.toString().substring(0,builder.length()) + ") " + body;
+        return "fun " + name + "(" + builder.toString().substring(0, builder.length()) + ") " + body;
     }
+
     public Modifier[] getModifiers() {
         return modifiers;
     }
+
     public int modifiers() {
         int mod = 0;
-        if(getModifiers() == null)
+        if (getModifiers() == null)
             return mod;
         for (Modifier modifier : getModifiers()) {
             mod += modifier.getModifier();
         }
         return mod;
     }
+
     public String getDesc() {
         StringBuilder desc = new StringBuilder("([Ljava/lang/String;)V");
-        if(!getName().toString().equals("main")) {
+        if (!getName().toString().equals("main")) {
             desc = new StringBuilder("(");
             for (VarDecl ignored : getParams()) {
                 desc.append(Constants.TOBJ_SIG);
             }
-            if(name.toString().equals("<init>")) {
+            if (name.toString().equals("<init>")) {
                 desc.append(")V");
             } else {
                 desc.append(")" + Constants.TOBJ_SIG);
             }
         }
-        if(getName().toString().equals("<clinit>"))
+        if (getName().toString().equals("<clinit>"))
             desc = new StringBuilder("()V");
 
         return desc.toString();

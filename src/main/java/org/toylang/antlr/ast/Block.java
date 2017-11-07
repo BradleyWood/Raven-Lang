@@ -12,6 +12,7 @@ public class Block extends Statement {
             append(statement);
         }
     }
+
     public void append(Statement statement) {
         statements.add(statement);
     }
@@ -23,11 +24,13 @@ public class Block extends Statement {
     public List<Statement> getStatements() {
         return statements;
     }
+
     @Override
     public void accept(TreeVisitor visitor) {
         visitor.visitBlock(this);
         //statements.forEach(stmt -> stmt.accept(visitor));
     }
+
     @Override
     public String toString() {
         StringBuilder builder = new StringBuilder();
