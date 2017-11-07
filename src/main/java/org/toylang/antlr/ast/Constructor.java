@@ -2,6 +2,8 @@ package org.toylang.antlr.ast;
 
 import org.objectweb.asm.Type;
 import org.toylang.antlr.Modifier;
+import org.toylang.antlr.Operator;
+import org.toylang.core.wrappers.TNull;
 import org.toylang.core.wrappers.TObject;
 
 import java.util.LinkedList;
@@ -10,8 +12,10 @@ public class Constructor extends Statement {
 
     public static Constructor DEFAULT = new Constructor(new Modifier[]{Modifier.PUBLIC}, null);
 
+    private Block initBlock = new Block();
+    private Block body;
+
     private final Modifier[] modifiers;
-    private final Block body;
     private final VarDecl[] params;
     private final Expression[] superParams;
 
@@ -29,6 +33,11 @@ public class Constructor extends Statement {
         this.superParams = null;
     }
 
+    public void initializeVar(VarDecl decl) {
+        BinOp bop = new BinOp(decl.getName(), Operator.ASSIGNMENT, new Literal(TNull.NULL));
+        initBlock.append(bop);
+    }
+
     /**
      * Short hand non-default constructor definition
      *
@@ -39,7 +48,7 @@ public class Constructor extends Statement {
         this.body = null;
         LinkedList<VarDecl> p = new LinkedList<>();
         for (int i = 0; i < params.length; i++) {
-            if(params[i] instanceof QualifiedName) {
+            if (params[i] instanceof QualifiedName) {
                 p.add(new VarDecl((QualifiedName) params[i], null, null));
             }
         }
@@ -51,8 +60,16 @@ public class Constructor extends Statement {
         return modifiers;
     }
 
+    public Block getInitBlock() {
+        return initBlock;
+    }
+
     public Block getBody() {
         return body;
+    }
+
+    public void setBody(Block body) {
+        this.body = body;
     }
 
     public VarDecl[] getParams() {

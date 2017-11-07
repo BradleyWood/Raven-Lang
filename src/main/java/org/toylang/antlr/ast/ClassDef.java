@@ -189,13 +189,8 @@ public class ClassDef extends Statement {
     }
 
     private void initFieldsInConstructor(Constructor c) {
-        //getFields().forEach(field -> c.getBody().addBefore(new BinOp(field.getName(), Operator.ASSIGNMENT, field.getInitialValue())));
         for (VarDecl decl : getFields()) {
-            BinOp bop = new BinOp(decl.getName(), Operator.ASSIGNMENT, new Literal(TNull.NULL));
-            if (c.getBody() == null) {
-                c.setBody(new Block());
-            }
-            c.getBody().addBefore(bop);
+            c.initializeVar(decl);
         }
     }
 
