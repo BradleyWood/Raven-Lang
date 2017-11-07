@@ -3,6 +3,7 @@ package org.toylang.antlr.ast;
 import org.toylang.antlr.Modifier;
 import org.toylang.antlr.Operator;
 import org.toylang.antlr.ToyTree;
+import org.toylang.core.wrappers.TNull;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -99,8 +100,13 @@ public class ClassDef extends Statement {
         return super_;
     }
 
-    public List<Statement> getFields() {
-        List<Statement> fields = statements.stream().filter(stmt -> (stmt instanceof VarDecl)).collect(Collectors.toList());
+    public List<VarDecl> getFields() {
+        List<VarDecl> fields = new LinkedList<>();
+        for (Statement statement : statements) {
+            if (statement instanceof VarDecl) {
+                fields.add((VarDecl) statement);
+            }
+        }
         fields.addAll(varParams);
         return fields;
     }
@@ -151,13 +157,17 @@ public class ClassDef extends Statement {
         constructors = new ArrayList<>();
         for (Statement stmt : statements) {
             if (stmt instanceof Constructor) {
+                initFieldsInConstructor((Constructor) stmt);
                 constructors.add((Constructor) stmt);
             }
         }
         statements.removeAll(constructors);
 
         if (superParams != null) {
-            constructors.add(new Constructor(superParams));
+            Constructor con = new Constructor(superParams);
+            initFieldsInConstructor(con);
+            constructors.add(con);
+            varParams.clear();
             return constructors;
         }
         // create a new constructor for the class parameters
@@ -172,9 +182,21 @@ public class ClassDef extends Statement {
         }
         if (autoGenerate && varParams.size() > 0) {
             Constructor con = createConstructor();
+            initFieldsInConstructor(con);
             constructors.add(con);
         }
         return constructors;
+    }
+
+    private void initFieldsInConstructor(Constructor c) {
+        //getFields().forEach(field -> c.getBody().addBefore(new BinOp(field.getName(), Operator.ASSIGNMENT, field.getInitialValue())));
+        for (VarDecl decl : getFields()) {
+            BinOp bop = new BinOp(decl.getName(), Operator.ASSIGNMENT, new Literal(TNull.NULL));
+            if (c.getBody() == null) {
+                c.setBody(new Block());
+            }
+            c.getBody().addBefore(bop);
+        }
     }
 
     private Constructor createConstructor() {
@@ -196,7 +218,7 @@ public class ClassDef extends Statement {
         for (VarDecl decl : getVarParams()) {
             Block block = new Block();
             block.append(new Return(decl.getName()));
-            Fun f = new Fun(new QualifiedName("get"+decl.getName()), block, new Modifier[]{Modifier.PUBLIC}, null);
+            Fun f = new Fun(new QualifiedName("get" + decl.getName()), block, new Modifier[]{Modifier.PUBLIC}, null);
             getters.add(f);
         }
         return getters;
@@ -208,7 +230,7 @@ public class ClassDef extends Statement {
             Block block = new Block();
             VarDecl param = new VarDecl(new QualifiedName(decl.getName().toString() + "_"), null, null);
             block.append(new BinOp(decl.getName(), Operator.ASSIGNMENT, param.getName()));
-            Fun f = new Fun(new QualifiedName("set"+decl.getName()), block, new Modifier[]{Modifier.PUBLIC}, null, param);
+            Fun f = new Fun(new QualifiedName("set" + decl.getName()), block, new Modifier[]{Modifier.PUBLIC}, null, param);
             setters.add(f);
         }
         return setters;
