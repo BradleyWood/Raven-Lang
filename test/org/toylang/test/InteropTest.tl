@@ -12,13 +12,6 @@ fun interopTest1() {
     Assert.assertNotEqual(Math.sin(Math.PI / 2), 0.9999999999999999);
 }
 
-fun interopTest2() {
-    var bigint = BigInteger("100");
-    var num = BigInteger("10000");
-    Assert.assertEqual(bigint.multiply(bigint), num);
-    Assert.assertTrue(bigint.multiply(bigint) == num);
-}
-
 fun interopTest3() {
     var f = File(".");
     Assert.assertTrue(f.isDirectory());
