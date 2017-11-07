@@ -16,6 +16,7 @@ public class ClassConstructor extends Method {
         if (constructor.getParams() != null) {
             Arrays.stream(constructor.getParams()).forEach(p -> locals.add(p.getName().toString()));
         }
+        constructor.getInitBlock().getStatements().forEach(stmt -> stmt.accept(this));
         visitVarInsn(ALOAD, 0);
         if (constructor.getSuperParams() == null || constructor.getSuperParams().length == 0) {
             visitMethodInsn(INVOKESPECIAL, ctx.getClassDef().getSuper().toString().replace(".", "/"), "<init>", "()V", false);

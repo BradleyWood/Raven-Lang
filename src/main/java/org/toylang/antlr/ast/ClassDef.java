@@ -189,8 +189,10 @@ public class ClassDef extends Statement {
     }
 
     private void initFieldsInConstructor(Constructor c) {
-        for (VarDecl decl : getFields()) {
-            c.initializeVar(decl);
+        for (Statement statement : statements) {
+            if (statement instanceof VarDecl) {
+                c.initializeVar((VarDecl) statement);
+            }
         }
     }
 

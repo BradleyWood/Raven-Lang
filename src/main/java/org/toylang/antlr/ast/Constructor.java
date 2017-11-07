@@ -34,7 +34,7 @@ public class Constructor extends Statement {
     }
 
     public void initializeVar(VarDecl decl) {
-        BinOp bop = new BinOp(decl.getName(), Operator.ASSIGNMENT, new Literal(TNull.NULL));
+        BinOp bop = new BinOp(decl.getName(), Operator.ASSIGNMENT, decl.getInitialValue());
         initBlock.append(bop);
     }
 
