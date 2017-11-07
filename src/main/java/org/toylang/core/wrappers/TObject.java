@@ -45,51 +45,51 @@ public class TObject implements Comparable<TObject> {
     }
     @Hidden
     public TObject set(TObject index, TObject obj) {
-        return null;
+        throw new RuntimeException("Cannot set element in non list type: " + getType().toString());
     }
     @Hidden
     public TObject get(TObject obj) {
-        return null;
+        throw new RuntimeException("Cannot get element from non list type: " + getType().toString());
     }
     @Hidden
     public TObject add(TObject obj) {
-        return null;
+        throw new RuntimeException("Cannot add types '"+getType().toString() + "' and '" + obj.getType().toString() + "'");
     }
     @Hidden
     public TObject sub(TObject obj) {
-        return null;
+        throw new RuntimeException("Cannot subtract types '"+getType().toString() + "' and '" + obj.getType().toString() + "'");
     }
     @Hidden
     public TObject mul(TObject obj) {
-        return null;
+        throw new RuntimeException("Cannot multiply types '"+getType().toString() + "' and '" + obj.getType().toString() + "'");
     }
     @Hidden
     public TObject div(TObject obj) {
-        return null;
+        throw new RuntimeException("Cannot divide types '"+getType().toString() + "' and '" + obj.getType().toString() + "'");
     }
     @Hidden
     public TObject mod(TObject obj) {
-        return null;
+        throw new RuntimeException("Cannot mod types '"+getType().toString() + "' and '" + obj.getType().toString() + "'");
     }
     @Hidden
     public TObject pow(TObject obj) {
-        return null;
+        throw new RuntimeException("Cannot divide types '"+getType().toString() + "' and '" + obj.getType().toString() + "'");
     }
     @Hidden
     public TObject GT(TObject obj) {
-        return null;
+        throw new RuntimeException("Cannot compare types '"+getType().toString() + "' and '" + obj.getType().toString() + "'");
     }
     @Hidden
     public TObject LT(TObject obj) {
-        return null;
+        throw new RuntimeException("Cannot compare types '"+getType().toString() + "' and '" + obj.getType().toString() + "'");
     }
     @Hidden
     public TObject GTE(TObject obj) {
-        return null;
+        throw new RuntimeException("Cannot compare types '"+getType().toString() + "' and '" + obj.getType().toString() + "'");
     }
     @Hidden
     public TObject LTE(TObject obj) {
-        return null;
+        throw new RuntimeException("Cannot compare types '"+getType().toString() + "' and '" + obj.getType().toString() + "'");
     }
     @Hidden
     public TObject EQ(TObject obj) {
@@ -100,14 +100,14 @@ public class TObject implements Comparable<TObject> {
     }
     @Hidden
     public TObject NE(TObject obj) {
-        return null;
+        return EQ(obj).not();
     }
     public TObject put(TObject key, TObject value) {
-        return null;
+        throw new RuntimeException("Cannot put " + key + ", " + value + " in non-map");
     }
     @Hidden
     public TObject not() {
-        return null;
+        throw new RuntimeException("Cannot invert " + getType().toString());
     }
     @Hidden
     public TObject and(TObject b) {
