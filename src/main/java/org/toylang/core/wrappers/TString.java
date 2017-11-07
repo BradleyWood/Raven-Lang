@@ -26,9 +26,41 @@ public class TString extends TObject {
 
     @Override
     public TObject EQ(TObject obj) {
-        if (obj == null)
+        if (obj == null || !(obj instanceof TString))
             return TBoolean.FALSE;
         return str.equals(obj.toString()) ? TBoolean.TRUE : TBoolean.FALSE;
+    }
+
+    @Override
+    public TObject GT(TObject obj) {
+        if (obj instanceof TString) {
+            return str.compareTo(((TString) obj).str) < 0 ? TBoolean.TRUE : TBoolean.FALSE;
+        }
+        return super.GT(obj);
+    }
+
+    @Override
+    public TObject LT(TObject obj) {
+        if (obj instanceof TString) {
+            return str.compareTo(((TString) obj).str) > 0 ? TBoolean.TRUE : TBoolean.FALSE;
+        }
+        return super.GT(obj);
+    }
+
+    @Override
+    public TObject GTE(TObject obj) {
+        if (obj instanceof TString) {
+            return str.compareTo(((TString) obj).str) <= 0 ? TBoolean.TRUE : TBoolean.FALSE;
+        }
+        return super.GT(obj);
+    }
+
+    @Override
+    public TObject LTE(TObject obj) {
+        if (obj instanceof TString) {
+            return str.compareTo(((TString) obj).str) >= 0 ? TBoolean.TRUE : TBoolean.FALSE;
+        }
+        return super.GT(obj);
     }
 
     @Override

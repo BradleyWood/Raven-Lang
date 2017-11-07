@@ -45,3 +45,55 @@ fun strAddTest3() {
     var result = "123abc";
     Assert.assertEqual(result, 123 + "abc");
 }
+
+fun strGTTest() {
+    var str1 = "aba";
+    var str2 = "abz";
+    Assert.assertEqual(true, str1 > str2);
+    Assert.assertEqual(false, str2 > str1);
+}
+
+fun strLTTest() {
+    var str1 = "aba";
+    var str2 = "abz";
+    Assert.assertEqual(false, str1 < str2);
+    Assert.assertEqual(true, str2 < str1);
+}
+
+fun strGTETest() {
+    var str1 = "aba";
+    var str2 = "abz";
+    var str3 = "aba";
+    Assert.assertEqual(true, str1 >= str2);
+    Assert.assertEqual(true, str1 >= str3);
+    Assert.assertEqual(false, str2 >= str3);
+}
+
+fun strLTETest() {
+    var str1 = "aba";
+    var str2 = "abz";
+    var str3 = "aba";
+    Assert.assertEqual(false, str1 <= str2);
+    Assert.assertEqual(true, str1 <= str3);
+    Assert.assertEqual(true, str2 <= str3);
+}
+
+fun strEQTest() {
+    var str1 = "aba";
+    var str2 = "abz";
+    var str3 = "aba";
+    Assert.assertEqual(true, str1 == str1);
+    Assert.assertEqual(false, str1 == str2);
+    Assert.assertEqual(true, str1 == str3);
+    Assert.assertEqual(false, str2 == str3);
+}
+
+fun strNETest() {
+    var str1 = "aba";
+    var str2 = "abz";
+    var str3 = "aba";
+    Assert.assertEqual(false, str1 != str1);
+    Assert.assertEqual(true, str1 != str2);
+    Assert.assertEqual(false, str1 != str3);
+    Assert.assertEqual(true, str2 != str3);
+}
