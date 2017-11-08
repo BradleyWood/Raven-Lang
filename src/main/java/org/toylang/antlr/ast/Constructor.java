@@ -94,8 +94,10 @@ public class Constructor extends Statement {
 
     public String getSuperConstructorDesc() {
         StringBuilder stringBuilder = new StringBuilder("(");
-        for (Expression ignored : getSuperParams()) {
-            stringBuilder.append(Type.getType(TObject.class).getDescriptor());
+        if(getSuperParams() != null) {
+            for (Expression ignored : getSuperParams()) {
+                stringBuilder.append(Type.getType(TObject.class).getDescriptor());
+            }
         }
         return stringBuilder.append(")V").toString();
     }
