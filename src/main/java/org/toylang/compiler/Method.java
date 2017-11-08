@@ -235,6 +235,10 @@ public class Method extends MethodVisitor implements TreeVisitor, Opcodes {
 
         String desc = getFunDescriptor(call.getParams());
 
+        if (call.getName().toString().equals("super")) {
+            Errors.put("Super() not allowed here.");
+        }
+
         if (call.getPrecedingExpr() != null) {
             final Expression precedingExpr = call.getPrecedingExpr();
             if (precedingExpr instanceof QualifiedName) {
