@@ -154,7 +154,11 @@ public class TBigInt extends TObject {
 
     @Override
     public Integer toInt() {
-        return value.intValueExact();
+        try {
+            return value.intValueExact();
+        } catch (ArithmeticException e) {
+            return null;
+        }
     }
 
     @Override

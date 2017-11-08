@@ -115,7 +115,7 @@ public class TObject implements Comparable<TObject> {
         if (this.obj != null && obj.obj != null) {
             return this.obj.equals(obj.obj) ? TBoolean.TRUE : TBoolean.FALSE;
         }
-        return null;
+        return TBoolean.FALSE;
     }
 
     @Hidden
@@ -166,7 +166,6 @@ public class TObject implements Comparable<TObject> {
         return null;
     }
 
-    @Hidden
     public Double toDouble() {
         return null;
     }
@@ -176,7 +175,6 @@ public class TObject implements Comparable<TObject> {
         throw new RuntimeException(this + " cannot be converted to boolean");
     }
 
-    @Hidden
     public BigInteger toBigInt() {
         return null;
     }
@@ -584,8 +582,6 @@ public class TObject implements Comparable<TObject> {
             lst.addAll(Arrays.asList(objA));
             return lst;
         }
-        if (TObject.class.isAssignableFrom(o.getClass()))
-            return (TObject) o;
         return new TObject(o);
     }
 

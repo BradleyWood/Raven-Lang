@@ -49,7 +49,15 @@ public fun len(obj) {
 }
 
 public fun int(obj) {
-    return obj.toInt();
+    var intVal = obj.toInt();
+    if (intVal == null) {
+        return bigInt(obj);
+    }
+    return intVal;
+}
+
+public fun bigInt(obj) {
+    return obj.toBigInt();
 }
 
 public fun real(obj) {

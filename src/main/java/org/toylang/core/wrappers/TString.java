@@ -3,6 +3,8 @@ package org.toylang.core.wrappers;
 
 import org.toylang.core.Hidden;
 
+import java.math.BigInteger;
+
 public class TString extends TObject {
 
     public static TType TYPE = new TType(TString.class);
@@ -95,7 +97,16 @@ public class TString extends TObject {
 
     @Override
     public Integer toInt() {
-        return Integer.parseInt(toString());
+        try {
+            return Integer.parseInt(toString());
+        } catch (NumberFormatException e) {
+            return null;
+        }
+    }
+
+    @Override
+    public BigInteger toBigInt() {
+        return new BigInteger(str);
     }
 
     @Override
