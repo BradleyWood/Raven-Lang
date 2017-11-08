@@ -39,7 +39,11 @@ public class ExpressionVisitor extends ToyLangBaseVisitor<Expression> {
                 if (ctx.literal().number().getText().contains(".") || ctx.literal().number().getText().toLowerCase().contains("e")) {
                     expr = new Literal(new TReal(Double.parseDouble(ctx.literal().number().getText())));
                 } else {
-                    expr = new Literal(new TInt(Integer.parseInt(ctx.literal().number().getText())));
+                    try {
+                        expr = new Literal(new TInt(Integer.parseInt(ctx.literal().number().getText())));
+                    } catch (NumberFormatException e) {
+                        expr = new Literal(new TBigInt(ctx.literal().number().getText()));
+                    }
                 }
             } else if (ctx.literal().stringLiteral() != null) {
                 String str = ctx.literal().stringLiteral().getText();

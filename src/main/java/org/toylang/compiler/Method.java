@@ -551,6 +551,8 @@ public class Method extends MethodVisitor implements TreeVisitor, Opcodes {
             putBoolean((TBoolean) obj);
         } else if (obj instanceof TNull) {
             putNull();
+        } else if (obj instanceof TBigInt) {
+            putBigInt((TBigInt) literal.getValue());
         }
     }
 
@@ -640,6 +642,8 @@ public class Method extends MethodVisitor implements TreeVisitor, Opcodes {
                 putString((TString) obj);
             } else if (obj instanceof TReal) {
                 putReal((TReal) obj);
+            } else if (obj instanceof TBigInt) {
+                putBigInt((TBigInt) obj);
             } else {
                 Errors.put("Unidentified Constant type");
                 visitInsn(ACONST_NULL);
@@ -709,6 +713,17 @@ public class Method extends MethodVisitor implements TreeVisitor, Opcodes {
             visitMethodInsn(INVOKESPECIAL, getInternalName(integer), "<init>", "(I)V", false);
         } else {
             getConstant(integer);
+        }
+    }
+
+    private void putBigInt(TBigInt bigInt) {
+        if (ctx.getName().equals("<clinit>")) {
+            visitTypeInsn(NEW, getInternalName(bigInt));
+            visitInsn(DUP);
+            visitLdcInsn(bigInt.toString());
+            visitMethodInsn(INVOKESPECIAL, getInternalName(bigInt), "<init>", "(Ljava/lang/String;)V", false);
+        } else {
+            getConstant(bigInt);
         }
     }
 
