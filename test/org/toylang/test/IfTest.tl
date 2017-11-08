@@ -44,3 +44,9 @@ fun ifTest4() {
     Assert.fail("no branch executed");
 }
 
+fun ifTest5() {
+    if (5==5)
+        return;
+    else
+        Assert.fail("Wrong branch");
+}
