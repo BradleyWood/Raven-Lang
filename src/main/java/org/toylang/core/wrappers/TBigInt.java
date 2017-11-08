@@ -138,23 +138,18 @@ public class TBigInt extends TObject {
     }
 
     @Override
+    public BigInteger toBigInt() {
+        return value;
+    }
+
+    @Override
     public TObject put(TObject key, TObject value) {
         return super.put(key, value);
     }
 
     @Override
     public TObject not() {
-        return super.not();
-    }
-
-    @Override
-    public TObject and(TObject b) {
-        return super.and(b);
-    }
-
-    @Override
-    public TObject or(TObject b) {
-        return super.or(b);
+        return new TBigInt(value.not());
     }
 
     @Override
@@ -211,9 +206,7 @@ public class TBigInt extends TObject {
     public boolean equals(Object o) {
         if (o instanceof TObject) {
             BigInteger bigInt = ((TObject) o).toBigInt();
-            if (bigInt != null) {
-                return value.equals(bigInt);
-            }
+            return value.equals(bigInt);
         }
         return super.equals(o);
     }

@@ -51,7 +51,7 @@ public class TInt extends TObject {
             int other = ((TInt) obj).getValue();
             return new TInt(value + other);
         } else if (obj instanceof TBigInt) {
-            return obj.add(this);
+            return new TBigInt(toBigInt().add(obj.toBigInt()));
         }
         return super.add(obj);
     }
@@ -64,7 +64,7 @@ public class TInt extends TObject {
             int other = ((TInt) obj).getValue();
             return new TInt(value - other);
         } else if (obj instanceof TBigInt) {
-            return obj.add(this);
+            return new TBigInt(toBigInt().subtract(obj.toBigInt()));
         }
         return super.sub(obj);
     }
@@ -77,7 +77,7 @@ public class TInt extends TObject {
             int other = ((TInt) obj).getValue();
             return new TInt(value * other);
         } else if (obj instanceof TBigInt) {
-            return obj.add(this);
+            return new TBigInt(toBigInt().multiply(obj.toBigInt()));
         }
         return super.mul(obj);
     }
@@ -90,7 +90,7 @@ public class TInt extends TObject {
             int other = ((TInt) obj).getValue();
             return new TInt(value / other);
         } else if (obj instanceof TBigInt) {
-            return obj.add(this);
+            return new TBigInt(toBigInt().divide(obj.toBigInt()));
         }
         return super.div(obj);
     }
@@ -103,7 +103,7 @@ public class TInt extends TObject {
             int other = ((TInt) obj).getValue();
             return new TInt(value % other);
         } else if (obj instanceof TBigInt) {
-            return obj.add(this);
+            return new TBigInt(toBigInt().mod(obj.toBigInt()));
         }
         return super.mod(obj);
     }
@@ -119,7 +119,7 @@ public class TInt extends TObject {
 
             return new TInt((int) Math.pow(value, other));
         } else if (obj instanceof TBigInt) {
-            return obj.add(this);
+            return new TBigInt(toBigInt().pow(obj.toInt()));
         }
         return super.pow(obj);
     }
@@ -132,7 +132,7 @@ public class TInt extends TObject {
             int other = ((TInt) obj).getValue();
             return value > other ? TBoolean.TRUE : TBoolean.FALSE;
         } else if (obj instanceof TBigInt) {
-            return obj.add(this);
+            return new TBigInt(toBigInt()).GT(obj);
         }
         return super.GT(obj);
     }
@@ -145,7 +145,7 @@ public class TInt extends TObject {
             int other = ((TInt) obj).getValue();
             return value < other ? TBoolean.TRUE : TBoolean.FALSE;
         } else if (obj instanceof TBigInt) {
-            return obj.add(this);
+            return new TBigInt(toBigInt()).LT(obj);
         }
         return super.LT(obj);
     }
@@ -158,7 +158,7 @@ public class TInt extends TObject {
             int other = ((TInt) obj).getValue();
             return value >= other ? TBoolean.TRUE : TBoolean.FALSE;
         } else if (obj instanceof TBigInt) {
-            return obj.add(this);
+            return new TBigInt(toBigInt()).GTE(obj);
         }
         return super.GTE(obj);
     }
@@ -171,7 +171,7 @@ public class TInt extends TObject {
             int other = ((TInt) obj).getValue();
             return value <= other ? TBoolean.TRUE : TBoolean.FALSE;
         } else if (obj instanceof TBigInt) {
-            return obj.add(this);
+            return new TBigInt(toBigInt()).LTE(obj);
         }
         return super.LTE(obj);
     }
@@ -184,7 +184,7 @@ public class TInt extends TObject {
             int other = ((TInt) obj).getValue();
             return value == other ? TBoolean.TRUE : TBoolean.FALSE;
         } else if (obj instanceof TBigInt) {
-            return obj.add(this);
+            return obj.EQ(this);
         }
         return super.EQ(obj);
     }
@@ -197,7 +197,7 @@ public class TInt extends TObject {
             int other = ((TInt) obj).getValue();
             return value != other ? TBoolean.TRUE : TBoolean.FALSE;
         } else if (obj instanceof TBigInt) {
-            return obj.add(this);
+            return new TBigInt(toBigInt()).NE(obj);
         }
         return super.NE(obj);
     }
