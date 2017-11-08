@@ -96,7 +96,9 @@ public class Application {
     }
 
     public static HashMap<String, byte[]> compile(String path, boolean save) throws IOException {
-        File file = new File(new File(".").getCanonicalPath(), path);
+        File file = new File(path);
+        if (!file.isAbsolute())
+            file = new File(new File(".").getCanonicalPath(), path);
 
         HashMap<String, byte[]> classes = new HashMap<>();
         LinkedList<File> files = new LinkedList<>();
