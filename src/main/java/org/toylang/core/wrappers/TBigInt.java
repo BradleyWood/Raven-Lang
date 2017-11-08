@@ -87,7 +87,7 @@ public class TBigInt extends TObject {
     public TObject GT(TObject obj) {
         BigInteger bigInt = obj.toBigInt();
         if (bigInt != null) {
-            return value.compareTo(bigInt) < 0 ? TBoolean.TRUE : TBoolean.FALSE;
+            return value.compareTo(bigInt) > 0 ? TBoolean.TRUE : TBoolean.FALSE;
         }
         return super.GT(obj);
     }
@@ -96,7 +96,7 @@ public class TBigInt extends TObject {
     public TObject LT(TObject obj) {
         BigInteger bigInt = obj.toBigInt();
         if (bigInt != null) {
-            return value.compareTo(bigInt) > 0 ? TBoolean.TRUE : TBoolean.FALSE;
+            return value.compareTo(bigInt) < 0 ? TBoolean.TRUE : TBoolean.FALSE;
         }
         return super.LT(obj);
     }
@@ -105,7 +105,7 @@ public class TBigInt extends TObject {
     public TObject GTE(TObject obj) {
         BigInteger bigInt = obj.toBigInt();
         if (bigInt != null) {
-            return value.compareTo(bigInt) <= 0 ? TBoolean.TRUE : TBoolean.FALSE;
+            return value.compareTo(bigInt) >= 0 ? TBoolean.TRUE : TBoolean.FALSE;
         }
         return super.GTE(obj);
     }
@@ -114,7 +114,7 @@ public class TBigInt extends TObject {
     public TObject LTE(TObject obj) {
         BigInteger bigInt = obj.toBigInt();
         if (bigInt != null) {
-            return value.compareTo(bigInt) >= 0 ? TBoolean.TRUE : TBoolean.FALSE;
+            return value.compareTo(bigInt) <= 0 ? TBoolean.TRUE : TBoolean.FALSE;
         }
         return super.LTE(obj);
     }
