@@ -49,7 +49,11 @@ public class TInt extends TObject {
             return new TReal((double) value).add(obj);
         } else if (obj instanceof TInt) {
             int other = ((TInt) obj).getValue();
-            return new TInt(value + other);
+            int sum = value + other;
+            if (((value ^ sum) & (other ^ sum)) < 0) {
+                return new TBigInt(toBigInt().add(obj.toBigInt()));
+            }
+            return new TInt(sum);
         } else if (obj instanceof TBigInt) {
             return new TBigInt(toBigInt().add(obj.toBigInt()));
         }
@@ -62,7 +66,11 @@ public class TInt extends TObject {
             return new TReal((double) value).sub(obj);
         } else if (obj instanceof TInt) {
             int other = ((TInt) obj).getValue();
-            return new TInt(value - other);
+            int result = value - other;
+            if ((((value ^ other) & (value ^ result)) < 0)) {
+                return new TBigInt(toBigInt().subtract(obj.toBigInt()));
+            }
+            return new TInt(result);
         } else if (obj instanceof TBigInt) {
             return new TBigInt(toBigInt().subtract(obj.toBigInt()));
         }
@@ -75,7 +83,11 @@ public class TInt extends TObject {
             return new TReal((double) value).mul(obj);
         } else if (obj instanceof TInt) {
             int other = ((TInt) obj).getValue();
-            return new TInt(value * other);
+            long result = (long) value * (long) other;
+            if ((int) result != result) {
+                return new TBigInt(toBigInt().multiply(obj.toBigInt()));
+            }
+            return new TInt((int) result);
         } else if (obj instanceof TBigInt) {
             return new TBigInt(toBigInt().multiply(obj.toBigInt()));
         }
@@ -114,14 +126,41 @@ public class TInt extends TObject {
             return new TReal((double) value).pow(obj);
         } else if (obj instanceof TInt) {
             int other = ((TInt) obj).getValue();
-            if (other < 0)
+            if (other < 0) {
                 return new TReal((double) value).pow(new TReal(other));
-
-            return new TInt((int) Math.pow(value, other));
+            }
+            try {
+                return new TInt(powExact(value, other));
+            } catch (ArithmeticException e) {
+                return new TBigInt(toBigInt().pow(other));
+            }
         } else if (obj instanceof TBigInt) {
             return new TBigInt(toBigInt().pow(obj.toInt()));
         }
         return super.pow(obj);
+    }
+
+    private int powExact(int x, int y) throws ArithmeticException {
+        if (y >= 0) {
+            int z = 1;
+            while (true) {
+                if ((y & 1) != 0)
+                    z = Math.multiplyExact(z, x);
+                y >>>= 1;
+                if (y == 0)
+                    break;
+                x = Math.multiplyExact(x, x);
+            }
+            return z;
+        } else {
+            if (x == 0)
+                throw new ArithmeticException("Negative power of zero is infinity");
+            if (x == 1)
+                return 1;
+            if (x == -1)
+                return (y & 1) == 0 ? 1 : -1;
+            return 0;
+        }
     }
 
     @Override
