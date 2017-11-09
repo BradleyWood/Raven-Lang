@@ -3,12 +3,11 @@ package org.toylang.antlr.ast;
 import org.toylang.antlr.Modifier;
 import org.toylang.antlr.Operator;
 import org.toylang.antlr.ToyTree;
-import org.toylang.core.wrappers.TNull;
+import org.toylang.core.TLFile;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class ClassDef extends Statement {
 
@@ -98,6 +97,18 @@ public class ClassDef extends Statement {
             }
         }
         return super_;
+    }
+
+    public boolean hasTlSuper() {
+        try {
+            Class c = Class.forName(getSuper().toString());
+            if (c.getAnnotation(TLFile.class) != null) {
+                return true;
+            }
+            return false;
+        } catch (ClassNotFoundException e) {
+            return true;
+        }
     }
 
     public List<VarDecl> getFields() {
