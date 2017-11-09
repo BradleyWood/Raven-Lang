@@ -156,6 +156,10 @@ public class TObject implements Comparable<TObject> {
         return null;
     }
 
+    public Character toChar() {
+        return null;
+    }
+
     @Hidden
     public Long toLong() {
         return null;
@@ -520,6 +524,8 @@ public class TObject implements Comparable<TObject> {
                     pa[i] = lst.get(i);
                 } else if (type == int.class) {
                     pa[i] = lst.get(i).toInt();
+                } else if(type == char.class) {
+                    pa[i] = lst.get(i).toChar();
                 } else if (type == long.class) {
                     pa[i] = lst.get(i).toLong();
                 } else if (type == short.class) {

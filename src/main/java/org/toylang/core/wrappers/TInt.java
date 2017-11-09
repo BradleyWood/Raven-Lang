@@ -263,6 +263,11 @@ public class TInt extends TObject {
         return (short) value;
     }
 
+    @Override
+    public Character toChar() {
+        return (char) value;
+    }
+
     @Hidden
     @Override
     public Long toLong() {
