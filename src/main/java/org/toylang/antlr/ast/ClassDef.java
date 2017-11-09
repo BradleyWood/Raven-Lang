@@ -131,6 +131,15 @@ public class ClassDef extends Statement {
         return null;
     }
 
+    public Fun findFun(String name, int paramCount) {
+        for (Fun fun : getMethods()) {
+            if (fun.getName().toString().equals(name) && fun.getParams().length == paramCount) {
+                return fun;
+            }
+        }
+        return null;
+    }
+
     public List<Fun> getMethods() {
         if (methods != null)
             return methods;

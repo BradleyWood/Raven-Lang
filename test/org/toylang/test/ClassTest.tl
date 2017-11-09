@@ -44,12 +44,22 @@ public class Tester extends JFrame {
     public constructor(a) {
         super(a);
     }
+
+    public fun updateSize() {
+        setSize(500, 600);
+    }
 }
 
-fun xdTest() {
+fun testInheritance() {
     var gg = Tester("ABCDEFG");
     gg.setSize(400, 401);
     Assert.assertEqual(400, gg.getWidth());
     Assert.assertEqual(401, gg.getHeight());
+
+    gg.updateSize();
+
+    Assert.assertEqual(500, gg.getWidth());
+    Assert.assertEqual(600, gg.getHeight());
+
     Assert.assertEqual("ABCDEFG", gg.getTitle());
 }
