@@ -237,6 +237,8 @@ public class Method extends MethodVisitor implements TreeVisitor, Opcodes {
 
         if (call.getName().toString().equals("super")) {
             Errors.put("Super() not allowed here.");
+        } else if (call.getName().toString().equals("this")) {
+            Errors.put("This() not allowed here.");
         }
 
         if (call.getPrecedingExpr() != null) {
