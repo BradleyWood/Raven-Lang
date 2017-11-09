@@ -731,23 +731,23 @@ public class Method extends MethodVisitor implements TreeVisitor, Opcodes {
         }
     }
 
-    private String getInternalName(Object obj) {
+    protected String getInternalName(Object obj) {
         return Type.getType(obj.getClass()).getInternalName();
     }
 
-    private String getDesc(Object obj) {
+    protected String getDesc(Object obj) {
         return Type.getType(obj.getClass()).getDescriptor();
     }
 
-    private String getInternalName(Class c) {
+    protected String getInternalName(Class c) {
         return Type.getType(c).getInternalName();
     }
 
-    private String getDesc(Class c) {
+    protected String getDesc(Class c) {
         return Type.getType(c).getDescriptor();
     }
 
-    private String getDesc(java.lang.reflect.Method m) {
+    protected String getDesc(java.lang.reflect.Method m) {
         return Type.getMethodDescriptor(m);
     }
 
