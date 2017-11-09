@@ -500,7 +500,7 @@ public class TObject implements Comparable<TObject> {
     }
 
     @Hidden
-    private static Object[] getParams(TObject params, Class<?>[] types) {
+    public static Object[] getParams(TObject params, Class<?>[] types) {
         if (!(params instanceof TList))
             return null;
 
