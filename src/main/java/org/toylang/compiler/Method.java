@@ -450,10 +450,10 @@ public class Method extends MethodVisitor implements TreeVisitor, Opcodes {
                 visitLdcInsn(Type.getType("L" + (owner) + ";"));
                 visitLdcInsn(name);
                 if (load) {
-                    visitMethodInsn(INVOKESTATIC, getDesc(TObject.class), "getField", getDesc(TObject.class, "getField", Class.class, String.class), false);
+                    visitMethodInsn(INVOKESTATIC, getInternalName(TObject.class), "getField", getDesc(TObject.class, "getField", Class.class, String.class), false);
                 } else {
                     System.err.println("ERROR");
-                    visitMethodInsn(INVOKESTATIC, getDesc(TObject.class), "getField", getDesc(TObject.class, "setField", Class.class, String.class, TObject.class), false);
+                    visitMethodInsn(INVOKESTATIC, getInternalName(TObject.class), "getField", getDesc(TObject.class, "setField", Class.class, String.class, TObject.class), false);
                 }
                 return;
             }
