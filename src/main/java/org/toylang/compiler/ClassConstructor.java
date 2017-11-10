@@ -94,7 +94,8 @@ public class ClassConstructor extends Method {
         String getParamDesc = "(Lorg/toylang/core/wrappers/TObject;[Ljava/lang/Class;)[Ljava/lang/Object;";
         visitVarInsn(ALOAD, locals.indexOf(" TL_PARAMS "));
         visitLdcInsn(params.length);
-        visitTypeInsn(ANEWARRAY, getDesc(Class.class));
+
+        visitTypeInsn(ANEWARRAY, getName(Class.class));
 
         int i = 0;
         for (Class cl : candidate) {
@@ -104,7 +105,7 @@ public class ClassConstructor extends Method {
             visitInsn(AASTORE);
         }
 
-        visitMethodInsn(INVOKESTATIC, getDesc(TObject.class), "getParams", getParamDesc, false);
+        visitMethodInsn(INVOKESTATIC, getName(TObject.class), "getParams", getParamDesc, false);
         visitVarInsn(ASTORE, locals.indexOf(" SUPER_PARAMS "));
 
         Label lb = new Label();

@@ -757,6 +757,10 @@ public class Method extends MethodVisitor implements TreeVisitor, Opcodes {
         return Type.getType(c).getDescriptor();
     }
 
+    protected String getName(Class c) {
+        return Type.getType(c).getClassName().replace(".", "/");
+    }
+
     protected String getDesc(java.lang.reflect.Method m) {
         return Type.getMethodDescriptor(m);
     }
