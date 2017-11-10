@@ -354,11 +354,16 @@ public class TObject implements Comparable<TObject> {
 
     @Hidden
     public static TObject invoke(int hash, TObject params) {
+        return invoke(hash, null, params);
+    }
+
+    @Hidden
+    public static TObject invoke(int hash, Object obj, TObject params) {
         JavaMethod jm = findMethod(hash);
         if (jm != null) {
             Object[] pa = getParams(params, jm.parameterTypes);
             try {
-                return toToyLang(jm.mh.invoke(null, pa));
+                return toToyLang(jm.mh.invoke(obj, pa));
             } catch (IllegalAccessException | InvocationTargetException e) {
                 e.getCause().printStackTrace();
                 return new TError(e.getMessage());
