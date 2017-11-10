@@ -47,7 +47,12 @@ public class Tester extends JFrame {
 
     public fun updateSize() {
         setSize(500, 600);
+        Assert.assertEqual(10, ClassTest.aFun());
     }
+}
+
+fun aFun() {
+    return 10;
 }
 
 fun testInheritance() {

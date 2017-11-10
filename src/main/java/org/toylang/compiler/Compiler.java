@@ -95,6 +95,7 @@ public class Compiler {
                     }
                     ClassMaker cm = new ClassMaker(classDef, lst);
                     toyTree.addImport(toyTree.getPackage().add(classDef.getName()));
+                    toyTree.addImport(toyTree.getPackage().add(toyTree.getName()));
                     if (!name.equals(toyTree.getFullName().toString())) {
                         Fun clinit = new Fun(new QualifiedName("<clinit>"), new Block(), null, null);
                         cm.addStaticMethods(clinit);
