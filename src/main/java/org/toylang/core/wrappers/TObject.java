@@ -206,7 +206,7 @@ public class TObject implements Comparable<TObject> {
     public Object coerce(Class clazz) {
         if (obj != null && clazz.isAssignableFrom(obj.getClass()) || clazz.equals(Object.class)) {
             return toObject();
-        } else if(TObject.class.isAssignableFrom(clazz)) {
+        } else if (TObject.class.isAssignableFrom(clazz)) {
             return this;
         }
         throw new RuntimeException("type " + getType().toString() + " is not coercible to " + clazz);
@@ -309,26 +309,28 @@ public class TObject implements Comparable<TObject> {
 
     @Hidden
     public TObject getField(String name) {
+        return getField(obj, name);
+    }
+
+    public static TObject getField(Object obj, String name) {
         try {
             String[] names = name.split("\\.");
             if (names.length == 0)
                 names = new String[]{name};
 
-
             for (String s : names) {
                 System.out.println(name + " : " + s);
             }
-            Object o = obj;
             for (int i = 0; i < names.length; i++) {
-                Field f = o.getClass().getField(names[i]);
+                Field f = obj.getClass().getField(names[i]);
                 if (f.getAnnotationsByType(Hidden.class) != null) {
                     f.setAccessible(true);
-                    o = f.get(o);
+                    obj = f.get(obj);
                 } else {
                     throw new RuntimeException("Field " + name + " is not accessible");
                 }
             }
-            return toToyLang(o);
+            return toToyLang(obj);
         } catch (NoSuchFieldException | IllegalAccessException e) {
             e.printStackTrace();
         }
@@ -566,7 +568,7 @@ public class TObject implements Comparable<TObject> {
 
     public static Object[] getParams(TObject params, Class<?>[] types, int rating) {
         if (rating == -1) {
-            throw new IllegalArgumentException("Cannot coerce arguments: "+ rating);
+            throw new IllegalArgumentException("Cannot coerce arguments: " + rating);
         }
         if (!(params instanceof TList) || params.size() != types.length)
             throw new IllegalArgumentException();
