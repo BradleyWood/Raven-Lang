@@ -1,6 +1,7 @@
 package org.toylang.test;
 
 import java.util.LinkedList;
+import java.util.Objects;
 
 public class Assert {
 
@@ -20,13 +21,13 @@ public class Assert {
     }
 
     public static void assertEqual(Object a, Object b) {
-        if (!a.equals(b)) {
+        if (!Objects.equals(a, b)) {
             fail(a + " is not equal to " + b);
         }
     }
 
     public static void assertNotEqual(Object a, Object b) {
-        if (a.equals(b)) {
+        if (Objects.equals(a, b)) {
             fail(a + " is equal to " + b);
         }
     }
