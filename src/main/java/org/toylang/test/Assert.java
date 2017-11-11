@@ -1,5 +1,7 @@
 package org.toylang.test;
 
+import org.toylang.core.wrappers.TObject;
+
 import java.util.LinkedList;
 import java.util.Objects;
 
@@ -18,6 +20,18 @@ public class Assert {
     public static void assertTrue(boolean b) {
         if (!b)
             fail("value is not true");
+    }
+
+    public static void assertEqual(TObject a, TObject b) {
+        if (!Objects.equals(a, b)) {
+            fail(a + " is not equal to " + b);
+        }
+    }
+
+    public static void assertNotEqual(TObject a, TObject b) {
+        if (Objects.equals(a, b)) {
+            fail(a + " is equal to " + b);
+        }
     }
 
     public static void assertEqual(Object a, Object b) {
