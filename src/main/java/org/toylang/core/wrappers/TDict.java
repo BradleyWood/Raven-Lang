@@ -15,6 +15,14 @@ public class TDict extends TObject implements Map<TObject, TObject> {
     }
 
     @Override
+    public int coerceRating(Class clazz) {
+        if (clazz.isAssignableFrom(Map.class)) {
+            return COERCE_IDEAL;
+        }
+        return super.coerceRating(clazz);
+    }
+
+    @Override
     public TObject getType() {
         return TYPE;
     }

@@ -301,6 +301,18 @@ public class TInt extends TObject {
         return Integer.toString(value);
     }
 
+    @Override
+    public int coerceRating(Class clazz) {
+        if (clazz.equals(int.class) || clazz.equals(long.class) || clazz.equals(Integer.class) || clazz.equals(Long.class)) {
+            return COERCE_IDEAL;
+        } else if (clazz.equals(byte.class) || clazz.equals(Byte.class) || clazz.equals(short.class) || clazz.equals(Short.class)) {
+            return COERCE_LESS_IDEAL;
+        } else if (clazz.equals(float.class) || clazz.equals(Float.class) || clazz.equals(double.class) || clazz.equals(Double.class)) {
+            return COERCE_BAD;
+        }
+        return super.coerceRating(clazz);
+    }
+
     @Hidden
     @Override
     public boolean equals(Object o) {

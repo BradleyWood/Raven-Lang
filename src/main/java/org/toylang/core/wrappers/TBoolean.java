@@ -32,6 +32,14 @@ public class TBoolean extends TObject {
     }
 
     @Override
+    public int coerceRating(Class clazz) {
+        if (clazz.equals(boolean.class) || clazz.equals(Boolean.class)) {
+            return COERCE_IDEAL;
+        }
+        return super.coerceRating(clazz);
+    }
+
+    @Override
     public Boolean toBoolean() {
         return isTrue();
     }

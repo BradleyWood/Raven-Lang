@@ -138,6 +138,19 @@ public class TBigInt extends TObject {
     }
 
     @Override
+    public int coerceRating(Class clazz) {
+        if (clazz.equals(BigInteger.class)) {
+            return COERCE_IDEAL;
+        } if (clazz.equals(long.class) || clazz.equals(Long.class)) {
+            try {
+                value.longValueExact();
+                return COERCE_IDEAL;
+            } catch (Exception e) {}
+        }
+        return super.coerceRating(clazz);
+    }
+
+    @Override
     public BigInteger toBigInt() {
         return value;
     }

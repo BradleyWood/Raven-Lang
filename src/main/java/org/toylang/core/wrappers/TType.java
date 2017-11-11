@@ -39,6 +39,19 @@ public class TType extends TObject {
         return type.getTypeName();
     }
 
+    @Override
+    public Object toObject() {
+        return type;
+    }
+
+    @Override
+    public int coerceRating(Class clazz) {
+        if (clazz.equals(Class.class)) {
+            return COERCE_IDEAL;
+        }
+        return super.coerceRating(clazz);
+    }
+
     @Hidden
     @Override
     public boolean equals(Object o) {

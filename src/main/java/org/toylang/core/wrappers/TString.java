@@ -82,6 +82,14 @@ public class TString extends TObject {
     }
 
     @Override
+    public int coerceRating(Class clazz) {
+        if (clazz.equals(String.class)) {
+            return COERCE_IDEAL;
+        }
+        return super.coerceRating(clazz);
+    }
+
+    @Override
     public int size() {
         return str.length();
     }

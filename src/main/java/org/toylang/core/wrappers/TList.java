@@ -213,6 +213,14 @@ public class TList extends TObject implements List {
         return list.toString();
     }
 
+    @Override
+    public int coerceRating(Class clazz) {
+        if (clazz.isArray() || List.class.isAssignableFrom(clazz)) {
+            return COERCE_IDEAL;
+        }
+        return super.coerceRating(clazz);
+    }
+
     @Hidden
     @Override
     public boolean equals(Object o) {

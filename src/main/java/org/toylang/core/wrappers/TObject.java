@@ -11,6 +11,11 @@ import java.util.stream.Stream;
 
 public class TObject implements Comparable<TObject> {
 
+    public static final int COERCE_IMPOSSIBLE = 0;
+    public static final int COERCE_BAD = 1;
+    public static final int COERCE_LESS_IDEAL = 2;
+    public static final int COERCE_IDEAL = 3;
+
     private static final HashMap<Integer, JavaMethod> methodCache = new HashMap<>();
 
     @Hidden
@@ -195,6 +200,18 @@ public class TObject implements Comparable<TObject> {
     @Hidden
     public Object[] toArray() {
         throw new RuntimeException(this + " cannot be converted to array");
+    }
+
+    public int coerceRating(Class clazz) {
+        if (TObject.class.isAssignableFrom(clazz)) {
+            return COERCE_IDEAL;
+        }
+        if (obj != null) {
+            if (clazz.isAssignableFrom(obj.getClass())) {
+                return COERCE_IDEAL;
+            }
+        }
+        return COERCE_IMPOSSIBLE;
     }
 
     @Hidden
@@ -545,8 +562,8 @@ public class TObject implements Comparable<TObject> {
                     pa[i] = lst.get(i).toBoolean();
                 } else if (type == BigInteger.class) {
                     pa[i] = lst.get(i).toBigInt();
-                } else if (type == Object[].class) {
-                    pa[i] = lst.toArray();
+                } else if (type.isArray()) {
+                    pa[i] = lst.get(i).toArray();
                 } else {
                     pa[i] = lst.get(i).toObject();
                     if (!type.isAssignableFrom(pa[i].getClass())) {

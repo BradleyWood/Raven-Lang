@@ -206,6 +206,14 @@ public class TReal extends TObject {
     }
 
     @Override
+    public int coerceRating(Class clazz) {
+        if (clazz.equals(double.class) || clazz.equals(Double.class)) {
+            return COERCE_IDEAL;
+        }
+        return super.coerceRating(clazz);
+    }
+
+    @Override
     public Integer toInt() {
         return (int) value;
     }

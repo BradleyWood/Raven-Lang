@@ -37,6 +37,11 @@ public class TNull extends TObject {
     }
 
     @Override
+    public int coerceRating(Class clazz) {
+        return COERCE_IDEAL;
+    }
+
+    @Override
     public TObject EQ(TObject obj) {
         return ((obj == null) || (obj instanceof TNull)) ? TBoolean.TRUE : TBoolean.FALSE;
     }
