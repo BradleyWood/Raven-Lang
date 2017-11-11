@@ -1,8 +1,6 @@
 package org.toylang.compiler;
 
-import org.objectweb.asm.Label;
-import org.objectweb.asm.MethodVisitor;
-import org.objectweb.asm.Type;
+import org.objectweb.asm.*;
 import org.toylang.antlr.Errors;
 import org.toylang.antlr.ast.*;
 import org.toylang.core.wrappers.TObject;
@@ -117,8 +115,8 @@ public class ClassConstructor extends Method {
             visitVarInsn(ALOAD, locals.indexOf(" SUPER_PARAMS "));
             visitLdcInsn(n);
             visitInsn(AALOAD);
-            if (!candidate[n].isPrimitive()) {
-                visitTypeInsn(CHECKCAST, candidate[n].getTypeName().replace(".", "/"));
+            if (!candidate[n].isPrimitive() || (candidate[n].isArray() && candidate[n].getComponentType().isPrimitive())) {
+                visitTypeInsn(CHECKCAST, Type.getType(candidate[n]).getInternalName());
             } else {
                 toPrimitive(candidate[n]);
             }
