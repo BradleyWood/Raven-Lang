@@ -2,6 +2,7 @@ package org.toylang.core.wrappers;
 
 import org.toylang.core.Hidden;
 
+import java.lang.reflect.Array;
 import java.util.*;
 
 public class TList extends TObject implements List {
@@ -10,6 +11,9 @@ public class TList extends TObject implements List {
     public static TType TYPE = new TType(TList.class);
     @Hidden
     private ArrayList<TObject> list;
+
+    private boolean allSameType = true;
+    private TType componentType = null;
 
     public TList() {
         list = new ArrayList<>();
@@ -56,14 +60,24 @@ public class TList extends TObject implements List {
         return list.iterator();
     }
 
+    private void checkType(TType c) {
+        if (componentType == null) {
+            componentType = c;
+        } else if (allSameType && !componentType.equals(c)) {
+            allSameType = false;
+        }
+    }
+
     @Override
     public TObject add(TObject obj) {
         list.add(obj);
+        checkType((TType) obj.getType());
         return this;
     }
 
     @Override
     public TObject set(TObject index, TObject obj) {
+        checkType((TType) obj.getType());
         if (index instanceof TInt) {
             return list.set(index.toInt(), obj);
         }
@@ -91,10 +105,11 @@ public class TList extends TObject implements List {
     @Override
     public boolean add(Object o) {
         if (o instanceof TObject) {
-            return list.add((TObject) o);
+            add((TObject) o);
         } else {
-            return list.add(TObject.toToyLang(o));
+            add(TObject.toToyLang(o));
         }
+        return true;
     }
 
     @Override
@@ -142,11 +157,14 @@ public class TList extends TObject implements List {
 
     @Override
     public void add(int index, Object element) {
+        TObject tobj;
         if (element instanceof TObject) {
-            list.add(index, (TObject) element);
+            tobj = (TObject) element;
         } else {
-            list.add(index, new TObject(element));
+            tobj = new TObject(element);
         }
+        list.add(index, tobj);
+        checkType((TType) tobj.getType());
     }
 
     @Override
@@ -216,11 +234,18 @@ public class TList extends TObject implements List {
     @Override
     public Object coerce(Class clazz) {
         if (clazz.isArray()) {
-            Object[] oa = new Object[list.size()];
-            for (int i = 0; i < list.size(); i++) {
-                oa[i] = list.get(i).coerce(clazz.getComponentType());
+            Object array;
+            if (allSameType && clazz.isArray()) {
+                array = Array.newInstance(clazz.getComponentType(), size());
+            } else if (clazz.equals(Object[].class)) {
+                array = new Object[size()];
+            } else {
+                return super.coerce(clazz);
             }
-            return oa;
+            for (int i = 0; i < list.size(); i++) {
+                Array.set(array, i, list.get(i).coerce(clazz.getComponentType()));
+            }
+            return array;
         } else if (List.class.isAssignableFrom(clazz)) {
             return toObject();
         }
