@@ -138,10 +138,23 @@ public class TBigInt extends TObject {
     }
 
     @Override
+    public Object coerce(Class clazz) {
+        if (clazz.equals(BigInteger.class)) {
+            return this;
+        } else if (clazz.equals(long.class) || clazz.equals(Long.class)) {
+            try {
+                value.longValueExact();
+                return toLong();
+            } catch (Exception e) {}
+        }
+        return super.coerce(clazz);
+    }
+
+    @Override
     public int coerceRating(Class clazz) {
         if (clazz.equals(BigInteger.class)) {
             return COERCE_IDEAL;
-        } if (clazz.equals(long.class) || clazz.equals(Long.class)) {
+        } else if (clazz.equals(long.class) || clazz.equals(Long.class)) {
             try {
                 value.longValueExact();
                 return COERCE_IDEAL;
@@ -222,10 +235,17 @@ public class TBigInt extends TObject {
     @Override
     public boolean equals(Object o) {
         if (o instanceof TObject) {
-            BigInteger bigInt = ((TObject) o).toBigInt();
-            return value.equals(bigInt);
+            try {
+                BigInteger bigInt = ((TObject) o).toBigInt();
+                return value.equals(bigInt);
+            } catch (Exception e) {}
         }
         return super.equals(o);
+    }
+
+    @Override
+    public Object toObject() {
+        return value;
     }
 
     @Override

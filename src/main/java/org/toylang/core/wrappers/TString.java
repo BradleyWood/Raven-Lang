@@ -82,6 +82,14 @@ public class TString extends TObject {
     }
 
     @Override
+    public Object coerce(Class clazz) {
+        if (clazz.equals(String.class)) {
+            return toObject();
+        }
+        return super.coerce(clazz);
+    }
+
+    @Override
     public int coerceRating(Class clazz) {
         if (clazz.equals(String.class)) {
             return COERCE_IDEAL;

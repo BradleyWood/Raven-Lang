@@ -2,6 +2,7 @@ package org.toylang.core.wrappers;
 
 import org.toylang.core.Hidden;
 
+import java.io.BufferedInputStream;
 import java.lang.invoke.MethodType;
 import java.lang.reflect.*;
 import java.math.BigInteger;
@@ -202,14 +203,24 @@ public class TObject implements Comparable<TObject> {
         throw new RuntimeException(this + " cannot be converted to array");
     }
 
+    public Object coerce(Class clazz) {
+        if (obj != null && clazz.isAssignableFrom(obj.getClass()) || clazz.equals(Object.class)) {
+            return toObject();
+        } else if(TObject.class.isAssignableFrom(clazz)) {
+            return this;
+        }
+        throw new RuntimeException("type " + getType().toString() + " is not coercible to " + clazz);
+    }
+
     public int coerceRating(Class clazz) {
         if (TObject.class.isAssignableFrom(clazz)) {
             return COERCE_IDEAL;
         }
-        if (obj != null) {
-            if (clazz.isAssignableFrom(obj.getClass())) {
-                return COERCE_IDEAL;
-            }
+        if (obj != null && clazz.isAssignableFrom(obj.getClass())) {
+            return COERCE_IDEAL;
+        }
+        if (clazz.equals(Object.class)) {
+            return COERCE_BAD;
         }
         return COERCE_IMPOSSIBLE;
     }
@@ -218,22 +229,28 @@ public class TObject implements Comparable<TObject> {
     public static TObject newObj(Class clazz, TObject params) {
         try {
             if (clazz.getAnnotationsByType(Hidden.class).length == 0) {
+                Class<?>[] types = null;
+                Constructor con = null;
+                int rating = -1;
                 for (Constructor<?> constructor : clazz.getConstructors()) {
                     if (constructor.getAnnotationsByType(Hidden.class).length > 0)
                         continue;
                     if (constructor.getParameterCount() == params.size()) {
-                        Class<?>[] types = constructor.getParameterTypes();
-                        Object[] pa = getParams(params, types);
-                        if (pa == null)
-                            continue;
-                        for (int i = 0; i < pa.length; i++) {
-                            //System.out.println(pa[i] + " " + pa[i].getClass() + " " + " : " + types[i] + " : " + params.get(new TInt(i)));
+                        Class<?>[] t = constructor.getParameterTypes();
+
+                        int r = rate(params, t);
+                        if (r > rating) {
+                            rating = r;
+                            con = constructor;
+                            types = t;
                         }
-                        Object o = constructor.newInstance(pa);
-                        if (TObject.class.isAssignableFrom(o.getClass()))
-                            return (TObject) o;
-                        return new TObject(o);
                     }
+                }
+                if (con != null) {
+                    Object o = con.newInstance(getParams(params, types, rating));
+                    if (TObject.class.isAssignableFrom(o.getClass()))
+                        return (TObject) o;
+                    return new TObject(o);
                 }
             }
         } catch (IllegalAccessException | InstantiationException | InvocationTargetException e) {
@@ -443,16 +460,19 @@ public class TObject implements Comparable<TObject> {
         }
         LinkedList<Method> methods = new LinkedList<>();
         Method found = null;
+        int foundCoerceRating = -1;
         for (Method method : getAllMethods(clazz, false, false)) {
             if (method.getAnnotationsByType(Hidden.class).length > 0 || method.getParameterCount() != params.size())
                 continue;
             if (method.getName().equals(name)) {
                 methods.add(method);
                 Class<?>[] types = method.getParameterTypes();
-                Object[] pa = getParams(params, types);
-                if (pa == null)
-                    continue;
-                found = method;
+                int rating = rate(params, types);
+
+                if (rating > foundCoerceRating) {
+                    found = method;
+                    foundCoerceRating = rating;
+                }
             }
         }
         if (found == null)
@@ -526,57 +546,44 @@ public class TObject implements Comparable<TObject> {
     }
 
     @Hidden
-    public static Object[] getParams(TObject params, Class<?>[] types) {
-        if (!(params instanceof TList))
-            return null;
-
+    private static int rate(TObject params, Class<?>[] types) {
+        if (!(params instanceof TList) || params.size() != types.length)
+            throw new IllegalArgumentException();
         List<TObject> lst = ((TList) params).getList();
 
-        Object[] pa = new Object[params.size()];
-        for (int i = 0; i < types.length; i++) {
-            Class<?> type = types[i];
-            if (lst.get(i) instanceof TNull) {
-                pa[i] = null;
-                continue;
-            }
-            try {
-                if (type.isAssignableFrom(TObject.class)) {
-                    pa[i] = toToyLang(lst.get(i));
-                } else if (type.getName().equals(TObject.class.getName())) {
-                    pa[i] = lst.get(i);
-                } else if (type == int.class) {
-                    pa[i] = lst.get(i).toInt();
-                } else if(type == char.class) {
-                    pa[i] = lst.get(i).toChar();
-                } else if (type == long.class) {
-                    pa[i] = lst.get(i).toLong();
-                } else if (type == short.class) {
-                    pa[i] = lst.get(i).toShort();
-                } else if (type == byte.class) {
-                    pa[i] = lst.get(i).toByte();
-                } else if (type == float.class) {
-                    pa[i] = lst.get(i).toFloat();
-                } else if (type == double.class) {
-                    pa[i] = lst.get(i).toDouble();
-                } else if (type == boolean.class) {
-                    pa[i] = lst.get(i).toBoolean();
-                } else if (type == BigInteger.class) {
-                    pa[i] = lst.get(i).toBigInt();
-                } else if (type.isArray()) {
-                    pa[i] = lst.get(i).toArray();
-                } else {
-                    pa[i] = lst.get(i).toObject();
-                    if (!type.isAssignableFrom(pa[i].getClass())) {
-                        return null;
-                    }
-                }
-            } catch (Exception e) {
-                return null;
-            }
-            if (pa[i] == null)
-                return null;
+        int rating = 0;
+
+        for (int i = 0; i < lst.size(); i++) {
+            int r = lst.get(i).coerceRating(types[i]);
+            if (r == COERCE_IMPOSSIBLE)
+                return COERCE_IMPOSSIBLE;
+            rating += r;
         }
-        return pa;
+
+        return rating;
+    }
+
+
+    public static Object[] getParams(TObject params, Class<?>[] types, int rating) {
+        if (rating == -1) {
+            throw new IllegalArgumentException("Cannot coerce arguments: "+ rating);
+        }
+        if (!(params instanceof TList) || params.size() != types.length)
+            throw new IllegalArgumentException();
+
+        List<TObject> lst = ((TList) params).getList();
+        Object[] ret = new Object[lst.size()];
+        for (int i = 0; i < lst.size(); i++) {
+            ret[i] = lst.get(i).coerce(types[i]);
+        }
+        return ret;
+    }
+
+    public static Object[] getParams(TObject params, Class<?>[] types) {
+        int rating = rate(params, types);
+        if (rating == COERCE_IMPOSSIBLE)
+            return null;
+        return getParams(params, types, rating);
     }
 
     @Hidden

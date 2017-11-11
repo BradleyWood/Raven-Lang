@@ -206,9 +206,33 @@ public class TReal extends TObject {
     }
 
     @Override
-    public int coerceRating(Class clazz) {
+    public Object coerce(Class clazz) {
         if (clazz.equals(double.class) || clazz.equals(Double.class)) {
+            return toDouble();
+        } else if (clazz.equals(float.class) || clazz.equals(Float.class)) {
+            return toFloat();
+        } else if (clazz.equals(int.class) || clazz.equals(Integer.class)) {
+            return toInt();
+        } else if (clazz.equals(long.class) || clazz.equals(Long.class)) {
+            return toLong();
+        } else if (clazz.equals(short.class) || clazz.equals(Short.class)) {
+            return toShort();
+        } else if(clazz.equals(byte.class) || clazz.equals(Byte.class)) {
+            return toByte();
+        }
+        return super.coerce(clazz);
+    }
+
+    @Override
+    public int coerceRating(Class clazz) {
+        if (clazz.equals(double.class) || clazz.equals(Double.class)
+                || clazz.equals(float.class) || clazz.equals(float.class)) {
             return COERCE_IDEAL;
+        } else if (clazz.equals(int.class) || clazz.equals(Integer.class)
+                || clazz.equals(long.class) || clazz.equals(Long.class)
+                || clazz.equals(short.class) || clazz.equals(Short.class)
+                || clazz.equals(byte.class) || clazz.equals(Byte.class)) {
+            return COERCE_BAD;
         }
         return super.coerceRating(clazz);
     }

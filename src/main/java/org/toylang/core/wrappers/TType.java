@@ -45,6 +45,14 @@ public class TType extends TObject {
     }
 
     @Override
+    public Object coerce(Class clazz) {
+        if (clazz.equals(Class.class)) {
+            return toObject();
+        }
+        return super.coerce(clazz);
+    }
+
+    @Override
     public int coerceRating(Class clazz) {
         if (clazz.equals(Class.class)) {
             return COERCE_IDEAL;

@@ -37,6 +37,11 @@ public class TNull extends TObject {
     }
 
     @Override
+    public Object coerce(Class clazz) {
+        return toObject();
+    }
+
+    @Override
     public int coerceRating(Class clazz) {
         return COERCE_IDEAL;
     }

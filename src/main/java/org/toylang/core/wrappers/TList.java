@@ -214,6 +214,20 @@ public class TList extends TObject implements List {
     }
 
     @Override
+    public Object coerce(Class clazz) {
+        if (clazz.isArray()) {
+            Object[] oa = new Object[list.size()];
+            for (int i = 0; i < list.size(); i++) {
+                oa[i] = list.get(i).coerce(clazz.getComponentType());
+            }
+            return oa;
+        } else if (List.class.isAssignableFrom(clazz)) {
+            return toObject();
+        }
+        return super.coerce(clazz);
+    }
+
+    @Override
     public int coerceRating(Class clazz) {
         if (clazz.isArray() || List.class.isAssignableFrom(clazz)) {
             return COERCE_IDEAL;
