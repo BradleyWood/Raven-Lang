@@ -12,6 +12,12 @@ fun interopTest1() {
     Assert.assertNotEqual(Math.sin(Math.PI / 2), 0.9999999999999999);
 }
 
+fun interopTest2() {
+    // test overloaded methods
+    Assert.assertEqual(100, Math.abs(100));
+    Assert.assertEqual(100.01, Math.abs(100.01));
+}
+
 fun interopTest3() {
     var f = File(".");
     Assert.assertTrue(f.isDirectory());
