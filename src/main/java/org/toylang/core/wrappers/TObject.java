@@ -318,9 +318,6 @@ public class TObject implements Comparable<TObject> {
             if (names.length == 0)
                 names = new String[]{name};
 
-            for (String s : names) {
-                System.out.println(name + " : " + s);
-            }
             for (int i = 0; i < names.length; i++) {
                 Field f = obj.getClass().getField(names[i]);
                 if (f.getAnnotationsByType(Hidden.class) != null) {
@@ -420,6 +417,11 @@ public class TObject implements Comparable<TObject> {
             } catch (Throwable e) {
                 e.getCause().printStackTrace();
                 return new TError(e.getMessage());
+            }
+        }
+        for (Class cl : clazz.getClasses()) {
+            if (cl.getSimpleName().equals(name)) {
+                return newObj(cl, params);
             }
         }
         throw new RuntimeException("Method " + clazz.getName() + ":" + name + " not found.");
