@@ -380,7 +380,6 @@ public class Method extends MethodVisitor implements TreeVisitor, Opcodes {
             TObject.registerMethod(c, name, paramCount);
             return true;
         } catch (Exception e) {
-            e.printStackTrace();
             return false;
         }
     }
@@ -422,7 +421,11 @@ public class Method extends MethodVisitor implements TreeVisitor, Opcodes {
                         if (var != null) {
                             accessVirtualField(var, load);
                         } else {
-                            Errors.put("Variable not found " + name.toString());
+                            visitVarInsn(ALOAD, locals.indexOf("this"));
+                            visitLdcInsn(names[0]);
+                            visitMethodInsn(INVOKESTATIC, getInternalName(TObject.class), "getField", getDesc(TObject.class, "getField", Object.class, String.class), false);
+                            System.err.println("Warning: Variable may not exist: " + ctx.getClassDef().getName().toString() + ":" + name.toString());
+                            // var could exist in super class
                         }
                     }
                     break;
