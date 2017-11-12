@@ -27,6 +27,15 @@ public class Method extends MethodVisitor implements TreeVisitor, Opcodes {
         this.ctx = ctx;
     }
 
+    protected int getLocal(String name) {
+        int idx = locals.indexOf(name);
+        if (idx == -1) {
+            Errors.put("Use of variable: " + name + " before it is defined");
+            return 0;
+        }
+        return idx;
+    }
+
     @Override
     public void visitEnd() {
         visitMaxs(0, 0);
@@ -278,12 +287,12 @@ public class Method extends MethodVisitor implements TreeVisitor, Opcodes {
                         invokeStaticMethod_D(funOwner, call.getName().toString(), desc, call.getParams());
                     } else {
                         if (ctx.getClassDef().findFun(call.getName().toString(), call.getParams().length) != null) {
-                            visitVarInsn(ALOAD, locals.indexOf("this"));
+                            visitVarInsn(ALOAD, getLocal("this"));
                             Arrays.stream(call.getParams()).forEach(param -> param.accept(this));
                             visitMethodInsn(INVOKEVIRTUAL, funOwner, call.getName().toString(), desc, false);
                         } else {
                             visitLdcInsn(Type.getType("L" + (funOwner.replace(".", "/")) + ";"));
-                            visitVarInsn(ALOAD, locals.indexOf("this"));
+                            visitVarInsn(ALOAD, getLocal("this"));
                             visitLdcInsn(call.getName().toString());
                             visitListDef(new ListDef(call.getParams()));
                             visitMethodInsn(INVOKESTATIC, Constants.TOBJ_NAME, "invoke", getDesc(TObject.class, "invoke", Class.class, Object.class, String.class, TObject.class), false);
@@ -392,7 +401,7 @@ public class Method extends MethodVisitor implements TreeVisitor, Opcodes {
         visitLine(name);
 
         String[] names = name.getNames();
-        int localIdx = findLocal(names[0]);
+        int localIdx = locals.indexOf(names[0]);
 
         if (localIdx != -1 && !names[0].equals("this")) {
             switch (names.length) {
@@ -414,13 +423,17 @@ public class Method extends MethodVisitor implements TreeVisitor, Opcodes {
             switch (names.length) {
                 case 1:
                     if (ctx.isStatic()) {
-                        accessStaticField(ctx.getOwner(), decl.getName().toString(), load);
+                        if (decl != null) {
+                            accessStaticField(ctx.getOwner(), decl.getName().toString(), load);
+                        } else {
+                            Errors.put("Variable " + ctx.getOwner() + ":" + ctx.getName() + ":" + names[0] + " not found");
+                        }
                     } else {
                         VarDecl var = ctx.getClassDef().findVar(name.toString());
                         if (var != null) {
                             accessVirtualField(var, load);
                         } else {
-                            visitVarInsn(ALOAD, locals.indexOf("this"));
+                            visitVarInsn(ALOAD, getLocal("this"));
                             visitLdcInsn(names[0]);
                             visitMethodInsn(INVOKESTATIC, getInternalName(TObject.class), "getField", getDesc(TObject.class, "getField", Object.class, String.class), false);
                             System.err.println("Warning: Variable may not exist: " + ctx.getClassDef().getName().toString() + ":" + name.toString());
@@ -466,7 +479,7 @@ public class Method extends MethodVisitor implements TreeVisitor, Opcodes {
     }
 
     private void accessVirtualField(VarDecl var, boolean load) {
-        int idx = findLocal("this");
+        int idx = getLocal("this");
         if (idx != 0) {
             Errors.put("Cannot access field in non static context: " + var.getName());
             return;
@@ -506,12 +519,8 @@ public class Method extends MethodVisitor implements TreeVisitor, Opcodes {
             visitFieldInsn(PUTSTATIC, ctx.getOwner(), decl.getName().toString(), Constants.TOBJ_SIG);
         } else {
             locals.add(decl.getName().toString());
-            visitVarInsn(ASTORE, findLocal(decl.getName().toString()));
+            visitVarInsn(ASTORE, getLocal(decl.getName().toString()));
         }
-    }
-
-    private int findLocal(String name) {
-        return locals.indexOf(name);
     }
 
     @Override
@@ -532,7 +541,7 @@ public class Method extends MethodVisitor implements TreeVisitor, Opcodes {
                     assignListIdx((ListIndex) op.getLeft());
                     break;
                 }
-                int idx = findLocal(op.getLeft().toString());
+                int idx = locals.indexOf(op.getLeft().toString());
                 if (idx != -1) {
                     visitVarInsn(ASTORE, idx);
                 } else {

@@ -77,7 +77,7 @@ public class ClassConstructor extends Method {
             locals.add(" SUPER_PARAMS ");
 
             visitListDef(new ListDef(params));
-            visitVarInsn(ASTORE, locals.indexOf(" TL_PARAMS "));
+            visitVarInsn(ASTORE, getLocal(" TL_PARAMS "));
 
             putSuperCalls(clazz, candidates, params);
 
@@ -90,7 +90,7 @@ public class ClassConstructor extends Method {
         Class[] candidate = candidates.getFirst();
 
         String getParamDesc = "(Lorg/toylang/core/wrappers/TObject;[Ljava/lang/Class;)[Ljava/lang/Object;";
-        visitVarInsn(ALOAD, locals.indexOf(" TL_PARAMS "));
+        visitVarInsn(ALOAD, getLocal(" TL_PARAMS "));
         visitLdcInsn(params.length);
 
         visitTypeInsn(ANEWARRAY, getName(Class.class));
@@ -104,15 +104,15 @@ public class ClassConstructor extends Method {
         }
 
         visitMethodInsn(INVOKESTATIC, getName(TObject.class), "getParams", getParamDesc, false);
-        visitVarInsn(ASTORE, locals.indexOf(" SUPER_PARAMS "));
+        visitVarInsn(ASTORE, getLocal(" SUPER_PARAMS "));
 
         Label lb = new Label();
-        visitVarInsn(ALOAD, locals.indexOf(" SUPER_PARAMS "));
+        visitVarInsn(ALOAD, getLocal(" SUPER_PARAMS "));
         visitJumpInsn(IFNULL, lb);
 
         String superDesc = Type.getConstructorDescriptor(clazz.getConstructor(candidate));
         for (int n = 0; n < params.length; n++) {
-            visitVarInsn(ALOAD, locals.indexOf(" SUPER_PARAMS "));
+            visitVarInsn(ALOAD, getLocal(" SUPER_PARAMS "));
             visitLdcInsn(n);
             visitInsn(AALOAD);
             if (!candidate[n].isPrimitive() || (candidate[n].isArray() && candidate[n].getComponentType().isPrimitive())) {
