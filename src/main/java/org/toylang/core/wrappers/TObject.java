@@ -617,8 +617,10 @@ public class TObject implements Comparable<TObject> {
         }
         if (o.getClass().isArray()) {
             TList lst = new TList();
-            Object[] objA = (Object[]) o;
-            lst.addAll(Arrays.asList(objA));
+            int length = Array.getLength(o);
+            for (int i = 0; i < length; i++) {
+                lst.add(Array.get(o, i));
+            }
             return lst;
         }
         return new TObject(o);
