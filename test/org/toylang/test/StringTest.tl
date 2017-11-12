@@ -97,3 +97,58 @@ fun strNETest() {
     Assert.assertEqual(false, str1 != str3);
     Assert.assertEqual(true, str2 != str3);
 }
+
+fun strContainsTest() {
+    var str = "abcdefghi";
+    Assert.assertTrue(str.contains("def"));
+}
+
+fun strSubstringTest() {
+    var str = "abcdefghi";
+    Assert.assertTrue(str.substring(1) == "bcdefghi");
+    Assert.assertTrue(str.substring(1, str.size() - 1) == "bcdefgh");
+}
+
+fun strEndsWithTest() {
+    var str = "abcdefghi";
+    Assert.assertTrue(str.endsWith("ghi"));
+    Assert.assertTrue(!str.endsWith("abc"));
+}
+
+fun strStarssWithTest() {
+    var str = "abcdefghi";
+    Assert.assertTrue(!str.startsWith("ghi"));
+    Assert.assertTrue(str.startsWith("abc"));
+}
+
+fun strUppercaseTest() {
+    var str = "abc";
+    Assert.assertTrue(str.toUpperCase() == "ABC");
+    Assert.assertTrue(str.toUpperCase() != "abc");
+}
+
+fun strLowercaseTest() {
+    var str = "ABC";
+    Assert.assertTrue(str.toLowerCase() != "ABC");
+    Assert.assertTrue(str.toLowerCase() == "abc");
+}
+
+fun strReplaceTest() {
+    var str = "ABCdefGHI";
+    Assert.assertTrue(str.replace("def", "") == "ABCGHI");
+    Assert.assertTrue(str.replace("def", "") != "def");
+}
+
+fun strIndexOfTest() {
+    var str = "ABCdefGHI";
+    Assert.assertEqual(3, str.indexOf("def"));
+}
+
+fun testEqualsIgnoreCase() {
+    Assert.assertTrue("AbCdEF".equalsIgnoreCase("abcdef"));
+}
+
+fun testIsEmpty() {
+    Assert.assertTrue("".isEmpty());
+    Assert.assertTrue(!("abc".isEmpty()));
+}

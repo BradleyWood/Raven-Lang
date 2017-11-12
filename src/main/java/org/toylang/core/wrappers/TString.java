@@ -142,6 +142,10 @@ public class TString extends TObject {
         return str.startsWith(prefix);
     }
 
+    public boolean endsWith(String suffix) {
+        return str.endsWith(suffix);
+    }
+
     public String substring(int beginIndex) {
         return str.substring(beginIndex);
     }
