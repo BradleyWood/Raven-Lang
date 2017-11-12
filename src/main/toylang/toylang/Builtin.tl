@@ -24,8 +24,9 @@ public fun isError(obj) {
 public fun error(obj) {
     return TError(str(obj));
 }
+
 public fun println(obj) {
-    out.println(obj);
+    out.println(str(obj));
 }
 
 public fun println() {
@@ -70,23 +71,6 @@ public fun type(obj) {
 
 public fun readLine() {
     return scan.nextLine();
-}
-
-public fun vars() {
-    var stackTrace = Thread.currentThread().getStackTrace();
-    var name = stackTrace.get(8);
-    var clazz = Class.forName(name.getClassName());
-    var fields = clazz.getDeclaredFields();
-
-    var dict = {};
-    var i = 0;
-    while (i < len(fields)) {
-        var field = fields[i];
-        field.setAccessible(true);
-        dict.put(field.getName(), field.get(null));
-        i += 1;
-    }
-    return dict;
 }
 
 public fun reverse(lst) {

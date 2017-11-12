@@ -36,22 +36,3 @@ public fun writeLines(path, lines) {
     }
     bw.close();
 }
-
-// open for writing
-public fun openR(path) {
-    var file = File(path);
-    if !(file.exists()) {
-        return error("The system cannot find the path specified: " + path);
-    }
-    return FileInputStream(path);
-}
-
-// open for writing
-public fun openW(path) {
-    var file = File(path);
-    return FileOutputStream(path);
-}
-
-public fun close(file) {
-    file.close();
-}

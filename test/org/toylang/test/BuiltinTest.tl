@@ -50,14 +50,6 @@ fun lenTest() {
     Assert.assertEqual(len(dict), 2);
 }
 
-var testVar = "testval";
-
-fun varsTest() {
-    var varDict = vars();
-    Assert.assertEqual(varDict.get("testVar"), "testval");
-    Assert.assertEqual(len(varDict), 2);
-}
-
 fun typeTest() {
     var val = null;
     Assert.assertEqual(type(val), TNull.TYPE);
