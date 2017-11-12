@@ -117,6 +117,7 @@ expression
     |   funCall
     |   qualifiedName
     |   listIdx
+    |   slice
     |   list
     |   dict
     |   (ADD|SUB|NOT) expression
@@ -153,6 +154,9 @@ paramList
     ;
 listIdx
     :   qualifiedName ('[' expression ']')*
+    ;
+slice
+    :   qualifiedName '[' lhs=expression? ':' rhs=expression? ']'
     ;
 list
     :   '[' paramList? ']'
