@@ -6,7 +6,6 @@ import org.toylang.antlr.Operator;
 import org.toylang.antlr.ast.*;
 import org.toylang.core.*;
 import org.toylang.core.wrappers.*;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.util.*;
 
@@ -208,7 +207,7 @@ public class Method extends MethodVisitor implements TreeVisitor, Opcodes {
 
     @Override
     public void visitGo(Go go) {
-        throw new NotImplementedException();
+        throw new UnsupportedOperationException("Not implemented");
     }
 
     @Override
