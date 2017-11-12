@@ -130,6 +130,66 @@ public class TString extends TObject {
         return Double.parseDouble(toString());
     }
 
+    public String[] split(String regex) {
+        return str.split(regex);
+    }
+
+    public String[] split(String regex, int limit) {
+        return str.split(regex, limit);
+    }
+
+    public boolean startsWith(String prefix) {
+        return str.startsWith(prefix);
+    }
+
+    public String substring(int beginIndex) {
+        return str.substring(beginIndex);
+    }
+
+    public String substring(int beginIndex, int endIndex) {
+        return str.substring(beginIndex, endIndex);
+    }
+
+    public String toUpperCase() {
+        return str.toUpperCase();
+    }
+
+    public String toLowerCase() {
+        return str.toLowerCase();
+    }
+
+    public boolean contains(String str) {
+        return this.str.contains(str);
+    }
+
+    public String trim() {
+        return str.trim();
+    }
+
+    public String replace(String target, String replacement) {
+        return str.replace(target, replacement);
+    }
+
+    public int indexOf(String str) {
+        return this.str.indexOf(str);
+    }
+
+    public boolean isEmpty() {
+        return str.isEmpty();
+    }
+
+    public boolean matches(String regex) {
+        return str.matches(regex);
+    }
+
+    public int lastIndexOf(String str) {
+        return this.str.lastIndexOf(str);
+    }
+
+    public boolean equalsIgnoreCase(String str) {
+        return this.str.equalsIgnoreCase(str);
+    }
+
     @Hidden
     @Override
     public boolean equals(Object o) {
