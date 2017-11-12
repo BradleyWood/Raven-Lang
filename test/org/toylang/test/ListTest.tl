@@ -9,6 +9,20 @@ fun sizeTest() {
     Assert.assertEqual(0, len(list));
 }
 
+fun listEQTest() {
+    var list = [1, 2, 3, 4, 5];
+    Assert.assertEqual(list, list);
+    Assert.assertTrue(list == list);
+    Assert.assertTrue([] == []);
+    Assert.assertTrue([1, 2] == [1, 2]);
+}
+
+fun listNETest() {
+    var list = [1, 2, 3, 4, 5];
+    Assert.assertTrue(list != [5, 4, 3, 2, 1]);
+    Assert.assertTrue(list != []);
+}
+
 fun appendTest() {
     var list = [];
     Assert.assertEqual(0, len(list));
@@ -66,4 +80,12 @@ fun list2dTest3() {
     Assert.assertEqual(6, sum(lst[0]));
     Assert.assertEqual(15, sum(lst[1]));
     Assert.assertEqual(24, sum(lst[2]));
+}
+
+fun sliceTest() {
+    var lst = [2, 4, 6, 8, 10, 12, 14, 16];
+    Assert.assertEqual(lst, lst[:]);
+    Assert.assertEqual([6, 8, 10, 12, 14, 16], lst[2:]);
+    Assert.assertEqual([2, 4], lst[:2]);
+    Assert.assertEqual([4, 6], lst[1:3]);
 }

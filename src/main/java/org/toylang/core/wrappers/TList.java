@@ -4,6 +4,7 @@ import org.toylang.core.Hidden;
 
 import java.lang.reflect.Array;
 import java.util.*;
+import java.util.regex.Pattern;
 
 public class TList extends TObject implements List {
 
@@ -53,6 +54,19 @@ public class TList extends TObject implements List {
     @Override
     public boolean contains(Object o) {
         return list.contains(o);
+    }
+
+    @Override
+    public TObject EQ(TObject obj) {
+        if (obj instanceof TList) {
+            return list.equals(((TList) obj).list) ? TBoolean.TRUE : TBoolean.FALSE;
+        }
+        return TBoolean.FALSE;
+    }
+
+    @Override
+    public TObject NE(TObject obj) {
+        return EQ(obj).not();
     }
 
     @Override
