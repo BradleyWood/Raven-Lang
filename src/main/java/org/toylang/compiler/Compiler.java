@@ -161,21 +161,12 @@ public class Compiler {
     }
 
     private static void buildSymbolMap(Class clazz) {
-        boolean isToyLang = clazz.getDeclaredAnnotation(TLFile.class) != null;
+        boolean isJava = clazz.getDeclaredAnnotation(TLFile.class) == null;
+        if (isJava)
+            return;
         for (Method method : clazz.getMethods()) {
-            SymbolMap.FUN_MAP.put(clazz.getPackage().getName() + "." + method.getName(), new Fun(isToyLang ? new QualifiedName(method.getName()) : null, null, null, null));
-        }
-        for (Constructor constructor : clazz.getConstructors()) {
-            // todo;
-            if (Modifier.isProtected(constructor.getModifiers()) || Modifier.isPublic(constructor.getModifiers())) {
-                //SymbolMap.CLASS_MAP.put(clazz.getName(), new ClassDef(null,null,null,null,null));
-                break;
-            }
-        }
-        // todo;
-        for (Field field : clazz.getFields()) {
-            if (Modifier.isStatic(field.getModifiers())) {
-                //SymbolMap.VARIABLE_MAP.put(clazz.getPackage().getName() + "." + field.getName(), new VarDecl(null,null,null));
+            if (Modifier.isPublic(method.getModifiers())) {
+                SymbolMap.FUN_MAP.put(clazz.getPackage().getName() + "." + method.getName(), new Fun(new QualifiedName(method.getName()), null, null, null));
             }
         }
     }

@@ -117,6 +117,9 @@ public class ClassMaker {
         method.visitCode();
         fun.accept(method);
         method.visitEnd();
+
+        String fqn = (context.getOwner() + "." + fun.getName().toString()).replace("/", ".");
+        SymbolMap.FUN_MAP.put(fqn, fun);
     }
 
     private void putDefaultConstructor() {
