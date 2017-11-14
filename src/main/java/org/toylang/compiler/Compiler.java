@@ -74,10 +74,7 @@ public class Compiler {
             }
         }
 
-        if (Errors.getErrorCount() > 0) {
-            Errors.printErrors();
-            System.err.println("Compilation failed with " + Errors.getErrorCount() + " errors.");
-        } else {
+        if (Errors.getErrorCount() == 0) {
             // no errors... generate code
             HashMap<String, ClassMaker> classes = new HashMap<>();
             for (ToyTree toyTree : trees) {
@@ -128,7 +125,6 @@ public class Compiler {
                 cm.make();
             }
             if (Errors.getErrorCount() > 0) {
-                Errors.printErrors();
                 classDefinitions.clear();
             } else {
                 for (String s : classes.keySet()) {
@@ -148,7 +144,7 @@ public class Compiler {
         return classDefinitions;
     }
 
-    private final String findFile(QualifiedName name) {
+    private String findFile(QualifiedName name) {
         QualifiedName pack = tree.getPackage();
         File basePath = file.getParentFile();
         if (pack != null) {
@@ -162,7 +158,7 @@ public class Compiler {
         return str;
     }
 
-    public static void buildSymbolMap(Class clazz) {
+    private static void buildSymbolMap(Class clazz) {
         boolean isToyLang = clazz.getDeclaredAnnotation(TLFile.class) != null;
         for (Method method : clazz.getMethods()) {
             SymbolMap.FUN_MAP.put(clazz.getPackage().getName() + "." + method.getName(), new Fun(isToyLang ? new QualifiedName(method.getName()) : null, null, null, null));

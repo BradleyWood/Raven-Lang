@@ -3,6 +3,7 @@ package org.toylang.core;
 import org.toylang.antlr.Errors;
 import org.toylang.antlr.ToyParser;
 import org.toylang.antlr.ToyTree;
+import org.toylang.antlr.ast.QualifiedName;
 import org.toylang.compiler.Compiler;
 import org.toylang.test.Assert;
 
@@ -44,30 +45,28 @@ public class Application {
         int numTests = 0;
         AtomicInteger fails = new AtomicInteger();
 
-        if (Errors.getErrorCount() == 0) {
-            ByteClassLoader cl = new ByteClassLoader(null, Application.class.getClassLoader(), classes);
-            if (classes != null) {
-                for (String s : classes.keySet()) {
-                    Class<?> clazz = cl.loadClass(s);
-                    for (Method method : clazz.getDeclaredMethods()) {
-                        if (method.getName().toLowerCase().contains("test") && method.getParameterCount() == 0) {
-                            try {
-                                numTests++;
-                                method.setAccessible(true);
-                                method.invoke(null);
-                            } catch (IllegalAccessException | InvocationTargetException e) {
-                                e.getCause().printStackTrace();
-                                if (!method.getName().toLowerCase().contains("exception"))
-                                    fails.getAndIncrement();
-                            }
-                            Assert.errors.forEach(error -> {
-                                if (!method.getName().toLowerCase().contains("fail")) {
-                                    error.printStackTrace();
-                                    fails.getAndIncrement();
-                                }
-                            });
-                            Assert.errors.clear();
+        ByteClassLoader cl = new ByteClassLoader(null, Application.class.getClassLoader(), classes);
+        if (classes != null) {
+            for (String s : classes.keySet()) {
+                Class<?> clazz = cl.loadClass(s);
+                for (Method method : clazz.getDeclaredMethods()) {
+                    if (method.getName().toLowerCase().contains("test") && method.getParameterCount() == 0) {
+                        try {
+                            numTests++;
+                            method.setAccessible(true);
+                            method.invoke(null);
+                        } catch (IllegalAccessException | InvocationTargetException e) {
+                            e.getCause().printStackTrace();
+                            if (!method.getName().toLowerCase().contains("exception"))
+                                fails.getAndIncrement();
                         }
+                        Assert.errors.forEach(error -> {
+                            if (!method.getName().toLowerCase().contains("fail")) {
+                                error.printStackTrace();
+                                fails.getAndIncrement();
+                            }
+                        });
+                        Assert.errors.clear();
                     }
                 }
             }
@@ -79,7 +78,7 @@ public class Application {
         path = path.replace("/", "\\");
         File file = new File(path);
 
-        HashMap<String, byte[]> classes = compile(path, false);
+        HashMap<String, byte[]> classes = compile(path, true);
         if (Errors.getErrorCount() == 0) {
             ByteClassLoader cl = new ByteClassLoader(null, Application.class.getClassLoader(), classes);
             if (classes != null) {
@@ -118,12 +117,13 @@ public class Application {
             ToyTree tree = parser.parse();
             Compiler compiler = new Compiler(f.getAbsolutePath(), f.getName().replace(".tl", ""), tree);
             classes.putAll(compiler.compile(save));
+
+            if (Errors.getErrorCount() > 0) {
+                Errors.printErrors();
+                Errors.reset();
+            }
         }
-        if (Errors.getErrorCount() == 0) {
-            System.out.println("Compilation Completed Successfully!");
-            return classes;
-        }
-        return null;
+        return classes;
     }
 
     public static class ByteClassLoader extends ClassLoader {
