@@ -117,9 +117,6 @@ public class ClassMaker {
         method.visitCode();
         fun.accept(method);
         method.visitEnd();
-
-        String fqn = (context.getOwner() + "." + fun.getName().toString()).replace("/", ".");
-        SymbolMap.FUN_MAP.put(fqn, fun);
     }
 
     private void putDefaultConstructor() {
@@ -134,12 +131,6 @@ public class ClassMaker {
 
     public void addStaticFields(VarDecl decl) {
         staticVariables.add(decl);
-        for (Modifier modifier : decl.getModifiers()) {
-            if (modifier.equals(Modifier.PUBLIC)) {
-                String fqn = (def.getFullName() + "." + decl.getName().toString()).replace("/", ".");
-                SymbolMap.VARIABLE_MAP.put(fqn, decl);
-            }
-        }
     }
 
     public void addStaticMethods(Fun fun) {

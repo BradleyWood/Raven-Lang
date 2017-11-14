@@ -38,7 +38,14 @@ public class Mapper implements TreeVisitor {
         if (tree.getPackage() != null) {
             name = tree.getPackage().add(tree.getName()).add(fun.getName()).toString();
         }
-        SymbolMap.FUN_MAP.put(name, fun);
+        if (fun.getModifiers() != null) {
+            for (Modifier modifier : fun.getModifiers()) {
+                if (modifier == Modifier.PUBLIC) {
+                    SymbolMap.FUN_MAP.put(name, fun);
+                    break;
+                }
+            }
+        }
     }
 
     @Override
@@ -51,7 +58,14 @@ public class Mapper implements TreeVisitor {
 
     @Override
     public void visitVarDecl(VarDecl decl) {
-        SymbolMap.VARIABLE_MAP.put(tree.getPackage().add(tree.getName()).add(decl.getName()).toString(), decl);
+        if (decl.getModifiers() != null) {
+            for (Modifier modifier : decl.getModifiers()) {
+                if (modifier.equals(Modifier.PUBLIC)) {
+                    SymbolMap.VARIABLE_MAP.put(tree.getPackage().add(tree.getName()).add(decl.getName()).toString(), decl);
+                    break;
+                }
+            }
+        }
     }
 
     @Override
@@ -84,7 +98,13 @@ public class Mapper implements TreeVisitor {
 
     @Override
     public void visitClassDef(ClassDef def) {
-        SymbolMap.CLASS_MAP.put(tree.getPackage().add(def.getName()).toString(), def);
+        if (def.getModifiers() != null) {
+            for (Modifier modifier : def.getModifiers()) {
+                if (modifier.equals(Modifier.PUBLIC)) {
+                    SymbolMap.CLASS_MAP.put(tree.getPackage().add(def.getName()).toString(), def);
+                }
+            }
+        }
     }
 
     @Override
