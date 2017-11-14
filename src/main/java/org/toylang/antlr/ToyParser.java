@@ -25,7 +25,7 @@ public class ToyParser {
         CommonTokenStream tokenStream = new CommonTokenStream(lexer);
         ToyLangParser parser = new ToyLangParser(tokenStream);
         parser.removeErrorListener(ConsoleErrorListener.INSTANCE);
-        parser.addErrorListener(new ToyErrorListener());
+        parser.addErrorListener(new ToyErrorListener(file));
         ToyFileVisitor fileVisitor = new ToyFileVisitor();
         ToyTree tree = fileVisitor.visit(parser.toyFile());
         String name = new File(file).getName();

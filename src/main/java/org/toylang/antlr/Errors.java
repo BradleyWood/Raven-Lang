@@ -22,4 +22,8 @@ public class Errors {
             System.err.println();
         }
     }
+
+    public static void reset() {
+        ERRORS.clear();
+    }
 }

@@ -8,13 +8,16 @@ import java.util.BitSet;
 
 public class ToyErrorListener extends BaseErrorListener {
 
-    public ToyErrorListener() {
+    private final String file;
+
+    public ToyErrorListener(final String file) {
         super();
+        this.file = file;
     }
 
     @Override
     public void syntaxError(Recognizer<?, ?> recognizer, Object offendingSymbol, int line, int charPositionInLine, String msg, RecognitionException e) {
-        Errors.put("at line " + line + ":" + charPositionInLine + " " + msg);
+        Errors.put(file + " at line " + line + ":" + charPositionInLine + " " + msg);
     }
 
     @Override
