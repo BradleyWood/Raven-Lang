@@ -25,6 +25,7 @@ public class Compiler {
     private String name;
     private ToyTree tree;
 
+    private static HashMap<String, byte[]> classMap = new HashMap<>();
     private static ArrayList<String> IMPORTS = new ArrayList<>();
 
     private ArrayList<ToyTree> trees = new ArrayList<>();
@@ -47,7 +48,6 @@ public class Compiler {
     }
 
     public HashMap<String, byte[]> compile(boolean save) throws IOException {
-        HashMap<String, byte[]> classDefinitions = new HashMap<>();
 
         for (QualifiedName qualifiedName : tree.getImports()) {
             if (!IMPORTS.contains(qualifiedName.toString())) {
@@ -68,7 +68,7 @@ public class Compiler {
                         IMPORTS.add(qualifiedName.toString());
                         buildSymbolMap(clazz);
                     } catch (ClassNotFoundException e) {
-                        e.printStackTrace();
+                        Errors.put("Cannot resolve import: " + qualifiedName);
                     }
                 }
             }
@@ -78,6 +78,8 @@ public class Compiler {
             // no errors... generate code
             HashMap<String, ClassMaker> classes = new HashMap<>();
             for (ToyTree toyTree : trees) {
+                if (classMap.containsKey(toyTree.getPackage().add(toyTree.getName()).toString()))
+                    continue;
                 for (ClassDef classDef : toyTree.getClasses()) {
                     classDef.setPackage(toyTree.getPackage());
                     classDef.setSourceTree(toyTree);
@@ -125,12 +127,12 @@ public class Compiler {
                 cm.make();
             }
             if (Errors.getErrorCount() > 0) {
-                classDefinitions.clear();
+                classMap.clear();
             } else {
                 for (String s : classes.keySet()) {
                     String file = BIN + "/" + s.replace(".", "/") + ".class";
                     byte[] data = classes.get(s).getBytes();
-                    classDefinitions.put(s, data);
+                    classMap.put(s, data);
                     if (save) {
                         File f = new File(file).getParentFile();
                         f.mkdirs();
@@ -141,7 +143,7 @@ public class Compiler {
                 }
             }
         }
-        return classDefinitions;
+        return classMap;
     }
 
     private String findFile(QualifiedName name) {
