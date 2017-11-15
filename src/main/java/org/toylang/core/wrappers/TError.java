@@ -31,6 +31,11 @@ public class TError extends TObject {
     }
 
     @Override
+    public int hashCode() {
+        return msg.hashCode();
+    }
+
+    @Override
     public TObject EQ(TObject obj) {
         if (equals(obj))
             return TBoolean.TRUE;

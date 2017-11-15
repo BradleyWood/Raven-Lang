@@ -44,7 +44,7 @@ Bool<br>
 Null<br>
 List<br>
 Dictionary<br>
-BigInt: to-do <br>
+BigInt<br>
 BigReal: to-do <br>
 </b>
 
@@ -153,11 +153,17 @@ public class scripts/test/HelloWorld {
  9. <b>len(var) : Returns the size for a string, list, or dictionary</b> <br>
  9. <b>int(var) : Converts a variable to an integer if possible</b> <br>
  10. <b>real(var) : Converts a variable to a real number if possible</b> <br>
+ 11. <b>sum(list) : Adds the contents of a list</br> <br>
+ 12. <b>reverse(list) : Reverse the order of a list</br> <br>
+ 13. <b>hash(var) : Returns the hash of the var </br>
 
-### Todo
+### In Progress
 
 - Classes
     - Automatically generate constructors, getters and setters
+    - Inherit from java classes
+
+### Todo
 
 - Automatically generate methods that accept and convert java types
 to facilitate calls from java.
