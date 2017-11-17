@@ -1,7 +1,7 @@
 package org.toylang.core;
 
 import org.apache.commons.cli.*;
-import org.toylang.antlr.Errors;
+import org.toylang.compiler.Errors;
 import org.toylang.antlr.ToyParser;
 import org.toylang.antlr.ToyTree;
 import org.toylang.compiler.Compiler;
