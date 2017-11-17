@@ -1,7 +1,6 @@
 package org.toylang.compiler;
 
 import org.objectweb.asm.*;
-import org.toylang.antlr.Errors;
 import org.toylang.antlr.Operator;
 import org.toylang.antlr.ast.*;
 import org.toylang.core.*;

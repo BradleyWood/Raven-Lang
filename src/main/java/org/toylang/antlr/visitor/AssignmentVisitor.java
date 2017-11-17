@@ -1,12 +1,11 @@
 package org.toylang.antlr.visitor;
 
-import org.toylang.antlr.Errors;
+import org.toylang.compiler.Errors;
 import org.toylang.antlr.Operator;
 import org.toylang.antlr.ToyLangBaseVisitor;
 import org.toylang.antlr.ToyLangParser;
 import org.toylang.antlr.ast.BinOp;
 import org.toylang.antlr.ast.Expression;
-import org.toylang.antlr.ast.QualifiedName;
 
 public class AssignmentVisitor extends ToyLangBaseVisitor<BinOp> {
 

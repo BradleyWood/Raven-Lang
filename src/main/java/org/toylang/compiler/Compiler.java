@@ -1,6 +1,5 @@
 package org.toylang.compiler;
 
-import org.toylang.antlr.Errors;
 import org.toylang.antlr.ToyParser;
 import org.toylang.antlr.ToyTree;
 import org.toylang.antlr.ast.*;
@@ -9,8 +8,6 @@ import org.toylang.core.TLFile;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
