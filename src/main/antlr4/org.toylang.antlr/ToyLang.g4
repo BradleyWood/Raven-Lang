@@ -249,7 +249,7 @@ CLASS   :   'class';
 RETURN  :   'return';
 PUB     :   'public';
 EXTENDS :   'extends';
-IMPL    :   'impl' | 'implements';
+IMPL    :   'implements';
 PRIV    :   'private';
 PACK    :   'package';
 CONTINUE:   'continue';
