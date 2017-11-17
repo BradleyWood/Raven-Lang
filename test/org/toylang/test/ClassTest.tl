@@ -51,7 +51,7 @@ public class Tester extends JFrame {
     }
 }
 
-fun aFun() {
+public fun aFun() {
     return 10;
 }
 
@@ -67,4 +67,22 @@ fun testInheritance() {
     Assert.assertEqual(600, gg.getHeight());
 
     Assert.assertEqual("ABCDEFG", gg.getTitle());
+}
+
+var aTestVar = 100;
+var anotherTestVar = "test";
+
+public class FieldAccessSameFile {
+    public constructor() {
+        Assert.assertEqual(100, ClassTest.aTestVar);
+        Assert.assertEqual("test", ClassTest.anotherTestVar);
+        ClassTest.aTestVar = 500;
+        ClassTest.anotherTestVar = true;
+        Assert.assertEqual(500, ClassTest.aTestVar);
+        Assert.assertEqual(true, ClassTest.anotherTestVar);
+    }
+}
+
+fun testFieldAccess() {
+    FieldAccessSameFile();
 }
