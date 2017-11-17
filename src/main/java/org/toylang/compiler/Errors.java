@@ -1,4 +1,4 @@
-package org.toylang.antlr;
+package org.toylang.compiler;
 
 import java.util.LinkedList;
 
