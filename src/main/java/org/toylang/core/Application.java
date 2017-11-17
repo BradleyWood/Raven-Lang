@@ -1,9 +1,9 @@
 package org.toylang.core;
 
+import org.apache.commons.cli.*;
 import org.toylang.antlr.Errors;
 import org.toylang.antlr.ToyParser;
 import org.toylang.antlr.ToyTree;
-import org.toylang.antlr.ast.QualifiedName;
 import org.toylang.compiler.Compiler;
 import org.toylang.test.Assert;
 
@@ -18,23 +18,73 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class Application {
 
     public static void main(String[] args) {
-        try {
-            if (args.length >= 1) {
-                if (args[0].endsWith(".tl")) {
-                    compileAndRun(args[0], Arrays.copyOfRange(args, 1, args.length));
-                } else if (args[0].equals("-test")) {
-                    compileAndTest("/test/org/toylang/test/");
-                } else {
-                    compile(args[0], true);
-                }
-            } else {
-                compile("/src/main/toylang/toylang/", true);
+        Options options = new Options();
+        options.addOption("test", false, "Runs tests");
+        options.addOption("s", true, "Check files for correctness");
+        options.addOption("b", true, "Build program into executable jar");
+        options.addOption("r", true, "Run program");
 
-                System.out.println("----------------------------------------------");
+        Option programArgs = new Option("args", true, "Specify command line arguments for your program");
+        programArgs.setArgs(Option.UNLIMITED_VALUES);
+        options.addOption(programArgs);
+
+        try {
+            Class.forName("toylang.Builtin");
+        } catch (ClassNotFoundException e) {
+            try {
+                compile("/src/main/toylang/toylang/", true);
+            } catch (IOException e1) {
+                System.err.println("Cannot build builtins");
+                return;
             }
-        } catch (IOException | NoSuchMethodException | ClassNotFoundException | IllegalAccessException | InvocationTargetException e) {
+        }
+
+        CommandLineParser parser = new DefaultParser();
+        try {
+            CommandLine cmd = parser.parse(options, args);
+            boolean test = cmd.hasOption("test");
+            boolean correctness = cmd.hasOption("s");
+            boolean build = cmd.hasOption("b");
+            boolean run = cmd.hasOption("r");
+
+            if (!onlyOneTrue(test, correctness, build, run)) {
+                cmdError(options);
+                return;
+            }
+
+            if (test) {
+                compileAndTest("/test/org/toylang/test/");
+            } else {
+                if (correctness) {
+                    String[] values = cmd.getOptionValues("s");
+                    compile(values[0], false);
+                } else if (build) {
+                    System.err.println("Not implemented");
+                } else if (run) {
+                    String[] values = cmd.getOptionValues("r");
+                    compileAndRun(values[0], cmd.getOptionValues("args"));
+                }
+            }
+
+        } catch (ParseException e) {
+            cmdError(options);
+        } catch (IOException | InvocationTargetException | IllegalAccessException | NoSuchMethodException | ClassNotFoundException e) {
             e.printStackTrace();
         }
+    }
+
+    private static void cmdError(Options options) {
+        System.err.println("Invalid usage");
+        HelpFormatter formatter = new HelpFormatter();
+        formatter.printHelp("ant", options);
+    }
+
+    private static boolean onlyOneTrue(boolean... booleans) {
+        int c = 0;
+        for (boolean b : booleans) {
+            c += b ? 1 : 0;
+        }
+        return c == 1;
     }
 
     public static void compileAndTest(String path) throws IOException, ClassNotFoundException {
