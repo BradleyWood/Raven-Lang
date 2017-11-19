@@ -33,6 +33,6 @@ public class BinOp extends Expression {
 
     @Override
     public String toString() {
-        return left.toString() + " " + op + " " + right.toString();
+        return left + " " + op + " " + right;
     }
 }
