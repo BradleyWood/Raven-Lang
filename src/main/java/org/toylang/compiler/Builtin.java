@@ -1,6 +1,8 @@
 package org.toylang.compiler;
 
+import org.toylang.antlr.ast.Fun;
 import org.toylang.antlr.ast.QualifiedName;
+import org.toylang.antlr.ast.VarDecl;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -33,9 +35,10 @@ public class Builtin {
             Class<?> builtin = Class.forName("toylang.Builtin");
             for (Method method : builtin.getMethods()) {
                 builtins.add(new Builtin(method.getName(), method.getParameterCount()));
+                SymbolMap.FUN_MAP.put((builtin.getName() + "." + method.getName()).replace("/", "."),
+                        new Fun(null, null, null, null, new VarDecl[method.getParameterCount()]));
             }
         } catch (ClassNotFoundException e) {
         }
     }
-
 }

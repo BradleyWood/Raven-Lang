@@ -42,10 +42,11 @@ public class Mapper implements TreeVisitor {
             for (Modifier modifier : fun.getModifiers()) {
                 if (modifier == Modifier.PUBLIC) {
                     SymbolMap.FUN_MAP.put(name, fun);
-                    break;
+                    return;
                 }
             }
         }
+        SymbolMap.addLocalFun(name, fun);
     }
 
     @Override

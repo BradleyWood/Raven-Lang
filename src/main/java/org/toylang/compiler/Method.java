@@ -318,8 +318,8 @@ public class Method extends MethodVisitor implements TreeVisitor, Opcodes {
     }
 
     private void resolveStaticFun(String funOwner, String funName, String desc, Expression[] params) {
-        Fun f = SymbolMap.resolveFun(funOwner, funName);
-        // if the function can be resolved, it is a toylang function
+        Fun f = SymbolMap.resolveFun(ctx.getOwner(), funOwner, funName, params.length);
+        // if the function can be resolved, it is a tl function
         if (f != null) {
             invokeStaticMethod_D(funOwner, funName, desc, params);
         } else {
@@ -337,6 +337,10 @@ public class Method extends MethodVisitor implements TreeVisitor, Opcodes {
     }
 
     private void invokeStaticMethod_D(String owner, String name, String desc, Expression[] params) {
+        Fun f = SymbolMap.resolveFun(ctx.getOwner().replace("/", "."), owner.replace("/", "."), name, params.length);
+        if (f == null) {
+            Errors.put("Cannot resolve function: " + owner + "." + name);
+        }
         for (Expression param : params) {
             param.accept(this);
         }

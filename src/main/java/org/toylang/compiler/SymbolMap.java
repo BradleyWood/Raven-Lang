@@ -5,11 +5,14 @@ import org.toylang.antlr.ast.Fun;
 import org.toylang.antlr.ast.VarDecl;
 
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 
 public class SymbolMap {
 
     public static HashMap<String, VarDecl> VARIABLE_MAP = new HashMap<>();
     public static HashMap<String, Fun> FUN_MAP = new HashMap<>();
+    public static HashMap<String, List<Fun>> LOCAL_FUNCTIONS = new HashMap<>();
     public static HashMap<String, ClassDef> CLASS_MAP = new HashMap<>();
 
     public static VarDecl resolveVar(String file, String name) {
@@ -31,6 +34,21 @@ public class SymbolMap {
             QName = QName.replaceAll("/", ".");
         }
         return QName;
+    }
+
+    public static Fun resolveFun(String callingClass, String funOwner, String name, int paramCount) {
+        if (funOwner.equals(callingClass)) {
+            for (String s : LOCAL_FUNCTIONS.keySet()) {
+                if (s.equals(callingClass + "." + name)) {
+                    for (Fun fun : LOCAL_FUNCTIONS.get(s)) {
+                        if (fun.getName().toString().equals(name)) {
+                            return fun;
+                        }
+                    }
+                }
+            }
+        }
+        return resolveFun(funOwner, name, paramCount);
     }
 
     public static Fun resolveFun(String file, String name) {
@@ -62,5 +80,14 @@ public class SymbolMap {
             }
         }
         return null;
+    }
+
+    public static void addLocalFun(String owner, Fun fun) {
+        if (LOCAL_FUNCTIONS.containsKey(owner)) {
+            LOCAL_FUNCTIONS.get(owner).add(fun);
+        } else {
+            LOCAL_FUNCTIONS.put(owner, new LinkedList<>());
+            addLocalFun(owner, fun);
+        }
     }
 }
