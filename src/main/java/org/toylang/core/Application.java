@@ -20,6 +20,7 @@ public class Application {
     public static void main(String[] args) {
         Options options = new Options();
         options.addOption("test", false, "Runs tests");
+        options.addOption("secure", false, "Run with security manager");
         options.addOption("s", true, "Check files for correctness");
         options.addOption("b", true, "Build program into executable jar");
         options.addOption("r", true, "Run program");
@@ -42,6 +43,11 @@ public class Application {
         CommandLineParser parser = new DefaultParser();
         try {
             CommandLine cmd = parser.parse(options, args);
+
+            if (cmd.hasOption("secure")) {
+                System.setSecurityManager(new WebSecurityManager());
+            }
+
             boolean test = cmd.hasOption("test");
             boolean correctness = cmd.hasOption("s");
             boolean build = cmd.hasOption("b");
