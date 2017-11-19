@@ -122,7 +122,9 @@ public class WebSecurityManager extends SecurityManager {
 
     @Override
     public void checkPropertyAccess(String key) {
-        throw new SecurityException("Program cannot access system properties");
+        if (key.contains("os") || key.contains("user")) {
+            throw new SecurityException("Program cannot access system property: "+key);
+        }
     }
 
     @Override
