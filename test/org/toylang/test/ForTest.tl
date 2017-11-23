@@ -90,3 +90,10 @@ fun testRange8() {
     }
     Assert.assertEqual(n, 100);
 }
+
+fun forTest9() {
+    var i = 100;
+    for (i range 0 to 10);
+
+    Assert.assertEqual(i, 10);
+}
