@@ -4,6 +4,7 @@ import org.toylang.antlr.Operator;
 import org.toylang.antlr.ToyLangBaseVisitor;
 import org.toylang.antlr.ToyLangParser;
 import org.toylang.antlr.ast.*;
+import org.toylang.compiler.Errors;
 import org.toylang.core.wrappers.*;
 
 public class ExpressionVisitor extends ToyLangBaseVisitor<Expression> {
@@ -17,22 +18,21 @@ public class ExpressionVisitor extends ToyLangBaseVisitor<Expression> {
 
         if (ctx.expression().size() == 1 && ctx.qualifiedName() != null) {
             QualifiedName qn = ctx.qualifiedName().accept(QualifiedNameVisitor.INSTANCE);
-            Expression preceeding = ctx.expression(0).accept(ExpressionVisitor.INSTANCE);
+            Expression proceeding = ctx.expression(0).accept(ExpressionVisitor.INSTANCE);
             for (String s : qn.getNames()) {
-                preceeding = new Call(preceeding, new QualifiedName("getField"), new QualifiedName(s));
+                proceeding = new Call(proceeding, new QualifiedName("getField"), new QualifiedName(s));
             }
-            expr = preceeding;
+            expr = proceeding;
         } else if (ctx.expression().size() == 1 && ctx.funCall() != null) {
             QualifiedName name = new QualifiedName(ctx.funCall().IDENTIFIER().getText());
-            Expression preceedingExpr = ctx.expression(0).accept(ExpressionVisitor.INSTANCE);
-            preceedingExpr.setLineNumber(ctx.expression(0).start.getLine());
+            Expression proceedingExpr = ctx.expression(0).accept(ExpressionVisitor.INSTANCE);
             Expression[] expressions = new Expression[0];
             if (ctx.funCall().paramList() != null)
                 expressions = new Expression[ctx.funCall().paramList().param().size()];
             for (int i = 0; i < expressions.length; i++) {
                 expressions[i] = ctx.funCall().paramList().param(i).accept(this);
             }
-            expr = new Call(preceedingExpr, name, expressions);
+            expr = new Call(proceedingExpr, name, expressions);
             expr.setLineNumber(ctx.funCall().start.getLine());
         } else if (ctx.literal() != null) {
             expr = ctx.literal().accept(LiteralVisitor.INSTANCE);
@@ -46,7 +46,7 @@ public class ExpressionVisitor extends ToyLangBaseVisitor<Expression> {
         } else if (ctx.listIdx() != null) {
             expr = ctx.listIdx().accept(ListIndexVisitor.INSTANCE);
             expr.setLineNumber(ctx.listIdx().start.getLine());
-        } else if (ctx.slice() != null ) {
+        } else if (ctx.slice() != null) {
             expr = ctx.slice().accept(SliceVisitor.INSTANCE);
             expr.setLineNumber(ctx.slice().start.getLine());
         } else if (ctx.funCall() != null) {
@@ -60,9 +60,7 @@ public class ExpressionVisitor extends ToyLangBaseVisitor<Expression> {
             expr.setLineNumber(ctx.varAssignment().start.getLine());
         } else if (ctx.expression().size() == 1) {
             expr = ctx.expression(0).accept(ExpressionVisitor.INSTANCE);
-            if (ctx.ADD() != null) {
-
-            } else if (ctx.SUB() != null) {
+            if (ctx.SUB() != null) {
                 expr = ctx.expression(0).accept(ExpressionVisitor.INSTANCE);
                 if (expr instanceof Literal) {
                     expr = new Literal(((Literal) expr).getValue().not()); // negate numbers at compile time
@@ -76,10 +74,9 @@ public class ExpressionVisitor extends ToyLangBaseVisitor<Expression> {
             Expression left = ctx.expression(0).accept(ExpressionVisitor.INSTANCE);
             Expression right = ctx.expression(1).accept(ExpressionVisitor.INSTANCE);
             Operator operator = getOperator(ctx);
-            //System.out.println(left + " : "+operator + " : "+right);
             expr = new BinOp(left, operator, right);
         } else {
-            // error
+            Errors.put("Unsupported expression: " + ctx.getText());
         }
 
         return expr;
