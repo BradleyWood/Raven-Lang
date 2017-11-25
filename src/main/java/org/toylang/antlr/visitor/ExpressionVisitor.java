@@ -67,17 +67,7 @@ public class ExpressionVisitor extends ToyLangBaseVisitor<Expression> {
             expr = ctx.listIdx().accept(ListIndexVisitor.INSTANCE);
             expr.setLineNumber(ctx.listIdx().start.getLine());
         } else if (ctx.slice() != null ) {
-            QualifiedName varName = ctx.slice().qualifiedName().accept(QualifiedNameVisitor.INSTANCE);
-            QualifiedName funName = new QualifiedName("subList");
-            Expression start = new Literal(new TInt(0));
-            Expression end = new Call((Expression) varName, new QualifiedName("size"));
-            if (ctx.slice().lhs != null) {
-                start = ctx.slice().lhs.accept(ExpressionVisitor.INSTANCE);
-            }
-            if (ctx.slice().rhs != null) {
-                end = ctx.slice().rhs.accept(ExpressionVisitor.INSTANCE);
-            }
-            expr = new Call((Expression) varName, funName, start, end);
+            expr = ctx.slice().accept(SliceVisitor.INSTANCE);
             expr.setLineNumber(ctx.slice().start.getLine());
         } else if (ctx.funCall() != null) {
             // todo;
