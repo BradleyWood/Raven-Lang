@@ -46,16 +46,7 @@ public class StatementVisitor extends ToyLangBaseVisitor<Statement> {
                 Errors.put("Not a statement: " + stmt.toString());
             }
         } else if (ctx.goStatement() != null) {
-            QualifiedName name = new QualifiedName(ctx.goStatement().funCall().IDENTIFIER().getText());
-            Expression[] expressions = new Expression[0];
-            if (ctx.goStatement().funCall().paramList() != null)
-                expressions = new Expression[ctx.goStatement().funCall().paramList().param().size()];
-            for (int i = 0; i < expressions.length; i++) {
-                expressions[i] = ctx.goStatement().funCall().paramList().param(i).accept(ExpressionVisitor.INSTANCE);
-            }
-            Call go = new Call(name, expressions);
-            go.setLineNumber(ctx.goStatement().funCall().start.getLine());
-            stmt = new Go(go);
+            stmt = ctx.goStatement().accept(GoVisitor.INSTANCE);
         } else if (ctx.SEMI() != null) {
             // empty statement
             stmt = new Statement();
