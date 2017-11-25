@@ -338,7 +338,7 @@ public class Method extends MethodVisitor implements TreeVisitor, Opcodes {
 
     private void invokeStaticMethod_D(String owner, String name, String desc, Expression[] params) {
         Fun f = SymbolMap.resolveFun(ctx.getOwner().replace("/", "."), owner.replace("/", "."), name, params.length);
-        if (f == null) {
+        if (f == null && !owner.equals(Constants.BUILTIN_NAME)) {
             Errors.put("Cannot resolve function: " + owner + "." + name);
         }
         for (Expression param : params) {
