@@ -18,21 +18,13 @@ public class ExpressionVisitor extends ToyLangBaseVisitor<Expression> {
 
         if (ctx.expression().size() == 1 && ctx.qualifiedName() != null) {
             QualifiedName qn = ctx.qualifiedName().accept(QualifiedNameVisitor.INSTANCE);
-            Expression proceeding = ctx.expression(0).accept(ExpressionVisitor.INSTANCE);
+            expr = ctx.expression(0).accept(ExpressionVisitor.INSTANCE);
             for (String s : qn.getNames()) {
-                proceeding = new Call(proceeding, new QualifiedName("getField"), new QualifiedName(s));
+                expr = new Call(expr, new QualifiedName("getField"), new QualifiedName(s));
             }
-            expr = proceeding;
         } else if (ctx.expression().size() == 1 && ctx.funCall() != null) {
-            QualifiedName name = new QualifiedName(ctx.funCall().IDENTIFIER().getText());
-            Expression proceedingExpr = ctx.expression(0).accept(ExpressionVisitor.INSTANCE);
-            Expression[] expressions = new Expression[0];
-            if (ctx.funCall().paramList() != null)
-                expressions = new Expression[ctx.funCall().paramList().param().size()];
-            for (int i = 0; i < expressions.length; i++) {
-                expressions[i] = ctx.funCall().paramList().param(i).accept(this);
-            }
-            expr = new Call(proceedingExpr, name, expressions);
+            expr = ctx.funCall().accept(FunCallVisitor.INSTANCE);
+            ((Call) expr).setPrecedingExpr(ctx.expression(0).accept(ExpressionVisitor.INSTANCE));
             expr.setLineNumber(ctx.funCall().start.getLine());
         } else if (ctx.literal() != null) {
             expr = ctx.literal().accept(LiteralVisitor.INSTANCE);

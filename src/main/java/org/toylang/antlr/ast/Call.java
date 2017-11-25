@@ -14,14 +14,18 @@ public class Call extends Expression {
         this.params = params;
     }
 
-    public Call(Expression precedingExpr, QualifiedName name, Expression... params) {
-        this.precedingExpr = precedingExpr;
+    public Call(Expression procedingExpr, QualifiedName name, Expression... params) {
+        this.precedingExpr = procedingExpr;
         this.name = name;
         this.params = params;
     }
 
     public Expression getPrecedingExpr() {
         return precedingExpr;
+    }
+
+    public void setPrecedingExpr(Expression precedingExpr) {
+        this.precedingExpr = precedingExpr;
     }
 
     public QualifiedName getName() {
