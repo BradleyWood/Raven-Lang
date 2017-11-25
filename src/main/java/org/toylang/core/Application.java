@@ -1,6 +1,7 @@
 package org.toylang.core;
 
 import org.apache.commons.cli.*;
+import org.toylang.build.AppBuilder;
 import org.toylang.compiler.Errors;
 import org.toylang.antlr.ToyParser;
 import org.toylang.antlr.ToyTree;
@@ -22,7 +23,11 @@ public class Application {
         options.addOption("test", false, "Runs tests");
         options.addOption("secure", false, "Run with security manager");
         options.addOption("s", true, "Check files for correctness");
-        options.addOption("b", true, "Build program into executable jar");
+
+        Option buildOption = new Option("b", true, "Build program into executable jar");
+        buildOption.setArgs(2);
+        options.addOption(buildOption);
+
         options.addOption("r", true, "Run program");
 
         Option programArgs = new Option("args", true, "Specify command line arguments for your program");
@@ -60,18 +65,33 @@ public class Application {
 
             if (test) {
                 compileAndTest("/test/org/toylang/test/");
-            } else {
-                if (correctness) {
-                    String[] values = cmd.getOptionValues("s");
-                    compile(values[0], false);
-                } else if (build) {
-                    System.err.println("Not implemented");
-                } else if (run) {
-                    String[] values = cmd.getOptionValues("r");
-                    compileAndRun(values[0], cmd.getOptionValues("args"));
+            } else if (correctness) {
+                String[] values = cmd.getOptionValues("s");
+                compile(values[0], false);
+            } else if (build) {
+                String[] buildOptions = cmd.getOptionValues("b");
+                HashMap<String, byte[]> classes = compile(buildOptions[0], false);
+                if (Errors.getErrorCount() > 0) {
+                    return;
                 }
+                String mainClass = null;
+                for (String s : classes.keySet()) {
+                    if (buildOptions[0].replace("/", "\\").endsWith(s.replace(".", "\\") + ".tl")) {
+                        mainClass = s;
+                    }
+                }
+                if (mainClass == null) {
+                    System.err.println("Could not determine main class.");
+                    return;
+                }
+                boolean b = AppBuilder.build(classes, mainClass, buildOptions[1]);
+                if (!b) {
+                    System.err.println("Failed to build executable jarfile");
+                }
+            } else if (run) {
+                String[] values = cmd.getOptionValues("r");
+                compileAndRun(values[0], cmd.getOptionValues("args"));
             }
-
         } catch (ParseException e) {
             cmdError(options);
         } catch (IOException | InvocationTargetException | IllegalAccessException | NoSuchMethodException | ClassNotFoundException e) {
