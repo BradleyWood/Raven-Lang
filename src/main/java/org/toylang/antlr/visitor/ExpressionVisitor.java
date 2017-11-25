@@ -35,27 +35,7 @@ public class ExpressionVisitor extends ToyLangBaseVisitor<Expression> {
             expr = new Call(preceedingExpr, name, expressions);
             expr.setLineNumber(ctx.funCall().start.getLine());
         } else if (ctx.literal() != null) {
-            if (ctx.literal().number() != null) {
-                if (ctx.literal().number().getText().contains(".") || ctx.literal().number().getText().toLowerCase().contains("e")) {
-                    expr = new Literal(new TReal(Double.parseDouble(ctx.literal().number().getText())));
-                } else {
-                    try {
-                        expr = new Literal(new TInt(Integer.parseInt(ctx.literal().number().getText())));
-                    } catch (NumberFormatException e) {
-                        expr = new Literal(new TBigInt(ctx.literal().number().getText()));
-                    }
-                }
-            } else if (ctx.literal().stringLiteral() != null) {
-                String str = ctx.literal().stringLiteral().getText();
-                expr = new Literal(new TString(str.substring(1, str.length() - 1)));
-            } else if (ctx.literal().getText().equals("null")) {
-                expr = new Literal(TNull.NULL); // use reference to null instead
-            } else if (ctx.literal().getText().equals("true")) {
-                expr = new Literal(TBoolean.TRUE); // use reference
-            } else if (ctx.literal().getText().equals("false")) {
-                expr = new Literal(TBoolean.FALSE); // use reference
-            }
-            assert expr != null;
+            expr = ctx.literal().accept(LiteralVisitor.INSTANCE);
             expr.setLineNumber(ctx.literal().start.getLine());
         } else if (ctx.dict() != null) {
             expr = ctx.dict().accept(DictDefVisitor.INSTANCE);
