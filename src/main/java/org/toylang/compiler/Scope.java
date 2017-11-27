@@ -8,15 +8,21 @@ public class Scope {
     private final LinkedList<ArrayList<String>> scope = new LinkedList<>();
 
     public void beginScope() {
-        scope.addFirst(new ArrayList<>());
+        scope.addLast(new ArrayList<>());
     }
 
     public void endScope() {
-        scope.removeFirst();
+        if (scope.isEmpty())
+            throw new RuntimeException("underflow");
+        scope.removeLast();
     }
 
     public void putVar(final String name) {
-        scope.getFirst().add(name);
+        if (findVar(name) != -1) {
+            Errors.put("Redeclaration of variable: " + name);
+        } else {
+            scope.getLast().add(name);
+        }
     }
 
     public int findVar(final String name) {
@@ -32,4 +38,11 @@ public class Scope {
         return -1;
     }
 
+    public int count() {
+        return scope.size();
+    }
+
+    public void clear() {
+        scope.clear();
+    }
 }
