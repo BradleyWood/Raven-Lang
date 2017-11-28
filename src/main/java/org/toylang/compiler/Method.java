@@ -12,11 +12,12 @@ public class Method extends MethodVisitor implements TreeVisitor, Opcodes {
 
     private static final LinkedList<ReflectiveMethod> reflectiveMethods = new LinkedList<>();
 
-    protected final ArrayList<String> locals = new ArrayList<>();
     private final ArrayList<Integer> lineNumbers = new ArrayList<>();
 
     private final Stack<Label> continueLabels = new Stack<>();
     private final Stack<Label> breakLabels = new Stack<>();
+
+    protected final Scope scope = new Scope();
 
 
     protected final MethodContext ctx;
@@ -27,7 +28,7 @@ public class Method extends MethodVisitor implements TreeVisitor, Opcodes {
     }
 
     protected int getLocal(String name) {
-        int idx = locals.indexOf(name);
+        int idx = scope.findVar(name);
         if (idx == -1) {
             Errors.put("Use of variable: " + name + " before it is defined");
             return 0;
@@ -51,14 +52,20 @@ public class Method extends MethodVisitor implements TreeVisitor, Opcodes {
 
         if (ifStatement.getElse() != null) {
             visitJumpInsn(Opcodes.IFEQ, else_);
+            scope.beginScope();
             ifStatement.getBody().accept(this);
+            scope.endScope();
             visitJumpInsn(Opcodes.GOTO, end);
 
             visitLabel(else_);
+            scope.beginScope();
             ifStatement.getElse().accept(this);
+            scope.endScope();
         } else {
             visitJumpInsn(Opcodes.IFEQ, end);
+            scope.beginScope();
             ifStatement.getBody().accept(this);
+            scope.endScope();
         }
         visitLabel(end);
     }
@@ -73,7 +80,20 @@ public class Method extends MethodVisitor implements TreeVisitor, Opcodes {
         continueLabels.push(after);
         breakLabels.push(end);
 
-        forStatement.getInit().accept(this);
+        scope.beginScope();
+
+        if (forStatement.getInit() instanceof VarDecl) {
+            VarDecl decl = (VarDecl) forStatement.getInit();
+            int idx = scope.findVar(decl.getName().toString());
+            if (idx >= 0) {
+                decl.getInitialValue().accept(this);
+                visitVarInsn(ASTORE, idx);
+            } else {
+                forStatement.getInit().accept(this);
+            }
+        } else {
+            forStatement.getInit().accept(this);
+        }
 
         visitJumpInsn(GOTO, conditional);
         visitLabel(start);
@@ -93,9 +113,7 @@ public class Method extends MethodVisitor implements TreeVisitor, Opcodes {
         continueLabels.pop();
         breakLabels.pop();
 
-        if (forStatement.getInit() instanceof VarDecl) {
-            locals.remove(((VarDecl) forStatement.getInit()).getName().toString());
-        }
+        scope.endScope();
     }
 
     @Override
@@ -106,6 +124,8 @@ public class Method extends MethodVisitor implements TreeVisitor, Opcodes {
 
         continueLabels.push(conditional);
         breakLabels.push(end);
+
+        scope.beginScope();
 
         if (!whileStatement.isDoWhile())
             visitJumpInsn(GOTO, conditional);
@@ -123,6 +143,8 @@ public class Method extends MethodVisitor implements TreeVisitor, Opcodes {
 
         continueLabels.pop();
         breakLabels.pop();
+
+        scope.endScope();
     }
 
     @Override
@@ -156,13 +178,13 @@ public class Method extends MethodVisitor implements TreeVisitor, Opcodes {
 
     private void visitParams(VarDecl[] params) {
         if (!ctx.isStatic()) {
-            locals.add("this");
+            scope.putVar("this");
         } else if (ctx.getName().equals("main")) {
-            locals.add(" args ");
+            scope.putVar(" args ");
             if (params.length > 1) {
                 Errors.put("Invalid main signature!");
             } else if (params.length == 1) {
-                locals.add(params[0].getName().toString());
+                scope.putVar(params[0].getName().toString());
                 visitVarInsn(ALOAD, 0);
                 visitMethodInsn(INVOKESTATIC, getInternalName(TObject.class), "toToyLang", getDesc(TObject.class, "toToyLang", Object.class), false);
                 visitTypeInsn(CHECKCAST, getInternalName(TList.class));
@@ -176,12 +198,13 @@ public class Method extends MethodVisitor implements TreeVisitor, Opcodes {
             return;
         }
         for (VarDecl varDecl : params) {
-            locals.add(varDecl.getName().toString());
+            scope.putVar(varDecl.getName().toString());
         }
     }
 
     @Override
     public void visitFun(Fun fun) {
+        scope.beginScope();
         visitParams(fun.getParams());
 
         if (fun.getName().toString().equals("<clinit>")) {
@@ -202,6 +225,7 @@ public class Method extends MethodVisitor implements TreeVisitor, Opcodes {
                 visitInsn(ARETURN);
             }
         }
+        scope.endScope();
     }
 
     private String getFunDescriptor(Expression[] params) {
@@ -404,7 +428,7 @@ public class Method extends MethodVisitor implements TreeVisitor, Opcodes {
         visitLine(name);
 
         String[] names = name.getNames();
-        int localIdx = locals.indexOf(names[0]);
+        int localIdx = scope.findVar(names[0]);
 
         if (localIdx != -1 && !names[0].equals("this")) {
             switch (names.length) {
@@ -508,7 +532,9 @@ public class Method extends MethodVisitor implements TreeVisitor, Opcodes {
 
     @Override
     public void visitBlock(Block block) {
+        scope.beginScope();
         block.getStatements().forEach(stmt -> stmt.accept(this));
+        scope.endScope();
     }
 
     @Override
@@ -521,7 +547,7 @@ public class Method extends MethodVisitor implements TreeVisitor, Opcodes {
         if (ctx.getName().equals("<clinit>")) {
             visitFieldInsn(PUTSTATIC, ctx.getOwner(), decl.getName().toString(), Constants.TOBJ_SIG);
         } else {
-            locals.add(decl.getName().toString());
+            scope.putVar(decl.getName().toString());
             visitVarInsn(ASTORE, getLocal(decl.getName().toString()));
         }
     }
@@ -544,7 +570,7 @@ public class Method extends MethodVisitor implements TreeVisitor, Opcodes {
                     assignListIdx((ListIndex) op.getLeft());
                     break;
                 }
-                int idx = locals.indexOf(op.getLeft().toString());
+                int idx = scope.findVar(op.getLeft().toString());
                 if (idx != -1) {
                     visitVarInsn(ASTORE, idx);
                 } else {

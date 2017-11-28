@@ -15,9 +15,10 @@ public class ClassConstructor extends Method {
     }
 
     public void visitConstructor(Constructor constructor) {
-        locals.add("this");
+        scope.beginScope();
+        scope.putVar("this");
         if (constructor.getParams() != null) {
-            Arrays.stream(constructor.getParams()).forEach(p -> locals.add(p.getName().toString()));
+            Arrays.stream(constructor.getParams()).forEach(p -> scope.putVar(p.getName().toString()));
         }
 
         constructor.getInitBlock().getStatements().forEach(stmt -> stmt.accept(this));
@@ -59,6 +60,7 @@ public class ClassConstructor extends Method {
             constructor.getBody().accept(this);
         }
         visitInsn(RETURN);
+        scope.endScope();
     }
 
     private void invokeJavaSuper(Expression[] params) {
@@ -72,8 +74,8 @@ public class ClassConstructor extends Method {
                 }
             }
 
-            locals.add(" TL_PARAMS ");
-            locals.add(" SUPER_PARAMS ");
+            scope.putVar(" TL_PARAMS ");
+            scope.putVar(" SUPER_PARAMS ");
 
             visitListDef(new ListDef(params));
             visitVarInsn(ASTORE, getLocal(" TL_PARAMS "));
