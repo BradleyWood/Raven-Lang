@@ -17,17 +17,17 @@ public class Method extends MethodVisitor implements TreeVisitor, Opcodes {
     private final Stack<Label> continueLabels = new Stack<>();
     private final Stack<Label> breakLabels = new Stack<>();
 
-    protected final Scope scope = new Scope();
+    final Scope scope = new Scope();
 
 
     protected final MethodContext ctx;
 
-    public Method(final MethodContext ctx, final MethodVisitor mv) {
+    Method(final MethodContext ctx, final MethodVisitor mv) {
         super(ASM5, mv);
         this.ctx = ctx;
     }
 
-    protected int getLocal(String name) {
+    int getLocal(String name) {
         int idx = scope.findVar(name);
         if (idx == -1) {
             Errors.put("Use of variable: " + name + " before it is defined");
@@ -230,7 +230,7 @@ public class Method extends MethodVisitor implements TreeVisitor, Opcodes {
 
     private String getFunDescriptor(Expression[] params) {
         StringBuilder sig = new StringBuilder("(");
-        for (Expression varDecl : params) {
+        for (int i = 0; i < params.length; i++) {
             sig.append(Constants.TOBJ_SIG);
         }
         sig.append(")" + Constants.TOBJ_SIG);
@@ -679,7 +679,7 @@ public class Method extends MethodVisitor implements TreeVisitor, Opcodes {
         reflectiveMethods.clear();
     }
 
-    public void writeConstants() {
+    private void writeConstants() {
         visitLdcInsn(Constants.getConstantCount());
         visitTypeInsn(ANEWARRAY, Constants.TOBJ_NAME);
         int i = 0;
@@ -781,19 +781,19 @@ public class Method extends MethodVisitor implements TreeVisitor, Opcodes {
         }
     }
 
-    protected String getInternalName(Object obj) {
+    private String getInternalName(Object obj) {
         return Type.getType(obj.getClass()).getInternalName();
     }
 
-    protected String getDesc(Object obj) {
+    private String getDesc(Object obj) {
         return Type.getType(obj.getClass()).getDescriptor();
     }
 
-    protected String getInternalName(Class c) {
+    String getInternalName(Class c) {
         return Type.getType(c).getInternalName();
     }
 
-    protected String getDesc(Class c) {
+    private String getDesc(Class c) {
         return Type.getType(c).getDescriptor();
     }
 
@@ -848,10 +848,6 @@ public class Method extends MethodVisitor implements TreeVisitor, Opcodes {
         @Override
         public int hashCode() {
             return Objects.hash(clazz, name, paramCount);
-        }
-
-        private Class getClazz() {
-            return clazz;
         }
 
         private String getName() {
