@@ -44,8 +44,7 @@ public class Compiler {
         return compile(true);
     }
 
-    public HashMap<String, byte[]> compile(boolean save) throws IOException {
-
+    private void parse() {
         for (QualifiedName qualifiedName : tree.getImports()) {
             if (!IMPORTS.contains(qualifiedName.toString())) {
                 String file = findFile(qualifiedName);
@@ -70,76 +69,95 @@ public class Compiler {
                 }
             }
         }
+    }
 
-        if (Errors.getErrorCount() == 0) {
-            // no errors... generate code
-            HashMap<String, ClassMaker> classes = new HashMap<>();
-            for (ToyTree toyTree : trees) {
-                if (classMap.containsKey(toyTree.getPackage().add(toyTree.getName()).toString()))
-                    continue;
-                for (ClassDef classDef : toyTree.getClasses()) {
-                    classDef.setPackage(toyTree.getPackage());
-                    classDef.setSourceTree(toyTree);
-                    String name = toyTree.getPackage().add(classDef.getName()).toString();
+    private ClassMaker setupClassMaker(ToyTree tree, ClassDef classDef) {
+        ClassMaker cm;
 
-                    List<QualifiedName> lst = toyTree.getImports();
-
-                    for (ClassDef cd : toyTree.getClasses()) {
-                        if (cd != classDef) {
-                            lst.add(toyTree.getPackage().add(classDef.getName()));
-                        }
-                    }
-                    ClassMaker cm = new ClassMaker(classDef, lst);
-                    toyTree.addImport(toyTree.getPackage().add(classDef.getName()));
-                    toyTree.addImport(toyTree.getPackage().add(toyTree.getName()));
-                    if (!name.equals(toyTree.getFullName().toString())) {
-                        Fun clinit = new Fun(new QualifiedName("<clinit>"), new Block(), null, null);
-                        cm.addStaticMethods(clinit);
-                        cm.make();
-                    }
-                    classes.put(name, cm);
+        if (classDef == null) {
+            cm = new ClassMaker(tree.getPackage(), tree.getName().toString(), tree.getImports());
+            Block b = new Block();
+            Fun clinit = new Fun(new QualifiedName("<clinit>"), b, null, null);
+            for (Statement statement : tree.getStatements()) {
+                if (statement instanceof VarDecl) {
+                    cm.addStaticFields((VarDecl) statement);
                 }
-                QualifiedName name = toyTree.getFullName();
-                ClassMaker cm;
-                // find the correct class to put that statics in
-                if (classes.containsKey(name.toString())) {
-                    cm = classes.get(name.toString());
+                if (!(statement instanceof Fun)) {
+                    b.append(statement);
                 } else {
-                    cm = new ClassMaker(toyTree.getPackage(), toyTree.getName().toString(), toyTree.getImports());
-                    classes.put(name.toString(), cm);
+                    cm.addStaticMethods((Fun) statement);
                 }
-                Block b = new Block();
-                Fun clinit = new Fun(new QualifiedName("<clinit>"), b, null, null, null);
-                for (Statement statement : toyTree.getStatements()) {
-                    if (statement instanceof VarDecl) {
-                        cm.addStaticFields((VarDecl) statement);
-                    }
-                    if (!(statement instanceof Fun)) {
-                        b.append(statement);
-                    } else {
-                        cm.addStaticMethods((Fun) statement);
-                    }
-                }
-                cm.addStaticMethods(clinit); // clinit MUST be the last to be added
-                cm.make();
             }
-            if (Errors.getErrorCount() > 0) {
-                classMap.clear();
-            } else {
-                for (String s : classes.keySet()) {
-                    String file = BIN + "/" + s.replace(".", "/") + ".class";
-                    byte[] data = classes.get(s).getBytes();
-                    classMap.put(s, data);
-                    if (save) {
-                        File f = new File(file).getParentFile();
-                        f.mkdirs();
-                        FileOutputStream fos = new FileOutputStream(file);
-                        fos.write(data);
-                        fos.close();
-                    }
-                }
+            cm.addStaticMethods(clinit);
+            return cm;
+        }
+
+        classDef.setPackage(tree.getPackage());
+        classDef.setSourceTree(tree);
+        String name = tree.getPackage().add(classDef.getName()).toString();
+
+        List<QualifiedName> lst = tree.getImports();
+
+        for (ClassDef cd : tree.getClasses()) {
+            if (cd != classDef) {
+                lst.add(tree.getPackage().add(classDef.getName()));
             }
         }
+        cm = new ClassMaker(classDef, lst);
+        tree.addImport(tree.getPackage().add(classDef.getName()));
+        tree.addImport(tree.getPackage().add(tree.getName()));
+        if (!name.equals(tree.getFullName().toString())) {
+            Fun clinit = new Fun(new QualifiedName("<clinit>"), new Block(), null, null);
+            cm.addStaticMethods(clinit);
+            cm.make();
+        }
+        return cm;
+    }
+
+    public HashMap<String, byte[]> compile(boolean save) throws IOException {
+        parse();
+
+        if (Errors.getErrorCount() > 0) {
+            // syntax errors
+            return classMap;
+        }
+
+        // no errors... generate code
+        HashMap<String, ClassMaker> classBuilders = new HashMap<>();
+        ClassMaker cm;
+        for (ToyTree tree : trees) {
+            if (classMap.containsKey(tree.getPackage().add(tree.getName()).toString()))
+                continue;
+            for (ClassDef classDef : tree.getClasses()) {
+                cm = setupClassMaker(tree, classDef);
+                classBuilders.put(tree.getPackage().add(classDef.getName()).toString(), cm);
+            }
+            if (classBuilders.containsKey(name)) {
+                cm = classBuilders.get(name);
+            } else {
+                cm = setupClassMaker(tree, null);
+                classBuilders.put(name, cm);
+            }
+            cm.make();
+        }
+        if (Errors.getErrorCount() > 0) {
+            classMap.clear();
+            return classMap;
+        }
+
+        for (String s : classBuilders.keySet()) {
+            String file = BIN + "/" + s.replace(".", "/") + ".class";
+            byte[] data = classBuilders.get(s).getBytes();
+            classMap.put(s, data);
+            if (save) {
+                File f = new File(file).getParentFile();
+                f.mkdirs();
+                FileOutputStream fos = new FileOutputStream(file);
+                fos.write(data);
+                fos.close();
+            }
+        }
+
         return classMap;
     }
 
