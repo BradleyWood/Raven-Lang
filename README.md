@@ -30,7 +30,36 @@ mvn assembly:single
 To run a test script
 
 ```
-java -jar toylang-1.0-SNAPSHOT-jar-with-dependencies.jar <path to script>.tl
+java -jar toylang-1.0-SNAPSHOT-jar-with-dependencies.jar -r <path to script>.tl
+```
+
+### Command line options
+
+Run with security manager
+```
+-secure
+```
+
+#### Mutually exclusive options
+
+Run a script
+```
+-r <path to script>
+```
+
+Check files for correctness
+```
+-s <path to script>
+```
+
+Build an executable jar
+```
+-b <path to script>
+```
+
+Run tests
+```
+-test
 ```
 
 #### Wrapper types
