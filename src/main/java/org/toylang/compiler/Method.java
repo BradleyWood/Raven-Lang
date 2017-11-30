@@ -267,9 +267,9 @@ public class Method extends MethodVisitor implements TreeVisitor, Opcodes {
         String desc = getFunDescriptor(call.getParams());
 
         if (call.getName().toString().equals("super")) {
-            Errors.put("Super() not allowed here.");
+            Errors.put(ctx.getOwner() + " line " + call.getLineNumber() + ": Super() not allowed here.");
         } else if (call.getName().toString().equals("this")) {
-            Errors.put("This() not allowed here.");
+            Errors.put(ctx.getOwner() + " line " + call.getLineNumber() + ": This() not allowed here.");
         }
 
         if (call.getPrecedingExpr() != null) {
@@ -363,7 +363,7 @@ public class Method extends MethodVisitor implements TreeVisitor, Opcodes {
     private void invokeStaticMethod_D(String owner, String name, String desc, Expression[] params) {
         Fun f = SymbolMap.resolveFun(ctx.getOwner().replace("/", "."), owner.replace("/", "."), name, params.length);
         if (f == null && !owner.equals(Constants.BUILTIN_NAME)) {
-            Errors.put("Cannot resolve function: " + owner + "." + name);
+            Errors.put(ctx.getOwner() + " Cannot resolve function: " + owner + "." + name);
         }
         for (Expression param : params) {
             param.accept(this);
@@ -453,7 +453,7 @@ public class Method extends MethodVisitor implements TreeVisitor, Opcodes {
                         if (decl != null) {
                             accessStaticField(ctx.getOwner(), decl.getName().toString(), load);
                         } else {
-                            Errors.put("Variable " + ctx.getOwner() + ":" + ctx.getName() + ":" + names[0] + " not found");
+                            Errors.put(ctx.getOwner() + " line " + name.getLineNumber() + ": Variable " + ctx.getOwner() + ":" + ctx.getName() + ":" + names[0] + " not found");
                         }
                     } else {
                         VarDecl var = ctx.getClassDef().findVar(name.toString());
@@ -508,7 +508,7 @@ public class Method extends MethodVisitor implements TreeVisitor, Opcodes {
     private void accessVirtualField(VarDecl var, boolean load) {
         int idx = getLocal("this");
         if (idx != 0) {
-            Errors.put("Cannot access field in non static context: " + var.getName());
+            Errors.put(ctx.getOwner() + " line " + var.getName().getLineNumber() + ":Cannot access field in non static context: " + var.getName());
             return;
         }
         visitVarInsn(ALOAD, idx);
