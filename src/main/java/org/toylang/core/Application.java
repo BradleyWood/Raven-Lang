@@ -39,6 +39,12 @@ public class Application {
         } catch (ClassNotFoundException e) {
             try {
                 compile("/src/main/toylang/toylang/", true);
+                if (Errors.getErrorCount() > 0) {
+                    Errors.printErrors();
+                } else {
+                    System.out.println("Builtins have been built");
+                }
+                return;
             } catch (IOException e1) {
                 System.err.println("Cannot build builtins");
                 return;
