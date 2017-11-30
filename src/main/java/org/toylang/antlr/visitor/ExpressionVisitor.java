@@ -22,6 +22,7 @@ public class ExpressionVisitor extends ToyLangBaseVisitor<Expression> {
             for (String s : qn.getNames()) {
                 expr = new Call(expr, new QualifiedName("getField"), new QualifiedName(s));
             }
+            expr.setLineNumber(ctx.expression(0).start.getLine());
         } else if (ctx.expression().size() == 1 && ctx.funCall() != null) {
             expr = ctx.funCall().accept(FunCallVisitor.INSTANCE);
             ((Call) expr).setPrecedingExpr(ctx.expression(0).accept(ExpressionVisitor.INSTANCE));
@@ -62,11 +63,13 @@ public class ExpressionVisitor extends ToyLangBaseVisitor<Expression> {
             } else if (ctx.NOT() != null) {
                 expr = new BinOp(null, Operator.NOT, expr);
             }
+            expr.setLineNumber(ctx.expression(0).start.getLine());
         } else if (ctx.expression().size() == 2) {
             Expression left = ctx.expression(0).accept(ExpressionVisitor.INSTANCE);
             Expression right = ctx.expression(1).accept(ExpressionVisitor.INSTANCE);
             Operator operator = getOperator(ctx);
             expr = new BinOp(left, operator, right);
+            expr.setLineNumber(ctx.expression(0).start.getLine());
         } else {
             Errors.put("Unsupported expression: " + ctx.getText());
         }
