@@ -1,5 +1,6 @@
 package org.toylang.antlr.visitor;
 
+import org.toylang.antlr.Operator;
 import org.toylang.compiler.Errors;
 import org.toylang.antlr.ToyLangBaseVisitor;
 import org.toylang.antlr.ToyLangParser;
@@ -41,7 +42,11 @@ public class StatementVisitor extends ToyLangBaseVisitor<Statement> {
             stmt = ctx.returnStatement().accept(ReturnVisitor.INSTANCE);
         } else if (ctx.expression() != null) {
             stmt = ctx.expression().accept(ExpressionVisitor.INSTANCE);
-            if (Application.REPL) {
+            boolean b = true;
+            if (stmt instanceof BinOp) {
+                b = ((BinOp) stmt).getOp() != Operator.ASSIGNMENT;
+            }
+            if (Application.REPL && b) {
                 stmt = new Call(new QualifiedName("println"), (Expression) stmt);
             } else if (stmt instanceof Call) {
                 ((Call) stmt).setPop(true);
