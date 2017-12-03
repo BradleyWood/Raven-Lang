@@ -6,19 +6,19 @@ public class Warning {
 
     private static LinkedList<String> WARNINGS = new LinkedList<>();
 
-    public int getWarningCount() {
+    public static int getWarningCount() {
         return WARNINGS.size();
     }
 
-    public void put(String warning) {
+    public static void put(String warning) {
         WARNINGS.add(warning);
     }
 
-    public void reset() {
+    public static void reset() {
         WARNINGS.clear();
     }
 
-    public void printWarnings() {
+    public static void printWarnings() {
         System.err.println("Compilation Completed with " + getWarningCount() + " warnings.");
         WARNINGS.forEach(System.err::println);
     }
