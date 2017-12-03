@@ -461,9 +461,16 @@ public class Method extends MethodVisitor implements TreeVisitor, Opcodes {
                             accessVirtualField(var, load);
                         } else {
                             visitVarInsn(ALOAD, getLocal("this"));
-                            visitLdcInsn(names[0]);
-                            visitMethodInsn(INVOKESTATIC, getInternalName(TObject.class), "getField", getDesc(TObject.class, "getField", Object.class, String.class), false);
-                            System.err.println("Warning: Variable may not exist: " + ctx.getClassDef().getName().toString() + ":" + name.toString());
+                            if (!load) {
+                                visitInsn(SWAP);
+                                visitLdcInsn(names[0]);
+                                visitInsn(SWAP);
+                                visitMethodInsn(INVOKESTATIC, getInternalName(TObject.class), "setField", getDesc(TObject.class, "setField", Object.class, String.class, TObject.class), false);
+                            } else {
+                                visitLdcInsn(names[0]);
+                                visitMethodInsn(INVOKESTATIC, getInternalName(TObject.class), "getField", getDesc(TObject.class, "getField", Object.class, String.class), false);
+                            }
+                            Warning.put("Warning: Variable may not exist: " + ctx.getClassDef().getName().toString() + ":" + name.toString());
                             // var could exist in super class
                         }
                     }
@@ -494,7 +501,7 @@ public class Method extends MethodVisitor implements TreeVisitor, Opcodes {
                 if (load) {
                     visitMethodInsn(INVOKESTATIC, getInternalName(TObject.class), "getField", getDesc(TObject.class, "getField", Class.class, String.class), false);
                 } else {
-                    System.err.println("ERROR");
+                    Warning.put("ERROR");
                     visitMethodInsn(INVOKESTATIC, getInternalName(TObject.class), "getField", getDesc(TObject.class, "setField", Class.class, String.class, TObject.class), false);
                 }
                 return;
@@ -652,7 +659,7 @@ public class Method extends MethodVisitor implements TreeVisitor, Opcodes {
 
     @Override
     public void visitAnnotation(Annotation annotation) {
-        System.err.println("Annotations are not implemented");
+        Warning.put("Annotations are not implemented");
     }
 
     private void assignListIdx(ListIndex idx) {
