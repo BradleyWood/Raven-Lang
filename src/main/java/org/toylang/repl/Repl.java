@@ -59,6 +59,7 @@ public class Repl {
                     imports.add((Import) statement);
             } else if (statement instanceof VarDecl) {
                 VarDecl decl = (VarDecl) statement;
+                decl.setModifiers(Modifier.PUBLIC);
                 staticVars.add(decl);
                 statements.add(new BinOp(decl.getName(), Operator.ASSIGNMENT, decl.getInitialValue()));
             } else if (statement instanceof Fun) {

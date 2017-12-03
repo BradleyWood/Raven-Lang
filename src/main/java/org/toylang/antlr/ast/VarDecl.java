@@ -8,7 +8,7 @@ public class VarDecl extends Statement {
 
     private final QualifiedName name;
     private final Expression initialValue;
-    private final Modifier[] modifiers;
+    private Modifier[] modifiers;
 
     public VarDecl(QualifiedName name, Expression initialValue, Modifier... modifiers) {
         this.name = name;
@@ -22,6 +22,10 @@ public class VarDecl extends Statement {
 
     public Modifier[] getModifiers() {
         return modifiers;
+    }
+
+    public void setModifiers(Modifier... modifiers) {
+        this.modifiers = modifiers;
     }
 
     public int modifiers() {
