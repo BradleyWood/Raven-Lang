@@ -6,6 +6,7 @@ import org.toylang.compiler.Errors;
 import org.toylang.antlr.ToyParser;
 import org.toylang.antlr.ToyTree;
 import org.toylang.compiler.Compiler;
+import org.toylang.repl.Repl;
 import org.toylang.test.Assert;
 
 import java.io.File;
@@ -23,6 +24,7 @@ public class Application {
         options.addOption("test", false, "Runs tests");
         options.addOption("secure", false, "Run with security manager");
         options.addOption("s", true, "Check files for correctness");
+        options.addOption("repl", false, "Run in REPL mode");
 
         Option buildOption = new Option("b", true, "Build program into executable jar");
         buildOption.setArgs(2);
@@ -63,8 +65,9 @@ public class Application {
             boolean correctness = cmd.hasOption("s");
             boolean build = cmd.hasOption("b");
             boolean run = cmd.hasOption("r");
+            boolean repl = cmd.hasOption("repl");
 
-            if (!onlyOneTrue(test, correctness, build, run)) {
+            if (!onlyOneTrue(test, correctness, build, run, repl)) {
                 cmdError(options);
                 return;
             }
@@ -97,6 +100,12 @@ public class Application {
             } else if (run) {
                 String[] values = cmd.getOptionValues("r");
                 compileAndRun(values[0], cmd.getOptionValues("args"));
+            } else if (repl) {
+                Repl REPL = new Repl();
+                Scanner scanner = new Scanner(System.in);
+                while (true) {
+                    REPL.exec(scanner.nextLine());
+                }
             }
         } catch (ParseException e) {
             cmdError(options);
