@@ -8,6 +8,8 @@ import org.toylang.compiler.ClassMaker;
 import org.toylang.compiler.Errors;
 import org.toylang.core.ByteClassLoader;
 
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -31,8 +33,9 @@ public class Repl {
         if (cl != null) {
             try {
                 parent = cl;
-                cl.getDeclaredMethod("exec").invoke(null);
-            } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+                Object o = cl.newInstance();
+                cl.getDeclaredMethod("exec").invoke(o);
+            } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException | InstantiationException e) {
                 e.printStackTrace();
             }
         }
@@ -69,6 +72,7 @@ public class Repl {
         if (parent != null) {
             superClass = new QualifiedName(parent.getName().split("\\."));
         }
+        imports.add(new Import(superClass));
 
         String name = "Repl" + counter++;
         ClassDef def = new ClassDef(new Modifier[]{Modifier.PUBLIC}, new QualifiedName("repl"), name, superClass,
@@ -76,7 +80,7 @@ public class Repl {
 
         ClassMaker maker = new ClassMaker(def, imports.stream().map(Import::getName).collect(Collectors.toList()));
         staticVars.forEach(maker::addStaticFields);
-        maker.addStaticMethods(createExec(statements));
+        def.getMethods().add(createExec(statements));
 
         functions.forEach(maker::addStaticMethods);
 
@@ -91,6 +95,14 @@ public class Repl {
         }
 
         String clName = "repl." + name;
+
+        try {
+            FileOutputStream fos = new FileOutputStream("target/classes/repl/"+name+".class");
+            fos.write(bytes);
+            fos.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
         classLoader.addDef(clName, bytes);
         try {
