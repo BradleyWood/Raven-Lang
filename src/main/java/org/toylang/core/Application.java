@@ -19,6 +19,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class Application {
 
+    public static boolean REPL = false;
+
     public static void main(String[] args) {
         Options options = new Options();
         options.addOption("test", false, "Runs tests");
@@ -65,9 +67,9 @@ public class Application {
             boolean correctness = cmd.hasOption("s");
             boolean build = cmd.hasOption("b");
             boolean run = cmd.hasOption("r");
-            boolean repl = cmd.hasOption("repl");
+            REPL = cmd.hasOption("repl");
 
-            if (!onlyOneTrue(test, correctness, build, run, repl)) {
+            if (!onlyOneTrue(test, correctness, build, run, REPL)) {
                 cmdError(options);
                 return;
             }
@@ -100,11 +102,11 @@ public class Application {
             } else if (run) {
                 String[] values = cmd.getOptionValues("r");
                 compileAndRun(values[0], cmd.getOptionValues("args"));
-            } else if (repl) {
+            } else if (REPL) {
                 Repl REPL = new Repl();
                 Scanner scanner = new Scanner(System.in);
                 while (true) {
-                    REPL.exec(scanner.nextLine());
+                    REPL.exec(scanner.nextLine() + ";");
                 }
             }
         } catch (ParseException e) {
