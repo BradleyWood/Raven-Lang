@@ -307,6 +307,10 @@ public class TObject implements Comparable<TObject> {
         return false;
     }
 
+    public static void setField(Object o, String field, TObject value) {
+        new TObject(o).setField(field, value);
+    }
+
     @Hidden
     public TObject getField(String name) {
         return getField(obj, name);
