@@ -8,9 +8,6 @@ import org.toylang.compiler.ClassMaker;
 import org.toylang.compiler.Errors;
 import org.toylang.core.ByteClassLoader;
 
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -26,17 +23,30 @@ public class Repl {
     private final LinkedList<Import> imports = new LinkedList<>();
     private Class parent = null;
     private int counter = 0;
+    private boolean debug;
 
+
+    public Repl(boolean debug) {
+        this.debug = debug;
+    }
+
+    public Repl() {
+        this(false);
+    }
 
     public void exec(String line) {
-        Class cl = build(line);
-        if (cl != null) {
-            try {
+        try {
+            Class<?> cl = build(line);
+            if (cl != null) {
                 parent = cl;
                 Object o = cl.newInstance();
                 cl.getDeclaredMethod("exec").invoke(o);
-            } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException | InstantiationException e) {
+            }
+        } catch (Throwable e) {
+            if (debug) {
                 e.printStackTrace();
+            } else {
+                System.err.println(e.getClass().getName() + " : " + e.getMessage());
             }
         }
     }
@@ -97,14 +107,6 @@ public class Repl {
 
         String clName = "repl." + name;
 
-        try {
-            FileOutputStream fos = new FileOutputStream("target/classes/repl/"+name+".class");
-            fos.write(bytes);
-            fos.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
         classLoader.addDef(clName, bytes);
         try {
             return classLoader.loadClass(clName);
@@ -117,5 +119,13 @@ public class Repl {
     private static Fun createExec(List<Statement> statements) {
         return new Fun(new QualifiedName("exec"),
                 new Block(statements.toArray(new Statement[statements.size()])), new Modifier[]{Modifier.PUBLIC}, new String[0]);
+    }
+
+    public void setDebug(boolean debug) {
+        this.debug = debug;
+    }
+
+    public boolean isDebugMode() {
+        return debug;
     }
 }
