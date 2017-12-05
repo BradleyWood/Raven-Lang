@@ -42,7 +42,8 @@ public fun str(obj) {
 }
 
 public fun sort(list) {
-    return Collections.sort(list);
+    Collections.sort(list);
+    return list;
 }
 
 public fun len(obj) {
