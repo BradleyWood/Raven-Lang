@@ -8,10 +8,7 @@ import org.toylang.compiler.ClassMaker;
 import org.toylang.compiler.Errors;
 import org.toylang.core.ByteClassLoader;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -25,9 +22,12 @@ public class Repl {
     private int counter = 0;
     private boolean debug;
 
+    private int id;
 
     public Repl(boolean debug) {
         this.debug = debug;
+        Random r = new Random();
+        id = r.nextInt();
     }
 
     public Repl() {
@@ -85,7 +85,7 @@ public class Repl {
         }
         imports.add(new Import(superClass));
 
-        String name = "Repl" + counter++;
+        String name = "Repl" + id + "_" + counter++;
         ClassDef def = new ClassDef(new Modifier[]{Modifier.PUBLIC}, new QualifiedName("repl"), name, superClass,
                 new QualifiedName[0], new ArrayList<>());
 
