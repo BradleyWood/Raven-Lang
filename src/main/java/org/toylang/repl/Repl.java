@@ -113,6 +113,7 @@ public class Repl {
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
         }
+        Errors.reset();
         return null;
     }
 
