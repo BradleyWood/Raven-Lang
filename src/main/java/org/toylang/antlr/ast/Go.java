@@ -4,6 +4,10 @@ public class Go extends Statement {
 
     private Call goFun;
 
+    /**
+     * Initializes a Go statement
+     * @param goFun The function to call
+     */
     public Go(Call goFun) {
         this.goFun = goFun;
     }

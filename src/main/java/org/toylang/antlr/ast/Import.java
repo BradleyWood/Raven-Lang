@@ -6,10 +6,18 @@ public class Import extends Statement {
 
     private final QualifiedName name;
 
+    /**
+     * Initializes an import statement
+     * @param name The fully qualified name
+     */
     public Import(QualifiedName name) {
         this.name = name;
     }
 
+    /**
+     * Get the imported resource
+     * @return The fully qualified name
+     */
     public QualifiedName getName() {
         return name;
     }
