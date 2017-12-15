@@ -19,6 +19,5 @@ public class Statement extends AST {
 
     @Override
     public void accept(TreeVisitor visitor) {
-        //throw new RuntimeException("Invalid Node");
     }
 }
