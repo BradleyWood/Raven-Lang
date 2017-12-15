@@ -39,6 +39,8 @@ public interface TreeVisitor {
 
     void visitAnnotation(Annotation annotation);
 
+    void visitAnnotationDef(AnnoDef def);
+
     void visitGo(Go go);
 
     void visitContinue();
