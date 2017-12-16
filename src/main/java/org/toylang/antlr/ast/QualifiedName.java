@@ -1,13 +1,26 @@
 package org.toylang.antlr.ast;
 
+/**
+ * A fully qualified name can be used to represent any name,
+ * including imported resources, variables, functions, annotations
+ * classes, etc.
+ */
 public class QualifiedName extends Expression {
 
     private String[] names;
 
+    /**
+     * Initializes a fully qualified name with the specified names
+     * @param names The names
+     */
     public QualifiedName(String... names) {
         this.names = names;
     }
 
+    /**
+     * Get all of the names in the fully qualified name
+     * @return The names
+     */
     public String[] getNames() {
         return names;
     }
@@ -23,6 +36,12 @@ public class QualifiedName extends Expression {
         return qualifiedName.substring(0, qualifiedName.length() - 1);
     }
 
+    /**
+     * Adds an element to the fully qualified name. Does not modify this object
+     *
+     * @param name The name to add
+     * @return The new qualified name
+     */
     public QualifiedName add(String name) {
         String[] sa = new String[names.length + 1];
         for (int i = 0; i < names.length; i++) {
@@ -32,10 +51,12 @@ public class QualifiedName extends Expression {
         return new QualifiedName(sa);
     }
 
-    public void update(QualifiedName name) {
-        this.names = name.getNames();
-    }
-
+    /**
+     * Adds a fully qualified name to this object and returns the result.
+     * Does not modify this object.
+     * @param name The fqn to add
+     * @return The new name
+     */
     public QualifiedName add(QualifiedName name) {
         String[] sa = new String[names.length + name.getNames().length];
         int i;
@@ -51,7 +72,6 @@ public class QualifiedName extends Expression {
 
     @Override
     public void accept(TreeVisitor visitor) {
-        //System.out.println("Visited qn: "+toString());
         visitor.visitName(this);
     }
 
