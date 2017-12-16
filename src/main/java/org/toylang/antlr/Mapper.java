@@ -119,6 +119,11 @@ public class Mapper implements TreeVisitor {
     }
 
     @Override
+    public void visitAnnotationDef(AnnoDef def) {
+
+    }
+
+    @Override
     public void visitGo(Go go) {
 
     }

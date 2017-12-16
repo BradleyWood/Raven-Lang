@@ -662,6 +662,11 @@ public class Method extends MethodVisitor implements TreeVisitor, Opcodes {
         Warning.put("Annotations are not implemented");
     }
 
+    @Override
+    public void visitAnnotationDef(AnnoDef def) {
+
+    }
+
     private void assignListIdx(ListIndex idx) {
         visitName(idx.getName());
         for (int i = 0; i < idx.getIndex().length - 1; i++) {
