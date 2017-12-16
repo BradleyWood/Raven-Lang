@@ -22,12 +22,12 @@ public class Repl {
     private int counter = 0;
     private boolean debug;
 
+    private static int instanceCount = 0;
     private int id;
 
     public Repl(boolean debug) {
         this.debug = debug;
-        Random r = new Random();
-        id = r.nextInt();
+        id = instanceCount++;
     }
 
     public Repl() {
@@ -102,6 +102,7 @@ public class Repl {
         byte[] bytes = maker.getBytes();
         if (Errors.getErrorCount() > 0) {
             Errors.printErrors();
+            Errors.reset();
             return null;
         }
 
@@ -113,7 +114,6 @@ public class Repl {
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
         }
-        Errors.reset();
         return null;
     }
 
