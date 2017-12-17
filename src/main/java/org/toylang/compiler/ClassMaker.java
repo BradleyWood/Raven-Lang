@@ -5,9 +5,11 @@ import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.MethodVisitor;
 import org.toylang.antlr.Modifier;
 import org.toylang.antlr.ast.*;
+import org.toylang.core.wrappers.TNull;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static org.objectweb.asm.Opcodes.*;
 
@@ -117,6 +119,21 @@ public class ClassMaker {
         method.visitCode();
         fun.accept(method);
         method.visitEnd();
+
+        // generate methods for lambda expressions
+        List<Go> goStatements = fun.getBody().getStatements().stream().filter(stmt -> stmt instanceof Go).map(stmt -> (Go) stmt).collect(Collectors.toList());
+        String methodName = context.getName();
+        int counter = 0;
+        for (Go goStatement : goStatements) {
+            String lambdaName = "lambda$" + methodName + "$" + counter++;
+            VarDecl[] params = new VarDecl[goStatement.getGoFun().getParams().length];
+            for (int i = 0; i < params.length; i++) {
+                params[i] = new VarDecl(new QualifiedName(String.valueOf(i)), new Literal(TNull.NULL));
+            }
+            Fun lamba = new Fun(new QualifiedName(lambdaName), new Block(goStatement.getGoFun()), new Modifier[]{}, new String[0], params);
+            context.setName(lambdaName);
+            defineMethod(context, lamba, ACC_STATIC + ACC_PRIVATE + ACC_SYNTHETIC);
+        }
     }
 
     private void putDefaultConstructor() {

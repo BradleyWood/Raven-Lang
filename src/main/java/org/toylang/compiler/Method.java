@@ -237,9 +237,28 @@ public class Method extends MethodVisitor implements TreeVisitor, Opcodes {
         return sig.toString();
     }
 
+    int counter = 0;
+
     @Override
     public void visitGo(Go go) {
-        throw new UnsupportedOperationException("Not implemented");
+        Call c = go.getGoFun();
+
+        String lambdaName = "lambda$" + ctx.getName() + "$" + counter++;
+        String desc = getFunDescriptor(c.getParams());
+        StringBuilder params = new StringBuilder();
+        for (int i = 0; i < c.getParams().length; i++) {
+            params.append(getDesc(TObject.class));
+        }
+        visitTypeInsn(NEW, "java/lang/Thread");
+        visitInsn(DUP);
+        Arrays.stream(c.getParams()).forEach(a -> a.accept(this));
+        visitInvokeDynamicInsn("run", "(" + params + ")Ljava/lang/Runnable;", new Handle(Opcodes.H_INVOKESTATIC,
+                        "java/lang/invoke/LambdaMetafactory", "metafactory",
+                        "(Ljava/lang/invoke/MethodHandles$Lookup;Ljava/lang/String;Ljava/lang/invoke/MethodType;Ljava/lang/invoke/MethodType;Ljava/lang/invoke/MethodHandle;Ljava/lang/invoke/MethodType;)Ljava/lang/invoke/CallSite;"),
+                Type.getType("()V"), new Handle(Opcodes.H_INVOKESTATIC, ctx.getOwner(), lambdaName, desc),
+                Type.getType("()V"));
+        visitMethodInsn(INVOKESPECIAL, "java/lang/Thread", "<init>", "(Ljava/lang/Runnable;)V", false);
+        visitMethodInsn(INVOKEVIRTUAL, "java/lang/Thread", "start", "()V", false);
     }
 
     @Override
