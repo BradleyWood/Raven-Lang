@@ -1,6 +1,8 @@
 package org.toylang.antlr.ast;
 
 
+import java.util.Arrays;
+
 public class DictDef extends Expression {
 
     private final Expression[] keys;
@@ -22,5 +24,23 @@ public class DictDef extends Expression {
     @Override
     public void accept(TreeVisitor visitor) {
         visitor.visitDictDef(this);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+        DictDef dictDef = (DictDef) o;
+        return Arrays.equals(keys, dictDef.keys) &&
+                Arrays.equals(values, dictDef.values);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = super.hashCode();
+        result = 31 * result + Arrays.hashCode(keys);
+        result = 31 * result + Arrays.hashCode(values);
+        return result;
     }
 }

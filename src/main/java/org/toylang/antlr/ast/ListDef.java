@@ -1,5 +1,7 @@
 package org.toylang.antlr.ast;
 
+import java.util.Arrays;
+
 public class ListDef extends Expression {
 
     private final Expression[] expressions;
@@ -32,5 +34,21 @@ public class ListDef extends Expression {
             str += expression.toString() + " ";
         }
         return str + "]";
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+        ListDef listDef = (ListDef) o;
+        return Arrays.equals(expressions, listDef.expressions);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = super.hashCode();
+        result = 31 * result + Arrays.hashCode(expressions);
+        return result;
     }
 }

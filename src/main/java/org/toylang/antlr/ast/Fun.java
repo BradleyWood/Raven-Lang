@@ -4,6 +4,7 @@ import org.toylang.antlr.Modifier;
 import org.toylang.compiler.Constants;
 
 import java.util.Arrays;
+import java.util.Objects;
 
 public class Fun extends Statement {
 
@@ -88,5 +89,27 @@ public class Fun extends Statement {
 
     public String[] getExceptions() {
         return exceptions;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+        Fun fun = (Fun) o;
+        return Objects.equals(name, fun.name) &&
+                Objects.equals(body, fun.body) &&
+                Arrays.equals(modifiers, fun.modifiers) &&
+                Arrays.equals(exceptions, fun.exceptions) &&
+                Arrays.equals(params, fun.params);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = Objects.hash(super.hashCode(), name, body);
+        result = 31 * result + Arrays.hashCode(modifiers);
+        result = 31 * result + Arrays.hashCode(exceptions);
+        result = 31 * result + Arrays.hashCode(params);
+        return result;
     }
 }

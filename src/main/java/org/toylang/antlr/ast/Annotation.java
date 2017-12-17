@@ -1,5 +1,8 @@
 package org.toylang.antlr.ast;
 
+import java.util.Arrays;
+import java.util.Objects;
+
 public class Annotation extends Statement {
 
     private final String name;
@@ -39,5 +42,22 @@ public class Annotation extends Statement {
     @Override
     public void accept(TreeVisitor visitor) {
         visitor.visitAnnotation(this);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+        Annotation that = (Annotation) o;
+        return Objects.equals(name, that.name) &&
+                Arrays.equals(params, that.params);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = Objects.hash(super.hashCode(), name);
+        result = 31 * result + Arrays.hashCode(params);
+        return result;
     }
 }

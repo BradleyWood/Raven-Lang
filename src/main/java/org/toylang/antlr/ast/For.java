@@ -1,5 +1,7 @@
 package org.toylang.antlr.ast;
 
+import java.util.Objects;
+
 public class For extends Statement {
 
     private final Statement init;
@@ -33,5 +35,22 @@ public class For extends Statement {
     @Override
     public void accept(TreeVisitor visitor) {
         visitor.visitFor(this);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+        For aFor = (For) o;
+        return Objects.equals(init, aFor.init) &&
+                Objects.equals(condition, aFor.condition) &&
+                Objects.equals(body, aFor.body) &&
+                Objects.equals(after, aFor.after);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), init, condition, body, after);
     }
 }

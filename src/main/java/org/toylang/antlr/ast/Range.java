@@ -1,5 +1,7 @@
 package org.toylang.antlr.ast;
 
+import java.util.Objects;
+
 /**
  * These ranges are especially helpful for loops,
  * and make if extremely simple to define the start and
@@ -34,5 +36,19 @@ public class Range {
      */
     public Expression getEnd() {
         return end;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Range range = (Range) o;
+        return Objects.equals(start, range.start) &&
+                Objects.equals(end, range.end);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(start, end);
     }
 }

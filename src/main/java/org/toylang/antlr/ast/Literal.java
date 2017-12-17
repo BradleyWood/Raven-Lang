@@ -2,6 +2,8 @@ package org.toylang.antlr.ast;
 
 import org.toylang.core.wrappers.TObject;
 
+import java.util.Objects;
+
 /**
  * Holds a literal value such as a string, number, boolean value, null etc
  */
@@ -28,5 +30,19 @@ public class Literal extends Expression {
     @Override
     public void accept(TreeVisitor visitor) {
         visitor.visitLiteral(this);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+        Literal literal = (Literal) o;
+        return Objects.equals(value, literal.value);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), value);
     }
 }

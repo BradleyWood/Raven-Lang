@@ -1,5 +1,7 @@
 package org.toylang.antlr.ast;
 
+import java.util.Objects;
+
 public class UnaryOp extends Expression {
 
     private final int op;
@@ -21,6 +23,20 @@ public class UnaryOp extends Expression {
     @Override
     public void accept(TreeVisitor visitor) {
         visitor.visitUnaryOp(this);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        UnaryOp unaryOp = (UnaryOp) o;
+        return op == unaryOp.op &&
+                Objects.equals(expr, unaryOp.expr);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(op, expr);
     }
 
     @Override

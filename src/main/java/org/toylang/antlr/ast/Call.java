@@ -1,6 +1,7 @@
 package org.toylang.antlr.ast;
 
 import java.util.Arrays;
+import java.util.Objects;
 
 /**
  * An expression representing a function call
@@ -101,5 +102,25 @@ public class Call extends Expression {
         StringBuilder builder = new StringBuilder();
         Arrays.stream(params).forEach(builder::append);
         return "{" + precedingExpr + " . " + name.toString() + "(" + builder.toString() + ");}";
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+        Call call = (Call) o;
+        return pop == call.pop &&
+                Objects.equals(precedingExpr, call.precedingExpr) &&
+                Objects.equals(name, call.name) &&
+                Arrays.equals(params, call.params);
+    }
+
+    @Override
+    public int hashCode() {
+
+        int result = Objects.hash(super.hashCode(), precedingExpr, name, pop);
+        result = 31 * result + Arrays.hashCode(params);
+        return result;
     }
 }

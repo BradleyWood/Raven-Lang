@@ -5,9 +5,7 @@ import org.toylang.antlr.Operator;
 import org.toylang.antlr.ToyTree;
 import org.toylang.core.TLFile;
 
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 public class ClassDef extends Statement {
 
@@ -251,5 +249,33 @@ public class ClassDef extends Statement {
             setters.add(f);
         }
         return setters;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+        ClassDef classDef = (ClassDef) o;
+        return Arrays.equals(modifiers, classDef.modifiers) &&
+                Objects.equals(name, classDef.name) &&
+                Objects.equals(super_, classDef.super_) &&
+                Arrays.equals(interfaces, classDef.interfaces) &&
+                Objects.equals(package_, classDef.package_) &&
+                Objects.equals(statements, classDef.statements) &&
+                Arrays.equals(superParams, classDef.superParams) &&
+                Objects.equals(constructors, classDef.constructors) &&
+                Objects.equals(varParams, classDef.varParams) &&
+                Objects.equals(sourceTree, classDef.sourceTree) &&
+                Objects.equals(methods, classDef.methods);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = Objects.hash(super.hashCode(), name, super_, package_, statements, constructors, varParams, sourceTree, methods);
+        result = 31 * result + Arrays.hashCode(modifiers);
+        result = 31 * result + Arrays.hashCode(interfaces);
+        result = 31 * result + Arrays.hashCode(superParams);
+        return result;
     }
 }

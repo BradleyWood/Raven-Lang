@@ -1,5 +1,8 @@
 package org.toylang.antlr.ast;
 
+import java.util.Arrays;
+import java.util.Objects;
+
 public class AnnoDef extends Statement {
 
     private final QualifiedName name;
@@ -35,5 +38,22 @@ public class AnnoDef extends Statement {
     @Override
     public void accept(TreeVisitor visitor) {
         visitor.visitAnnotationDef(this);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+        AnnoDef annoDef = (AnnoDef) o;
+        return Objects.equals(name, annoDef.name) &&
+                Arrays.equals(paramNames, annoDef.paramNames);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = Objects.hash(super.hashCode(), name);
+        result = 31 * result + Arrays.hashCode(paramNames);
+        return result;
     }
 }

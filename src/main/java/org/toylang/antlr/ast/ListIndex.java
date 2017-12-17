@@ -1,5 +1,8 @@
 package org.toylang.antlr.ast;
 
+import java.util.Arrays;
+import java.util.Objects;
+
 /**
  * References an index in an array or dictionary
  */
@@ -37,5 +40,22 @@ public class ListIndex extends Expression {
     @Override
     public void accept(TreeVisitor visitor) {
         visitor.visitListIdx(this);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+        ListIndex listIndex = (ListIndex) o;
+        return Objects.equals(name, listIndex.name) &&
+                Arrays.equals(index, listIndex.index);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = Objects.hash(super.hashCode(), name);
+        result = 31 * result + Arrays.hashCode(index);
+        return result;
     }
 }

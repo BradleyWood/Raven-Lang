@@ -2,6 +2,7 @@ package org.toylang.antlr.ast;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * A block of code that contains a set of statements
@@ -56,5 +57,19 @@ public class Block extends Statement {
         StringBuilder builder = new StringBuilder();
         statements.forEach(stmt -> builder.append(stmt.toString()).append(System.lineSeparator()));
         return "{" + System.lineSeparator() + builder.toString() + "}";
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+        Block block = (Block) o;
+        return Objects.equals(statements, block.statements);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), statements);
     }
 }

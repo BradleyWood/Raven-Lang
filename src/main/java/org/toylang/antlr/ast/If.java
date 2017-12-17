@@ -1,5 +1,7 @@
 package org.toylang.antlr.ast;
 
+import java.util.Objects;
+
 public class If extends Statement {
 
     private final Expression condition;
@@ -51,5 +53,21 @@ public class If extends Statement {
     public String toString() {
         return "if(" + condition.toString() + ")" + body.toString() +
                 (else_ != null ? (" else " + else_.toString()) : "");
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+        If anIf = (If) o;
+        return Objects.equals(condition, anIf.condition) &&
+                Objects.equals(body, anIf.body) &&
+                Objects.equals(else_, anIf.else_);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), condition, body, else_);
     }
 }

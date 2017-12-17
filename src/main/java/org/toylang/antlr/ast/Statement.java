@@ -4,6 +4,7 @@ import org.toylang.antlr.AST;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class Statement extends AST {
 
@@ -19,5 +20,18 @@ public class Statement extends AST {
 
     @Override
     public void accept(TreeVisitor visitor) {
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Statement statement = (Statement) o;
+        return Objects.equals(annotations, statement.annotations);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(annotations);
     }
 }

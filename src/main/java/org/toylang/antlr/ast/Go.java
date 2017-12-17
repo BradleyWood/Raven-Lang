@@ -1,5 +1,7 @@
 package org.toylang.antlr.ast;
 
+import java.util.Objects;
+
 public class Go extends Statement {
 
     private Call goFun;
@@ -23,5 +25,19 @@ public class Go extends Statement {
     @Override
     public void accept(TreeVisitor visitor) {
         visitor.visitGo(this);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+        Go go = (Go) o;
+        return Objects.equals(goFun, go.goFun);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), goFun);
     }
 }

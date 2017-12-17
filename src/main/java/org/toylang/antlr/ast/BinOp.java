@@ -2,6 +2,8 @@ package org.toylang.antlr.ast;
 
 import org.toylang.antlr.Operator;
 
+import java.util.Objects;
+
 public class BinOp extends Expression {
 
     private final Expression left;
@@ -53,5 +55,21 @@ public class BinOp extends Expression {
     @Override
     public String toString() {
         return left + " " + op + " " + right;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+        BinOp binOp = (BinOp) o;
+        return Objects.equals(left, binOp.left) &&
+                op == binOp.op &&
+                Objects.equals(right, binOp.right);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), left, op, right);
     }
 }

@@ -6,7 +6,9 @@ import org.toylang.antlr.Operator;
 import org.toylang.core.wrappers.TNull;
 import org.toylang.core.wrappers.TObject;
 
+import java.util.Arrays;
 import java.util.LinkedList;
+import java.util.Objects;
 
 public class Constructor extends Statement {
 
@@ -100,5 +102,27 @@ public class Constructor extends Statement {
             }
         }
         return stringBuilder.append(")V").toString();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+        Constructor that = (Constructor) o;
+        return Objects.equals(initBlock, that.initBlock) &&
+                Objects.equals(body, that.body) &&
+                Arrays.equals(modifiers, that.modifiers) &&
+                Arrays.equals(params, that.params) &&
+                Arrays.equals(superParams, that.superParams);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = Objects.hash(super.hashCode(), initBlock, body);
+        result = 31 * result + Arrays.hashCode(modifiers);
+        result = 31 * result + Arrays.hashCode(params);
+        result = 31 * result + Arrays.hashCode(superParams);
+        return result;
     }
 }
