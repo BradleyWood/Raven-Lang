@@ -1,8 +1,10 @@
 package org.toylang.js;
 
 
+import org.toylang.antlr.ToyParser;
 import org.toylang.antlr.ToyTree;
 import org.toylang.antlr.ast.*;
+import org.toylang.core.wrappers.TString;
 
 import java.io.*;
 import java.util.LinkedList;
@@ -82,7 +84,7 @@ public class JSCompiler implements TreeVisitor {
     }
 
     public boolean save(File file) {
-        if (!file.getParentFile().exists()) {
+        if (!file.getAbsoluteFile().getParentFile().exists()) {
             boolean success = file.getParentFile().mkdirs();
             if (!success) {
                 return false;
@@ -102,7 +104,7 @@ public class JSCompiler implements TreeVisitor {
     }
 
     public void compile() {
-
+        tree.accept(this);
         compiled = true;
     }
 
@@ -156,9 +158,10 @@ public class JSCompiler implements TreeVisitor {
             putSpaces(1);
             line.append("else");
             putSpaces(1);
-            line.append("{");
+            newLine(ifStatement);
+            beginIndent();
             ifStatement.getElse().accept(this);
-            line.append("}");
+            endIndent();
         }
         newLine(ifStatement);
     }
@@ -175,7 +178,11 @@ public class JSCompiler implements TreeVisitor {
 
     @Override
     public void visitReturn(Return ret) {
-
+        line.append("return");
+        if (ret.getValue() != null) {
+            line.append(' ');
+            ret.getValue().accept(this);
+        }
     }
 
     @Override
@@ -200,12 +207,27 @@ public class JSCompiler implements TreeVisitor {
         beginIndent();
         fun.getBody().accept(this);
         endIndent();
-
+        line.append('}');
+        newLine(fun);
         newLine(fun);
     }
 
     @Override
     public void visitFunCall(Call call) {
+        if (call.getPrecedingExpr() != null) {
+            call.getPrecedingExpr().accept(this);
+            line.append('.');
+        }
+        call.getName().accept(this);
+        line.append('(');
+        for (int i = 0; i < call.getParams().length; i++) {
+            call.getParams()[i].accept(this);
+            if (i + 1 < call.getParams().length) {
+                line.append(',');
+                putSpaces(1);
+            }
+        }
+        line.append(')');
 
     }
 
@@ -251,7 +273,13 @@ public class JSCompiler implements TreeVisitor {
 
     @Override
     public void visitLiteral(Literal literal) {
+        if (literal.getValue() instanceof TString) {
+            line.append("\"");
+        }
         line.append(literal.getValue().toString());
+        if (literal.getValue() instanceof TString) {
+            line.append("\"");
+        }
     }
 
     @Override
@@ -296,12 +324,12 @@ public class JSCompiler implements TreeVisitor {
 
     @Override
     public void visitContinue() {
-
+        line.append("continue");
     }
 
     @Override
     public void visitBreak() {
-
+        line.append("break");
     }
 
     private static class Line {
