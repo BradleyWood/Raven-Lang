@@ -5,6 +5,7 @@ import org.toylang.antlr.ToyTree;
 import org.toylang.antlr.ast.*;
 
 import java.io.*;
+import java.util.LinkedList;
 
 /**
  * Javascript trans-compiler
@@ -17,7 +18,9 @@ public class JSCompiler implements TreeVisitor {
 
     private int indentationLevel = 0;
 
+    private final LinkedList<Line> lines = new LinkedList<>();
     private final StringBuilder output = new StringBuilder();
+    private StringBuilder line = new StringBuilder();
 
     private boolean compiled = false;
 
@@ -27,6 +30,7 @@ public class JSCompiler implements TreeVisitor {
 
     /**
      * Get the tree associated with this compilation
+     *
      * @return The tree representing the program
      */
     public final ToyTree getTree() {
@@ -35,6 +39,7 @@ public class JSCompiler implements TreeVisitor {
 
     /**
      * Get the number of spaces used for indentation
+     *
      * @return The number of spaces
      */
     public int getSpaces() {
@@ -43,15 +48,31 @@ public class JSCompiler implements TreeVisitor {
 
     /**
      * Sets the number of spaces used for indentation
+     *
      * @param spaces Number of spaces to use
      */
     public void setSpaces(int spaces) {
         this.spaces = spaces;
     }
 
-    public String getOutput() {
+    public String getOutput() throws IOException {
         if (!compiled) {
             compile();
+        }
+        if (output.length() > 0) {
+            return output.toString();
+        }
+
+        for (Line line : lines) {
+            if (line.line.length() == 0) {
+                output.append('\n');
+                continue;
+            }
+            for (int i = 0; i < spaces * line.level; i++) {
+                output.append(' ');
+            }
+            output.append(line.line);
+            output.append('\n');
         }
         return output.toString();
     }
@@ -85,9 +106,48 @@ public class JSCompiler implements TreeVisitor {
         compiled = true;
     }
 
+    private void putSpaces(int count) {
+        for (int i = 0; i < count; i++) {
+            line.append(' ');
+        }
+    }
+
+    private void newLine() {
+        lines.add(new Line(line.toString(), indentationLevel));
+        line = new StringBuilder();
+    }
+
+    private void beginIndent() {
+        indentationLevel++;
+    }
+
+    private void endIndent() {
+        indentationLevel--;
+    }
+
     @Override
     public void visitIf(If ifStatement) {
-
+        line.append("if");
+        putSpaces(1);
+        line.append('(');
+        ifStatement.getCondition().accept(this);
+        line.append(')');
+        putSpaces(1);
+        line.append('{');
+        newLine();
+        beginIndent();
+        ifStatement.getBody().accept(this);
+        endIndent();
+        line.append('}');
+        if (ifStatement.getElse() != null) {
+            putSpaces(1);
+            line.append("else");
+            putSpaces(1);
+            line.append("{");
+            ifStatement.getElse().accept(this);
+            line.append("}");
+        }
+        newLine();
     }
 
     @Override
@@ -107,7 +167,28 @@ public class JSCompiler implements TreeVisitor {
 
     @Override
     public void visitFun(Fun fun) {
+        line.append("function");
+        putSpaces(1);
+        fun.getName().accept(this);
+        line.append('(');
 
+        for (int i = 0; i < fun.getParams().length; i++) {
+            line.append(fun.getParams()[i]);
+            if (i + 1 < fun.getParams().length) {
+                line.append(',');
+                putSpaces(1);
+            }
+        }
+
+        line.append(')');
+        putSpaces(1);
+        line.append('{');
+        newLine();
+        beginIndent();
+        fun.getBody().accept(this);
+        endIndent();
+
+        newLine();
     }
 
     @Override
@@ -117,12 +198,23 @@ public class JSCompiler implements TreeVisitor {
 
     @Override
     public void visitBlock(Block block) {
-
+        block.getStatements().forEach(stmt -> {
+            stmt.accept(this);
+            newLine();
+        });
     }
 
     @Override
     public void visitVarDecl(VarDecl decl) {
-
+        line.append("var");
+        putSpaces(1);
+        decl.getName().accept(this);
+        if (decl.getInitialValue() != null) {
+            putSpaces(1);
+            line.append('=');
+            putSpaces(1);
+            decl.getInitialValue().accept(this);
+        }
     }
 
     @Override
@@ -132,7 +224,11 @@ public class JSCompiler implements TreeVisitor {
 
     @Override
     public void visitBinOp(BinOp op) {
-
+        op.getLeft().accept(this);
+        putSpaces(1);
+        line.append(op.getOp().op);
+        putSpaces(1);
+        op.getRight().accept(this);
     }
 
     @Override
@@ -142,12 +238,12 @@ public class JSCompiler implements TreeVisitor {
 
     @Override
     public void visitLiteral(Literal literal) {
-
+        line.append(literal.getValue().toString());
     }
 
     @Override
     public void visitName(QualifiedName name) {
-
+        line.append(name.toString());
     }
 
     @Override
@@ -162,7 +258,7 @@ public class JSCompiler implements TreeVisitor {
 
     @Override
     public void visitClassDef(ClassDef def) {
-
+        throw new RuntimeException("Classes not allowed");
     }
 
     @Override
@@ -193,5 +289,15 @@ public class JSCompiler implements TreeVisitor {
     @Override
     public void visitBreak() {
 
+    }
+
+    private static class Line {
+        String line;
+        int level;
+
+        public Line(String line, int level) {
+            this.line = line;
+            this.level = level;
+        }
     }
 }
