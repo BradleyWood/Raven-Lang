@@ -4,15 +4,85 @@ package org.toylang.js;
 import org.toylang.antlr.ToyTree;
 import org.toylang.antlr.ast.*;
 
+import java.io.*;
+
 /**
  * Javascript trans-compiler
  */
 public class JSCompiler implements TreeVisitor {
 
+    private int spaces = 4;
+
     private final ToyTree tree;
+
+    private int indentationLevel = 0;
+
+    private final StringBuilder output = new StringBuilder();
+
+    private boolean compiled = false;
 
     public JSCompiler(final ToyTree tree) {
         this.tree = tree;
+    }
+
+    /**
+     * Get the tree associated with this compilation
+     * @return The tree representing the program
+     */
+    public final ToyTree getTree() {
+        return tree;
+    }
+
+    /**
+     * Get the number of spaces used for indentation
+     * @return The number of spaces
+     */
+    public int getSpaces() {
+        return spaces;
+    }
+
+    /**
+     * Sets the number of spaces used for indentation
+     * @param spaces Number of spaces to use
+     */
+    public void setSpaces(int spaces) {
+        this.spaces = spaces;
+    }
+
+    public String getOutput() {
+        if (!compiled) {
+            compile();
+        }
+        return output.toString();
+    }
+
+    public boolean save(String file) {
+        return save(new File(file));
+    }
+
+    public boolean save(File file) {
+        if (!file.getParentFile().exists()) {
+            boolean success = file.getParentFile().mkdirs();
+            if (!success) {
+                return false;
+            }
+        }
+        try {
+            FileOutputStream fos = new FileOutputStream(file);
+            writeOutput(fos);
+        } catch (IOException e) {
+            return false;
+        }
+        return true;
+    }
+
+    public void writeOutput(OutputStream output) throws IOException {
+        output.write(getOutput().getBytes());
+    }
+
+    public void compile() {
+
+        compiled = true;
     }
 
     @Override
