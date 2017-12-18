@@ -112,7 +112,20 @@ public class JSCompiler implements TreeVisitor {
         }
     }
 
-    private void newLine() {
+    private void newLine(Statement stmt) {
+        // check whether the new line needs a semi colon
+        if (!(stmt instanceof For) && !(stmt instanceof While) && !(stmt instanceof If)
+                && !(stmt instanceof Fun)) {
+            newLine(true);
+        } else {
+            newLine(false);
+        }
+    }
+
+    private void newLine(boolean b) {
+        if (b) {
+            line.append(';');
+        }
         lines.add(new Line(line.toString(), indentationLevel));
         line = new StringBuilder();
     }
@@ -134,7 +147,7 @@ public class JSCompiler implements TreeVisitor {
         line.append(')');
         putSpaces(1);
         line.append('{');
-        newLine();
+        newLine(ifStatement);
         beginIndent();
         ifStatement.getBody().accept(this);
         endIndent();
@@ -147,7 +160,7 @@ public class JSCompiler implements TreeVisitor {
             ifStatement.getElse().accept(this);
             line.append("}");
         }
-        newLine();
+        newLine(ifStatement);
     }
 
     @Override
@@ -183,12 +196,12 @@ public class JSCompiler implements TreeVisitor {
         line.append(')');
         putSpaces(1);
         line.append('{');
-        newLine();
+        newLine(fun);
         beginIndent();
         fun.getBody().accept(this);
         endIndent();
 
-        newLine();
+        newLine(fun);
     }
 
     @Override
@@ -200,7 +213,7 @@ public class JSCompiler implements TreeVisitor {
     public void visitBlock(Block block) {
         block.getStatements().forEach(stmt -> {
             stmt.accept(this);
-            newLine();
+            newLine(stmt);
         });
     }
 
