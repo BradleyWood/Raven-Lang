@@ -57,7 +57,7 @@ public class JSCompiler implements TreeVisitor {
         this.spaces = spaces;
     }
 
-    public String getOutput() throws IOException {
+    public String getOutput() {
         if (!compiled) {
             compile();
         }
@@ -173,7 +173,16 @@ public class JSCompiler implements TreeVisitor {
 
     @Override
     public void visitWhile(While whileStatement) {
-
+        line.append("while");
+        putSpaces(1);
+        line.append('(');
+        whileStatement.getCondition().accept(this);
+        line.append(')');
+        putSpaces(1);
+        line.append('{');
+        newLine(whileStatement);
+        whileStatement.getBody().accept(this);
+        line.append('}');
     }
 
     @Override
@@ -340,5 +349,12 @@ public class JSCompiler implements TreeVisitor {
             this.line = line;
             this.level = level;
         }
+    }
+    public static void main(String[] args) throws IOException {
+        ToyParser tp = new ToyParser("test/org/toylang/test/IfTest.tl");
+        ToyTree tree = tp.parse();
+        JSCompiler compiler = new JSCompiler(tree);
+        compiler.compile();
+        compiler.save("gg.js");
     }
 }
