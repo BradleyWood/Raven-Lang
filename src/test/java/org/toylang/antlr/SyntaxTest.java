@@ -280,6 +280,7 @@ public class SyntaxTest {
         testSyntax("a[a:b];", true);
 
         testSyntax("a[1:5:10];", false);
+        testSyntax("a[1:2]", false);
         testSyntax("a[]", false);
     }
 
