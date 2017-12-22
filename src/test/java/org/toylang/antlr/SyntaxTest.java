@@ -123,4 +123,34 @@ public class SyntaxTest {
         testSyntax("var a = b", false);
     }
 
+    @Test
+    public void testBinaryOp() {
+        testSyntax("a * b;", true);
+        testSyntax("a / b;", true);
+        testSyntax("10 + b;", true);
+        testSyntax("10 - 10;", true);
+        testSyntax("a % b;", true);
+        testSyntax("a ** b;", true);
+        testSyntax("a += b;", true);
+        testSyntax("a -= b;", true);
+        testSyntax("a *= b;", true);
+        testSyntax("a /= b;", true);
+        testSyntax("a %= b;", true);
+        testSyntax("a **= b;", true);
+        testSyntax("a && b;", true);
+        testSyntax("a || b;", true);
+
+        // binary op with unary op
+        testSyntax("a =- b;", true);
+        testSyntax("a =+ b;", true);
+
+        testSyntax("a =/ b;", false);
+        testSyntax("a =% b;", false);
+        testSyntax("a =* b;", false);
+        testSyntax("a =** b;", false);
+
+        testSyntax("a b;", false);
+        testSyntax("a b c;", false);
+        testSyntax("a true b;", false);
+    }
 }
