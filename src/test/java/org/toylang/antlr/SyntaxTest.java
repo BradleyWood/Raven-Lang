@@ -234,4 +234,14 @@ public class SyntaxTest {
 
         testSyntax("continue", false);
     }
+
+    @Test
+    public void testListDef() {
+        testSyntax("[1, 50, 100, 2000, 50000];", true);
+        testSyntax("[1, \"str\", 100, 2000, 50000];", true);
+        testSyntax("var a = [1, 50, 100, 2000, 50000];", true);
+
+        testSyntax("[1, 50, 100, 2000, 50000]", false);
+        testSyntax("[1, 50, 100, 2000, 50000,,,,];", false);
+    }
 }
