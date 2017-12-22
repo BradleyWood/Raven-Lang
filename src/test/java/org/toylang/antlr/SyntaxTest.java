@@ -105,4 +105,22 @@ public class SyntaxTest {
         testSyntax("for a: ;;", false);
         testSyntax("for :b ;;", false);
     }
+
+    @Test
+    public void testVarDecl() {
+        testSyntax("var a;", true);
+        testSyntax("var a = 10;", true);
+        testSyntax("var a = \"str\";", true);
+        testSyntax("var a = true;", true);
+        testSyntax("var a = false;", true);
+        testSyntax("var a = b;", true);
+
+        testSyntax("var a", false);
+        testSyntax("var a =", false);
+        testSyntax("var a = ;", false);
+        testSyntax("var a = 100", false);
+        testSyntax("var a = true", false);
+        testSyntax("var a = b", false);
+    }
+
 }
