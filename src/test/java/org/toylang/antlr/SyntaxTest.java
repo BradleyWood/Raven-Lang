@@ -220,4 +220,18 @@ public class SyntaxTest {
         testSyntax("class SoMeClAsS extends AnOtHeRcLaSs implements {}", false);
         testSyntax("class SoMeClAsS(a,b) extends AnOtHeRcLaSs() implements GG() {}", false);
     }
+
+    @Test
+    public void testBreak() {
+        testSyntax("break;", true);
+
+        testSyntax("break", false);
+    }
+
+    @Test
+    public void testContinue() {
+        testSyntax("continue;", true);
+
+        testSyntax("continue", false);
+    }
 }
