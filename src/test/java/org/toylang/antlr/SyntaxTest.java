@@ -200,6 +200,24 @@ public class SyntaxTest {
         testSyntax("fun f(5, 1, 6) {}", false);
         testSyntax("fun f(true, false, 5, for) {}", false);
         testSyntax("fun f(,,) {}", false);
+    }
 
+    @Test
+    public void testClass() {
+        testSyntax("class SoMeClAsS(a, b, c) {}", true);
+        testSyntax("class SoMeClAsS {}", true);
+        testSyntax("class SoMeClAsS { constructor(a,b,c){} }", true);
+        testSyntax("class SoMeClAsS extends AnOtHeRcLaSs {}", true);
+        testSyntax("class SoMeClAsS extends AnOtHeRcLaSs implements GG {}", true);
+        testSyntax("class SoMeClAsS(a,b) extends AnOtHeRcLaSs implements GG { constructor(a,b,c){} }", true);
+        testSyntax("class SoMeClAsS(a,b) extends AnOtHeRcLaSs implements GG {}", true);
+        testSyntax("class SoMeClAsS(a,b) extends AnOtHeRcLaSs(b,a) implements GG {}", true);
+
+        testSyntax("class SoMeClAsS;", false);
+        testSyntax("class SoMeClAsS( {}", false);
+        testSyntax("class SoMeClAsS() {}", false);
+        testSyntax("class SoMeClAsS extends {}", false);
+        testSyntax("class SoMeClAsS extends AnOtHeRcLaSs implements {}", false);
+        testSyntax("class SoMeClAsS(a,b) extends AnOtHeRcLaSs() implements GG() {}", false);
     }
 }
