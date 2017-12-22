@@ -153,4 +153,22 @@ public class SyntaxTest {
         testSyntax("a b c;", false);
         testSyntax("a true b;", false);
     }
+
+    @Test
+    public void testUnaryOp() {
+        testSyntax("!b;", true);
+        testSyntax("!!b;", true);
+        testSyntax("!!!!!b;", true);
+        testSyntax("-b;", true);
+        testSyntax("+b;", true);
+        testSyntax("-------b;", true);
+        testSyntax("----+-+-+--b;", true);
+
+        testSyntax("!(b);", true);
+        testSyntax("-+!(!!--++--(!+--+b));", true);
+
+        testSyntax("/b;", false);
+        testSyntax("*b;", false);
+        testSyntax("%b;", false);
+    }
 }
