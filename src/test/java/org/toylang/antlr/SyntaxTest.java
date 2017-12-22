@@ -301,4 +301,20 @@ public class SyntaxTest {
         testSyntax("testFun(,);", false);
     }
 
+    @Test
+    public void testGo() {
+        testSyntax("go toHell();", true);
+        testSyntax("go toHell(a,b,c,d);", true);
+        testSyntax("go toHell(1,2,3,4);", true);
+        testSyntax("go id.toHell();", true); // todo fix problem
+
+        testSyntax("go true;", false);
+        testSyntax("go 412;", false);
+        testSyntax("go toHell()", false);
+        testSyntax("go toHell(,);", false);
+        testSyntax("go toHell(1,);", false);
+        testSyntax("go toHell(1,,4);", false);
+        testSyntax("go toHell(,1,4);", false);
+    }
+
 }
