@@ -184,4 +184,22 @@ public class SyntaxTest {
 
         testSyntax("import javax.swing.JFrame", false);
     }
+
+    @Test
+    public void testFun() {
+        testSyntax("f() = 50;", true);
+        testSyntax("f(x,y,z) = x + y + z;", true);
+        testSyntax("fun f() = 50;", true);
+
+        testSyntax("fun f() {}", true);
+        testSyntax("fun f(x) {}", true);
+        testSyntax("fun f() {;;;;;;;;}", true);
+
+        testSyntax("fun f() ;", false);
+        testSyntax("fun f(x,y,z) ;", false);
+        testSyntax("fun f(5, 1, 6) {}", false);
+        testSyntax("fun f(true, false, 5, for) {}", false);
+        testSyntax("fun f(,,) {}", false);
+
+    }
 }
