@@ -244,4 +244,16 @@ public class SyntaxTest {
         testSyntax("[1, 50, 100, 2000, 50000]", false);
         testSyntax("[1, 50, 100, 2000, 50000,,,,];", false);
     }
+
+    @Test
+    public void testListIdx() {
+        testSyntax("a[5];", true);
+        testSyntax("a[5];", true);
+        testSyntax("a[5][5][\"5\"][5][\"str\"];", true);
+
+        testSyntax("a[5]", false);
+        testSyntax("a[];", false);
+        testSyntax("a[5][\"str\"][5][5][][5];", false);
+    }
+    
 }
