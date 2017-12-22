@@ -284,4 +284,19 @@ public class SyntaxTest {
         testSyntax("a[]", false);
     }
 
+    @Test
+    public void testFunctionCall() {
+        testSyntax("testFun();", true);
+        testSyntax("testFun(a);", true);
+        testSyntax("testFun(a,b,c,d,e,f,g,h,i);", true);
+        testSyntax("testFun(1,2,4,true,false,\"str\", a,b);", true);
+
+        testSyntax("test()", false);
+        testSyntax("testFun(a, b)", false);
+        testSyntax("testFun(a,, b);", false);
+        testSyntax("testFun(a, b,,);", false);
+        testSyntax("testFun(,,a, b);", false);
+        testSyntax("testFun(,);", false);
+    }
+
 }
