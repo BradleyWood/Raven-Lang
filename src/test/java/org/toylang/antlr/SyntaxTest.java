@@ -269,4 +269,18 @@ public class SyntaxTest {
         testSyntax("{1 : 2, : 2};", false);
     }
 
+    @Test
+    public void testSlice() {
+        testSyntax("a[:];", true);
+        testSyntax("a[1:];", true);
+        testSyntax("a[:2];", true);
+        testSyntax("a[1:4];", true);
+        testSyntax("a[a:];", true);
+        testSyntax("a[:b];", true);
+        testSyntax("a[a:b];", true);
+
+        testSyntax("a[1:5:10];", false);
+        testSyntax("a[]", false);
+    }
+
 }
