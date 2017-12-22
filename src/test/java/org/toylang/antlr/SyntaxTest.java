@@ -171,4 +171,17 @@ public class SyntaxTest {
         testSyntax("*b;", false);
         testSyntax("%b;", false);
     }
+
+    @Test
+    public void testImport() {
+        testSyntax("import javax.swing.JFrame;", true);
+
+        testSyntax("import a..b.c.d;", false);
+        testSyntax("import a.....b.c..d;", false);
+
+        testSyntax("import ", false);
+        testSyntax("import ;", false);
+
+        testSyntax("import javax.swing.JFrame", false);
+    }
 }
