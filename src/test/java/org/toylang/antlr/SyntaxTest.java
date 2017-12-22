@@ -65,6 +65,8 @@ public class SyntaxTest {
         testSyntax(" for (i = 0; i < 10; i += 2) {}", true);
         testSyntax(" for i = 0; i < 10; i += 2 ;", true);
         testSyntax(" for i = 0; i < 10; i += 2 {}", true);
+        testSyntax(" for i = 0; i < 10; i += 2, j +=1 {}", true);
+        testSyntax(" for i = 0; i < 10; i += 2, j +=1, k += 3;", true);
 
         testSyntax("for ;", false);
         testSyntax("for (;;)", false);
