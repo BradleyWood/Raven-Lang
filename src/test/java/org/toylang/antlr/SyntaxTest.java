@@ -255,5 +255,18 @@ public class SyntaxTest {
         testSyntax("a[];", false);
         testSyntax("a[5][\"str\"][5][5][][5];", false);
     }
-    
+
+    @Test
+    public void testDictionaryDef() {
+        testSyntax("{1 : 2, 50 : 100, \"str\" : \"msg\", 2000 : 100, 50000 : 10};", true);
+        testSyntax("{\"a\" : \"b\"};", true);
+
+        testSyntax("{\"a\" : \"b\";", false);
+        testSyntax("{\"a\", \"b\"};", false);
+        testSyntax("{1 : 2, 2};", false);
+        testSyntax("{1 : 2,,, 2 : 2};", false);
+        testSyntax("{1 : , 2 : 4};", false);
+        testSyntax("{1 : 2, : 2};", false);
+    }
+
 }
