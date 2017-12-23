@@ -74,7 +74,7 @@ annotation
     :   AT qualifiedName ('(' paramDef (',' paramDef)* ')')?
     ;
 annotationDeclaration
-    :   AT INTER '{' (paramDef (',' paramDef)*)? '}'
+    :   AT INTER IDENTIFIER '{' (paramDef (',' paramDef)*)? '}'
     ;
 methodDeclaration
     :   (annotation*) (modifier*) FUN IDENTIFIER '(' (paramDef (',' paramDef)*)? ')' block
