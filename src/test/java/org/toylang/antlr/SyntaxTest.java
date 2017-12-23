@@ -318,4 +318,17 @@ public class SyntaxTest {
         testSyntax("go toHell(,1,4);", false);
     }
 
+    @Test
+    public void testAnnotationDef() {
+        testSyntax("@interface Id {}", true);
+        testSyntax("@interface Id {a,b,c}", true);
+
+        testSyntax("@interface Id (a,b,c)", false);
+        testSyntax("@interface Id (true,b,c)", false);
+        testSyntax("@interface Id (2,b,c)", false);
+        testSyntax("@interface Id {a,b,c,,}", false);
+        testSyntax("@interface Id {,}", false);
+        testSyntax("@interface Id {a,}", false);
+        testSyntax("@interface true {}", false);
+    }
 }
