@@ -123,6 +123,7 @@ public class SyntaxTest {
         testSyntax("var a = 100", false);
         testSyntax("var a = true", false);
         testSyntax("var a = b", false);
+        testSyntax("var true = b;", false);
     }
 
     @Test
