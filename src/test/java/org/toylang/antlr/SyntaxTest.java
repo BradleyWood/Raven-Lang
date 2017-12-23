@@ -307,7 +307,7 @@ public class SyntaxTest {
         testSyntax("go toHell();", true);
         testSyntax("go toHell(a,b,c,d);", true);
         testSyntax("go toHell(1,2,3,4);", true);
-        testSyntax("go id.toHell();", true); // todo fix problem
+        testSyntax("go id.toHell();", true);
 
         testSyntax("go true;", false);
         testSyntax("go 412;", false);

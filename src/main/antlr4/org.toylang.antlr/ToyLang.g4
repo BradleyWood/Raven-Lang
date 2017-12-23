@@ -36,7 +36,7 @@ ifStatement
     :   IF expression statement (ELSE statement)?
     ;
 goStatement
-    :   GO funCall SEMI
+    :   GO (expression '.')? funCall SEMI
     ;
 whileStatement
     :   WHILE expression statement

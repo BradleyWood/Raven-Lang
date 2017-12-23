@@ -22,6 +22,12 @@ public class GoVisitor extends ToyLangBaseVisitor<Go> {
             expressions[i] = ctx.funCall().paramList().param(i).accept(ExpressionVisitor.INSTANCE);
         }
         Call call = new Call(name, expressions);
+
+        if (ctx.expression() != null) {
+            Expression expr = ctx.expression().accept(ExpressionVisitor.INSTANCE);
+            call.setPrecedingExpr(expr);
+        }
+
         call.setLineNumber(ctx.funCall().start.getLine());
         return new Go(call);
     }
