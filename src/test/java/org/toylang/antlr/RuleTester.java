@@ -4,7 +4,11 @@ import org.antlr.v4.runtime.*;
 import org.junit.Assert;
 import org.toylang.antlr.ToyLangLexer;
 import org.toylang.antlr.ToyLangParser;
+import org.toylang.antlr.ToyLangBaseVisitor;
+import org.toylang.antlr.ast.Statement;
 import org.toylang.antlr.visitor.ToyFileVisitor;
+
+import static org.junit.Assert.assertEquals;
 
 public class RuleTester {
 
@@ -35,5 +39,20 @@ public class RuleTester {
         } else {
             Assert.assertNotEquals(0, p.getNumberOfSyntaxErrors());
         }
+    }
+
+    /**
+     * Tests whether the output produced by the parser matches the expected ast node
+     * @param v The visitor responsible for handling the parsing rule
+     * @param txt The input text
+     * @param expected The expected output
+     */
+    public static void testStatement(ToyLangBaseVisitor v, String txt, Statement expected) {
+        ToyLangLexer lexer = new ToyLangLexer(CharStreams.fromString(txt));
+        CommonTokenStream tokenStream = new CommonTokenStream(lexer);
+        ToyLangParser parser = new ToyLangParser(tokenStream);
+        parser.removeErrorListener(ConsoleErrorListener.INSTANCE);
+        Statement stmt = (Statement) v.visit(parser.statement());
+        assertEquals(expected, stmt);
     }
 }
