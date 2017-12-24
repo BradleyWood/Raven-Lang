@@ -6,6 +6,8 @@ import org.toylang.antlr.ToyLangLexer;
 import org.toylang.antlr.ToyLangParser;
 import org.toylang.antlr.ToyLangBaseVisitor;
 import org.toylang.antlr.ast.Expression;
+import org.toylang.antlr.ast.Import;
+import org.toylang.antlr.ast.Range;
 import org.toylang.antlr.ast.Statement;
 import org.toylang.antlr.visitor.ToyFileVisitor;
 
@@ -54,7 +56,11 @@ public class RuleTester {
         ToyLangParser parser = new ToyLangParser(tokenStream);
         parser.removeErrorListener(ConsoleErrorListener.INSTANCE);
         Statement stmt;
-        if (expected instanceof Expression) {
+        if (expected instanceof Range) {
+            stmt = (Statement) v.visit(parser.range());
+        } else if (expected instanceof Import) {
+            stmt = (Statement) v.visit(parser.importStatement());
+        } else if (expected instanceof Expression) {
             stmt = (Statement) v.visit(parser.expression());
         } else {
             stmt = (Statement) v.visit(parser.statement());
