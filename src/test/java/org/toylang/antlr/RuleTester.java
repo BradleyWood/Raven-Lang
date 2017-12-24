@@ -5,6 +5,7 @@ import org.junit.Assert;
 import org.toylang.antlr.ToyLangLexer;
 import org.toylang.antlr.ToyLangParser;
 import org.toylang.antlr.ToyLangBaseVisitor;
+import org.toylang.antlr.ast.Expression;
 import org.toylang.antlr.ast.Statement;
 import org.toylang.antlr.visitor.ToyFileVisitor;
 
@@ -52,7 +53,12 @@ public class RuleTester {
         CommonTokenStream tokenStream = new CommonTokenStream(lexer);
         ToyLangParser parser = new ToyLangParser(tokenStream);
         parser.removeErrorListener(ConsoleErrorListener.INSTANCE);
-        Statement stmt = (Statement) v.visit(parser.statement());
+        Statement stmt;
+        if (expected instanceof Expression) {
+            stmt = (Statement) v.visit(parser.expression());
+        } else {
+            stmt = (Statement) v.visit(parser.statement());
+        }
         assertEquals(expected, stmt);
     }
 }
