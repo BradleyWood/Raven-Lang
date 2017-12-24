@@ -95,7 +95,7 @@ public class Fun extends Statement {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        if (!super.equals(o)) return false;
+
         Fun fun = (Fun) o;
         return Objects.equals(name, fun.name) &&
                 Objects.equals(body, fun.body) &&

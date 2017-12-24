@@ -255,7 +255,7 @@ public class ClassDef extends Statement {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        if (!super.equals(o)) return false;
+
         ClassDef classDef = (ClassDef) o;
         return Arrays.equals(modifiers, classDef.modifiers) &&
                 Objects.equals(name, classDef.name) &&

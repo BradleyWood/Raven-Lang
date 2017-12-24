@@ -108,7 +108,7 @@ public class Constructor extends Statement {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        if (!super.equals(o)) return false;
+
         Constructor that = (Constructor) o;
         return Objects.equals(initBlock, that.initBlock) &&
                 Objects.equals(body, that.body) &&

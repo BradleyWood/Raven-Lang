@@ -23,7 +23,7 @@ public class Return extends Statement {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        if (!super.equals(o)) return false;
+
         Return aReturn = (Return) o;
         return Objects.equals(value, aReturn.value);
     }

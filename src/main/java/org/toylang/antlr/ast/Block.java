@@ -63,7 +63,7 @@ public class Block extends Statement {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        if (!super.equals(o)) return false;
+
         Block block = (Block) o;
         return Objects.equals(statements, block.statements);
     }

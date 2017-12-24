@@ -59,7 +59,7 @@ public class If extends Statement {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        if (!super.equals(o)) return false;
+
         If anIf = (If) o;
         return Objects.equals(condition, anIf.condition) &&
                 Objects.equals(body, anIf.body) &&

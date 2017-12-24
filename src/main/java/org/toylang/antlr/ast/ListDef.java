@@ -40,7 +40,7 @@ public class ListDef extends Expression {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        if (!super.equals(o)) return false;
+
         ListDef listDef = (ListDef) o;
         return Arrays.equals(expressions, listDef.expressions);
     }

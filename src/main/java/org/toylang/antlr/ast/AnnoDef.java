@@ -44,7 +44,7 @@ public class AnnoDef extends Statement {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        if (!super.equals(o)) return false;
+
         AnnoDef annoDef = (AnnoDef) o;
         return Objects.equals(name, annoDef.name) &&
                 Arrays.equals(paramNames, annoDef.paramNames);

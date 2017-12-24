@@ -36,7 +36,7 @@ public class Literal extends Expression {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        if (!super.equals(o)) return false;
+
         Literal literal = (Literal) o;
         return Objects.equals(value, literal.value);
     }

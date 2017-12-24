@@ -48,7 +48,7 @@ public class Annotation extends Statement {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        if (!super.equals(o)) return false;
+
         Annotation that = (Annotation) o;
         return Objects.equals(name, that.name) &&
                 Arrays.equals(params, that.params);

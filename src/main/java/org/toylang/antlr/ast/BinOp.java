@@ -61,7 +61,7 @@ public class BinOp extends Expression {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        if (!super.equals(o)) return false;
+
         BinOp binOp = (BinOp) o;
         return Objects.equals(left, binOp.left) &&
                 op == binOp.op &&

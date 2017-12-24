@@ -46,7 +46,7 @@ public class ListIndex extends Expression {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        if (!super.equals(o)) return false;
+
         ListIndex listIndex = (ListIndex) o;
         return Objects.equals(name, listIndex.name) &&
                 Arrays.equals(index, listIndex.index);

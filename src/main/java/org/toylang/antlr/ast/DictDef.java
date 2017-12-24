@@ -30,7 +30,7 @@ public class DictDef extends Expression {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        if (!super.equals(o)) return false;
+
         DictDef dictDef = (DictDef) o;
         return Arrays.equals(keys, dictDef.keys) &&
                 Arrays.equals(values, dictDef.values);
