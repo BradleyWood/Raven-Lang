@@ -80,7 +80,7 @@ public class QualifiedName extends Expression {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         QualifiedName that = (QualifiedName) o;
-        return toString().toString().equals(that.toString());
+        return toString().equals(that.toString());
     }
 
     @Override
