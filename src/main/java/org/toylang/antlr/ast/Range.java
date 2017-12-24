@@ -7,7 +7,7 @@ import java.util.Objects;
  * and make if extremely simple to define the start and
  * end points of a loop
  */
-public class Range {
+public class Range extends Expression {
 
     private final Expression start;
     private final Expression end;
