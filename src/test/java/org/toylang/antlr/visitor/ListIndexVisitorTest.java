@@ -59,7 +59,7 @@ public class ListIndexVisitorTest {
     }
 
     @Test
-    public void test4DIndicies() {
+    public void test4DIndices() {
         ListIndex listIndex = new ListIndex(new QualifiedName("lst"),
                 new QualifiedName("aKey"), new Literal(new TInt(5)),
                 new Literal(TBoolean.TRUE),
