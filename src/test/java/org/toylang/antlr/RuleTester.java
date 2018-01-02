@@ -9,6 +9,7 @@ import org.toylang.antlr.ast.Expression;
 import org.toylang.antlr.ast.Import;
 import org.toylang.antlr.ast.Range;
 import org.toylang.antlr.ast.Statement;
+import org.toylang.antlr.visitor.ParamDefVisitor;
 import org.toylang.antlr.visitor.ToyFileVisitor;
 
 import static org.junit.Assert.assertEquals;
@@ -62,6 +63,8 @@ public class RuleTester {
             stmt = (Statement) v.visit(parser.importStatement());
         } else if (expected instanceof Expression) {
             stmt = (Statement) v.visit(parser.expression());
+        } else if (v instanceof ParamDefVisitor) {
+            stmt = (Statement) v.visit(parser.paramDef());
         } else {
             stmt = (Statement) v.visit(parser.statement());
         }
