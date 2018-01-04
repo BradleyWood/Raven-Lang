@@ -10,9 +10,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 public class Compiler {
 
@@ -22,13 +20,14 @@ public class Compiler {
     private String name;
     private ToyTree tree;
 
+    private static LinkedList<AnnotationProcessor> processors = new LinkedList<>();
     private static HashMap<String, byte[]> classMap = new HashMap<>();
     private static ArrayList<String> IMPORTS = new ArrayList<>();
 
     private ArrayList<ToyTree> trees = new ArrayList<>();
     private ArrayList<String> classPath;
 
-    public Compiler(String file, String name, ToyTree tree) {
+    public Compiler(String file, String name, ToyTree tree, AnnotationProcessor... annotationProcessors) {
         this.file = new File(file);
         if (tree.getPackage() != null) {
             this.name = tree.getPackage().toString() + "." + name;
@@ -38,6 +37,15 @@ public class Compiler {
         this.tree = tree;
         IMPORTS.add(this.name);
         trees.add(tree);
+        Arrays.stream(annotationProcessors).forEach(this::addAnnotationProcessor);
+    }
+
+    public void addAnnotationProcessor(AnnotationProcessor annotationProcessor) {
+        processors.add(annotationProcessor);
+    }
+
+    public List<AnnotationProcessor> getAnnotationProcessors() {
+        return processors;
     }
 
     public HashMap<String, byte[]> compile() throws IOException {
@@ -115,6 +123,10 @@ public class Compiler {
     }
 
     public HashMap<String, byte[]> compile(boolean save) throws IOException {
+        for (Statement statement : tree.getStatements()) {
+            getAnnotationProcessors().forEach(processors -> processors.process(tree, statement));
+        }
+
         parse();
 
         if (Errors.getErrorCount() > 0) {
