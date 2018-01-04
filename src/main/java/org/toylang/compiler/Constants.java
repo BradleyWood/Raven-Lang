@@ -1,5 +1,6 @@
 package org.toylang.compiler;
 
+import org.toylang.antlr.ast.QualifiedName;
 import org.toylang.core.wrappers.TObject;
 
 import java.util.LinkedList;
@@ -18,6 +19,11 @@ public class Constants {
     public static void addConstant(TObject literal) {
         CONSTANTS.add(literal);
     }
+
+    public static final QualifiedName[] COMMON_IMPORTS = {
+            new QualifiedName("java", "lang", "Math"),
+            new QualifiedName("java", "lang", "System"),
+    };
 
     public static List<TObject> getConstants() {
         return CONSTANTS;

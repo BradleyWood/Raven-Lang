@@ -8,6 +8,7 @@ import org.toylang.antlr.ast.*;
 import org.toylang.core.wrappers.TNull;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -29,6 +30,7 @@ public class ClassMaker {
         this.def = def;
         cw = new ClassWriter(ClassWriter.COMPUTE_FRAMES);
         this.imports = imports;
+        this.imports.addAll(Arrays.asList(Constants.COMMON_IMPORTS));
     }
 
     /**
