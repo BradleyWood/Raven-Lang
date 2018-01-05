@@ -71,7 +71,13 @@ modifier
     :   (PUB|PRIV)
     ;
 annotation
-    :   AT qualifiedName ('(' paramDef (',' paramDef)* ')')?
+    :   AT qualifiedName (annotationParamList)?
+    ;
+annotationParamList
+    :   '(' annotationParam (',' annotationParam)* ')'
+    ;
+annotationParam
+    :   paramDef '=' (literal)
     ;
 annotationDeclaration
     :   AT INTER IDENTIFIER '{' (paramDef (',' paramDef)*)? '}'
