@@ -49,6 +49,10 @@ public class Fun extends Statement {
         this.name = new QualifiedName(name);
     }
 
+    public boolean isJavaMethod() {
+        return javaDesc != null;
+    }
+
     @Override
     public void accept(TreeVisitor visitor) {
         visitor.visitFun(this);
