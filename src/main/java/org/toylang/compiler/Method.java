@@ -812,11 +812,11 @@ public class Method extends MethodVisitor implements TreeVisitor, Opcodes {
         }
     }
 
-    private String getInternalName(Object obj) {
+    protected String getInternalName(Object obj) {
         return Type.getType(obj.getClass()).getInternalName();
     }
 
-    private String getDesc(Object obj) {
+    protected String getDesc(Object obj) {
         return Type.getType(obj.getClass()).getDescriptor();
     }
 
@@ -836,7 +836,7 @@ public class Method extends MethodVisitor implements TreeVisitor, Opcodes {
         return Type.getMethodDescriptor(m);
     }
 
-    private String getDesc(Class<?> c, String methodName, Class... params) {
+    protected String getDesc(Class<?> c, String methodName, Class... params) {
         try {
             return Type.getMethodDescriptor(c.getMethod(methodName, params));
         } catch (NoSuchMethodException e) {
