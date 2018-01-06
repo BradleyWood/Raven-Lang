@@ -4,6 +4,8 @@ import org.toylang.antlr.Modifier;
 import org.toylang.compiler.Constants;
 
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Objects;
 
 public class Fun extends Statement {
@@ -101,7 +103,8 @@ public class Fun extends Statement {
                 Objects.equals(body, fun.body) &&
                 Arrays.equals(modifiers, fun.modifiers) &&
                 Arrays.equals(exceptions, fun.exceptions) &&
-                Arrays.equals(params, fun.params);
+                Arrays.equals(params, fun.params) &&
+                Objects.equals(getAnnotations(), fun.getAnnotations());
     }
 
     @Override
