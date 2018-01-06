@@ -15,6 +15,7 @@ public class Fun extends Statement {
     private final Modifier[] modifiers;
     private final String[] exceptions;
     private VarDecl[] params;
+    private String javaDesc = null;
 
     public Fun(QualifiedName name, Block body, Modifier[] modifiers, String[] exceptions, VarDecl... params) {
         this.name = name;
@@ -26,6 +27,10 @@ public class Fun extends Statement {
 
         if (this.params == null)
             this.params = new VarDecl[0];
+    }
+
+    public void forceDescriptor(String desc) {
+        this.javaDesc = desc;
     }
 
     public QualifiedName getName() {
@@ -71,6 +76,8 @@ public class Fun extends Statement {
     }
 
     public String getDesc() {
+        if (javaDesc != null)
+            return javaDesc;
         StringBuilder desc = new StringBuilder("([Ljava/lang/String;)V");
         if (!getName().toString().equals("main")) {
             desc = new StringBuilder("(");
