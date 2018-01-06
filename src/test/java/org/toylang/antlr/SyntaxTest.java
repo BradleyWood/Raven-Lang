@@ -331,4 +331,40 @@ public class SyntaxTest {
         testSyntax("@interface Id {a,}", false);
         testSyntax("@interface true {}", false);
     }
+
+    @Test
+    public void testAnnotatedMethods() {
+        testSyntax("@JvmMethod(name=\"method\", params=\"int, int, String\", ret=\"int\")" +
+                "fun anAnnotatedMethod(a, b, c) {}", true);
+
+        testSyntax("@SomeAnnotation\n" +
+                "fun anAnnotatedMethod() {}", true);
+
+        testSyntax("@SomeAnnotation()\n" +
+                "fun anAnnotatedMethod() {}", false);
+
+        testSyntax("@SomeAnnotation(a=b+45)\n" +
+                "fun anAnnotatedMethod() {}", false);
+
+        testSyntax("@SomeAnnotation(a=[5,6])\n" +
+                "fun anAnnotatedMethod() {}", false);
+
+        testSyntax("@SomeAnnotation(\"msg\")\n" +
+                "fun anAnnotatedMethod() {}", false);
+
+        testSyntax("@SomeAnnotation(a=,b=5)\n" +
+                "fun anAnnotatedMethod() {}", false);
+
+        testSyntax("@SomeAnnotation(5, 7, 1)\n" +
+                "fun anAnnotatedMethod() {}", false);
+
+        testSyntax("@SomeAnnotation(a, b, c)\n" +
+                "fun anAnnotatedMethod() {}", false);
+
+        testSyntax("@SomeAnnotation(a=b, c=d, d=e)\n" +
+                "fun anAnnotatedMethod() {}", false);
+
+        testSyntax("@SomeAnnotation(a=5, b=\"c\"\n" +
+                "fun anAnnotatedMethod() {}", false);
+    }
 }
