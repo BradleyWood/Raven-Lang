@@ -18,6 +18,8 @@ public class Annotation extends Statement {
         this.name = name;
         this.keys = keys;
         this.values = values;
+        if (keys.length != values.length)
+            throw new IllegalArgumentException("Requires equal number of keys and values");
     }
 
     /**
@@ -44,6 +46,19 @@ public class Annotation extends Statement {
 
     public Literal[] getValues() {
         return values;
+    }
+
+    public Literal get(QualifiedName name) {
+        for (int i = 0; i < keys.length; i++) {
+            if (keys[i].equals(name)) {
+                return values[i];
+            }
+        }
+        return null;
+    }
+
+    public Literal get(String name) {
+        return get(new QualifiedName(name));
     }
 
     @Override
