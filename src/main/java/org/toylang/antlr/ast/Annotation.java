@@ -61,6 +61,17 @@ public class Annotation extends Statement {
         return get(new QualifiedName(name));
     }
 
+    public Literal getOrDefault(QualifiedName name, Literal defaultValue) {
+        Literal val = get(name);
+        if (val != null)
+            return val;
+        return defaultValue;
+    }
+
+    public Literal getOrDefault(String name, Literal defaultValue) {
+        return getOrDefault(new QualifiedName(name), defaultValue);
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
