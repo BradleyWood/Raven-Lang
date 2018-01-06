@@ -267,7 +267,8 @@ public class ClassDef extends Statement {
                 Objects.equals(constructors, classDef.constructors) &&
                 Objects.equals(varParams, classDef.varParams) &&
                 Objects.equals(sourceTree, classDef.sourceTree) &&
-                Objects.equals(methods, classDef.methods);
+                Objects.equals(methods, classDef.methods) &&
+                Objects.equals(getAnnotations(), classDef.getAnnotations());
     }
 
     @Override

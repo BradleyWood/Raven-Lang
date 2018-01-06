@@ -55,7 +55,8 @@ public class VarDecl extends Statement {
         VarDecl decl = (VarDecl) o;
         return Objects.equals(name, decl.name) &&
                 Objects.equals(initialValue, decl.initialValue) &&
-                Arrays.equals(modifiers, decl.modifiers);
+                Arrays.equals(modifiers, decl.modifiers) &&
+                Objects.equals(getAnnotations(), decl.getAnnotations());
     }
 
     @Override

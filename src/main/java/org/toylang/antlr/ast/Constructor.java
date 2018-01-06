@@ -114,7 +114,8 @@ public class Constructor extends Statement {
                 Objects.equals(body, that.body) &&
                 Arrays.equals(modifiers, that.modifiers) &&
                 Arrays.equals(params, that.params) &&
-                Arrays.equals(superParams, that.superParams);
+                Arrays.equals(superParams, that.superParams) &&
+                Objects.equals(getAnnotations(), that.getAnnotations());
     }
 
     @Override
