@@ -602,10 +602,10 @@ public class TObject implements Comparable<TObject> {
             return new TBigInt((BigInteger) o);
         }
         if (o instanceof Integer || o instanceof Long || o instanceof Short || o instanceof Byte) {
-            return new TInt((int) o);
+            return new TInt(((Number) o).intValue());
         }
         if (o instanceof Float || o instanceof Double) {
-            return new TReal((double) o);
+            return new TReal(((Number)o).doubleValue());
         }
         if (o instanceof Boolean) {
             return ((boolean) o) ? TBoolean.TRUE : TBoolean.FALSE;
