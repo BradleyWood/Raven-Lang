@@ -55,6 +55,9 @@ public class JvmMethodAnnotationProcessor implements AnnotationProcessor {
 
     private void updateDesc(Fun fun, String params, String ret) {
         String[] types = params.replace(" ", "").split(",");
+        if (types.length != fun.getParams().length) {
+            Errors.put("adaptor must have same number of params as target");
+        }
 
         StringBuilder builder = new StringBuilder("(");
         for (String type : types) {
@@ -77,6 +80,10 @@ public class JvmMethodAnnotationProcessor implements AnnotationProcessor {
                 return "Z";
             case "byte":
                 return "B";
+            case "float":
+                return "F";
+            case "double":
+                return "D";
             case "String":
                 return "Ljava/lang/String;";
             case "void":
