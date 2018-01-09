@@ -123,7 +123,9 @@ public class Compiler {
     }
 
     public HashMap<String, byte[]> compile(boolean save) throws IOException {
-        for (Statement statement : tree.getStatements()) {
+        int max = tree.getStatements().size();
+        for (int i = 0; i < max; i++) {
+            Statement statement = tree.getStatements().get(i);
             getAnnotationProcessors().forEach(processors -> processors.process(tree, statement));
         }
 

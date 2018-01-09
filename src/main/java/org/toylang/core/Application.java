@@ -6,6 +6,7 @@ import org.toylang.compiler.Errors;
 import org.toylang.antlr.ToyParser;
 import org.toylang.antlr.ToyTree;
 import org.toylang.compiler.Compiler;
+import org.toylang.compiler.JvmMethodAnnotationProcessor;
 import org.toylang.repl.Repl;
 import org.toylang.test.Assert;
 
@@ -208,7 +209,7 @@ public class Application {
                 continue;
             ToyParser parser = new ToyParser(f.getPath());
             ToyTree tree = parser.parse();
-            Compiler compiler = new Compiler(f.getAbsolutePath(), f.getName().replace(".tl", ""), tree);
+            Compiler compiler = new Compiler(f.getAbsolutePath(), f.getName().replace(".tl", ""), tree, new JvmMethodAnnotationProcessor());
             classes.putAll(compiler.compile(save));
 
             if (Errors.getErrorCount() > 0) {

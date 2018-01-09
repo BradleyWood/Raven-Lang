@@ -115,7 +115,14 @@ public class ClassMaker {
         if (fun.getName().toString().equals("main"))
             modifiers += ACC_PUBLIC;
 
-        Method method = new Method(context, cw.visitMethod(modifiers, fun.getName().toString(), desc, null, fun.getExceptions()));
+        Method method;
+
+        if (fun.isJavaMethod()) {
+            method = new AdaptorMethod(context, cw.visitMethod(modifiers, fun.getName().toString(), desc, null, fun.getExceptions()));
+        } else {
+            method = new Method(context, cw.visitMethod(modifiers, fun.getName().toString(), desc, null, fun.getExceptions()));
+        }
+
         fun.getAnnotations().forEach(annotation -> annotation.accept(method));
 
         method.visitCode();
