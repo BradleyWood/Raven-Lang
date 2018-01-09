@@ -7,7 +7,7 @@ import static org.objectweb.asm.Opcodes.*;
 public enum Primitive {
 
     BYTE("byte", "B", "java/lang/Byte", ILOAD, IRETURN, byte.class, Byte.class),
-    SHORT("float", "S", "java/lang/Short", ILOAD, IRETURN, short.class, Short.class),
+    SHORT("short", "S", "java/lang/Short", ILOAD, IRETURN, short.class, Short.class),
     INT("int", "I", "java/lang/Integer", ILOAD, IRETURN, int.class, Integer.class),
     LONG("long", "J", "java/lang/Long", LLOAD, LRETURN, long.class, Long.class),
     FLOAT("float", "F", "java/lang/Float", FLOAD, FRETURN, float.class, Float.class),
