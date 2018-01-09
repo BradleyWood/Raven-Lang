@@ -149,50 +149,19 @@ public class ClassConstructor extends Method {
     }
 
     private void toPrimitive(Class cl) {
-        if (cl.equals(int.class)) {
-            visitTypeInsn(CHECKCAST, "java/lang/Integer");
-            visitMethodInsn(INVOKEVIRTUAL, "java/lang/Integer", "intValue", "()I", false);
-        } else if (cl.equals(double.class)) {
-            visitTypeInsn(CHECKCAST, "java/lang/Double");
-            visitMethodInsn(INVOKEVIRTUAL, "java/lang/Double", "doubleValue", "()D", false);
-        } else if (cl.equals(float.class)) {
-            visitTypeInsn(CHECKCAST, "java/lang/Float");
-            visitMethodInsn(INVOKEVIRTUAL, "java/lang/Float", "floatValue", "()F", false);
-        } else if (cl.equals(byte.class)) {
-            visitTypeInsn(CHECKCAST, "java/lang/Byte");
-            visitMethodInsn(INVOKEVIRTUAL, "java/lang/Byte", "byteValue", "()B", false);
-        } else if (cl.equals(short.class)) {
-            visitTypeInsn(CHECKCAST, "java/lang/Short");
-            visitMethodInsn(INVOKEVIRTUAL, "java/lang/Short", "shortValue", "()S", false);
-        } else if (cl.equals(char.class)) {
-            visitTypeInsn(CHECKCAST, "java/lang/Character");
-            visitMethodInsn(INVOKEVIRTUAL, "java/lang/Character", "charValue", "()C", false);
-        } else if (cl.equals(long.class)) {
-            visitTypeInsn(CHECKCAST, "java/lang/Long");
-            visitMethodInsn(INVOKEVIRTUAL, "java/lang/Long", "longValue", "()J", false);
-        } else if (cl.equals(boolean.class)) {
-            visitTypeInsn(CHECKCAST, "java/lang/Boolean");
-            visitMethodInsn(INVOKEVIRTUAL, "java/lang/Boolean", "booleanValue", "()Z", false);
+        Primitive primitive = Primitive.getPrimitiveType(cl);
+
+        if (primitive != null) {
+            primitive.unwrap(this);
+        } else {
+            Errors.put("Class " + cl + " does not represent a primitive type");
         }
     }
 
     private void putType(Class c) {
-        if (c.equals(int.class)) {
-            visitFieldInsn(GETSTATIC, "java/lang/Integer", "TYPE", "Ljava/lang/Class;");
-        } else if (c.equals(double.class)) {
-            visitFieldInsn(GETSTATIC, "java/lang/Double", "TYPE", "Ljava/lang/Class;");
-        } else if (c.equals(float.class)) {
-            visitFieldInsn(GETSTATIC, "java/lang/Float", "TYPE", "Ljava/lang/Class;");
-        } else if (c.equals(byte.class)) {
-            visitFieldInsn(GETSTATIC, "java/lang/Byte", "TYPE", "Ljava/lang/Class;");
-        } else if (c.equals(boolean.class)) {
-            visitFieldInsn(GETSTATIC, "java/lang/Boolean", "TYPE", "Ljava/lang/Class;");
-        } else if (c.equals(char.class)) {
-            visitFieldInsn(GETSTATIC, "java/lang/Character", "TYPE", "Ljava/lang/Class;");
-        } else if (c.equals(short.class)) {
-            visitFieldInsn(GETSTATIC, "java/lang/Short", "TYPE", "Ljava/lang/Class;");
-        } else if (c.equals(long.class)) {
-            visitFieldInsn(GETSTATIC, "java/lang/Long", "TYPE", "Ljava/lang/Class;");
+        Primitive type = Primitive.getPrimitiveType(c);
+        if (type != null) {
+            type.putPrimitiveType(this);
         } else {
             visitLdcInsn(Type.getType(c));
         }
