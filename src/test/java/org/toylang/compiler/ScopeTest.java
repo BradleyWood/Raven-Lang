@@ -75,6 +75,7 @@ public class ScopeTest {
 
     @Test
     public void testVarOverload() {
+        Errors.reset();
         scope.clear();
         scope.beginScope();
 
