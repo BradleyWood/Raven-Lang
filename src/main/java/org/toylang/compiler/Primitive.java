@@ -6,26 +6,31 @@ import static org.objectweb.asm.Opcodes.*;
 
 public enum Primitive {
 
-    BYTE("byte", "B", "java/lang/Byte", byte.class, Byte.class),
-    SHORT("float", "S", "java/lang/Short", short.class, Short.class),
-    INT("int", "I", "java/lang/Integer", int.class, Integer.class),
-    LONG("long", "J", "java/lang/Long", long.class, Long.class),
-    FLOAT("float", "F", "java/lang/Float", float.class, Float.class),
-    DOUBLE("double", "D", "java/lang/Double", double.class, Double.class),
-    CHAR("char", "C", "java/lang/Character", char.class, Character.class),
-    BOOLEAN("boolean", "Z", "java/lang/Boolean", boolean.class, Boolean.class),
-    VOID("void", "V", "java/lang/Void", void.class, Void.class);
+    BYTE("byte", "B", "java/lang/Byte", ILOAD, IRETURN, byte.class, Byte.class),
+    SHORT("float", "S", "java/lang/Short", ILOAD, IRETURN, short.class, Short.class),
+    INT("int", "I", "java/lang/Integer", ILOAD, IRETURN, int.class, Integer.class),
+    LONG("long", "J", "java/lang/Long", LLOAD, LRETURN, long.class, Long.class),
+    FLOAT("float", "F", "java/lang/Float", FLOAD, FRETURN, float.class, Float.class),
+    DOUBLE("double", "D", "java/lang/Double", DLOAD, DRETURN, double.class, Double.class),
+    CHAR("char", "C", "java/lang/Character", ILOAD, IRETURN, char.class, Character.class),
+    BOOLEAN("boolean", "Z", "java/lang/Boolean", ILOAD, IRETURN, boolean.class, Boolean.class),
+    VOID("void", "V", "java/lang/Void", RETURN, 0, void.class, Void.class);
 
-    private String name;
-    private String desc;
-    private String wrapper;
-    private Class<?>[] classes;
+    private final String name;
+    private final String desc;
+    private final String wrapper;
+    private final int loadInstruction;
+    private final int retInstruction;
+    private final Class<?>[] classes;
 
-    Primitive(final String name, final String desc, final String wrapper, Class<?>... classes) {
+    Primitive(final String name, final String desc, final String wrapper,
+              final int loadInstruction, final int retInstruction, final Class<?>... classes) {
         this.name = name;
         this.desc = desc;
         this.wrapper = wrapper;
         this.classes = classes;
+        this.loadInstruction = loadInstruction;
+        this.retInstruction = retInstruction;
     }
 
     /**
@@ -40,6 +45,7 @@ public enum Primitive {
 
     /**
      * Wrap the primitive
+     *
      * @param mv
      */
     public void wrap(MethodVisitor mv) {
@@ -48,6 +54,7 @@ public enum Primitive {
 
     /**
      * Gets the type for this primitive and puts in on the stack
+     *
      * @param mv
      */
     public void putPrimitiveType(MethodVisitor mv) {
@@ -55,7 +62,25 @@ public enum Primitive {
     }
 
     /**
+     * Return from the method with the correct instruction
      *
+     * @param mv
+     */
+    public void ret(MethodVisitor mv) {
+        mv.visitInsn(retInstruction);
+    }
+
+    /**
+     * Put the primitive at local idx onto the stack
+     *
+     * @param mv
+     * @param idx
+     */
+    public void load(MethodVisitor mv, int idx) {
+        mv.visitVarInsn(loadInstruction, idx);
+    }
+
+    /**
      * @return The internal name for the wrapped type
      */
     public String getInternalName() {
