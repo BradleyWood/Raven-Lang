@@ -4,7 +4,6 @@ import org.toylang.core.Hidden;
 
 import java.lang.reflect.Array;
 import java.util.*;
-import java.util.regex.Pattern;
 
 public class TList extends TObject implements List {
 

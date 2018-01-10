@@ -3,7 +3,6 @@ package org.toylang.antlr.ast;
 import org.objectweb.asm.Type;
 import org.toylang.antlr.Modifier;
 import org.toylang.antlr.Operator;
-import org.toylang.core.wrappers.TNull;
 import org.toylang.core.wrappers.TObject;
 
 import java.util.Arrays;

@@ -41,7 +41,6 @@ public class MethodDeclVisitor extends ToyLangBaseVisitor<Fun> {
         }
 
         Fun fun = new Fun(name, body, modArray, new String[0], params.toArray(new VarDecl[params.size()]));
-        ;
 
         if (ctx.annotation() != null) {
             for (ToyLangParser.AnnotationContext annotationContext : ctx.annotation()) {

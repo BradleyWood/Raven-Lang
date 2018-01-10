@@ -7,7 +7,6 @@ import org.toylang.antlr.ast.Fun;
 import org.toylang.antlr.ast.Statement;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class ToyFileVisitor extends ToyLangBaseVisitor<ToyTree> {
 

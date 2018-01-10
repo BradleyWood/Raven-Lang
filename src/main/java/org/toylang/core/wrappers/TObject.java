@@ -2,7 +2,6 @@ package org.toylang.core.wrappers;
 
 import org.toylang.core.Hidden;
 
-import java.io.BufferedInputStream;
 import java.lang.invoke.MethodType;
 import java.lang.reflect.*;
 import java.math.BigInteger;

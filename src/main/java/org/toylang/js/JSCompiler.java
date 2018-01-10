@@ -158,10 +158,14 @@ public class JSCompiler implements TreeVisitor {
             putSpaces(1);
             line.append("else");
             putSpaces(1);
+            if (ifStatement.getElse() instanceof Block)
+                line.append('{');
             newLine(ifStatement);
             beginIndent();
             ifStatement.getElse().accept(this);
             endIndent();
+            if (ifStatement.getElse() instanceof Block)
+                line.append('}');
         }
         newLine(ifStatement);
     }

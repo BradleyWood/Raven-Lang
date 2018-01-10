@@ -4,8 +4,6 @@ import org.toylang.antlr.Modifier;
 import org.toylang.compiler.Constants;
 
 import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.Objects;
 
 public class Fun extends Statement {
