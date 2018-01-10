@@ -78,6 +78,10 @@ public fun hash(obj) {
     return obj.hashCode();
 }
 
+public fun exit(code) {
+    System.exit(code);
+}
+
 public fun reverse(lst) {
     if (type(lst) != TList.TYPE) {
         return error("Illegal arguments of type: " + type(lst) + " expected: " + TList.TYPE);
