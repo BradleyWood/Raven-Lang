@@ -100,10 +100,7 @@ public class ClassDef extends Statement {
     public boolean hasTlSuper() {
         try {
             Class c = Class.forName(getSuper().toString());
-            if (c.getAnnotation(TLFile.class) != null) {
-                return true;
-            }
-            return false;
+            return c.getAnnotation(TLFile.class) != null;
         } catch (ClassNotFoundException e) {
             return true;
         }
