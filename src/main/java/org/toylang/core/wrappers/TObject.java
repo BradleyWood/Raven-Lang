@@ -321,8 +321,8 @@ public class TObject implements Comparable<TObject> {
             if (names.length == 0)
                 names = new String[]{name};
 
-            for (int i = 0; i < names.length; i++) {
-                Field f = obj.getClass().getField(names[i]);
+            for (String name1 : names) {
+                Field f = obj.getClass().getField(name1);
                 if (f.getAnnotationsByType(Hidden.class) != null) {
                     f.setAccessible(true);
                     obj = f.get(obj);

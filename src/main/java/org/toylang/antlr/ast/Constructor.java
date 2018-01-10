@@ -48,9 +48,9 @@ public class Constructor extends Statement {
         this.modifiers = new Modifier[]{Modifier.PUBLIC};
         this.body = null;
         LinkedList<VarDecl> p = new LinkedList<>();
-        for (int i = 0; i < params.length; i++) {
-            if (params[i] instanceof QualifiedName) {
-                p.add(new VarDecl((QualifiedName) params[i], null, null));
+        for (Expression param : params) {
+            if (param instanceof QualifiedName) {
+                p.add(new VarDecl((QualifiedName) param, null, null));
             }
         }
         this.params = p.toArray(new VarDecl[p.size()]);

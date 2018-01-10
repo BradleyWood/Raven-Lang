@@ -230,7 +230,7 @@ public class Method extends MethodVisitor implements TreeVisitor, Opcodes {
 
     private String getFunDescriptor(Expression[] params) {
         StringBuilder sig = new StringBuilder("(");
-        for (int i = 0; i < params.length; i++) {
+        for (Expression ignored : params) {
             sig.append(Constants.TOBJ_SIG);
         }
         sig.append(")" + Constants.TOBJ_SIG);

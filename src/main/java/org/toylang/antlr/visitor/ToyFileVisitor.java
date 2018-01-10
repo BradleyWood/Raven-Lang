@@ -33,7 +33,7 @@ public class ToyFileVisitor extends ToyLangBaseVisitor<ToyTree> {
                     statements.add(s);
             }
         });
-        functions.forEach(func -> statements.add(func));
+        statements.addAll(functions);
         return tree;
     }
 }
