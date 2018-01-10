@@ -62,7 +62,7 @@ public class TDict extends TObject implements Map<TObject, TObject> {
 
     @Override
     public boolean containsValue(Object value) {
-        return containsValue(value);
+        return map.containsValue(value);
     }
 
     @Override
