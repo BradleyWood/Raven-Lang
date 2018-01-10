@@ -12,8 +12,7 @@ public class ParamDefVisitor extends ToyLangBaseVisitor<VarDecl> {
 
     @Override
     public VarDecl visitParamDef(ToyLangParser.ParamDefContext ctx) {
-        VarDecl decl = new VarDecl(new QualifiedName(ctx.IDENTIFIER().getText()), null);
-        return decl;
+        return new VarDecl(new QualifiedName(ctx.IDENTIFIER().getText()), null);
     }
 
     public static final ParamDefVisitor INSTANCE = new ParamDefVisitor();
