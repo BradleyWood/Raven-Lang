@@ -20,12 +20,13 @@ public enum Modifier {
     }
 
     public static Modifier getModifier(String name) {
-        if (name.equals("public")) {
-            return PUBLIC;
-        } else if (name.equals("private")) {
-            return PRIVATE;
-        } else if (name.equals("open")) {
-            return OPEN;
+        switch (name) {
+            case "public":
+                return PUBLIC;
+            case "private":
+                return PRIVATE;
+            case "open":
+                return OPEN;
         }
         return null;
     }

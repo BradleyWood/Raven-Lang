@@ -44,9 +44,7 @@ public class QualifiedName extends Expression {
      */
     public QualifiedName add(String name) {
         String[] sa = new String[names.length + 1];
-        for (int i = 0; i < names.length; i++) {
-            sa[i] = names[i];
-        }
+        System.arraycopy(names, 0, sa, 0, names.length);
         sa[names.length] = name;
         return new QualifiedName(sa);
     }

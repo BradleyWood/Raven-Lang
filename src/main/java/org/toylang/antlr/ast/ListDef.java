@@ -29,9 +29,9 @@ public class ListDef extends Expression {
 
     @Override
     public String toString() {
-        String str = "[ ";
+        StringBuilder str = new StringBuilder("[ ");
         for (Expression expression : expressions) {
-            str += expression.toString() + " ";
+            str.append(expression.toString()).append(" ");
         }
         return str + "]";
     }
