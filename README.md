@@ -185,6 +185,7 @@ public class scripts/test/HelloWorld {
  11. <b>sum(list) : Adds the contents of a list</br> <br>
  12. <b>reverse(list) : Reverse the order of a list</br> <br>
  13. <b>hash(var) : Returns the hash of the var </br>
+ 14. <b>exit(status) : terminate virtual machine
 
 ### In Progress
 
