@@ -21,26 +21,32 @@ public class AdaptorMethod extends Method {
 
         Type ret = Type.getReturnType(fun.getDesc());
         Type[] paramTypes = Type.getArgumentTypes(fun.getDesc());
+        Primitive[] primitives = new Primitive[paramTypes.length];
 
         scope.beginScope();
 
-        for (VarDecl varDecl : fun.getParams()) {
-            scope.putVar(varDecl.getName().toString());
-        }
-
         int i = 0;
         for (VarDecl varDecl : fun.getParams()) {
-            Primitive p = Primitive.getPrimitiveType(paramTypes[i].getDescriptor());
+            scope.putVar(varDecl.getName().toString());
+            primitives[i] = Primitive.getPrimitiveType(paramTypes[i].getDescriptor());
+            if (primitives[i] == Primitive.DOUBLE || primitives[i] == Primitive.LONG) {
+                scope.putVar(varDecl.getName().toString() + "_2");
+                // need extra 4 bytes for long or double
+            }
+            i++;
+        }
 
+        i = 0;
+        for (VarDecl varDecl : fun.getParams()) {
             String var_ = varDecl.getName().toString() + "_";
-            c.getParams()[i++] = new QualifiedName(var_);
+            c.getParams()[i] = new QualifiedName(var_);
 
-            if (p != null) {
+            if (primitives[i] != null) {
                 int idx = scope.findVar(varDecl.getName().toString());
                 if (idx < 0)
                     Errors.put("Could not find local var with name: " + varDecl.getName().toString());
-                p.load(this, idx);
-                p.wrap(this);
+                primitives[i].load(this, idx);
+                primitives[i].wrap(this);
             } else {
                 visitName(varDecl.getName());
             }
@@ -48,6 +54,7 @@ public class AdaptorMethod extends Method {
 
             scope.putVar(var_);
             visitVarInsn(ASTORE, scope.findVar(var_));
+            i++;
         }
 
         super.visitFunCall(c);
