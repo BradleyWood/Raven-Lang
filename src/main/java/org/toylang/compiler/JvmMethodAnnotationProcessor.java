@@ -55,6 +55,8 @@ public class JvmMethodAnnotationProcessor implements AnnotationProcessor {
 
     private void updateDesc(Fun fun, String params, String ret) {
         String[] types = params.replace(" ", "").split(",");
+        if (params.length() == 0)
+            types = new String[0];
         if (types.length != fun.getParams().length) {
             Errors.put("adaptor must have same number of params as target");
         }
