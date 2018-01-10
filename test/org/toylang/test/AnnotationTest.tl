@@ -13,6 +13,9 @@ public fun sumTl(a, b, c, d) {
 }
 
 @JvmMethod(name="jAve", params="int, int, int, int", ret="int")
+@JvmMethod(name="jAve", params="short, short, short, short", ret="short")
+@JvmMethod(name="jAve", params="long, long, long, long", ret="long")
+@JvmMethod(name="jAve", params="double, double, double, double", ret="double")
 public fun ave(a, b, c, d) {
     return (a + b + c + d) / 4;
 }
