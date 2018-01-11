@@ -2,7 +2,6 @@ package org.toylang.antlr.visitor;
 
 import org.junit.Test;
 import org.toylang.antlr.ast.Call;
-import org.toylang.antlr.ast.Expression;
 import org.toylang.antlr.ast.Literal;
 import org.toylang.antlr.ast.QualifiedName;
 import org.toylang.core.wrappers.TBoolean;

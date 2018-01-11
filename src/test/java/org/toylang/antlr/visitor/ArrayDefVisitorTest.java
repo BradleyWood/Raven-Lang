@@ -11,8 +11,6 @@ import org.toylang.core.wrappers.TInt;
 import org.toylang.core.wrappers.TReal;
 import org.toylang.core.wrappers.TString;
 
-import static org.junit.Assert.*;
-
 import static org.toylang.antlr.RuleTester.testStatement;
 
 public class ArrayDefVisitorTest {
