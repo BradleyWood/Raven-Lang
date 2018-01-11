@@ -3,10 +3,10 @@ package org.toylang.core;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
-@Retention(RetentionPolicy.RUNTIME)
 /**
  * Blocks reflective invocation
  */
+@Retention(RetentionPolicy.RUNTIME)
 public @interface Hidden {
 
 }
