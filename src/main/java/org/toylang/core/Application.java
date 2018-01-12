@@ -81,38 +81,46 @@ public class Application {
                 compile(values[0], false);
             } else if (build) {
                 String[] buildOptions = cmd.getOptionValues("b");
-                HashMap<String, byte[]> classes = compile(buildOptions[0], false);
-                if (Errors.getErrorCount() > 0) {
-                    return;
-                }
-                String mainClass = null;
-                for (String s : classes.keySet()) {
-                    if (buildOptions[0].replace("/", "\\").endsWith(s.replace(".", "\\") + ".tl")) {
-                        mainClass = s;
-                    }
-                }
-                if (mainClass == null) {
-                    System.err.println("Could not determine main class.");
-                    return;
-                }
-                boolean b = AppBuilder.build(classes, mainClass, buildOptions[1]);
-                if (!b) {
-                    System.err.println("Failed to build executable jarfile");
-                }
+                build(buildOptions);
             } else if (run) {
                 String[] values = cmd.getOptionValues("r");
                 compileAndRun(values[0], cmd.getOptionValues("args"));
             } else if (REPL) {
-                Repl REPL = new Repl();
-                Scanner scanner = new Scanner(System.in);
-                while (true) {
-                    REPL.exec(scanner.nextLine() + ";");
-                }
+                repl();
             }
         } catch (ParseException e) {
             cmdError(options);
         } catch (IOException | InvocationTargetException | IllegalAccessException | NoSuchMethodException | ClassNotFoundException e) {
             e.printStackTrace();
+        }
+    }
+
+    private static void repl() {
+        Repl REPL = new Repl();
+        Scanner scanner = new Scanner(System.in);
+        while (true) {
+            REPL.exec(scanner.nextLine() + ";");
+        }
+    }
+
+    private static void build(String[] buildOptions) throws IOException {
+        HashMap<String, byte[]> classes = compile(buildOptions[0], false);
+        if (Errors.getErrorCount() > 0) {
+            return;
+        }
+        String mainClass = null;
+        for (String s : classes.keySet()) {
+            if (buildOptions[0].replace("/", "\\").endsWith(s.replace(".", "\\") + ".tl")) {
+                mainClass = s;
+            }
+        }
+        if (mainClass == null) {
+            System.err.println("Could not determine main class.");
+            return;
+        }
+        boolean b = AppBuilder.build(classes, mainClass, buildOptions[1]);
+        if (!b) {
+            System.err.println("Failed to build executable jarfile");
         }
     }
 
@@ -130,7 +138,7 @@ public class Application {
         return c == 1;
     }
 
-    public static void compileAndTest(String path) throws IOException, ClassNotFoundException {
+    private static void compileAndTest(String path) throws IOException, ClassNotFoundException {
         path = path.replace("/", "\\");
 
         HashMap<String, byte[]> classes = compile(path, true);
@@ -187,7 +195,7 @@ public class Application {
         }
     }
 
-    public static HashMap<String, byte[]> compile(String path, boolean save) throws IOException {
+    private static HashMap<String, byte[]> compile(String path, boolean save) throws IOException {
         File file = new File(path);
         if (!file.isAbsolute())
             file = new File(new File(".").getCanonicalPath(), path);
