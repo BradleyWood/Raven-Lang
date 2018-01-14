@@ -2,8 +2,12 @@ package org.toylang.antlr.ast;
 
 import org.toylang.antlr.Modifier;
 import org.toylang.compiler.Constants;
+import org.toylang.core.wrappers.TObject;
 
+import java.lang.reflect.Method;
 import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Objects;
 
 public class Fun extends Statement {
@@ -123,5 +127,38 @@ public class Fun extends Statement {
         result = 31 * result + Arrays.hashCode(exceptions);
         result = 31 * result + Arrays.hashCode(params);
         return result;
+    }
+
+    public static Fun valueOf(Method method) {
+        List<Modifier> modifierList = new LinkedList<>();
+        int modifiers = method.getModifiers();
+        if (java.lang.reflect.Modifier.isStatic(modifiers)) {
+            modifierList.add(Modifier.STATIC);
+        }
+        if (java.lang.reflect.Modifier.isPublic(modifiers)) {
+            modifierList.add(Modifier.PUBLIC);
+        }
+        if (java.lang.reflect.Modifier.isPrivate(modifiers)) {
+            modifierList.add(Modifier.PRIVATE);
+        }
+        String[] exceptions = new String[method.getExceptionTypes().length];
+
+        for (int i = 0; i < method.getExceptionTypes().length; i++) {
+            exceptions[i] = method.getExceptionTypes()[i].getName().replace(".", "/");
+        }
+
+        VarDecl[] params = new VarDecl[method.getParameterCount()];
+
+        Fun fun = new Fun(QualifiedName.valueOf(method.getName()), new Block(),
+                modifierList.toArray(new Modifier[modifierList.size()]), exceptions, params);
+        int i = 0;
+        for (Class<?> paramType : method.getParameterTypes()) {
+            if (!paramType.equals(TObject.class)) {
+                fun.forceDescriptor("");
+            }
+            params[i++] = new VarDecl(QualifiedName.valueOf(String.valueOf(i)), null);
+        }
+
+        return fun;
     }
 }
