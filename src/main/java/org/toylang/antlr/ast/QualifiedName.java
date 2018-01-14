@@ -85,4 +85,8 @@ public class QualifiedName extends Expression {
     public int hashCode() {
         return toString().hashCode();
     }
+
+    public QualifiedName valueOf(String str) {
+        return new QualifiedName(str.split("\\."));
+    }
 }
