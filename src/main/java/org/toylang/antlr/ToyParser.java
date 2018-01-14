@@ -30,7 +30,6 @@ public class ToyParser {
         ToyTree tree = fileVisitor.visit(parser.toyFile());
         String name = new File(file).getName();
         tree.setName(name.replaceAll(".tl", ""));
-        new Mapper(tree).map();
         return tree;
     }
 }
