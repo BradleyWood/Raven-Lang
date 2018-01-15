@@ -39,8 +39,7 @@ public class Repl {
             Class<?> cl = build(line);
             if (cl != null) {
                 parent = cl;
-                Object o = cl.newInstance();
-                cl.getDeclaredMethod("exec").invoke(o);
+                cl.getDeclaredMethod("exec").invoke(null);
             }
         } catch (Throwable e) {
             if (debug) {
@@ -59,7 +58,7 @@ public class Repl {
             return null;
         }
 
-        LinkedList<VarDecl> staticVars = new LinkedList<>();
+        LinkedList<VarDecl> variables = new LinkedList<>();
         LinkedList<Fun> functions = new LinkedList<>();
         LinkedList<Statement> statements = new LinkedList<>();
 
@@ -69,8 +68,9 @@ public class Repl {
                     imports.add((Import) statement);
             } else if (statement instanceof VarDecl) {
                 VarDecl decl = (VarDecl) statement;
-                decl.setModifiers(Modifier.PUBLIC);
-                staticVars.add(decl);
+                decl.addModifier(Modifier.PUBLIC);
+                decl.addModifier(Modifier.STATIC);
+                variables.add(decl);
                 statements.add(new BinOp(decl.getName(), Operator.ASSIGNMENT, decl.getInitialValue()));
             } else if (statement instanceof Fun) {
                 functions.add((Fun) statement);
@@ -90,13 +90,12 @@ public class Repl {
                 new QualifiedName[0], new ArrayList<>());
 
         ClassMaker maker = new ClassMaker(def, imports.stream().map(Import::getName).collect(Collectors.toList()));
-        staticVars.forEach(maker::addStaticFields);
-        def.getMethods().add(createExec(statements));
+        def.getStatements().addAll(variables);
+        def.getStatements().addAll(functions);
+        def.getStatements().add(createExec(statements));
 
-        functions.forEach(maker::addStaticMethods);
-
-        Fun clinit = new Fun(new QualifiedName("<clinit>"), new Block(), null, null);
-        maker.addStaticMethods(clinit);
+        Fun clinit = new Fun(new QualifiedName("<clinit>"), new Block(), new Modifier[]{Modifier.STATIC}, null);
+        def.getStatements().add(clinit);
 
         maker.make();
         byte[] bytes = maker.getBytes();
@@ -119,7 +118,7 @@ public class Repl {
 
     private static Fun createExec(List<Statement> statements) {
         return new Fun(new QualifiedName("exec"),
-                new Block(statements.toArray(new Statement[statements.size()])), new Modifier[]{Modifier.PUBLIC}, new String[0]);
+                new Block(statements.toArray(new Statement[statements.size()])), new Modifier[]{Modifier.PUBLIC, Modifier.STATIC}, new String[0]);
     }
 
     public void setDebug(boolean debug) {
