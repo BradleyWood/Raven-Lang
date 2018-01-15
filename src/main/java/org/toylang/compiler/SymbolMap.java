@@ -1,93 +1,93 @@
 package org.toylang.compiler;
 
-import org.toylang.antlr.ast.ClassDef;
-import org.toylang.antlr.ast.Fun;
-import org.toylang.antlr.ast.VarDecl;
+import org.toylang.antlr.Modifier;
+import org.toylang.antlr.ast.*;
+import org.toylang.core.wrappers.TObject;
 
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+import java.util.*;
 
 public class SymbolMap {
 
-    public static HashMap<String, VarDecl> VARIABLE_MAP = new HashMap<>();
-    public static HashMap<String, Fun> FUN_MAP = new HashMap<>();
-    public static HashMap<String, List<Fun>> LOCAL_FUNCTIONS = new HashMap<>();
     public static HashMap<String, ClassDef> CLASS_MAP = new HashMap<>();
 
-    public static VarDecl resolveVar(String file, String name) {
-        String QName = file + "." + name;
-        if (QName.contains("/")) {
-            QName = QName.replaceAll("/", ".");
-        }
-        for (String s : VARIABLE_MAP.keySet()) {
-            if (s.equals(QName)) {
-                return VARIABLE_MAP.get(s);
-            }
-        }
-        return null;
-    }
-
-    private static String getName(String file, String name) {
-        String QName = file + "." + name;
-        if (QName.contains("/")) {
-            QName = QName.replaceAll("/", ".");
-        }
-        return QName;
-    }
-
-    public static Fun resolveFun(String callingClass, String funOwner, String name, int paramCount) {
-        if (funOwner.equals(callingClass)) {
-            for (String s : LOCAL_FUNCTIONS.keySet()) {
-                if (s.equals(callingClass + "." + name)) {
-                    for (Fun fun : LOCAL_FUNCTIONS.get(s)) {
-                        if (fun.getName().toString().equals(name)) {
-                            return fun;
+    public static VarDecl resolveField(String callingClass, String funOwner, String name) {
+        ClassDef def = CLASS_MAP.get(funOwner);
+        if (def != null) {
+            for (VarDecl field : def.getFields()) {
+                if (name.equals(field.getName().toString())) {
+                    for (Modifier modifier : field.getModifiers()) {
+                        if (modifier.equals(Modifier.PRIVATE) && !callingClass.equals(funOwner)) {
+                            return null;
                         }
                     }
+                    return field;
                 }
             }
         }
-        return resolveFun(funOwner, name, paramCount);
+        return null;
     }
 
-    public static Fun resolveFun(String file, String name) {
-        String QName = getName(file, name);
-        for (String s : FUN_MAP.keySet()) {
-            if (s.equals(QName)) {
-                return FUN_MAP.get(s);
+    public static Fun resolveFun(String callingClass, String funOwner, String name, int paramCount) {
+        ClassDef def = CLASS_MAP.get(funOwner);
+        if (def != null) {
+            for (Fun fun : def.getMethods()) {
+                if (fun.getParams().length == paramCount && name.equals(fun.getName().toString())) {
+                    for (Modifier modifier : fun.getModifiers()) {
+                        if (modifier.equals(Modifier.PRIVATE) && !callingClass.equals(funOwner))
+                            return null;
+                    }
+                    return fun;
+                }
             }
         }
         return null;
     }
 
-    public static Fun resolveFun(String file, String name, int numParams) {
-        String QName = getName(file, name);
-        for (String s : FUN_MAP.keySet()) {
-            Fun f = FUN_MAP.get(s);
-            if (s.equals(QName) && f.getParams().length == numParams) {
-                return f;
-            }
-        }
-        return null;
+    public static void map(ClassDef def) {
+        CLASS_MAP.put(def.getFullName(), def);
     }
 
-    public static ClassDef resolveClass(String file, String name) {
-        String QName = getName(file, name);
-        for (String s : CLASS_MAP.keySet()) {
-            if (s.equals(QName)) {
-                return CLASS_MAP.get(s);
-            }
+    public static void map(Class<?> clazz) {
+        QualifiedName[] interfaces = new QualifiedName[clazz.getInterfaces().length];
+        for (int i = 0; i < clazz.getInterfaces().length; i++) {
+            interfaces[i] = QualifiedName.valueOf(clazz.getInterfaces()[i].getName());
         }
-        return null;
+        Inheritance inh = new Inheritance(QualifiedName.valueOf(clazz.getSuperclass().getName()),
+                new Expression[0], interfaces);
+        List<Statement> statements = new ArrayList<>();
+        ClassDef def = new ClassDef(new Modifier[0], clazz.getName(), inh, statements);
+
+        for (Field field : clazz.getDeclaredFields()) {
+            Modifier[] modifiers = new Modifier[0];
+            if (java.lang.reflect.Modifier.isPublic(field.getModifiers()))
+                modifiers = new Modifier[]{Modifier.PUBLIC};
+            if (java.lang.reflect.Modifier.isPrivate(field.getModifiers()))
+                modifiers = new Modifier[]{Modifier.PRIVATE};
+            VarDecl decl = new VarDecl(QualifiedName.valueOf(field.getName()), null, modifiers);
+            boolean isJavaField = !field.getType().equals(TObject.class);
+            decl.setJavaField(isJavaField);
+            statements.add(decl);
+        }
+
+        for (Method method : clazz.getDeclaredMethods()) {
+            statements.add(Fun.valueOf(method));
+        }
+
+        CLASS_MAP.put(clazz.getName().replace(".", "/"), def);
     }
 
-    public static void addLocalFun(String owner, Fun fun) {
-        if (LOCAL_FUNCTIONS.containsKey(owner)) {
-            LOCAL_FUNCTIONS.get(owner).add(fun);
-        } else {
-            LOCAL_FUNCTIONS.put(owner, new LinkedList<>());
-            addLocalFun(owner, fun);
+    public static void output() {
+        for (Map.Entry<String, ClassDef> stringClassDefEntry : CLASS_MAP.entrySet()) {
+            System.out.println("-----CLASS: " + stringClassDefEntry.getKey() + " ------");
+            ClassDef def = stringClassDefEntry.getValue();
+            for (VarDecl varDecl : def.getFields()) {
+                System.out.println("Field: " + varDecl.getName());
+            }
+            for (Fun fun : def.getMethods()) {
+                System.out.println("Method: " + fun.getName().toString() + " paramsCount=" + fun.getParams().length);
+            }
         }
     }
 }

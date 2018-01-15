@@ -23,8 +23,6 @@ public class ClassMaker {
     private final ClassDef def;
 
     private final List<QualifiedName> imports;
-    private final List<VarDecl> staticVariables = new ArrayList<>();
-    private final List<Fun> staticFunctions = new ArrayList<>();
 
     public ClassMaker(ClassDef def, List<QualifiedName> imports) {
         this.def = def;
@@ -65,31 +63,23 @@ public class ClassMaker {
         cw.visitSource(def.getName().toString() + ".tl", null);
 
         cw.visitField(ACC_PRIVATE + ACC_STATIC + ACC_FINAL, "__CONSTANTS__", "[" + Constants.TOBJ_SIG, null, null);
-        for (VarDecl staticVariable : staticVariables) {
-            defineField(staticVariable.getName().toString(), ACC_STATIC + staticVariable.modifiers());
+        for (VarDecl staticVariable : def.getFields()) {
+            defineField(staticVariable.getName().toString(), staticVariable.modifiers());
         }
 
-        for (Statement statement : def.getFields()) {
-            VarDecl decl = (VarDecl) statement;
-            defineField(decl.getName().toString(), decl.modifiers());
-        }
         List<Constructor> constructors = def.getConstructors();
 
         if (constructors.size() == 0)
             putDefaultConstructor();
 
-        MethodContext classCtx = new MethodContext(def.getFullName(), "<init>", imports, staticVariables, staticFunctions, def);
+        MethodContext classCtx = new MethodContext(def.getFullName(), "<init>", imports, def);
         for (Constructor constructor : constructors) {
             defineConstructor(classCtx, constructor);
         }
         for (Fun fun : def.getMethods()) {
             classCtx.setName(fun.getName().toString());
+            classCtx.setStatic(fun.hasModifier(Modifier.STATIC));
             defineMethod(classCtx, fun, fun.modifiers());
-        }
-        MethodContext staticContext = new MethodContext(def.getFullName(), null, imports, staticVariables, staticFunctions);
-        for (Fun staticFun : staticFunctions) {
-            staticContext.setName(staticFun.getName().toString());
-            defineMethod(staticContext, staticFun, ACC_STATIC + staticFun.modifiers());
         }
         Constants.clear();
     }
@@ -153,14 +143,6 @@ public class ClassMaker {
         method.visitInsn(RETURN);
         method.visitMaxs(0, 0);
         method.visitEnd();
-    }
-
-    public void addStaticFields(VarDecl decl) {
-        staticVariables.add(decl);
-    }
-
-    public void addStaticMethods(Fun fun) {
-        staticFunctions.add(fun);
     }
 
     public byte[] getBytes() {

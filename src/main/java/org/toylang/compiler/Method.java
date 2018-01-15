@@ -1,6 +1,7 @@
 package org.toylang.compiler;
 
 import org.objectweb.asm.*;
+import org.toylang.antlr.Modifier;
 import org.toylang.antlr.Operator;
 import org.toylang.antlr.ast.*;
 import org.toylang.core.*;
@@ -363,7 +364,7 @@ public class Method extends MethodVisitor implements TreeVisitor, Opcodes {
     private void resolveStaticFun(String funOwner, String funName, String desc, Expression[] params) {
         Fun f = SymbolMap.resolveFun(ctx.getOwner(), funOwner, funName, params.length);
         // if the function can be resolved, it is a tl function
-        if (f != null) {
+        if (f != null && !f.isJavaMethod()) {
             invokeStaticMethod_D(funOwner, funName, desc, params);
         } else {
             String clazz = funOwner.replace("/", ".");
@@ -380,9 +381,10 @@ public class Method extends MethodVisitor implements TreeVisitor, Opcodes {
     }
 
     private void invokeStaticMethod_D(String owner, String name, String desc, Expression[] params) {
-        Fun f = SymbolMap.resolveFun(ctx.getOwner().replace("/", "."), owner.replace("/", "."), name, params.length);
+        Fun f = SymbolMap.resolveFun(ctx.getOwner(), owner, name, params.length);
         if (f == null && !owner.equals(Constants.BUILTIN_NAME)) {
             Errors.put(ctx.getOwner() + " Cannot resolve function: " + owner + "." + name);
+            //throw new RuntimeException();
         }
         for (Expression param : params) {
             param.accept(this);
@@ -465,13 +467,15 @@ public class Method extends MethodVisitor implements TreeVisitor, Opcodes {
             }
         } else {
             String importedClass = getInternalNameFromImports(names[0]);
-            VarDecl decl = ctx.findStaticVar(names[0]);
+            VarDecl decl = SymbolMap.resolveField(ctx.getOwner(), ctx.getOwner(), names[0]);
+
             switch (names.length) {
                 case 1:
                     if (ctx.isStatic()) {
-                        if (decl != null) {
+                        if (decl != null && decl.hasModifier(Modifier.STATIC)) {
                             accessStaticField(ctx.getOwner(), decl.getName().toString(), load);
                         } else {
+                            System.err.println((decl != null) + "::" + decl.hasModifier(Modifier.STATIC));
                             Errors.put(ctx.getOwner() + " line " + name.getLineNumber() + ": Variable " + ctx.getOwner() + ":" + ctx.getName() + ":" + names[0] + " not found");
                         }
                     } else {
@@ -512,21 +516,24 @@ public class Method extends MethodVisitor implements TreeVisitor, Opcodes {
     }
 
     private void accessStaticField(String owner, String name, boolean load) {
-        try {
-            Class clazz = Class.forName(owner.replace("/", "."));
-            if (!clazz.getField(name).getType().isAssignableFrom(TObject.class)) {
-                visitLdcInsn(Type.getType("L" + (owner) + ";"));
-                visitLdcInsn(name);
-                if (load) {
-                    visitMethodInsn(INVOKESTATIC, getInternalName(TObject.class), "getField", getDesc(TObject.class, "getField", Class.class, String.class), false);
-                } else {
-                    Warning.put("ERROR");
-                    visitMethodInsn(INVOKESTATIC, getInternalName(TObject.class), "getField", getDesc(TObject.class, "setField", Class.class, String.class, TObject.class), false);
-                }
-                return;
-            }
-        } catch (Exception e) {
+        VarDecl decl = SymbolMap.resolveField(ctx.getOwner(), owner, name);
 
+        if (decl == null) {
+            System.err.println(owner + " :: " + owner + " : " + name);
+            Errors.put("Cannot resolve field " + owner + " : " + name);
+            return;
+        }
+
+        if (decl.isJavaField()) {
+            visitLdcInsn(Type.getType("L" + (owner) + ";"));
+            visitLdcInsn(name);
+            if (load) {
+                visitMethodInsn(INVOKESTATIC, getInternalName(TObject.class), "getField", getDesc(TObject.class, "getField", Class.class, String.class), false);
+            } else {
+                Warning.put("ERROR");
+                visitMethodInsn(INVOKESTATIC, getInternalName(TObject.class), "setField", getDesc(TObject.class, "setField", Class.class, String.class, TObject.class), false);
+            }
+            return;
         }
         visitFieldInsn(load ? GETSTATIC : PUTSTATIC, owner, name, getDesc(TObject.class));
     }

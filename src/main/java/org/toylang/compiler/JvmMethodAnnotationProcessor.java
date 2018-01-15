@@ -4,6 +4,10 @@ import org.toylang.antlr.ToyTree;
 import org.toylang.antlr.ast.*;
 import org.toylang.core.wrappers.TString;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+
 public class JvmMethodAnnotationProcessor implements AnnotationProcessor {
 
     private final Literal DEFAULT_PARAMS = new Literal(new TString(""));

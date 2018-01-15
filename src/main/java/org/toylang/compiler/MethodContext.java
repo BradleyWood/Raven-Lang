@@ -9,27 +9,20 @@ public class MethodContext {
     private final String owner;
     private String name;
     private final List<QualifiedName> imports;
-    private final List<VarDecl> staticVariables;
-    private final List<Fun> staticFunctions;
 
+    private boolean isStatic = false;
 
-    private final ClassDef def; //  if !isStatic
+    private final ClassDef def;
 
-    public MethodContext(String owner, String name, List<QualifiedName> imports, List<VarDecl> staticVariables, List<Fun> staticFunctions) {
-        this(owner, name, imports, staticVariables, staticFunctions, null);
-    }
-
-    public MethodContext(String owner, String name, List<QualifiedName> imports, List<VarDecl> staticVariables, List<Fun> staticFunctions, ClassDef def) {
+    public MethodContext(String owner, String name, List<QualifiedName> imports, ClassDef def) {
         this.owner = owner;
         this.name = name;
         this.imports = imports;
-        this.staticFunctions = staticFunctions;
-        this.staticVariables = staticVariables;
         this.def = def;
     }
 
     public boolean isStatic() {
-        return def == null;
+        return isStatic;
     }
 
     public String getOwner() {
@@ -40,45 +33,16 @@ public class MethodContext {
         return name;
     }
 
+    public void setStatic(boolean isStatic) {
+        this.isStatic = isStatic;
+    }
+
     public void setName(String name) {
         this.name = name;
     }
 
-    public VarDecl findStaticVar(String name) {
-        for (VarDecl staticVariable : staticVariables) {
-            if (staticVariable.getName().toString().equals(name))
-                return staticVariable;
-        }
-        return null;
-    }
-
-    public Fun findStaticFun(String name) {
-        for (Fun staticFunction : staticFunctions) {
-            if (staticFunction.getName().toString().equals(name))
-                return staticFunction;
-        }
-        return null;
-    }
-
-    public Fun findStaticFun(String name, int nParams) {
-        for (Fun staticFunction : staticFunctions) {
-            if (staticFunction.getParams().length == nParams && staticFunction.getName().toString().equals(name)) {
-                return staticFunction;
-            }
-        }
-        return null;
-    }
-
     public List<QualifiedName> getImports() {
         return imports;
-    }
-
-    public List<VarDecl> getStaticVariables() {
-        return staticVariables;
-    }
-
-    public List<Fun> getStaticFunctions() {
-        return staticFunctions;
     }
 
     public ClassDef getClassDef() {

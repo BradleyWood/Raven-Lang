@@ -1,16 +1,15 @@
 package org.toylang.compiler;
 
+import org.toylang.antlr.Modifier;
 import org.toylang.antlr.ToyParser;
 import org.toylang.antlr.ToyTree;
 import org.toylang.antlr.ast.*;
-import org.toylang.core.TLFile;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class Compiler {
 
@@ -70,56 +69,13 @@ public class Compiler {
                     try {
                         Class clazz = Class.forName(qualifiedName.toString());
                         IMPORTS.add(qualifiedName.toString());
-                        buildSymbolMap(clazz);
+                        SymbolMap.map(clazz);
                     } catch (ClassNotFoundException e) {
                         Errors.put("Cannot resolve import: " + qualifiedName);
                     }
                 }
             }
         }
-    }
-
-    private ClassMaker setupClassMaker(ToyTree tree, ClassDef classDef) {
-        ClassMaker cm;
-
-        if (classDef == null) {
-            cm = new ClassMaker(tree.getPackage(), tree.getName().toString(), tree.getImports());
-            Block b = new Block();
-            Fun clinit = new Fun(new QualifiedName("<clinit>"), b, null, null);
-            for (Statement statement : tree.getStatements()) {
-                if (statement instanceof VarDecl) {
-                    cm.addStaticFields((VarDecl) statement);
-                }
-                if (!(statement instanceof Fun)) {
-                    b.append(statement);
-                } else {
-                    cm.addStaticMethods((Fun) statement);
-                }
-            }
-            cm.addStaticMethods(clinit);
-            return cm;
-        }
-
-        classDef.setPackage(tree.getPackage());
-        classDef.setSourceTree(tree);
-        String name = tree.getPackage().add(classDef.getName()).toString();
-
-        List<QualifiedName> lst = tree.getImports();
-
-        for (ClassDef cd : tree.getClasses()) {
-            if (cd != classDef) {
-                lst.add(tree.getPackage().add(classDef.getName()));
-            }
-        }
-        cm = new ClassMaker(classDef, lst);
-        tree.addImport(tree.getPackage().add(classDef.getName()));
-        tree.addImport(tree.getPackage().add(tree.getName()));
-        if (!name.equals(tree.getFullName().toString())) {
-            Fun clinit = new Fun(new QualifiedName("<clinit>"), new Block(), null, null);
-            cm.addStaticMethods(clinit);
-            cm.make();
-        }
-        return cm;
     }
 
     public HashMap<String, byte[]> compile(boolean save) throws IOException {
@@ -138,22 +94,22 @@ public class Compiler {
 
         // no errors... generate code
         HashMap<String, ClassMaker> classBuilders = new HashMap<>();
-        ClassMaker cm;
-        for (ToyTree tree : trees) {
-            if (classMap.containsKey(tree.getPackage().add(tree.getName()).toString()))
-                continue;
-            for (ClassDef classDef : tree.getClasses()) {
-                cm = setupClassMaker(tree, classDef);
-                classBuilders.put(tree.getPackage().add(classDef.getName()).toString(), cm);
-            }
-            if (classBuilders.containsKey(name)) {
-                cm = classBuilders.get(name);
-            } else {
-                cm = setupClassMaker(tree, null);
-                classBuilders.put(name, cm);
-            }
-            cm.make();
+
+        modifyTree(tree);
+
+        for (ClassDef classDef : tree.getClasses()) {
+            SymbolMap.map(classDef);
+            classDef.setPackage(tree.getPackage());
+            tree.addImport(tree.getPackage().add(classDef.getName()));
+            classDef.setSourceTree(tree);
         }
+
+        for (ClassDef classDef : tree.getClasses()) {
+            ClassMaker cm = new ClassMaker(classDef, tree.getImports());
+            cm.make();
+            classBuilders.put(tree.getPackage().add(classDef.getName()).toString(), cm);
+        }
+
         if (Errors.getErrorCount() > 0) {
             classMap.clear();
             return classMap;
@@ -175,6 +131,43 @@ public class Compiler {
         return classMap;
     }
 
+    private void modifyTree(ToyTree tree) {
+        String name = tree.getPackage().add(tree.getName().toString()).toString().replace(".", "/");
+        boolean exists = tree.getClasses().stream().filter(cd -> cd.getFullName().equals(name)).count() == 1;
+        ClassDef def;
+        if (exists) {
+            def = tree.getClasses().stream().filter(cd -> cd.getFullName().equals(name)).collect(Collectors.toList()).get(0);
+        } else {
+            def = new ClassDef(new Modifier[]{Modifier.PUBLIC}, tree.getPackage(), tree.getName().toString(),
+                    new QualifiedName("java", "lang", "Object"), new QualifiedName[0], new ArrayList<>());
+        }
+        Block b = new Block();
+        Fun clinit = new Fun(new QualifiedName("<clinit>"), b, new Modifier[]{Modifier.STATIC}, null);
+        for (Statement statement : tree.getStatements()) {
+            if (statement instanceof VarDecl) {
+                VarDecl decl = (VarDecl) statement;
+                decl.addModifier(Modifier.STATIC);
+                def.getStatements().add(statement);
+            }
+            if (!(statement instanceof Fun)) {
+                b.append(statement);
+            } else {
+                Fun fun = (Fun) statement;
+                fun.addModifier(Modifier.STATIC);
+                def.getStatements().add(statement);
+            }
+        }
+        def.getStatements().add(clinit);
+        tree.getStatements().add(def);
+
+        for (ClassDef classDef : tree.getClasses()) {
+            if (!classDef.equals(def)) {
+                Fun clinit_ = new Fun(new QualifiedName("<clinit>"), new Block(), new Modifier[]{Modifier.STATIC}, null);
+                classDef.getStatements().add(clinit_);
+            }
+        }
+    }
+
     private String findFile(QualifiedName name) {
         QualifiedName pack = tree.getPackage();
         File basePath = file.getParentFile();
@@ -189,14 +182,4 @@ public class Compiler {
         return str;
     }
 
-    private static void buildSymbolMap(Class clazz) {
-        boolean isJava = clazz.getDeclaredAnnotation(TLFile.class) == null;
-        if (isJava)
-            return;
-        for (Method method : clazz.getMethods()) {
-            if (Modifier.isPublic(method.getModifiers())) {
-                SymbolMap.FUN_MAP.put(clazz.getPackage().getName() + "." + method.getName(), new Fun(new QualifiedName(method.getName()), null, null, null));
-            }
-        }
-    }
 }
