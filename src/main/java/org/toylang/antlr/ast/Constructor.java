@@ -50,7 +50,7 @@ public class Constructor extends Statement {
         LinkedList<VarDecl> p = new LinkedList<>();
         for (Expression param : params) {
             if (param instanceof QualifiedName) {
-                p.add(new VarDecl((QualifiedName) param, null, null));
+                p.add(new VarDecl((QualifiedName) param, null));
             }
         }
         this.params = p.toArray(new VarDecl[p.size()]);
