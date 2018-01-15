@@ -3,7 +3,9 @@ package org.toylang.antlr.ast;
 import org.toylang.antlr.Modifier;
 import org.toylang.core.wrappers.TNull;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Objects;
 
 public class VarDecl extends Statement {
@@ -11,24 +13,45 @@ public class VarDecl extends Statement {
 
     private final QualifiedName name;
     private final Expression initialValue;
-    private Modifier[] modifiers;
+    private List<Modifier> modifiers;
+    private boolean isJavaField = false;
 
     public VarDecl(QualifiedName name, Expression initialValue, Modifier... modifiers) {
+        this(name, initialValue, new ArrayList<>(Arrays.asList(modifiers)));
+    }
+
+    public VarDecl(QualifiedName name, Expression initialValue, List<Modifier> modifiers) {
         this.name = name;
         this.initialValue = initialValue;
         this.modifiers = modifiers;
+    }
+
+    public void setJavaField(boolean isJavaField) {
+        this.isJavaField = isJavaField;
+    }
+
+    public boolean isJavaField() {
+        return isJavaField;
     }
 
     public QualifiedName getName() {
         return name;
     }
 
-    public Modifier[] getModifiers() {
+    public List<Modifier> getModifiers() {
         return modifiers;
     }
 
-    public void setModifiers(Modifier... modifiers) {
-        this.modifiers = modifiers;
+    public void addModifier(Modifier modifier) {
+        modifiers.add(modifier);
+    }
+
+    public boolean hasModifier(Modifier modifier) {
+        for (Modifier m : modifiers) {
+            if (m.equals(modifier))
+                return true;
+        }
+        return false;
     }
 
     public int modifiers() {
@@ -55,14 +78,14 @@ public class VarDecl extends Statement {
         VarDecl decl = (VarDecl) o;
         return Objects.equals(name, decl.name) &&
                 Objects.equals(initialValue, decl.initialValue) &&
-                Arrays.equals(modifiers, decl.modifiers) &&
+                Objects.equals(modifiers, decl.modifiers) &&
                 Objects.equals(getAnnotations(), decl.getAnnotations());
     }
 
     @Override
     public int hashCode() {
         int result = Objects.hash(name, initialValue);
-        result = 31 * result + Arrays.hashCode(modifiers);
+        result = 31 * result + Objects.hashCode(modifiers);
         return result;
     }
 

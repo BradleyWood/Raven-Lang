@@ -14,7 +14,7 @@ public class Fun extends Statement {
 
     private QualifiedName name;
     private final Block body;
-    private final Modifier[] modifiers;
+    private final List<Modifier> modifiers;
     private final String[] exceptions;
     private VarDecl[] params;
     private String javaDesc = null;
@@ -22,7 +22,22 @@ public class Fun extends Statement {
     public Fun(QualifiedName name, Block body, Modifier[] modifiers, String[] exceptions, VarDecl... params) {
         this.name = name;
         this.body = body;
-        this.modifiers = modifiers;
+        this.modifiers = new LinkedList<>();
+
+        if (modifiers != null)
+            this.modifiers.addAll(Arrays.asList(modifiers));
+        this.exceptions = exceptions;
+        this.params = params;
+
+
+        if (this.params == null)
+            this.params = new VarDecl[0];
+    }
+
+    public Fun(QualifiedName name, Block body, List<Modifier> modifiers, String[] exceptions, VarDecl... params) {
+        this.name = name;
+        this.body = body;
+        this.modifiers = new LinkedList<>(modifiers);
         this.exceptions = exceptions;
         this.params = params;
 
@@ -55,6 +70,10 @@ public class Fun extends Statement {
         return javaDesc != null;
     }
 
+    public void addModifier(Modifier modifier) {
+        this.modifiers.add(modifier);
+    }
+
     @Override
     public void accept(TreeVisitor visitor) {
         visitor.visitFun(this);
@@ -67,7 +86,7 @@ public class Fun extends Statement {
         return "fun " + name + "(" + builder.toString().substring(0, builder.length()) + ") " + body;
     }
 
-    public Modifier[] getModifiers() {
+    public List<Modifier> getModifiers() {
         return modifiers;
     }
 
@@ -114,7 +133,7 @@ public class Fun extends Statement {
         Fun fun = (Fun) o;
         return Objects.equals(name, fun.name) &&
                 Objects.equals(body, fun.body) &&
-                Arrays.equals(modifiers, fun.modifiers) &&
+                Objects.equals(modifiers, fun.modifiers) &&
                 Arrays.equals(exceptions, fun.exceptions) &&
                 Arrays.equals(params, fun.params) &&
                 Objects.equals(getAnnotations(), fun.getAnnotations());
@@ -123,10 +142,18 @@ public class Fun extends Statement {
     @Override
     public int hashCode() {
         int result = Objects.hash(super.hashCode(), name, body);
-        result = 31 * result + Arrays.hashCode(modifiers);
+        result = 31 * result + Objects.hashCode(modifiers);
         result = 31 * result + Arrays.hashCode(exceptions);
         result = 31 * result + Arrays.hashCode(params);
         return result;
+    }
+
+    public boolean hasModifier(Modifier modifier) {
+        for (Modifier m : getModifiers()) {
+            if (m.equals(modifier))
+                return true;
+        }
+        return false;
     }
 
     public static Fun valueOf(Method method) {
