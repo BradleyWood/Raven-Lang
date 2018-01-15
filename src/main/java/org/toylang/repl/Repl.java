@@ -6,6 +6,7 @@ import org.toylang.antlr.StatementParser;
 import org.toylang.antlr.ast.*;
 import org.toylang.compiler.ClassMaker;
 import org.toylang.compiler.Errors;
+import org.toylang.compiler.SymbolMap;
 import org.toylang.core.ByteClassLoader;
 
 import java.util.*;
@@ -97,7 +98,7 @@ public class Repl {
 
         Fun clinit = new Fun(new QualifiedName("<clinit>"), new Block(), new Modifier[]{Modifier.STATIC}, null);
         def.getStatements().add(clinit);
-
+        SymbolMap.map(def);
         maker.make();
         byte[] bytes = maker.getBytes();
         if (Errors.getErrorCount() > 0) {
