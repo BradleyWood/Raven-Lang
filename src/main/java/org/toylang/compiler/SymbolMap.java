@@ -10,9 +10,41 @@ import java.util.*;
 
 public class SymbolMap {
 
-    public static HashMap<String, ClassDef> CLASS_MAP = new HashMap<>();
+    private static HashMap<String, ClassDef> CLASS_MAP = new HashMap<>();
 
     public static VarDecl resolveField(String callingClass, String funOwner, String name) {
+        ClassDef def = CLASS_MAP.get(funOwner);
+        if (def != null) {
+            String clazz = funOwner;
+            while (!clazz.equals("java/lang/Object") && def != null) {
+                VarDecl decl = findField(callingClass, clazz, name);
+                if (decl != null) {
+                    return decl;
+                }
+                clazz = def.getSuper().toString().replace(".", "/");
+                def = CLASS_MAP.get(clazz);
+            }
+        }
+        return null;
+    }
+
+    public static Fun resolveFun(String callingClass, String funOwner, String name, int paramCount) {
+        ClassDef def = CLASS_MAP.get(funOwner);
+        if (def != null) {
+            String clazz = funOwner;
+            while (!clazz.equals("java/lang/Object") && def != null) {
+                Fun decl = findFun(callingClass, clazz, name, paramCount);
+                if (decl != null) {
+                    return decl;
+                }
+                clazz = def.getSuper().toString().replace(".", "/");
+                def = CLASS_MAP.get(clazz);
+            }
+        }
+        return null;
+    }
+
+    private static VarDecl findField(String callingClass, String funOwner, String name) {
         ClassDef def = CLASS_MAP.get(funOwner);
         if (def != null) {
             for (VarDecl field : def.getFields()) {
@@ -29,7 +61,7 @@ public class SymbolMap {
         return null;
     }
 
-    public static Fun resolveFun(String callingClass, String funOwner, String name, int paramCount) {
+    private static Fun findFun(String callingClass, String funOwner, String name, int paramCount) {
         ClassDef def = CLASS_MAP.get(funOwner);
         if (def != null) {
             for (Fun fun : def.getMethods()) {
@@ -50,6 +82,8 @@ public class SymbolMap {
     }
 
     public static void map(Class<?> clazz) {
+        if (!clazz.getSuperclass().equals(Object.class))
+            map(clazz.getSuperclass());
         QualifiedName[] interfaces = new QualifiedName[clazz.getInterfaces().length];
         for (int i = 0; i < clazz.getInterfaces().length; i++) {
             interfaces[i] = QualifiedName.valueOf(clazz.getInterfaces()[i].getName());
