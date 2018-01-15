@@ -244,7 +244,7 @@ public class ClassDef extends Statement {
         LinkedList<Fun> setters = new LinkedList<>();
         for (VarDecl decl : getVarParams()) {
             Block block = new Block();
-            VarDecl param = new VarDecl(new QualifiedName(decl.getName().toString() + "_"), null, new Modifier[0]);
+            VarDecl param = new VarDecl(new QualifiedName(decl.getName().toString() + "_"), null);
             block.append(new BinOp(decl.getName(), Operator.ASSIGNMENT, param.getName()));
             Fun f = new Fun(new QualifiedName("set" + decl.getName()), block, new Modifier[]{Modifier.PUBLIC}, null, param);
             setters.add(f);
