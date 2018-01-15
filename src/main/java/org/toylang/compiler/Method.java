@@ -475,8 +475,8 @@ public class Method extends MethodVisitor implements TreeVisitor, Opcodes {
                         if (decl != null && decl.hasModifier(Modifier.STATIC)) {
                             accessStaticField(ctx.getOwner(), decl.getName().toString(), load);
                         } else {
-                            System.err.println((decl != null) + "::" + decl.hasModifier(Modifier.STATIC));
-                            Errors.put(ctx.getOwner() + " line " + name.getLineNumber() + ": Variable " + ctx.getOwner() + ":" + ctx.getName() + ":" + names[0] + " not found");
+                            visitFieldInsn(load ? GETSTATIC : PUTSTATIC, ctx.getOwner(), names[0], getDesc(TObject.class));
+                            // check parent for field in the future
                         }
                     } else {
                         VarDecl var = ctx.getClassDef().findVar(name.toString());
