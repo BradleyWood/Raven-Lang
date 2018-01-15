@@ -73,6 +73,7 @@ public class Repl {
                 variables.add(decl);
                 statements.add(new BinOp(decl.getName(), Operator.ASSIGNMENT, decl.getInitialValue()));
             } else if (statement instanceof Fun) {
+                ((Fun) statement).addModifier(Modifier.STATIC);
                 functions.add((Fun) statement);
             } else {
                 statements.add(statement);
