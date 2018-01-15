@@ -402,9 +402,12 @@ public class Method extends MethodVisitor implements TreeVisitor, Opcodes {
         String desc = Type.getMethodDescriptor(method);
         Arrays.stream(params).forEach(expression -> expression.accept(this));
         visitMethodInsn(INVOKEVIRTUAL, Constants.TOBJ_NAME, name, desc, false);
-        if (method.getReturnType() == int.class) {
-            visitMethodInsn(INVOKESTATIC, getInternalName(Integer.class), "valueOf", getDesc(Integer.class, "valueOf", int.class), false);
+
+        Primitive p = Primitive.getPrimitiveType(method.getReturnType());
+        if (p != null) {
+            p.wrap(this);
         }
+
         if (!method.getReturnType().isAssignableFrom(TObject.class)) {
             visitMethodInsn(INVOKESTATIC, getInternalName(TObject.class), "toToyLang", getDesc(TObject.class, "toToyLang", Object.class), false);
         }
