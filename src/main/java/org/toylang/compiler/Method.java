@@ -403,7 +403,7 @@ public class Method extends MethodVisitor implements TreeVisitor, Opcodes {
         Arrays.stream(params).forEach(expression -> expression.accept(this));
         visitMethodInsn(INVOKEVIRTUAL, Constants.TOBJ_NAME, name, desc, false);
 
-        Primitive p = Primitive.getPrimitiveType(method.getReturnType());
+        Primitive p = Primitive.getUnboxedPrimitive(method.getReturnType());
         if (p != null) {
             p.wrap(this);
         }
