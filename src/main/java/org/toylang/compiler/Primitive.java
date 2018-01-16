@@ -21,14 +21,16 @@ public enum Primitive {
     private final String wrapper;
     private final int loadInstruction;
     private final int retInstruction;
-    private final Class<?>[] classes;
+    private final Class<?> primitiveClass;
+    private final Class<?> boxedClass;
 
     Primitive(final String name, final String desc, final String wrapper,
-              final int loadInstruction, final int retInstruction, final Class<?>... classes) {
+              final int loadInstruction, final int retInstruction, final Class<?> primitiveClass, final Class<?> boxedClass) {
         this.name = name;
         this.desc = desc;
         this.wrapper = wrapper;
-        this.classes = classes;
+        this.primitiveClass = primitiveClass;
+        this.boxedClass = boxedClass;
         this.loadInstruction = loadInstruction;
         this.retInstruction = retInstruction;
     }
@@ -100,11 +102,25 @@ public enum Primitive {
     }
 
     public static Primitive getPrimitiveType(Class<?> clazz) {
+        Primitive unboxed = getUnboxedPrimitive(clazz);
+        if (unboxed != null) {
+            return unboxed;
+        }
+        return getBoxedPrimitive(clazz);
+    }
+
+    public static Primitive getUnboxedPrimitive(Class<?> clazz) {
         for (Primitive primitive : Primitive.values()) {
-            for (Class<?> aClass : primitive.classes) {
-                if (aClass.equals(clazz))
-                    return primitive;
-            }
+            if (primitive.primitiveClass.equals(clazz))
+                return primitive;
+        }
+        return null;
+    }
+
+    public static Primitive getBoxedPrimitive(Class<?> clazz) {
+        for (Primitive primitive : Primitive.values()) {
+            if (primitive.boxedClass.equals(clazz))
+                return primitive;
         }
         return null;
     }
