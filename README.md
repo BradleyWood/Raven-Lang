@@ -35,6 +35,11 @@ java -jar toylang-1.0-SNAPSHOT-jar-with-dependencies.jar -r <path to script>.tl
 
 ### Command line options
 
+Run in REPL (read-eval-print-loop) mode
+```
+-repl
+```
+
 Run with security manager
 ```
 -secure
@@ -74,7 +79,6 @@ Null<br>
 List<br>
 Dictionary<br>
 BigInt<br>
-BigReal: to-do <br>
 </b>
 
 
@@ -91,82 +95,6 @@ fun main() {
 
 [View more examples](https://github.com/BradleyWood/TlDemo)
 
-<br>
-Below is the bytecode output of the compiler. Each class is initialized with an array
-of constants since the wrapper types cannot go in the constant pool. This will prevent
-commonly used constants such as numbers and strings from reinitialized every time
-they are needed. In this case null and the string "Hello World." are placed within the constants and
-only initialized once.
-
-Inorder to show the message dialog we must call the method invoke from ToyObject.
-This method will use reflection to determine the correct method to invoke and convert
-the parameters to java types. When calling invoke we will pass a few parameters on the stack
-including the class that declared the method, the name of the method, and the parameters
-in the form of a list.
-
-
-```
-public class scripts/test/HelloWorld {
-
-  // compiled from: HelloWorld.tl
-
-  // access flags 0x1A
-  private final static [Lorg/toylang/core/ToyObject; __CONSTANTS__
-
-  // access flags 0x9
-  public static main([Ljava/lang/String;)V
-   L0
-    LINENUMBER 6 L0
-    LDC Ljavax/swing/JOptionPane;.class
-    LDC "showMessageDialog"
-    NEW org/toylang/core/ToyList
-    DUP
-    INVOKESPECIAL org/toylang/core/ToyList.<init> ()V
-    GETSTATIC scripts/test/HelloWorld.__CONSTANTS__ : [Lorg/toylang/core/ToyObject;
-    LDC 0
-    AALOAD
-    INVOKEVIRTUAL org/toylang/core/ToyObject.add (Lorg/toylang/core/ToyObject;)Lorg/toylang/core/ToyObject;
-    GETSTATIC scripts/test/HelloWorld.__CONSTANTS__ : [Lorg/toylang/core/ToyObject;
-    LDC 1
-    AALOAD
-    INVOKEVIRTUAL org/toylang/core/ToyObject.add (Lorg/toylang/core/ToyObject;)Lorg/toylang/core/ToyObject;
-    INVOKESTATIC org/toylang/core/ToyObject.invoke (Ljava/lang/Class;Ljava/lang/String;Lorg/toylang/core/ToyObject;)Lorg/toylang/core/ToyObject;
-    POP
-    RETURN
-    MAXSTACK = 5
-    MAXLOCALS = 1
-
-  // access flags 0x8
-  static <clinit>()V
-    LDC 2
-    ANEWARRAY org/toylang/core/ToyObject
-    DUP
-    LDC 0
-    NEW org/toylang/core/ToyNull
-    DUP
-    INVOKESPECIAL org/toylang/core/ToyNull.<init> ()V
-    AASTORE
-    DUP
-    LDC 1
-    NEW org/toylang/core/ToyString
-    DUP
-    LDC "Hello World."
-    INVOKESPECIAL org/toylang/core/ToyString.<init> (Ljava/lang/String;)V
-    AASTORE
-    PUTSTATIC scripts/test/HelloWorld.__CONSTANTS__ : [Lorg/toylang/core/ToyObject;
-    RETURN
-    MAXSTACK = 6
-    MAXLOCALS = 0
-
-  // access flags 0x1
-  public <init>()V
-    ALOAD 0
-    INVOKESPECIAL java/lang/Object.<init> ()V
-    RETURN
-    MAXSTACK = 1
-    MAXLOCALS = 1
-}
-```
 
 ### Bultins
 <b>The following builtin functions are accessible globally<b><br><br>
@@ -193,7 +121,12 @@ public class scripts/test/HelloWorld {
     - Automatically generate constructors, getters and setters
     - Inherit from java classes
 
+- Annotations and annotation processors
+    - Generate adaptor methods through the @JvmMethod annotation
+        - Annotation takes name, parameter types, and return type
+        - Allows for java code to call our functions
+    - 
+
 ### Todo
 
-- Automatically generate methods that accept and convert java types
-to facilitate calls from java.
+- More Unit tests
