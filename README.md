@@ -35,10 +35,6 @@ java -jar toylang-1.0-SNAPSHOT-jar-with-dependencies.jar -r <path to script>.tl
 
 ### Command line options
 
-Run in REPL (read-eval-print-loop) mode
-```
--repl
-```
 
 Run with security manager
 ```
@@ -46,6 +42,11 @@ Run with security manager
 ```
 
 #### Mutually exclusive options
+
+Run in REPL (read-eval-print-loop) mode
+```
+-repl
+```
 
 Run a script
 ```
@@ -112,8 +113,8 @@ fun main() {
  10. <b>real(var) : Converts a variable to a real number if possible</b> <br>
  11. <b>sum(list) : Adds the contents of a list</br> <br>
  12. <b>reverse(list) : Reverse the order of a list</br> <br>
- 13. <b>hash(var) : Returns the hash of the var </br>
- 14. <b>exit(status) : terminate virtual machine
+ 13. <b>hash(var) : Returns the hash of the var </br> <br>
+ 14. <b>exit(status) : terminate virtual machine </br> <br>
 
 ### In Progress
 
@@ -125,7 +126,6 @@ fun main() {
     - Generate adaptor methods through the @JvmMethod annotation
         - Annotation takes name, parameter types, and return type
         - Allows for java code to call our functions
-    - 
 
 ### Todo
 
