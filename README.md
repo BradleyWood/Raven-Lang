@@ -111,10 +111,10 @@ fun main() {
  9. <b>len(var) : Returns the size for a string, list, or dictionary</b> <br>
  9. <b>int(var) : Converts a variable to an integer if possible</b> <br>
  10. <b>real(var) : Converts a variable to a real number if possible</b> <br>
- 11. <b>sum(list) : Adds the contents of a list</br> <br>
- 12. <b>reverse(list) : Reverse the order of a list</br> <br>
- 13. <b>hash(var) : Returns the hash of the var </br> <br>
- 14. <b>exit(status) : terminate virtual machine </br> <br>
+ 11. <b>sum(list) : Adds the contents of a list</b> <br>
+ 12. <b>reverse(list) : Reverse the order of a list</b> <br>
+ 13. <b>hash(var) : Returns the hash of the var </b> <br>
+ 14. <b>exit(status) : terminate virtual machine </b> <br>
 
 ### In Progress
 
