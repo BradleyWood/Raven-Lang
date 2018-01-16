@@ -14,7 +14,7 @@ public enum Primitive {
     DOUBLE("double", "D", "java/lang/Double", DLOAD, DRETURN, double.class, Double.class),
     CHAR("char", "C", "java/lang/Character", ILOAD, IRETURN, char.class, Character.class),
     BOOLEAN("boolean", "Z", "java/lang/Boolean", ILOAD, IRETURN, boolean.class, Boolean.class),
-    VOID("void", "V", "java/lang/Void", RETURN, 0, void.class, Void.class);
+    VOID("void", "V", "java/lang/Void", 0, RETURN, void.class, Void.class);
 
     private final String name;
     private final String desc;
