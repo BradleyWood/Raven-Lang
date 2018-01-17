@@ -39,8 +39,8 @@ public class Repl {
         try {
             Class<?> cl = build(line);
             if (cl != null) {
-                parent = cl;
                 cl.getDeclaredMethod("exec").invoke(null);
+                parent = cl;
             }
         } catch (Throwable e) {
             if (debug) {
