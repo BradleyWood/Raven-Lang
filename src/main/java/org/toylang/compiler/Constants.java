@@ -25,6 +25,16 @@ public class Constants {
             new QualifiedName("java", "lang", "System"),
     };
 
+    static {
+        for (QualifiedName commonImport : COMMON_IMPORTS) {
+            try {
+                SymbolMap.map(Class.forName(commonImport.toString()));
+            } catch (ClassNotFoundException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
     public static List<TObject> getConstants() {
         return CONSTANTS;
     }
