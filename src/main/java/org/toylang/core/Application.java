@@ -21,7 +21,6 @@ public class Application {
 
     public static void main(String[] args) {
         Options options = new Options();
-        options.addOption("test", false, "Runs tests");
         options.addOption("secure", false, "Run with security manager");
         options.addOption("s", true, "Check files for correctness");
         options.addOption("repl", false, "Run in REPL mode");
@@ -61,20 +60,17 @@ public class Application {
                 System.setSecurityManager(new WebSecurityManager());
             }
 
-            boolean test = cmd.hasOption("test");
             boolean correctness = cmd.hasOption("s");
             boolean build = cmd.hasOption("b");
             boolean run = cmd.hasOption("r");
             REPL = cmd.hasOption("repl");
 
-            if (!onlyOneTrue(test, correctness, build, run, REPL)) {
+            if (!onlyOneTrue(correctness, build, run, REPL)) {
                 cmdError(options);
                 return;
             }
 
-            if (test) {
-                compileAndTest("/test/org/toylang/test/");
-            } else if (correctness) {
+            if (correctness) {
                 String[] values = cmd.getOptionValues("s");
                 compile(values[0], false);
             } else if (build) {
@@ -134,42 +130,5 @@ public class Application {
             c += b ? 1 : 0;
         }
         return c == 1;
-    }
-
-    private static void compileAndTest(String path) throws IOException, ClassNotFoundException {
-        path = path.replace("/", "\\");
-
-        HashMap<String, byte[]> classes = compile(path, true);
-
-        int numTests = 0;
-        AtomicInteger fails = new AtomicInteger();
-
-        ByteClassLoader cl = new ByteClassLoader(null, Application.class.getClassLoader(), classes);
-        if (classes != null) {
-            for (String s : classes.keySet()) {
-                Class<?> clazz = cl.loadClass(s);
-                for (Method method : clazz.getDeclaredMethods()) {
-                    if (method.getName().toLowerCase().contains("test") && method.getParameterCount() == 0) {
-                        try {
-                            numTests++;
-                            method.setAccessible(true);
-                            method.invoke(null);
-                        } catch (IllegalAccessException | InvocationTargetException e) {
-                            e.getCause().printStackTrace();
-                            if (!method.getName().toLowerCase().contains("exception"))
-                                fails.getAndIncrement();
-                        }
-                        Assert.errors.forEach(error -> {
-                            if (!method.getName().toLowerCase().contains("fail")) {
-                                error.printStackTrace();
-                                fails.getAndIncrement();
-                            }
-                        });
-                        Assert.errors.clear();
-                    }
-                }
-            }
-        }
-        System.err.println("All tests completed, " + (numTests - fails.get()) + "/" + numTests + " passed.");
     }
 }
