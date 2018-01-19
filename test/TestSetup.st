@@ -1,5 +1,5 @@
 
-    @Before
-    public void load<name>() {
+    @BeforeClass
+    public static void load<name>() {
         TestRunner.loadClass(<file>);
     }

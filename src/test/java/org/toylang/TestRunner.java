@@ -4,9 +4,12 @@ import org.junit.Assert;
 import org.toylang.antlr.ToyParser;
 import org.toylang.antlr.ToyTree;
 import org.toylang.compiler.Compiler;
+import org.toylang.compiler.Errors;
 import org.toylang.compiler.JvmMethodAnnotationProcessor;
 import org.toylang.core.ByteClassLoader;
+import org.toylang.core.Utility;
 
+import javax.swing.*;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Method;
@@ -35,7 +38,21 @@ public class TestRunner {
         }
     }
 
+    private static void buildBuiltins() {
+        try {
+            Class.forName("toylang.Builtin");
+        } catch (ClassNotFoundException e) {
+            try {
+                Errors.reset();
+                Utility.compile("/src/main/toylang/toylang/", true);
+            } catch (Exception e1) {
+                e1.printStackTrace();
+            }
+        }
+    }
+
     public static void loadClass(final String file) {
+        buildBuiltins();
         File f = new File(file);
         if (f.isDirectory() || classes.containsKey(file)) {
             return;

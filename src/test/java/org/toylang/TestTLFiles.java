@@ -11,22 +11,8 @@ import java.util.HashMap;
 
 // this file has been automatically generated. Do not edit
 public class TestTLFiles {
-
     @BeforeClass
-    public static void buildBuiltins() {
-        try {
-            Class.forName("toylang.Builtin");
-        } catch (ClassNotFoundException e) {
-                try {
-                Errors.reset();
-                HashMap<String, byte[]> gg = Utility.compile("/src/main/toylang/toylang/", true);
-            } catch (Exception e1) {
-                e1.printStackTrace();
-            }
-        }
-    }
-    @Before
-    public void loadAnnotationTest() {
+    public static void loadAnnotationTest() {
         TestRunner.loadClass("test/org/toylang/test/AnnotationTest.tl");
     }
     @Test
@@ -37,8 +23,8 @@ public class TestTLFiles {
     public void AnnotationTest_testPrimitive() throws Throwable {
         TestRunner.doTest("test/org/toylang/test/AnnotationTest.tl", "testPrimitive");
     }
-    @Before
-    public void loadBigIntTest() {
+    @BeforeClass
+    public static void loadBigIntTest() {
         TestRunner.loadClass("test/org/toylang/test/BigIntTest.tl");
     }
     @Test
@@ -81,8 +67,8 @@ public class TestTLFiles {
     public void BigIntTest_intPowOverflowTest() throws Throwable {
         TestRunner.doTest("test/org/toylang/test/BigIntTest.tl", "intPowOverflowTest");
     }
-    @Before
-    public void loadBooleanTest() {
+    @BeforeClass
+    public static void loadBooleanTest() {
         TestRunner.loadClass("test/org/toylang/test/BooleanTest.tl");
     }
     @Test
@@ -101,8 +87,8 @@ public class TestTLFiles {
     public void BooleanTest_boolNotTest() throws Throwable {
         TestRunner.doTest("test/org/toylang/test/BooleanTest.tl", "boolNotTest");
     }
-    @Before
-    public void loadBreakTest() {
+    @BeforeClass
+    public static void loadBreakTest() {
         TestRunner.loadClass("test/org/toylang/test/BreakTest.tl");
     }
     @Test
@@ -117,8 +103,8 @@ public class TestTLFiles {
     public void BreakTest_breakTest3() throws Throwable {
         TestRunner.doTest("test/org/toylang/test/BreakTest.tl", "breakTest3");
     }
-    @Before
-    public void loadBuiltinTest() {
+    @BeforeClass
+    public static void loadBuiltinTest() {
         TestRunner.loadClass("test/org/toylang/test/BuiltinTest.tl");
     }
     @Test
@@ -149,8 +135,8 @@ public class TestTLFiles {
     public void BuiltinTest_revsereTest() throws Throwable {
         TestRunner.doTest("test/org/toylang/test/BuiltinTest.tl", "revsereTest");
     }
-    @Before
-    public void loadClassTest() {
+    @BeforeClass
+    public static void loadClassTest() {
         TestRunner.loadClass("test/org/toylang/test/ClassTest.tl");
     }
     @Test
@@ -169,8 +155,8 @@ public class TestTLFiles {
     public void ClassTest_testFieldAccess() throws Throwable {
         TestRunner.doTest("test/org/toylang/test/ClassTest.tl", "testFieldAccess");
     }
-    @Before
-    public void loadContinueTest() {
+    @BeforeClass
+    public static void loadContinueTest() {
         TestRunner.loadClass("test/org/toylang/test/ContinueTest.tl");
     }
     @Test
@@ -189,8 +175,8 @@ public class TestTLFiles {
     public void ContinueTest_continueTest4() throws Throwable {
         TestRunner.doTest("test/org/toylang/test/ContinueTest.tl", "continueTest4");
     }
-    @Before
-    public void loadDictTest() {
+    @BeforeClass
+    public static void loadDictTest() {
         TestRunner.loadClass("test/org/toylang/test/DictTest.tl");
     }
     @Test
@@ -213,12 +199,12 @@ public class TestTLFiles {
     public void DictTest_dict2dTest2() throws Throwable {
         TestRunner.doTest("test/org/toylang/test/DictTest.tl", "dict2dTest2");
     }
-    @Before
-    public void loadError() {
+    @BeforeClass
+    public static void loadError() {
         TestRunner.loadClass("test/org/toylang/test/Error.tl");
     }
-    @Before
-    public void loadForEachTest() {
+    @BeforeClass
+    public static void loadForEachTest() {
         TestRunner.loadClass("test/org/toylang/test/ForEachTest.tl");
     }
     @Test
@@ -233,8 +219,8 @@ public class TestTLFiles {
     public void ForEachTest_forEachTest3() throws Throwable {
         TestRunner.doTest("test/org/toylang/test/ForEachTest.tl", "forEachTest3");
     }
-    @Before
-    public void loadForTest() {
+    @BeforeClass
+    public static void loadForTest() {
         TestRunner.loadClass("test/org/toylang/test/ForTest.tl");
     }
     @Test
@@ -289,8 +275,8 @@ public class TestTLFiles {
     public void ForTest_forTest9() throws Throwable {
         TestRunner.doTest("test/org/toylang/test/ForTest.tl", "forTest9");
     }
-    @Before
-    public void loadFunctionTest() {
+    @BeforeClass
+    public static void loadFunctionTest() {
         TestRunner.loadClass("test/org/toylang/test/FunctionTest.tl");
     }
     @Test
@@ -301,24 +287,24 @@ public class TestTLFiles {
     public void FunctionTest_testFunction2() throws Throwable {
         TestRunner.doTest("test/org/toylang/test/FunctionTest.tl", "testFunction2");
     }
-    @Before
-    public void loadGoTest() {
+    @BeforeClass
+    public static void loadGoTest() {
         TestRunner.loadClass("test/org/toylang/test/GoTest.tl");
     }
     @Test
     public void GoTest_goTest1() throws Throwable {
         TestRunner.doTest("test/org/toylang/test/GoTest.tl", "goTest1");
     }
-    @Before
-    public void loadHashTest() {
+    @BeforeClass
+    public static void loadHashTest() {
         TestRunner.loadClass("test/org/toylang/test/HashTest.tl");
     }
     @Test
     public void HashTest_hashTest1() throws Throwable {
         TestRunner.doTest("test/org/toylang/test/HashTest.tl", "hashTest1");
     }
-    @Before
-    public void loadIfTest() {
+    @BeforeClass
+    public static void loadIfTest() {
         TestRunner.loadClass("test/org/toylang/test/IfTest.tl");
     }
     @Test
@@ -341,8 +327,8 @@ public class TestTLFiles {
     public void IfTest_ifTest5() throws Throwable {
         TestRunner.doTest("test/org/toylang/test/IfTest.tl", "ifTest5");
     }
-    @Before
-    public void loadIntegerTest() {
+    @BeforeClass
+    public static void loadIntegerTest() {
         TestRunner.loadClass("test/org/toylang/test/IntegerTest.tl");
     }
     @Test
@@ -393,8 +379,8 @@ public class TestTLFiles {
     public void IntegerTest_neTest() throws Throwable {
         TestRunner.doTest("test/org/toylang/test/IntegerTest.tl", "neTest");
     }
-    @Before
-    public void loadInteropTest() {
+    @BeforeClass
+    public static void loadInteropTest() {
         TestRunner.loadClass("test/org/toylang/test/InteropTest.tl");
     }
     @Test
@@ -409,8 +395,8 @@ public class TestTLFiles {
     public void InteropTest_interopTest3() throws Throwable {
         TestRunner.doTest("test/org/toylang/test/InteropTest.tl", "interopTest3");
     }
-    @Before
-    public void loadListTest() {
+    @BeforeClass
+    public static void loadListTest() {
         TestRunner.loadClass("test/org/toylang/test/ListTest.tl");
     }
     @Test
@@ -453,8 +439,8 @@ public class TestTLFiles {
     public void ListTest_sliceTest() throws Throwable {
         TestRunner.doTest("test/org/toylang/test/ListTest.tl", "sliceTest");
     }
-    @Before
-    public void loadRealTest() {
+    @BeforeClass
+    public static void loadRealTest() {
         TestRunner.loadClass("test/org/toylang/test/RealTest.tl");
     }
     @Test
@@ -505,8 +491,8 @@ public class TestTLFiles {
     public void RealTest_neTest() throws Throwable {
         TestRunner.doTest("test/org/toylang/test/RealTest.tl", "neTest");
     }
-    @Before
-    public void loadReplTest() {
+    @BeforeClass
+    public static void loadReplTest() {
         TestRunner.loadClass("test/org/toylang/test/ReplTest.tl");
     }
     @Test
@@ -521,8 +507,8 @@ public class TestTLFiles {
     public void ReplTest_testFun() throws Throwable {
         TestRunner.doTest("test/org/toylang/test/ReplTest.tl", "testFun");
     }
-    @Before
-    public void loadScopeTest() {
+    @BeforeClass
+    public static void loadScopeTest() {
         TestRunner.loadClass("test/org/toylang/test/ScopeTest.tl");
     }
     @Test
@@ -549,8 +535,8 @@ public class TestTLFiles {
     public void ScopeTest_scopeTest6() throws Throwable {
         TestRunner.doTest("test/org/toylang/test/ScopeTest.tl", "scopeTest6");
     }
-    @Before
-    public void loadStringTest() {
+    @BeforeClass
+    public static void loadStringTest() {
         TestRunner.loadClass("test/org/toylang/test/StringTest.tl");
     }
     @Test
@@ -657,8 +643,8 @@ public class TestTLFiles {
     public void StringTest_testIsEmpty() throws Throwable {
         TestRunner.doTest("test/org/toylang/test/StringTest.tl", "testIsEmpty");
     }
-    @Before
-    public void loadWhileTest() {
+    @BeforeClass
+    public static void loadWhileTest() {
         TestRunner.loadClass("test/org/toylang/test/WhileTest.tl");
     }
     @Test
