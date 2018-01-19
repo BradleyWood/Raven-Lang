@@ -10,32 +10,20 @@ The main goal is create a fast jvm language that lacks the verbosity
 of java while maintaining full interoperability.
 
 ## Building and Running
-
+<br>
 ```
-mvn compile assembly:single
+mvn clean install assembly:single
 ```
-
-Run once from the root directory to build the builtin (.tl) files
-
-```
-java -jar target/toylang-1.0-SNAPSHOT-jar-with-dependencies.jar
-```
-
-Then re-assemble the jar
-
-```
-mvn assembly:single
-```
-
+<br>
 To run a test script
 
 ```
 java -jar toylang-1.0-SNAPSHOT-jar-with-dependencies.jar -r <path to script>.tl
 ```
-
+<br>
 ### Command line options
 
-
+<br>
 Run with security manager
 ```
 -secure
@@ -61,11 +49,6 @@ Check files for correctness
 Build an executable jar
 ```
 -b <path to script>
-```
-
-Run tests
-```
--test
 ```
 
 #### Wrapper types
