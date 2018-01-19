@@ -78,7 +78,7 @@ public class Application {
                 build(buildOptions);
             } else if (run) {
                 String[] values = cmd.getOptionValues("r");
-                compileAndRun(values[0], cmd.getOptionValues("args"));
+                compileAndRun(values[0], cmd.hasOption("args") ? cmd.getOptionValues("args") : new String[0]);
             } else if (REPL) {
                 repl();
             }
