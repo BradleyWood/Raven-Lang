@@ -3,12 +3,14 @@ package org.toylang.repl;
 import org.toylang.antlr.Modifier;
 import org.toylang.antlr.Operator;
 import org.toylang.antlr.StatementParser;
+import org.toylang.antlr.ToyTree;
 import org.toylang.antlr.ast.*;
 import org.toylang.compiler.ClassMaker;
 import org.toylang.compiler.Errors;
 import org.toylang.compiler.SymbolMap;
 import org.toylang.core.ByteClassLoader;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -21,18 +23,12 @@ public class Repl {
     private final LinkedList<Import> imports = new LinkedList<>();
     private Class parent = null;
     private int counter = 0;
-    private boolean debug;
 
     private static int instanceCount = 0;
     private int id;
 
-    public Repl(boolean debug) {
-        this.debug = debug;
-        id = instanceCount++;
-    }
-
     public Repl() {
-        this(false);
+        id = instanceCount++;
     }
 
     public void exec(String line) {
@@ -42,12 +38,10 @@ public class Repl {
                 cl.getDeclaredMethod("exec").invoke(null);
                 parent = cl;
             }
-        } catch (Throwable e) {
-            if (debug) {
-                e.printStackTrace();
-            } else {
-                System.err.println(e.getClass().getName() + " : " + e.getMessage());
-            }
+        } catch (InvocationTargetException e) {
+            e.getCause().printStackTrace();
+        } catch (NoSuchMethodException | IllegalAccessException e) {
+            System.err.println("REPL INTERNAL ERROR");
         }
     }
 
@@ -91,6 +85,10 @@ public class Repl {
         ClassDef def = new ClassDef(new Modifier[]{Modifier.PUBLIC}, new QualifiedName("repl"), name, superClass,
                 new QualifiedName[0], new ArrayList<>());
 
+        ToyTree tree = new ToyTree(Collections.singletonList(def));
+        tree.setSourceFile("<stdin>");
+        def.setSourceTree(tree);
+
         ClassMaker maker = new ClassMaker(def, imports.stream().map(Import::getName).collect(Collectors.toList()));
         def.getStatements().addAll(variables);
         def.getStatements().addAll(functions);
@@ -121,13 +119,5 @@ public class Repl {
     private static Fun createExec(List<Statement> statements) {
         return new Fun(new QualifiedName("exec"),
                 new Block(statements.toArray(new Statement[statements.size()])), new Modifier[]{Modifier.PUBLIC, Modifier.STATIC}, new String[0]);
-    }
-
-    public void setDebug(boolean debug) {
-        this.debug = debug;
-    }
-
-    public boolean isDebugMode() {
-        return debug;
     }
 }
