@@ -81,7 +81,7 @@ public class Application {
             }
         } catch (ParseException e) {
             cmdError(options);
-        } catch (IOException | InvocationTargetException | IllegalAccessException | NoSuchMethodException | ClassNotFoundException e) {
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }

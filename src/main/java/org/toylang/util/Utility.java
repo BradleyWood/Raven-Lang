@@ -18,23 +18,35 @@ import java.util.LinkedList;
 
 public class Utility {
 
-    public static void compileAndRun(String path, String[] args) throws IOException, ClassNotFoundException, NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+    public static void compileAndRun(String path, String[] args) {
         path = path.replace("/", "\\");
         File file = new File(path);
 
-        HashMap<String, byte[]> classes = compile(path, true);
-        if (Errors.getErrorCount() == 0) {
-            ByteClassLoader cl = new ByteClassLoader(null, Application.class.getClassLoader(), classes);
-            if (classes != null) {
-                for (String s : classes.keySet()) {
-                    if (file.getAbsolutePath().endsWith(s.replace(".", "\\") + ".tl")) {
-                        Class<?> app = cl.loadClass(s);
-                        Method m = app.getMethod("main", String[].class);
-                        m.invoke(null, (Object) args);
-                        break;
+        if (!file.exists()) {
+            System.err.println("Cannot find the path specified: " + path);
+            return;
+        }
+
+        try {
+            HashMap<String, byte[]> classes = compile(path, true);
+            if (Errors.getErrorCount() == 0) {
+                ByteClassLoader cl = new ByteClassLoader(null, Application.class.getClassLoader(), classes);
+                if (classes != null) {
+                    for (String s : classes.keySet()) {
+                        if (file.getAbsolutePath().endsWith(s.replace(".", "\\") + ".tl")) {
+                            Class<?> app = cl.loadClass(s);
+                            Method m = app.getMethod("main", String[].class);
+                            m.setAccessible(true);
+                            m.invoke(null, (Object) args);
+                            break;
+                        }
                     }
                 }
             }
+        } catch (IOException | NoSuchMethodException | ClassNotFoundException | IllegalAccessException e) {
+            System.err.println(e.getMessage());
+        } catch (InvocationTargetException e) {
+            e.getCause().printStackTrace();
         }
     }
 
