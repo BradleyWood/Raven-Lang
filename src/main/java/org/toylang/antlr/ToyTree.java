@@ -11,7 +11,7 @@ import java.util.List;
 public class ToyTree extends AST {
 
     private List<Statement> statements = new ArrayList<>();
-    private QualifiedName pack = null;
+    private QualifiedName pack = new QualifiedName();
     private List<QualifiedName> imports = new ArrayList<>();
     private QualifiedName name = null;
 

@@ -156,7 +156,7 @@ public class ClassDef extends Statement {
     }
 
     public String getFullName() {
-        if (package_ == null)
+        if (package_ == null || package_.equals(new QualifiedName()))
             return name.toString();
         return (package_.toString() + "." + name).replace(".", "/");
     }
