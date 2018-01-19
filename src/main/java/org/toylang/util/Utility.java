@@ -1,10 +1,12 @@
-package org.toylang.core;
+package org.toylang.util;
 
 import org.toylang.antlr.ToyParser;
 import org.toylang.antlr.ToyTree;
 import org.toylang.compiler.Compiler;
 import org.toylang.compiler.Errors;
 import org.toylang.compiler.JvmMethodAnnotationProcessor;
+import org.toylang.core.Application;
+import org.toylang.core.ByteClassLoader;
 
 import java.io.File;
 import java.io.IOException;

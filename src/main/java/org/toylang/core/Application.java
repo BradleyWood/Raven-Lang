@@ -4,16 +4,13 @@ import org.apache.commons.cli.*;
 import org.toylang.build.AppBuilder;
 import org.toylang.compiler.Errors;
 import org.toylang.repl.Repl;
-import org.toylang.test.Assert;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.util.*;
-import java.util.concurrent.atomic.AtomicInteger;
 
-import static org.toylang.core.Utility.compile;
-import static org.toylang.core.Utility.compileAndRun;
+import static org.toylang.util.Utility.compile;
+import static org.toylang.util.Utility.compileAndRun;
 
 public class Application {
 

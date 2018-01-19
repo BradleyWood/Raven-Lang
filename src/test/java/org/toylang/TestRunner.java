@@ -7,7 +7,7 @@ import org.toylang.compiler.Compiler;
 import org.toylang.compiler.Errors;
 import org.toylang.compiler.JvmMethodAnnotationProcessor;
 import org.toylang.core.ByteClassLoader;
-import org.toylang.core.Utility;
+import org.toylang.util.Utility;
 
 import java.io.File;
 import java.io.IOException;
