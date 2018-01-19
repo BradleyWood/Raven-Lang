@@ -1,5 +1,6 @@
 package org.toylang.test;
 
+import javax.swing.JOptionPane;
 import org.toylang.test.Assert;
 import org.toylang.test.AnnotationTest;
 
@@ -28,4 +29,12 @@ fun testWrapped() {
 fun testPrimitive() {
     var ave = AnnotationTest.jAve(100, 200, 300, 400);
     Assert.assertEqual((100 + 200 + 300 + 400) / 4, ave);
+}
+
+class AnnotatedClass(x, y, z) {
+
+    @JvmMethod(ret="double")
+    public fun product() {
+        return x * y * z;
+    }
 }

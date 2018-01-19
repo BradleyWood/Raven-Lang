@@ -9,7 +9,6 @@ import org.toylang.compiler.JvmMethodAnnotationProcessor;
 import org.toylang.core.ByteClassLoader;
 import org.toylang.core.Utility;
 
-import javax.swing.*;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Method;
