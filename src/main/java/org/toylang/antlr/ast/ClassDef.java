@@ -9,7 +9,7 @@ import java.util.*;
 
 public class ClassDef extends Statement {
 
-    private final ArrayList modifiers;
+    private final ArrayList<Modifier> modifiers;
     private final QualifiedName name;
     private final QualifiedName super_;
     private final QualifiedName[] interfaces;
