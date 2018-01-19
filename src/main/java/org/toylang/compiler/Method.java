@@ -623,11 +623,6 @@ public class Method extends MethodVisitor implements TreeVisitor, Opcodes {
     }
 
     @Override
-    public void visitUnaryOp(UnaryOp op) {
-
-    }
-
-    @Override
     public void visitLiteral(Literal literal) {
         visitLine(literal);
         TObject obj = (literal.getValue());

@@ -23,8 +23,6 @@ public interface TreeVisitor {
 
     void visitBinOp(BinOp op);
 
-    void visitUnaryOp(UnaryOp op);
-
     void visitLiteral(Literal literal);
 
     void visitName(QualifiedName name);

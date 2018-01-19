@@ -280,11 +280,6 @@ public class JSCompiler implements TreeVisitor {
     }
 
     @Override
-    public void visitUnaryOp(UnaryOp op) {
-
-    }
-
-    @Override
     public void visitLiteral(Literal literal) {
         if (literal.getValue() instanceof TString) {
             line.append("\"");
