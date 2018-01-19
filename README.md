@@ -10,20 +10,20 @@ The main goal is create a fast jvm language that lacks the verbosity
 of java while maintaining full interoperability.
 
 ## Building and Running
-<br>
+
 ```
 mvn clean install assembly:single
 ```
-<br>
+
 To run a test script
+
 
 ```
 java -jar toylang-1.0-SNAPSHOT-jar-with-dependencies.jar -r <path to script>.tl
 ```
-<br>
+
 ### Command line options
 
-<br>
 Run with security manager
 ```
 -secure
