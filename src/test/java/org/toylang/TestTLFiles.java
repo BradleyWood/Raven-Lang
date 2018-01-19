@@ -1,13 +1,7 @@
 package org.toylang;
 
 import org.junit.Test;
-import org.junit.Before;
 import org.junit.BeforeClass;
-
-import org.toylang.compiler.Errors;
-import org.toylang.core.Utility;
-
-import java.util.HashMap;
 
 // this file has been automatically generated. Do not edit
 public class TestTLFiles {
@@ -198,10 +192,6 @@ public class TestTLFiles {
     @Test
     public void DictTest_dict2dTest2() throws Throwable {
         TestRunner.doTest("test/org/toylang/test/DictTest.tl", "dict2dTest2");
-    }
-    @BeforeClass
-    public static void loadError() {
-        TestRunner.loadClass("test/org/toylang/test/Error.tl");
     }
     @BeforeClass
     public static void loadForEachTest() {
