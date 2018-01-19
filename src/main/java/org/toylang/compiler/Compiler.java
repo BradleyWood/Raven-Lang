@@ -19,10 +19,10 @@ public class Compiler {
     private String name;
     private ToyTree tree;
 
-    private static LinkedList<AnnotationProcessor> processors = new LinkedList<>();
     private static HashMap<String, byte[]> classMap = new HashMap<>();
     private static ArrayList<String> IMPORTS = new ArrayList<>();
 
+    private LinkedList<AnnotationProcessor> processors = new LinkedList<>();
     private ArrayList<ToyTree> trees = new ArrayList<>();
     private ArrayList<String> classPath;
 
@@ -43,8 +43,8 @@ public class Compiler {
         processors.add(annotationProcessor);
     }
 
-    public List<AnnotationProcessor> getAnnotationProcessors() {
-        return processors;
+    public void removeAnnotationProcessor(AnnotationProcessor annotationProcessor) {
+        processors.remove(annotationProcessor);
     }
 
     public HashMap<String, byte[]> compile() throws IOException {
@@ -82,7 +82,7 @@ public class Compiler {
         int max = tree.getStatements().size();
         for (int i = 0; i < max; i++) {
             Statement statement = tree.getStatements().get(i);
-            getAnnotationProcessors().forEach(processors -> processors.process(tree, statement));
+            processors.forEach(processors -> processors.process(tree, statement));
         }
 
         parse();
