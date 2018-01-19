@@ -11,16 +11,19 @@ import java.io.*;
 public class TestGenerator {
 
     public static void main(String[] args) throws IOException {
-        ST testFile = new ST(readFile("test/TestFile.st"));
+        String testSetup = readFile("testData/rt_tests/TestSetup.st");
+        String tlTest = readFile("testData/rt_tests/TLTest.st");
+
+        ST testFile = new ST(readFile("testData/rt_tests/TestFile.st"));
 
         StringBuilder body = new StringBuilder();
 
-        File testFolder = new File("test/org/toylang/test/");
+        File testFolder = new File("testData/rt_tests/org/toylang/test/");
 
         for (File file : testFolder.listFiles()) {
             String name = file.getName().replace(".tl", "");
             String f = "\"" + file.getPath().replace("\\", "/") + "\"";
-            ST setup = new ST(readFile("test/TestSetup.st"));
+            ST setup = new ST(testSetup);
             setup.add("name", name);
             setup.add("file", f);
 
@@ -33,7 +36,7 @@ public class TestGenerator {
                 if (statement instanceof Fun) {
                     Fun fun = (Fun) statement;
                     if (fun.getName().toString().toLowerCase().contains("test")) {
-                        ST test = new ST(readFile("test/TLTest.st"));
+                        ST test = new ST(tlTest);
                         test.add("name", name);
                         test.add("test", fun.getName().toString());
                         test.add("file", f);
