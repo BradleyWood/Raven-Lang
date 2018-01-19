@@ -1,5 +1,7 @@
 package org.toylang.antlr.ast;
 
+import java.util.Arrays;
+
 /**
  * A fully qualified name can be used to represent any name,
  * including imported resources, variables, functions, annotations
@@ -78,12 +80,12 @@ public class QualifiedName extends Expression {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         QualifiedName that = (QualifiedName) o;
-        return toString().equals(that.toString());
+        return Arrays.equals(names, that.names);
     }
 
     @Override
     public int hashCode() {
-        return toString().hashCode();
+        return Arrays.hashCode(names);
     }
 
     public static QualifiedName valueOf(String str) {
