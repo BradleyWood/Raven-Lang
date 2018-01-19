@@ -14,12 +14,21 @@ public class ToyTree extends AST {
     private QualifiedName pack = new QualifiedName();
     private List<QualifiedName> imports = new ArrayList<>();
     private QualifiedName name = null;
+    private String sourceFile = "";
 
     public ToyTree() {
     }
 
     public ToyTree(List<Statement> statements) {
         this.statements = statements;
+    }
+
+    public String getSourceFile() {
+        return sourceFile;
+    }
+
+    public void setSourceFile(String sourceFile) {
+        this.sourceFile = sourceFile;
     }
 
     public void setPackage(QualifiedName pack) {

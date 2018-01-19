@@ -28,6 +28,7 @@ public class ToyParser {
         parser.addErrorListener(new ToyErrorListener(file));
         ToyFileVisitor fileVisitor = new ToyFileVisitor();
         ToyTree tree = fileVisitor.visit(parser.toyFile());
+        tree.setSourceFile(file);
         String name = new File(file).getName();
         tree.setName(name.replaceAll(".tl", ""));
         return tree;
