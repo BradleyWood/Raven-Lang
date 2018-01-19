@@ -22,7 +22,6 @@ public class ToyFileVisitor extends ToyLangBaseVisitor<ToyTree> {
         }
         if (ctx.importStatement() != null) {
             ctx.importStatement().forEach(imp -> tree.addImport(imp.qualifiedName().accept(QualifiedNameVisitor.INSTANCE)));
-
         }
         ctx.statement().forEach(stmtCtx -> {
             Statement s = stmtCtx.accept(StatementVisitor.INSTANCE);
