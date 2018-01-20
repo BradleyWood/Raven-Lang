@@ -34,7 +34,7 @@ public fun println() {
 }
 
 public fun print(obj) {
-    out.println(obj);
+    out.print(obj);
 }
 
 public fun str(obj) {
