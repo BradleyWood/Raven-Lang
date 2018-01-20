@@ -11,10 +11,18 @@ import java.io.*;
 public class TestGenerator {
 
     public static void main(String[] args) throws IOException {
+        genFileTests();
+    }
+
+    private static void genReplTests() {
+
+    }
+
+    private static void genFileTests() throws IOException {
         String testSetup = readFile("testData/rt_tests/TestSetup.st");
         String tlTest = readFile("testData/rt_tests/TLTest.st");
 
-        ST testFile = new ST(readFile("testData/rt_tests/TestFile.st"));
+        ST testFile = new ST(readFile("testData/TestFile.st"));
 
         StringBuilder body = new StringBuilder();
 
