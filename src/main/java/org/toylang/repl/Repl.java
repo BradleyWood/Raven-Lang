@@ -63,12 +63,16 @@ public class Repl {
                     imports.add((Import) statement);
             } else if (statement instanceof VarDecl) {
                 VarDecl decl = (VarDecl) statement;
+                decl.getModifiers().clear();
                 decl.addModifier(Modifier.PUBLIC);
                 decl.addModifier(Modifier.STATIC);
                 variables.add(decl);
                 statements.add(new BinOp(decl.getName(), Operator.ASSIGNMENT, decl.getInitialValue()));
             } else if (statement instanceof Fun) {
-                ((Fun) statement).addModifier(Modifier.STATIC);
+                Fun fun = (Fun) statement;
+                fun.getModifiers().clear();
+                fun.addModifier(Modifier.PUBLIC);
+                fun.addModifier(Modifier.STATIC);
                 functions.add((Fun) statement);
             } else {
                 statements.add(statement);
