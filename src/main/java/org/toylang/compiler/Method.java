@@ -716,10 +716,10 @@ public class Method extends MethodVisitor implements TreeVisitor, Opcodes {
     }
 
     private void writeConstants() {
-        visitLdcInsn(Constants.getConstantCount());
+        visitLdcInsn(ctx.getConstants().size());
         visitTypeInsn(ANEWARRAY, Constants.TOBJ_NAME);
         int i = 0;
-        for (TObject obj : Constants.getConstants()) {
+        for (TObject obj : ctx.getConstants()) {
             visitInsn(DUP);
             visitLdcInsn(i);
             if (obj instanceof TNull) {
@@ -745,14 +745,14 @@ public class Method extends MethodVisitor implements TreeVisitor, Opcodes {
     }
 
     private void getConstant(TObject obj) {
-        int idx = Constants.getConstants().indexOf(obj);
+        int idx = ctx.getConstants().indexOf(obj);
         visitFieldInsn(GETSTATIC, ctx.getOwner(), "__CONSTANTS__", getDesc(TObject[].class));
 
         if (idx >= 0) {
             visitLdcInsn(idx);
         } else {
-            visitLdcInsn(Constants.getConstantCount());
-            Constants.addConstant(obj);
+            visitLdcInsn(ctx.getConstants().size());
+            ctx.getConstants().add(obj);
         }
         visitInsn(AALOAD);
     }

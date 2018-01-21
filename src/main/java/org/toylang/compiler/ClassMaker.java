@@ -81,7 +81,6 @@ public class ClassMaker {
             classCtx.setStatic(fun.hasModifier(Modifier.STATIC));
             defineMethod(classCtx, fun, fun.modifiers());
         }
-        Constants.clear();
     }
 
     private void defineField(String name, int modifiers) {

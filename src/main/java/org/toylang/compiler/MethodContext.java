@@ -1,11 +1,14 @@
 package org.toylang.compiler;
 
 import org.toylang.antlr.ast.*;
+import org.toylang.core.wrappers.TObject;
 
+import java.util.LinkedList;
 import java.util.List;
 
 public class MethodContext {
 
+    private LinkedList<TObject> constants = new LinkedList<>();
     private final String owner;
     private String name;
     private final List<QualifiedName> imports;
@@ -13,6 +16,7 @@ public class MethodContext {
     private boolean isStatic = false;
 
     private final ClassDef def;
+
 
     public MethodContext(String owner, String name, List<QualifiedName> imports, ClassDef def) {
         this.owner = owner;
@@ -47,5 +51,13 @@ public class MethodContext {
 
     public ClassDef getClassDef() {
         return def;
+    }
+
+    public LinkedList<TObject> getConstants() {
+        return constants;
+    }
+
+    public void setConstants(LinkedList<TObject> constants) {
+        this.constants = constants;
     }
 }
