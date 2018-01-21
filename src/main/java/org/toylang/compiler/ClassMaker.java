@@ -31,23 +31,6 @@ public class ClassMaker {
         this.imports.addAll(Arrays.asList(Constants.COMMON_IMPORTS));
     }
 
-    /**
-     * Creates a skeleton class for classes with no instance methods or fields
-     *
-     * @param pack The package of the Class
-     * @param name The name of the Class
-     */
-    public ClassMaker(QualifiedName pack, String name, List<QualifiedName> imports) {
-        this(new ClassDef(new Modifier[]{Modifier.PUBLIC}, pack, name, OBJECT, new QualifiedName[0], new ArrayList<>()), imports);
-    }
-
-    /**
-     * For use in a repl for live interp
-     */
-    public ClassMaker(List<QualifiedName> imports) {
-        this(new ClassDef(new Modifier[]{Modifier.PUBLIC}, new QualifiedName("repl"), "Repl", OBJECT, new QualifiedName[0], new ArrayList<>()), imports);
-    }
-
     public void make() {
         int modifiers = ACC_SUPER;
         for (Modifier modifier : def.getModifiers()) {
