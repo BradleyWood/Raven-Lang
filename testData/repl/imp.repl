@@ -1,0 +1,3 @@
+> import java.lang.String
+> String.valueOf(5)
+5
