@@ -1,6 +1,6 @@
 
-    private static final PrintStream sout = System.out;
-    private static final PrintStream serr = System.out;
+    private static final java.io.PrintStream sout = System.out;
+    private static final java.io.PrintStream serr = System.out;
 
     @BeforeClass
     public static void before() {

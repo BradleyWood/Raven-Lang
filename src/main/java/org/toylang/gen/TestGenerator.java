@@ -12,10 +12,38 @@ public class TestGenerator {
 
     public static void main(String[] args) throws IOException {
         genFileTests();
+        genReplTests();
     }
 
-    private static void genReplTests() {
+    private static void genReplTests() throws IOException {
+        String replTemplate = readFile("testData/repl/ReplTest.st");
+        ST testFile = new ST(readFile("testData/TestFile.st"));
 
+        StringBuilder body = new StringBuilder();
+
+        body.append(readFile("testData/repl/ReplTestSetup.st"));
+
+        File testFolder = new File("testData/repl/");
+
+        for (File file : testFolder.listFiles()) {
+            if (!file.getName().endsWith(".repl"))
+                continue;
+            ST replTestTemplate = new ST(replTemplate);
+            String name = file.getName().replace(".repl", "");
+            String f = "\"" + file.getPath().replace("\\", "/") + "\"";
+            replTestTemplate.add("name", name);
+            replTestTemplate.add("file", f);
+            body.append(replTestTemplate.render());
+        }
+
+        testFile.add("package", "org.toylang");
+        testFile.add("name", "Repl");
+        testFile.add("body", body.toString());
+
+        File output = new File("src/test/java/org/toylang/TestRepl.java");
+        FileOutputStream fos = new FileOutputStream(output);
+        fos.write(testFile.render().getBytes());
+        fos.close();
     }
 
     private static void genFileTests() throws IOException {
@@ -29,6 +57,8 @@ public class TestGenerator {
         File testFolder = new File("testData/rt_tests/org/toylang/test/");
 
         for (File file : testFolder.listFiles()) {
+            if (!file.getName().endsWith(".tl"))
+                continue;
             String name = file.getName().replace(".tl", "");
             String f = "\"" + file.getPath().replace("\\", "/") + "\"";
             ST setup = new ST(testSetup);
