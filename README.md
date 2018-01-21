@@ -9,6 +9,8 @@ compiled and tested several programs.
 The main goal is create a fast jvm language that lacks the verbosity
 of java while maintaining full interoperability.
 
+[Click here to try](http://bradleywood.me/projects/jvmlang.html)
+
 ## Building and Running
 
 ```
