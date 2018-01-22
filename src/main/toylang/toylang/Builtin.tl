@@ -11,12 +11,6 @@ import java.lang.Class;
 import org.toylang.core.wrappers.TError;
 import org.toylang.core.wrappers.TList;
 
-private var out = System.out;
-private var err = System.err;
-private var in = System.in;
-private var scan = Scanner(in);
-
-
 public fun isError(obj) {
     return type(obj) == TError.TYPE;
 }
@@ -26,15 +20,15 @@ public fun error(obj) {
 }
 
 public fun println(obj) {
-    out.println(str(obj));
+    System.out.println(str(obj));
 }
 
 public fun println() {
-    out.println();
+    System.out.println();
 }
 
 public fun print(obj) {
-    out.print(obj);
+    System.out.print(obj);
 }
 
 public fun str(obj) {
