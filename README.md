@@ -26,11 +26,6 @@ java -jar toylang-1.0-SNAPSHOT-jar-with-dependencies.jar -r <path to script>.tl
 
 ### Command line options
 
-Run with security manager
-```
--secure
-```
-
 #### Mutually exclusive options
 
 Run in REPL (read-eval-print-loop) mode
