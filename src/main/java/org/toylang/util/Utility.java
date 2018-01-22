@@ -18,6 +18,21 @@ import java.util.LinkedList;
 
 public class Utility {
 
+
+    public static void buildBuiltins() {
+        try {
+            Class.forName("toylang.Builtin");
+        } catch (ClassNotFoundException e) {
+            try {
+                Errors.reset();
+                Utility.compile("/src/main/toylang/toylang/", true);
+                Class.forName("toylang.Builtin");
+            } catch (Exception e1) {
+                e1.printStackTrace();
+            }
+        }
+    }
+
     public static void compileAndRun(String path, String[] args) {
         path = path.replace("/", "\\");
         File file = new File(path);

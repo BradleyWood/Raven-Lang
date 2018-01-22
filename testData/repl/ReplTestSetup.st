@@ -4,6 +4,7 @@
 
     @BeforeClass
     public static void before() {
+        org.toylang.util.Utility.buildBuiltins();
         org.toylang.core.Application.REPL = true;
     }
 

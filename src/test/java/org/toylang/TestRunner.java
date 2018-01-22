@@ -36,21 +36,8 @@ public class TestRunner {
         }
     }
 
-    private static void buildBuiltins() {
-        try {
-            Class.forName("toylang.Builtin");
-        } catch (ClassNotFoundException e) {
-            try {
-                Errors.reset();
-                Utility.compile("/src/main/toylang/toylang/", true);
-            } catch (Exception e1) {
-                e1.printStackTrace();
-            }
-        }
-    }
-
     public static void loadClass(final String file) {
-        buildBuiltins();
+        Utility.buildBuiltins();
         File f = new File(file);
         if (f.isDirectory() || classes.containsKey(file)) {
             return;
