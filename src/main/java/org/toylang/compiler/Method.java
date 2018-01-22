@@ -505,7 +505,7 @@ public class Method extends MethodVisitor implements TreeVisitor, Opcodes {
                         accessStaticField(importedClass, names[1], load);
                     } else {
                         if (decl != null) {
-                            visitFieldInsn(GETSTATIC, ctx.getOwner().replace(".", "/"), names[1], Constants.TOBJ_SIG);
+                            visitFieldInsn(GETSTATIC, ctx.getOwner().replace(".", "/"), names[0], Constants.TOBJ_SIG);
                             StringBuilder qname = new StringBuilder();
                             String[] nn = Arrays.copyOfRange(names, 1, names.length);
                             Arrays.stream(nn).forEach(qname::append);
