@@ -7,6 +7,8 @@ import org.toylang.antlr.ast.*;
 import org.toylang.core.*;
 import org.toylang.core.wrappers.*;
 
+import javax.swing.*;
+import java.lang.reflect.Field;
 import java.util.*;
 
 public class Method extends MethodVisitor implements TreeVisitor, Opcodes {
@@ -537,12 +539,24 @@ public class Method extends MethodVisitor implements TreeVisitor, Opcodes {
         }
 
         if (decl.isJavaField()) {
-            visitLdcInsn(Type.getType("L" + (owner) + ";"));
-            visitLdcInsn(name);
+            Primitive p = null;
             if (load) {
-                visitMethodInsn(INVOKESTATIC, getInternalName(TObject.class), "getField", getDesc(TObject.class, "getField", Class.class, String.class), false);
+                String type = "Ljava/lang/Object;";
+                try {
+                    Field f = Class.forName(owner.replace("/", ".")).getField(name);
+                    type = getDesc(f.getType());
+                    p = Primitive.getUnboxedPrimitive(f.getType());
+                } catch (ClassNotFoundException | NoSuchFieldException e) {
+                    e.printStackTrace();
+                }
+                visitFieldInsn(load ? GETSTATIC : PUTSTATIC, owner, name, type);
+                if (p != null) {
+                    p.wrap(this);
+                }
+                mv.visitMethodInsn(INVOKESTATIC, "org/toylang/core/wrappers/TObject", "toToyLang", "(Ljava/lang/Object;)" + getDesc(TObject.class), false);
             } else {
-                Warning.put("ERROR");
+                visitLdcInsn(Type.getType("L" + (owner) + ";"));
+                visitLdcInsn(name);
                 visitMethodInsn(INVOKESTATIC, getInternalName(TObject.class), "setField", getDesc(TObject.class, "setField", Class.class, String.class, TObject.class), false);
             }
             return;
