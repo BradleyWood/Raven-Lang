@@ -1,0 +1,11 @@
+> public var a = 100
+> a
+100
+> private var b = 200
+> b
+200
+> a + b
+300
+> var c = 300
+> a + b + c
+600

@@ -1,0 +1,6 @@
+> import java.awt.geom.Point2D
+> var pt = Point2D.Double(100, 200)
+> pt.getX()
+100.0
+> pt.getY()
+200.0

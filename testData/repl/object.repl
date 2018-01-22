@@ -1,0 +1,4 @@
+> import java.lang.String
+> var a = String("a test string")
+> a
+a test string

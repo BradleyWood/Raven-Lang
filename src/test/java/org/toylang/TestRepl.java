@@ -51,5 +51,21 @@ public class TestRepl {
     public void imp() throws Throwable {
         ReplTestRunner.doTest("testData/repl/imp.repl");
     }
+    @Test
+    public void object() throws Throwable {
+        ReplTestRunner.doTest("testData/repl/object.repl");
+    }
+    @Test
+    public void object_field() throws Throwable {
+        ReplTestRunner.doTest("testData/repl/object_field.repl");
+    }
+    @Test
+    public void object_function() throws Throwable {
+        ReplTestRunner.doTest("testData/repl/object_function.repl");
+    }
+    @Test
+    public void variable() throws Throwable {
+        ReplTestRunner.doTest("testData/repl/variable.repl");
+    }
 
 }
