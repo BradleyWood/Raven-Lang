@@ -24,6 +24,10 @@ public class TestRepl {
         org.toylang.core.Application.REPL = false;
     }
     @Test
+    public void comment() throws Throwable {
+        ReplTestRunner.doTest("testData/repl/comment.repl");
+    }
+    @Test
     public void constants_pi() throws Throwable {
         ReplTestRunner.doTest("testData/repl/constants_pi.repl");
     }
@@ -62,6 +66,10 @@ public class TestRepl {
     @Test
     public void object_function() throws Throwable {
         ReplTestRunner.doTest("testData/repl/object_function.repl");
+    }
+    @Test
+    public void types() throws Throwable {
+        ReplTestRunner.doTest("testData/repl/types.repl");
     }
     @Test
     public void variable() throws Throwable {
