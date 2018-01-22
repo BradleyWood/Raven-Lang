@@ -44,6 +44,10 @@ public class TestRepl {
         ReplTestRunner.doTest("testData/repl/constant_str.repl");
     }
     @Test
+    public void dict() throws Throwable {
+        ReplTestRunner.doTest("testData/repl/dict.repl");
+    }
+    @Test
     public void errors() throws Throwable {
         ReplTestRunner.doTest("testData/repl/errors.repl");
     }
@@ -58,6 +62,10 @@ public class TestRepl {
     @Test
     public void imp() throws Throwable {
         ReplTestRunner.doTest("testData/repl/imp.repl");
+    }
+    @Test
+    public void lists() throws Throwable {
+        ReplTestRunner.doTest("testData/repl/lists.repl");
     }
     @Test
     public void object() throws Throwable {
