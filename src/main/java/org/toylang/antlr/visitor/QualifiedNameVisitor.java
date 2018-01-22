@@ -15,6 +15,10 @@ public class QualifiedNameVisitor extends ToyLangBaseVisitor<QualifiedName> {
 
     @Override
     public QualifiedName visitQualifiedName(ToyLangParser.QualifiedNameContext ctx) {
+        if (ctx.THIS() != null) {
+            return new QualifiedName("this");
+        }
+
         List<String> list = new ArrayList<>();
         for (TerminalNode terminalNode : ctx.IDENTIFIER()) {
             list.add(terminalNode.getText());

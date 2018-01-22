@@ -44,6 +44,10 @@ public class TestRepl {
         ReplTestRunner.doTest("testData/repl/constant_str.repl");
     }
     @Test
+    public void errors() throws Throwable {
+        ReplTestRunner.doTest("testData/repl/errors.repl");
+    }
+    @Test
     public void expr_add() throws Throwable {
         ReplTestRunner.doTest("testData/repl/expr_add.repl");
     }

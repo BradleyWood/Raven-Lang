@@ -454,7 +454,17 @@ public class Method extends MethodVisitor implements TreeVisitor, Opcodes {
         String[] names = name.getNames();
         int localIdx = scope.findVar(names[0]);
 
-        if (localIdx != -1 && !names[0].equals("this")) {
+        if (names[0].equals("this")) {
+            if (ctx.isStatic()) {
+                Errors.put("\"this\" not allowed in non-static context");
+            } else if (load) {
+                visitVarInsn(ALOAD, getLocal("this"));
+            } else {
+                Errors.put("Cannot reassign \"this\"");
+            }
+        }
+
+        if (localIdx != -1) {
             switch (names.length) {
                 case 1:
                     visitVarInsn(load ? ALOAD : ASTORE, localIdx);
