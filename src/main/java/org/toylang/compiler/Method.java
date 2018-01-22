@@ -460,7 +460,6 @@ public class Method extends MethodVisitor implements TreeVisitor, Opcodes {
                     visitVarInsn(load ? ALOAD : ASTORE, localIdx);
                     break;
                 default:
-                    visitFieldInsn(GETSTATIC, ctx.getOwner().replace(".", "/"), names[1], Constants.TOBJ_SIG);
                     StringBuilder qname = new StringBuilder();
                     String[] nn = Arrays.copyOfRange(names, 1, names.length);
                     Arrays.stream(nn).forEach(qname::append);
