@@ -26,7 +26,12 @@ public class ReplTestRunner {
             String line;
             while ((line = br.readLine()) != null) {
                 if (line.startsWith(">")) {
-                    inputLines.add(line.substring(1) + ";");
+                    line = line.substring(1);
+                    int comment = line.indexOf("//");
+                    if (comment > 0) {
+                        line = line.substring(0, comment);
+                    }
+                    inputLines.add(line + ";");
                 } else if (line.length() > 0) {
                     output.add(line);
                 }

@@ -6,7 +6,6 @@ import org.toylang.compiler.Errors;
 import org.toylang.repl.Repl;
 
 import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 
 import static org.toylang.util.Utility.compile;
@@ -90,7 +89,12 @@ public class Application {
         Repl REPL = new Repl();
         Scanner scanner = new Scanner(System.in);
         while (true) {
-            REPL.exec(scanner.nextLine() + ";");
+            String line = scanner.nextLine();
+            int comment = line.indexOf("//");
+            if (comment > 0) {
+                line = line.substring(0, comment);
+            }
+            REPL.exec(line + ";");
         }
     }
 
