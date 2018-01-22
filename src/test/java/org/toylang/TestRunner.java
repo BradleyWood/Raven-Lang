@@ -10,7 +10,6 @@ import org.toylang.core.ByteClassLoader;
 import org.toylang.util.Utility;
 
 import java.io.File;
-import java.io.IOException;
 import java.lang.reflect.Method;
 import java.net.URL;
 import java.util.HashMap;
@@ -61,12 +60,14 @@ public class TestRunner {
             ToyTree tree = parser.parse();
             Compiler compiler = new Compiler(f.getAbsolutePath(), f.getName().replace(".tl", ""), tree, new JvmMethodAnnotationProcessor());
             HashMap<String, byte[]> clazzes = compiler.compile(false);
+            Errors.printErrors();
+            Errors.reset();
             for (Map.Entry<String, byte[]> entry : clazzes.entrySet()) {
                 byteClassLoader.addDef(entry.getKey(), entry.getValue());
             }
             Class<?> clazz = byteClassLoader.loadClass(tree.getFullName().toString());
             classes.put(file, clazz);
-        } catch (IOException | ClassNotFoundException | ClassFormatError e) {
+        } catch (Exception e) {
             e.printStackTrace();
             classes.put(file, null);
         }
