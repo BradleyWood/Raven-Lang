@@ -65,7 +65,7 @@ public fun type(obj) {
 }
 
 public fun readLine() {
-    return scan.nextLine();
+    return Scanner(System.in).nextLine();
 }
 
 public fun hash(obj) {
