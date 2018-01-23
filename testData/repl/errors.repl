@@ -1,2 +1,4 @@
 > var a = this;
 Error: "this" not allowed in non-static context
+> b + 1
+Error: Variable b has not been defined.
