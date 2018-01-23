@@ -289,9 +289,11 @@ public class Method extends MethodVisitor implements TreeVisitor, Opcodes {
         String desc = getFunDescriptor(call.getParams());
 
         if (call.getName().toString().equals("super")) {
-            Errors.put(ctx.getOwner() + " line " + call.getLineNumber() + ": Super() not allowed here.");
+            Errors.put(ctx.getClassDef().getSourceTree().getSourceFile() + " line " + call.getLineNumber() + ": Super() not allowed here");
+            return;
         } else if (call.getName().toString().equals("this")) {
-            Errors.put(ctx.getOwner() + " line " + call.getLineNumber() + ": This() not allowed here.");
+            Errors.put(ctx.getClassDef().getSourceTree().getSourceFile() + " line " + call.getLineNumber() + ": This() not allowed here");
+            return;
         }
 
         if (call.getPrecedingExpr() != null) {

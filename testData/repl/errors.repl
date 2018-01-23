@@ -2,3 +2,9 @@
 Error: "this" not allowed in non-static context
 > b + 1
 Error: Variable b has not been defined.
+
+> super()
+Error: <stdin> line 1: Super() not allowed here
+
+> this()
+Error: <stdin> line 1: This() not allowed here
