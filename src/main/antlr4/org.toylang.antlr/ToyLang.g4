@@ -64,8 +64,10 @@ importStatement
     :  'import' qualifiedName ('.' '*')? SEMI
     ;
 qualifiedName
-    :   THIS
-    |   IDENTIFIER ('.' IDENTIFIER)*
+    :   (THIS '.')? IDENTIFIER ('.' IDENTIFIER)*
+    |   (SUPER '.')? IDENTIFIER ('.' IDENTIFIER)*
+    |   THIS
+    |   SUPER
     ;
 modifier
     :   (PUB|PRIV)
@@ -115,9 +117,7 @@ interfaceList
     :   qualifiedName (',' qualifiedName)*
     ;
 expression
-    :   THIS '.' expression
-    |   SUPER '.' expression
-    |   literal
+    :   literal
     |   expression '.' qualifiedName
     |   expression '.' funCall
     |   funCall
