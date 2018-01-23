@@ -459,10 +459,12 @@ public class Method extends MethodVisitor implements TreeVisitor, Opcodes {
         if (names[0].equals("this")) {
             if (ctx.isStatic()) {
                 Errors.put("\"this\" not allowed in non-static context");
+                return;
             } else if (load) {
                 visitVarInsn(ALOAD, getLocal("this"));
             } else {
                 Errors.put("Cannot reassign \"this\"");
+                return;
             }
         }
 
@@ -488,9 +490,10 @@ public class Method extends MethodVisitor implements TreeVisitor, Opcodes {
                     if (ctx.isStatic()) {
                         if (decl != null && decl.hasModifier(Modifier.STATIC)) {
                             accessStaticField(ctx.getOwner(), decl.getName().toString(), load);
+                        } else if (decl != null) {
+                            Errors.put("Use of non-static variable " + names[0] + " in a static context");
                         } else {
-                            visitFieldInsn(load ? GETSTATIC : PUTSTATIC, ctx.getOwner(), names[0], getDesc(TObject.class));
-                            // check parent for field in the future
+                            Errors.put("Variable " + names[0] + " has not been defined.");
                         }
                     } else {
                         VarDecl var = ctx.getClassDef().findVar(name.toString());
