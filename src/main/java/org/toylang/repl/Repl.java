@@ -49,6 +49,7 @@ public class Repl {
         List<Statement> statementList = StatementParser.parseStatements(line);
 
         if (Errors.getErrorCount() > 0) {
+            Errors.printErrors();
             Errors.reset();
             return null;
         }
