@@ -458,14 +458,14 @@ public class Method extends MethodVisitor implements TreeVisitor, Opcodes {
         String[] names = name.getNames();
         int localIdx = scope.findVar(names[0]);
 
-        if (names[0].equals("this")) {
+        if (names[0].equals("this") || names[0].equals("super")) {
             if (ctx.isStatic()) {
-                Errors.put("\"this\" not allowed in non-static context");
+                Errors.put("\"" + names[0] + "\" not allowed in non-static context");
                 return;
             } else if (load) {
                 visitVarInsn(ALOAD, getLocal("this"));
-            } else {
-                Errors.put("Cannot reassign \"this\"");
+            } else if (names.length == 1) {
+                Errors.put("Cannot reassign \"" + names[0] + "\"");
                 return;
             }
         }
