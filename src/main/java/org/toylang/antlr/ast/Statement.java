@@ -10,12 +10,22 @@ public class Statement extends AST {
 
     private final ArrayList<Annotation> annotations = new ArrayList<>();
 
+    protected int lineNumber = -1;
+
     public List<Annotation> getAnnotations() {
         return annotations;
     }
 
     public void addAnnotation(Annotation annotation) {
         annotations.add(annotation);
+    }
+
+    public int getLineNumber() {
+        return lineNumber;
+    }
+
+    public void setLineNumber(int lineNumber) {
+        this.lineNumber = lineNumber;
     }
 
     @Override
