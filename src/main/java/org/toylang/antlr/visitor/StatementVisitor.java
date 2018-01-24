@@ -59,9 +59,13 @@ public class StatementVisitor extends ToyLangBaseVisitor<Statement> {
             // empty statement
             stmt = new Statement();
         } else {
-            System.err.println("Unimplemented parser rule for statement: " + ctx.getText());
+            //System.err.println("Unimplemented parser rule for statement: " + ctx.getText());
         }
-        //System.out.println("Statement: "+stmt);
+
+        if (stmt != null) {
+            stmt.setLineNumber(ctx.getStart().getLine());
+        }
+
         return stmt;
     }
 
