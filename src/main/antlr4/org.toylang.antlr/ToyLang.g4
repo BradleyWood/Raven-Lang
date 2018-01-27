@@ -118,8 +118,8 @@ interfaceList
     ;
 expression
     :   literal
-    |   expression '.' qualifiedName
-    |   expression '.' funCall
+    |   expression DOT qualifiedName
+    |   expression DOT funCall
     |   funCall
     |   qualifiedName
     |   listIdx
@@ -160,6 +160,7 @@ paramList
     ;
 listIdx
     :   qualifiedName ('[' expression ']')*
+    |   funCall ('[' expression ']')*
     ;
 slice
     :   qualifiedName '[' lhs=expression? ':' rhs=expression? ']'
@@ -420,4 +421,7 @@ EXP_ASSIGNMENT
     ;
 AT
     : '@'
+    ;
+DOT
+    : '.'
     ;
