@@ -2,22 +2,30 @@ package org.toylang.antlr.visitor;
 
 import org.toylang.antlr.ToyLangBaseVisitor;
 import org.toylang.antlr.ToyLangParser;
-import org.toylang.antlr.ast.Expression;
-import org.toylang.antlr.ast.ListIndex;
-import org.toylang.antlr.ast.QualifiedName;
+import org.toylang.antlr.ast.*;
 
-public class ListIndexVisitor extends ToyLangBaseVisitor<ListIndex> {
+public class ListIndexVisitor extends ToyLangBaseVisitor<Expression> {
 
     private ListIndexVisitor() {
 
     }
 
     @Override
-    public ListIndex visitListIdx(ToyLangParser.ListIdxContext ctx) {
-        QualifiedName lst = ctx.qualifiedName().accept(QualifiedNameVisitor.INSTANCE);
+    public Expression visitListIdx(ToyLangParser.ListIdxContext ctx) {
+        QualifiedName lst = null;
+        Expression call = null;
+        if (ctx.qualifiedName() != null) {
+            lst = ctx.qualifiedName().accept(QualifiedNameVisitor.INSTANCE);
+        } else if (ctx.funCall() != null) {
+            call = ctx.funCall().accept(FunCallVisitor.INSTANCE);
+        }
+
         Expression[] ia = new Expression[ctx.expression().size()];
         for (int i = 0; i < ia.length; i++) {
             ia[i] = ctx.expression(i).accept(ExpressionVisitor.INSTANCE);
+        }
+        if (call != null) {
+            return new ExpressionGroup(call, new ListIndex(null, ia));
         }
         return new ListIndex(lst, ia);
     }

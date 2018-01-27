@@ -13,8 +13,8 @@ public class ListIndex extends Expression {
 
     /**
      * Initializes a list index expression
-     * @param name
-     * @param index
+     * @param name The name of list; null if the list is on the stack
+     * @param index The indices
      */
     public ListIndex(QualifiedName name, Expression... index) {
         this.name = name;

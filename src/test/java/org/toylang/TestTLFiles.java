@@ -393,6 +393,10 @@ public class TestTLFiles {
         TestRunner.loadClass("testData/rt_tests/org/toylang/test/ListTest.tl");
     }
     @Test
+    public void ListTest_listIdxTest() throws Throwable {
+        TestRunner.doTest("testData/rt_tests/org/toylang/test/ListTest.tl", "listIdxTest");
+    }
+    @Test
     public void ListTest_sizeTest() throws Throwable {
         TestRunner.doTest("testData/rt_tests/org/toylang/test/ListTest.tl", "sizeTest");
     }

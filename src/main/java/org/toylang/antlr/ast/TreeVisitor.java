@@ -17,6 +17,8 @@ public interface TreeVisitor {
 
     void visitBlock(Block block);
 
+    void visitExpressionGroup(ExpressionGroup group);
+
     void visitVarDecl(VarDecl decl);
 
     void visitImport(Import importStatement);

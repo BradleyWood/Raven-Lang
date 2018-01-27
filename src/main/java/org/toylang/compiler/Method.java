@@ -602,6 +602,11 @@ public class Method extends MethodVisitor implements TreeVisitor, Opcodes {
     }
 
     @Override
+    public void visitExpressionGroup(ExpressionGroup group) {
+        group.accept(this);
+    }
+
+    @Override
     public void visitVarDecl(VarDecl decl) {
         if (decl.getInitialValue() != null) {
             decl.getInitialValue().accept(this);
@@ -683,7 +688,9 @@ public class Method extends MethodVisitor implements TreeVisitor, Opcodes {
 
     @Override
     public void visitListIdx(ListIndex idx) {
-        visitName(idx.getName());
+        if (idx.getName() != null) {
+            visitName(idx.getName());
+        }
         for (Expression expression : idx.getIndex()) {
             expression.accept(this);
             visitMethodInsn(INVOKEVIRTUAL, Constants.TOBJ_NAME, "get", getDesc(TObject.class, "get", TObject.class), false);
