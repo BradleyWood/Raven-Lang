@@ -16,7 +16,7 @@ public class StatementParser {
         CommonTokenStream tokenStream = new CommonTokenStream(lexer);
         org.toylang.antlr.ToyLangParser parser = new org.toylang.antlr.ToyLangParser(tokenStream);
         parser.removeErrorListener(ConsoleErrorListener.INSTANCE);
-        parser.addErrorListener(new ToyErrorListener("REPL"));
+        parser.addErrorListener(new ToyErrorListener("<stdin>"));
 
         ToyFileVisitor tfv = new ToyFileVisitor();
         return tfv.visitToyFile(parser.toyFile()).getStatements();

@@ -41,7 +41,12 @@ public class Method extends MethodVisitor implements TreeVisitor, Opcodes {
 
     @Override
     public void visitEnd() {
-        visitMaxs(0, 0);
+        try {
+            visitMaxs(0, 0);
+        } catch (Exception e) {
+            System.err.println(ctx.getOwner() + ":"+ctx.getName());
+            e.printStackTrace();
+        }
         super.visitEnd();
     }
 
@@ -688,9 +693,7 @@ public class Method extends MethodVisitor implements TreeVisitor, Opcodes {
 
     @Override
     public void visitListIdx(ListIndex idx) {
-        if (idx.getName() != null) {
-            visitName(idx.getName());
-        }
+        idx.getPrecedingExpr().accept(this);
         for (Expression expression : idx.getIndex()) {
             expression.accept(this);
             visitMethodInsn(INVOKEVIRTUAL, Constants.TOBJ_NAME, "get", getDesc(TObject.class, "get", TObject.class), false);
@@ -727,7 +730,7 @@ public class Method extends MethodVisitor implements TreeVisitor, Opcodes {
     }
 
     private void assignListIdx(ListIndex idx) {
-        visitName(idx.getName());
+        idx.getPrecedingExpr().accept(this);
         for (int i = 0; i < idx.getIndex().length - 1; i++) {
             Expression expression = idx.getIndex()[i];
             expression.accept(this);

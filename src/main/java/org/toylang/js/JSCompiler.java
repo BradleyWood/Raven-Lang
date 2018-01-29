@@ -253,6 +253,11 @@ public class JSCompiler implements TreeVisitor {
     }
 
     @Override
+    public void visitExpressionGroup(ExpressionGroup group) {
+
+    }
+
+    @Override
     public void visitVarDecl(VarDecl decl) {
         line.append("var");
         putSpaces(1);

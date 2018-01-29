@@ -8,16 +8,16 @@ import java.util.Objects;
  */
 public class ListIndex extends Expression {
 
-    private final QualifiedName name;
+    private Expression precedingExpr;
     private final Expression[] index;
 
     /**
      * Initializes a list index expression
-     * @param name The name of list; null if the list is on the stack
+     * @param precedingExpr expression that puts a list on the stack
      * @param index The indices
      */
-    public ListIndex(QualifiedName name, Expression... index) {
-        this.name = name;
+    public ListIndex(Expression precedingExpr, Expression... index) {
+        this.precedingExpr = precedingExpr;
         this.index = index;
     }
 
@@ -25,8 +25,12 @@ public class ListIndex extends Expression {
      * Get the name of the list to index
      * @return The fully qualified list name
      */
-    public QualifiedName getName() {
-        return name;
+    public Expression getPrecedingExpr() {
+        return precedingExpr;
+    }
+
+    public void setPrecedingExpr(Expression precedingExpr) {
+        this.precedingExpr = precedingExpr;
     }
 
     /**
@@ -48,13 +52,13 @@ public class ListIndex extends Expression {
         if (o == null || getClass() != o.getClass()) return false;
 
         ListIndex listIndex = (ListIndex) o;
-        return Objects.equals(name, listIndex.name) &&
+        return Objects.equals(precedingExpr, listIndex.precedingExpr) &&
                 Arrays.equals(index, listIndex.index);
     }
 
     @Override
     public int hashCode() {
-        int result = Objects.hash(super.hashCode(), name);
+        int result = Objects.hash(super.hashCode(), precedingExpr);
         result = 31 * result + Arrays.hashCode(index);
         return result;
     }

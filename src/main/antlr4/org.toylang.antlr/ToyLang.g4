@@ -122,7 +122,7 @@ expression
     |   expression DOT funCall
     |   funCall
     |   qualifiedName
-    |   listIdx
+    |   expression listIdx
     |   slice
     |   list
     |   dict
@@ -134,7 +134,9 @@ expression
     |   expression (GT|LT|GTE|LTE|EQUALS|NOT_EQUAL) expression
     |   expression (AND|OR) expression
     |   varAssignment
+    |   <assoc=right> lhs=expression listIdx ASSIGNMENT rhs=expression
     ;
+
 varAssignment
     :   <assoc=right>
         qualifiedName
@@ -147,8 +149,6 @@ varAssignment
         |   EXP_ASSIGNMENT
         )
         expression
-        |
-        listIdx ASSIGNMENT expression
     ;
 funCall
     :   IDENTIFIER '(' paramList? ')'
@@ -159,8 +159,7 @@ paramList
     :   param (',' param)*
     ;
 listIdx
-    :   qualifiedName ('[' expression ']')*
-    |   funCall ('[' expression ']')*
+    :   ('[' expression ']')+
     ;
 slice
     :   qualifiedName '[' lhs=expression? ':' rhs=expression? ']'

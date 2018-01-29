@@ -17,8 +17,6 @@ public class AssignmentVisitor extends ToyLangBaseVisitor<BinOp> {
         Expression lhs = null;
         if (ctx.qualifiedName() != null) {
             lhs = ctx.qualifiedName().accept(QualifiedNameVisitor.INSTANCE);
-        } else if (ctx.listIdx() != null) {
-            lhs = ctx.listIdx().accept(ListIndexVisitor.INSTANCE);
         }
         Operator operator = getOperator(ctx);
         Expression value = ctx.accept(ExpressionVisitor.INSTANCE);

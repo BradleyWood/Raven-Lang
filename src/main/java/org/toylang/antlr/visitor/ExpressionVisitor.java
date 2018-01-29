@@ -31,8 +31,6 @@ public class ExpressionVisitor extends ToyLangBaseVisitor<Expression> {
             expr = ctx.dict().accept(DictDefVisitor.INSTANCE);
         } else if (ctx.list() != null) {
             expr = ctx.list().accept(ArrayDefVisitor.INSTANCE);
-        } else if (ctx.listIdx() != null) {
-            expr = ctx.listIdx().accept(ListIndexVisitor.INSTANCE);
         } else if (ctx.slice() != null) {
             expr = ctx.slice().accept(SliceVisitor.INSTANCE);
         } else if (ctx.funCall() != null) {
@@ -41,6 +39,15 @@ public class ExpressionVisitor extends ToyLangBaseVisitor<Expression> {
             expr = ctx.qualifiedName().accept(QualifiedNameVisitor.INSTANCE);
         } else if (ctx.varAssignment() != null) {
             expr = ctx.varAssignment().accept(AssignmentVisitor.INSTANCE);
+        } else if (ctx.lhs != null && ctx.rhs != null && ctx.ASSIGNMENT() != null) {
+            ListIndex lIdx = ctx.listIdx().accept(ListIndexVisitor.INSTANCE);
+            lIdx.setPrecedingExpr(ctx.lhs.accept(ExpressionVisitor.INSTANCE));
+            expr = new BinOp(lIdx, Operator.ASSIGNMENT, ctx.rhs.accept(ExpressionVisitor.INSTANCE));
+        } else if (ctx.listIdx() != null) {
+            Expression preceding = ctx.expression(0).accept(ExpressionVisitor.INSTANCE);
+            ListIndex lIdx = ctx.listIdx().accept(ListIndexVisitor.INSTANCE);
+            lIdx.setPrecedingExpr(preceding);
+            expr = lIdx;
         } else if (ctx.expression().size() == 1) {
             expr = ctx.expression(0).accept(ExpressionVisitor.INSTANCE);
             if (ctx.SUB() != null) {
