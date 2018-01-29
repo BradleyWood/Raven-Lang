@@ -10,6 +10,8 @@ fun listIdxTest() {
     Assert.assertEqual(2, listGetter()[2]);
     Assert.assertEqual(8, listGetter()[8]);
     Assert.assertEqual(0, listGetter()[0]);
+    var xd = ListTest.listGetter()[5];
+    Assert.assertEqual(5, xd);
 }
 
 fun sizeTest() {
