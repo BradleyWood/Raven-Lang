@@ -1,0 +1,6 @@
+.idea/
+gen/
+*.iml
+target/
+*.jar
+*.bat
