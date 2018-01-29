@@ -11,7 +11,6 @@ public class Call extends Expression {
     private Expression precedingExpr = null;
     private QualifiedName name;
     private final Expression[] params;
-    private boolean pop = false;
 
     /**
      * Initializes a call, generally used for local static functions
@@ -82,24 +81,6 @@ public class Call extends Expression {
         return params;
     }
 
-    /**
-     * Sometimes the return value is not used and it must be popped off the stack
-     *
-     * @return True if the return value should be popped off the stack
-     */
-    public boolean pop() {
-        return pop;
-    }
-
-    /**
-     * If the result of this expression is not used, we may need to pop the value off the stack
-     *
-     * @param pop Whether to pop the return value off the stack
-     */
-    public void setPop(boolean pop) {
-        this.pop = pop;
-    }
-
     @Override
     public void accept(TreeVisitor visitor) {
         visitor.visitFunCall(this);
@@ -118,8 +99,7 @@ public class Call extends Expression {
         if (o == null || getClass() != o.getClass()) return false;
 
         Call call = (Call) o;
-        return pop == call.pop &&
-                Objects.equals(precedingExpr, call.precedingExpr) &&
+        return Objects.equals(precedingExpr, call.precedingExpr) &&
                 Objects.equals(name, call.name) &&
                 Arrays.equals(params, call.params);
     }
@@ -127,7 +107,7 @@ public class Call extends Expression {
     @Override
     public int hashCode() {
 
-        int result = Objects.hash(super.hashCode(), precedingExpr, name, pop);
+        int result = Objects.hash(super.hashCode(), precedingExpr, name);
         result = 31 * result + Arrays.hashCode(params);
         return result;
     }
