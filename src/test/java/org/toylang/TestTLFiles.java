@@ -268,6 +268,10 @@ public class TestTLFiles {
     public void ForTest_forTest9() throws Throwable {
         TestRunner.doTest("testData/rt_tests/org/toylang/test/ForTest.tl", "forTest9");
     }
+    @Test
+    public void ForTest_forTest10() throws Throwable {
+        TestRunner.doTest("testData/rt_tests/org/toylang/test/ForTest.tl", "forTest10");
+    }
     @BeforeClass
     public static void loadFunctionTest() {
         TestRunner.loadClass("testData/rt_tests/org/toylang/test/FunctionTest.tl");

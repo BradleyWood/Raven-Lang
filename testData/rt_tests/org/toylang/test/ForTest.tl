@@ -97,3 +97,10 @@ fun forTest9() {
 
     Assert.assertEqual(i, 10);
 }
+
+fun forTest10() {
+    var i;
+    for (i = 0; i < 10; i += 1);
+
+    Assert.assertEqual(i, 10);
+}
