@@ -64,6 +64,7 @@ public class StatementVisitor extends ToyLangBaseVisitor<Statement> {
 
         if (stmt != null) {
             stmt.setLineNumber(ctx.getStart().getLine());
+            stmt.setText(ctx.getText());
         }
 
         return stmt;

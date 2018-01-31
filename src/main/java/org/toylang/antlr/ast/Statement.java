@@ -10,10 +10,20 @@ public class Statement extends AST {
 
     private final ArrayList<Annotation> annotations = new ArrayList<>();
 
+    protected String text;
+
     protected int lineNumber = -1;
 
     public List<Annotation> getAnnotations() {
         return annotations;
+    }
+
+    public void setText(String text) {
+        this.text = text;
+    }
+
+    public String getText() {
+        return text;
     }
 
     public void addAnnotation(Annotation annotation) {
@@ -43,5 +53,10 @@ public class Statement extends AST {
     @Override
     public int hashCode() {
         return Objects.hash(annotations);
+    }
+
+    @Override
+    public String toString() {
+        return getClass().getSimpleName() + "[" + getText() + "]";
     }
 }

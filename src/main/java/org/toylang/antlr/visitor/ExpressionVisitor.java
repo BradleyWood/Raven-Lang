@@ -71,6 +71,7 @@ public class ExpressionVisitor extends ToyLangBaseVisitor<Expression> {
 
         if (expr != null) {
             expr.setLineNumber(ctx.start.getLine());
+            expr.setText(ctx.getText());
         }
 
         return expr;
