@@ -66,7 +66,7 @@ public class ForVisitor extends ToyLangBaseVisitor<For> {
         } else if (ctx.statement() != null) {
             Statement init = new Block();
             Expression condition = new Literal(TBoolean.TRUE);
-            if (ctx.forControl().init != null)
+            if (forControl.init != null)
                 init = forControl.init.accept(ExpressionVisitor.INSTANCE);
             else if (forControl.decl != null)
                 init = forControl.decl.accept(VarDeclVisitor.INSTANCE);
