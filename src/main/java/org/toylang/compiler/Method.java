@@ -7,7 +7,6 @@ import org.toylang.antlr.ast.*;
 import org.toylang.core.*;
 import org.toylang.core.wrappers.*;
 
-import javax.swing.*;
 import java.lang.reflect.Field;
 import java.util.*;
 
@@ -41,12 +40,7 @@ public class Method extends MethodVisitor implements TreeVisitor, Opcodes {
 
     @Override
     public void visitEnd() {
-        try {
-            visitMaxs(0, 0);
-        } catch (Exception e) {
-            System.err.println(ctx.getOwner() + ":"+ctx.getName());
-            e.printStackTrace();
-        }
+        visitMaxs(0, 0);
         super.visitEnd();
     }
 
