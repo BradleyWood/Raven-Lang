@@ -1,5 +1,6 @@
 package org.toylang.antlr.ast;
 
+import org.objectweb.asm.Type;
 import org.toylang.antlr.Modifier;
 import org.toylang.compiler.Constants;
 import org.toylang.core.wrappers.TObject;
@@ -103,22 +104,17 @@ public class Fun extends Statement {
     public String getDesc() {
         if (javaDesc != null)
             return javaDesc;
-        StringBuilder desc = new StringBuilder("([Ljava/lang/String;)V");
-        if (!getName().toString().equals("main")) {
-            desc = new StringBuilder("(");
-            for (VarDecl ignored : getParams()) {
-                desc.append(Constants.TOBJ_SIG);
-            }
-            if (name.toString().equals("<init>")) {
-                desc.append(")V");
-            } else {
-                desc.append(")" + Constants.TOBJ_SIG);
-            }
-        }
-        if (getName().toString().equals("<clinit>"))
-            desc = new StringBuilder("()V");
 
-        return desc.toString();
+        StringBuilder desc = new StringBuilder("([Ljava/lang/String;)V");
+        if (getName().toString().equals("main")) {
+            return "([Ljava/lang/String;)V";
+        } else if (getName().toString().equals("<clinit>")) {
+            return "()V";
+        }
+
+        Type[] paramTypes = new Type[params.length];
+        Arrays.fill(paramTypes, Type.getType(TObject.class));
+        return Type.getMethodDescriptor(Type.getType(TObject.class), paramTypes);
     }
 
     public String[] getExceptions() {
@@ -179,12 +175,21 @@ public class Fun extends Statement {
         Fun fun = new Fun(QualifiedName.valueOf(method.getName()), new Block(),
                 modifierList.toArray(new Modifier[modifierList.size()]), exceptions, params);
         int i = 0;
+        boolean isJava = false;
         for (Class<?> paramType : method.getParameterTypes()) {
             if (!paramType.equals(TObject.class)) {
-                fun.forceDescriptor("");
+                isJava = true;
+                break;
             }
             params[i++] = new VarDecl(QualifiedName.valueOf(String.valueOf(i)), null);
         }
+
+        if (!method.getReturnType().equals(TObject.class)) {
+            isJava = true;
+        }
+
+        if (isJava)
+            fun.forceDescriptor(Type.getMethodDescriptor(method));
 
         return fun;
     }
