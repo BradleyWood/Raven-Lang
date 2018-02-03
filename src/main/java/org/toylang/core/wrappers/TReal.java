@@ -226,7 +226,7 @@ public class TReal extends TObject {
     @Override
     public int coerceRating(Class clazz) {
         if (clazz.equals(double.class) || clazz.equals(Double.class)
-                || clazz.equals(float.class) || clazz.equals(float.class)) {
+                || clazz.equals(float.class) || clazz.equals(Float.class)) {
             return COERCE_IDEAL;
         } else if (clazz.equals(int.class) || clazz.equals(Integer.class)
                 || clazz.equals(long.class) || clazz.equals(Long.class)
