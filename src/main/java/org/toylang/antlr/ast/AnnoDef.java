@@ -52,7 +52,7 @@ public class AnnoDef extends Statement {
 
     @Override
     public int hashCode() {
-        int result = Objects.hash(super.hashCode(), name);
+        int result = Objects.hash(name);
         result = 31 * result + Arrays.hashCode(paramNames);
         return result;
     }

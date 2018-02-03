@@ -274,7 +274,7 @@ public class ClassDef extends Statement {
 
     @Override
     public int hashCode() {
-        int result = Objects.hash(super.hashCode(), name, super_, package_, statements, constructors, varParams, sourceTree, methods);
+        int result = Objects.hash(name, super_, package_, statements, constructors, varParams, sourceTree, methods);
         result = 31 * result + Objects.hashCode(modifiers);
         result = 31 * result + Arrays.hashCode(interfaces);
         result = 31 * result + Arrays.hashCode(superParams);

@@ -58,7 +58,7 @@ public class ListIndex extends Expression {
 
     @Override
     public int hashCode() {
-        int result = Objects.hash(super.hashCode(), precedingExpr);
+        int result = Objects.hash(precedingExpr);
         result = 31 * result + Arrays.hashCode(index);
         return result;
     }

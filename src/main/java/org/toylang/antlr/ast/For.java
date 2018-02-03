@@ -51,6 +51,6 @@ public class For extends Statement {
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), init, condition, body, after);
+        return Objects.hash(init, condition, body, after);
     }
 }

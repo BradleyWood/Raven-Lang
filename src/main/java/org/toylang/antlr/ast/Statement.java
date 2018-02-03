@@ -52,7 +52,7 @@ public class Statement extends AST {
 
     @Override
     public int hashCode() {
-        return Objects.hash(annotations);
+        return Objects.hash(annotations, text, lineNumber);
     }
 
     @Override

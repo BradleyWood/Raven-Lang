@@ -5,4 +5,9 @@ public class Continue extends Statement {
     public void accept(TreeVisitor visitor) {
         visitor.visitContinue();
     }
+
+    @Override
+    public int hashCode() {
+        return 1;
+    }
 }

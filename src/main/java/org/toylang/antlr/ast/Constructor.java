@@ -119,7 +119,7 @@ public class Constructor extends Statement {
 
     @Override
     public int hashCode() {
-        int result = Objects.hash(super.hashCode(), initBlock, body);
+        int result = Objects.hash(initBlock, body);
         result = 31 * result + Arrays.hashCode(modifiers);
         result = 31 * result + Arrays.hashCode(params);
         result = 31 * result + Arrays.hashCode(superParams);

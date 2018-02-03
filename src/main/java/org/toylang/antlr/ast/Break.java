@@ -9,4 +9,9 @@ public class Break extends Statement {
     public void accept(TreeVisitor visitor) {
         visitor.visitBreak();
     }
+
+    @Override
+    public int hashCode() {
+        return 420;
+    }
 }

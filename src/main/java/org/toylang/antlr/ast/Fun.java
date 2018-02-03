@@ -105,7 +105,6 @@ public class Fun extends Statement {
         if (javaDesc != null)
             return javaDesc;
 
-        StringBuilder desc = new StringBuilder("([Ljava/lang/String;)V");
         if (getName().toString().equals("main")) {
             return "([Ljava/lang/String;)V";
         } else if (getName().toString().equals("<clinit>")) {
@@ -137,7 +136,7 @@ public class Fun extends Statement {
 
     @Override
     public int hashCode() {
-        int result = Objects.hash(super.hashCode(), name, body);
+        int result = Objects.hash(name, body);
         result = 31 * result + Objects.hashCode(modifiers);
         result = 31 * result + Arrays.hashCode(exceptions);
         result = 31 * result + Arrays.hashCode(params);

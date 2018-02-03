@@ -38,8 +38,7 @@ public class DictDef extends Expression {
 
     @Override
     public int hashCode() {
-        int result = super.hashCode();
-        result = 31 * result + Arrays.hashCode(keys);
+        int result = Arrays.hashCode(keys);
         result = 31 * result + Arrays.hashCode(values);
         return result;
     }

@@ -30,7 +30,7 @@ public class Return extends Statement {
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), value);
+        return Objects.hash(value);
     }
 
     @Override

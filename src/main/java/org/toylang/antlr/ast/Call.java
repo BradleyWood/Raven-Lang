@@ -106,8 +106,7 @@ public class Call extends Expression {
 
     @Override
     public int hashCode() {
-
-        int result = Objects.hash(super.hashCode(), precedingExpr, name);
+        int result = Objects.hash(precedingExpr, name);
         result = 31 * result + Arrays.hashCode(params);
         return result;
     }

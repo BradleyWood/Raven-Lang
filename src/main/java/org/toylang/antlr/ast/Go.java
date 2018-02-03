@@ -38,6 +38,6 @@ public class Go extends Statement {
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), goFun);
+        return Objects.hash(goFun);
     }
 }

@@ -40,6 +40,6 @@ public class Expression extends Statement {
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), lineNumber, pop);
+        return Objects.hash(super.hashCode(), pop);
     }
 }

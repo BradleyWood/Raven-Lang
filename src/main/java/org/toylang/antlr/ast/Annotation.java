@@ -85,8 +85,7 @@ public class Annotation extends Statement {
 
     @Override
     public int hashCode() {
-
-        int result = Objects.hash(super.hashCode(), name);
+        int result = Objects.hash(name);
         result = 31 * result + Arrays.hashCode(keys);
         result = 31 * result + Arrays.hashCode(values);
         return result;

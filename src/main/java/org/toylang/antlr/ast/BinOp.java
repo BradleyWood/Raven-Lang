@@ -70,6 +70,6 @@ public class BinOp extends Expression {
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), left, op, right);
+        return Objects.hash(left, op, right);
     }
 }

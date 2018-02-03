@@ -68,6 +68,6 @@ public class If extends Statement {
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), condition, body, else_);
+        return Objects.hash(condition, body, else_);
     }
 }

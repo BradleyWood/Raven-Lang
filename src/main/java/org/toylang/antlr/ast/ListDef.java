@@ -47,8 +47,6 @@ public class ListDef extends Expression {
 
     @Override
     public int hashCode() {
-        int result = super.hashCode();
-        result = 31 * result + Arrays.hashCode(expressions);
-        return result;
+        return Arrays.hashCode(expressions);
     }
 }
