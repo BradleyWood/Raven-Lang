@@ -209,6 +209,7 @@ public class SyntaxTest {
     public void testClass() {
         testSyntax("class SoMeClAsS(a, b, c) {}", true);
         testSyntax("class SoMeClAsS {}", true);
+        testSyntax("class SoMeClAsS() {}", true);
         testSyntax("class SoMeClAsS { constructor(a,b,c){} }", true);
         testSyntax("class SoMeClAsS extends AnOtHeRcLaSs {}", true);
         testSyntax("class SoMeClAsS extends AnOtHeRcLaSs implements GG {}", true);
@@ -218,7 +219,6 @@ public class SyntaxTest {
 
         testSyntax("class SoMeClAsS;", false);
         testSyntax("class SoMeClAsS( {}", false);
-        testSyntax("class SoMeClAsS() {}", false);
         testSyntax("class SoMeClAsS extends {}", false);
         testSyntax("class SoMeClAsS extends AnOtHeRcLaSs implements {}", false);
         testSyntax("class SoMeClAsS(a,b) extends AnOtHeRcLaSs() implements GG() {}", false);

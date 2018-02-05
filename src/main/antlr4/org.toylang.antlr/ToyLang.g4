@@ -102,7 +102,7 @@ varDeclaration
     |   (modifier*) VAR IDENTIFIER SEMI
     ;
 classDef
-    :   (modifier*) CLASS IDENTIFIER ('(' fields=paramList ')')? inheritance? block
+    :   (modifier*) CLASS IDENTIFIER ('(' fields=paramList? ')')? inheritance? block
     ;
 inheritance
     :   ext? impl?
