@@ -11,6 +11,7 @@ import java.util.*;
 public class SymbolMap {
 
     private static HashMap<String, ClassDef> CLASS_MAP = new HashMap<>();
+    private static HashMap<String, Interface> INTERFACE_MAP = new HashMap<>();
 
     public static VarDecl resolveField(String callingClass, String funOwner, String name) {
         ClassDef def = CLASS_MAP.get(funOwner);
@@ -82,6 +83,10 @@ public class SymbolMap {
     }
 
     public static void map(Class<?> clazz) {
+        if (clazz.isInterface()) {
+            INTERFACE_MAP.put(clazz.getName().replace(".", "/"), Interface.valueOf(clazz));
+            return;
+        }
         if (!clazz.getSuperclass().equals(Object.class))
             map(clazz.getSuperclass());
         QualifiedName[] interfaces = new QualifiedName[clazz.getInterfaces().length];
