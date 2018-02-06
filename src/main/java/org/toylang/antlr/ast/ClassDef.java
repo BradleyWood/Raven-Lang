@@ -10,11 +10,11 @@ import java.util.*;
 public class ClassDef extends Statement {
 
     private final ArrayList<Modifier> modifiers;
-    private final QualifiedName name;
-    private final QualifiedName super_;
     private final QualifiedName[] interfaces;
-    private QualifiedName package_;
     private final List<Statement> statements;
+    private final QualifiedName name;
+    private QualifiedName super_;
+    private QualifiedName package_;
     private Expression[] superParams = null;
     private List<Constructor> constructors = null;
     private List<VarDecl> varParams = new LinkedList<>();
@@ -25,11 +25,11 @@ public class ClassDef extends Statement {
     public ClassDef(Modifier[] modifiers, String name, Inheritance inh, List<Statement> statements) {
         this.statements = statements;
         this.modifiers = new ArrayList<>(Arrays.asList(modifiers));
-        this.interfaces = inh.getInterfaces();
         this.superParams = inh.getSuperParams();
         this.name = new QualifiedName(name);
         this.superParams = inh.getSuperParams();
         this.super_ = inh.getSuperClass();
+        this.interfaces = inh.getInterfaces();
     }
 
     public ClassDef(Modifier[] modifiers, QualifiedName package_, String name, QualifiedName super_, QualifiedName[] interfaces, List<Statement> statements) {
@@ -63,6 +63,10 @@ public class ClassDef extends Statement {
 
     public void setSourceTree(ToyTree sourceTree) {
         this.sourceTree = sourceTree;
+        this.super_ = getName(super_);
+        for (int i = 0; i < this.interfaces.length; i++) {
+            this.interfaces[i] = getName(this.interfaces[i]);
+        }
     }
 
     @Override
@@ -91,14 +95,18 @@ public class ClassDef extends Statement {
     }
 
     public QualifiedName getSuper() {
+        return super_;
+    }
+
+    private QualifiedName getName(QualifiedName name) {
         if (sourceTree != null) {
             for (QualifiedName qualifiedName : sourceTree.getImports()) {
-                if (qualifiedName.toString().endsWith(super_.toString())) {
+                if (qualifiedName.toString().endsWith(name.toString())) {
                     return qualifiedName;
                 }
             }
         }
-        return super_;
+        return name;
     }
 
     public boolean hasTlSuper() {
