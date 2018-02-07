@@ -13,6 +13,10 @@ public class SymbolMap {
     private static HashMap<String, ClassDef> CLASS_MAP = new HashMap<>();
     private static HashMap<String, Interface> INTERFACE_MAP = new HashMap<>();
 
+    public static Interface resolveInterface(String clazz) {
+        return INTERFACE_MAP.get(clazz);
+    }
+
     public static VarDecl resolveField(String callingClass, String funOwner, String name) {
         ClassDef def = CLASS_MAP.get(funOwner);
         if (def != null) {
