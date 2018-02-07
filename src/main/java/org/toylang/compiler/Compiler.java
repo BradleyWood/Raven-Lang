@@ -95,11 +95,14 @@ public class Compiler {
         // no errors... generate code
         HashMap<String, ClassMaker> classBuilders = new HashMap<>();
 
+        for (ClassDef classDef : tree.getClasses()) {
+            classDef.setPackage(tree.getPackage());
+        }
+        
         modifyTree(tree);
 
         for (ClassDef classDef : tree.getClasses()) {
             SymbolMap.map(classDef);
-            classDef.setPackage(tree.getPackage());
             tree.addImport(tree.getPackage().add(classDef.getName()));
             classDef.setSourceTree(tree);
         }
