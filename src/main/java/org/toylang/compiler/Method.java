@@ -885,7 +885,8 @@ public class Method extends MethodVisitor implements TreeVisitor, Opcodes {
 
     private String getInternalNameFromImports(String name) {
         for (QualifiedName qualifiedName : ctx.getImports()) {
-            if (qualifiedName.toString().endsWith(name)) {
+            String lastName = qualifiedName.getNames()[qualifiedName.getNames().length - 1];
+            if (lastName.equals(name)) {
                 return qualifiedName.toString().replace(".", "/");
             }
         }
