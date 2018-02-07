@@ -325,6 +325,14 @@ public class TestTLFiles {
         TestRunner.doTest("testData/rt_tests/org/toylang/test/IfTest.tl", "ifTest5");
     }
     @BeforeClass
+    public static void loadImplementsTest() {
+        TestRunner.loadClass("testData/rt_tests/org/toylang/test/ImplementsTest.tl");
+    }
+    @Test
+    public void ImplementsTest_testRunnable() throws Throwable {
+        TestRunner.doTest("testData/rt_tests/org/toylang/test/ImplementsTest.tl", "testRunnable");
+    }
+    @BeforeClass
     public static void loadIntegerTest() {
         TestRunner.loadClass("testData/rt_tests/org/toylang/test/IntegerTest.tl");
     }
