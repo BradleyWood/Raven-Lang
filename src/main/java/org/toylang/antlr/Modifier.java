@@ -9,6 +9,7 @@ public enum Modifier {
     PRIVATE(ACC_PRIVATE),
     OPEN(-ACC_FINAL),
     STATIC(ACC_STATIC),
+    ABSTRACT(ACC_ABSTRACT),
     SYNTHETIC(ACC_SYNTHETIC);
     int modifier;
 
