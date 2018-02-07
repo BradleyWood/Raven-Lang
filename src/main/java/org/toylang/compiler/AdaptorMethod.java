@@ -25,6 +25,10 @@ public class AdaptorMethod extends Method {
 
         scope.beginScope();
 
+        if (!ctx.isStatic()) {
+            scope.putVar("this");
+        }
+
         int i = 0;
         for (VarDecl varDecl : fun.getParams()) {
             scope.putVar(varDecl.getName().toString());
