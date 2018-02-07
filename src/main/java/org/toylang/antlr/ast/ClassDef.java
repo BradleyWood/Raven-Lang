@@ -69,6 +69,34 @@ public class ClassDef extends Statement {
         }
     }
 
+    /**
+     * Checks if the class def contains a method with a given name and number of params
+     * @param name The method name
+     * @param paramCount The the number of params
+     * @return True if the def contains the method
+     */
+    public boolean containsMethod(String name, int paramCount) {
+        for (Fun fun : getMethods()) {
+            if (fun.getName().toString().equals(name) && fun.getParams().length == paramCount)
+                return true;
+        }
+        return false;
+    }
+
+    /**
+     * Checks if this def contains the method with a given name and descriptor
+     * @param name The method name
+     * @param desc The method descriptor
+     * @return True if this class def contains a method with the given name and descriptor
+     */
+    public boolean containsExact(String name, String desc) {
+        for (Fun fun : getMethods()) {
+            if (fun.getName().toString().equals(name) && fun.getDesc().equals(desc))
+                return true;
+        }
+        return false;
+    }
+
     @Override
     public void accept(TreeVisitor visitor) {
         visitor.visitClassDef(this);

@@ -3,11 +3,11 @@ package org.toylang.compiler;
 
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.MethodVisitor;
+import org.objectweb.asm.Type;
 import org.toylang.antlr.Modifier;
 import org.toylang.antlr.ast.*;
 import org.toylang.core.wrappers.TNull;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -41,7 +41,7 @@ public class ClassMaker {
             interfaces[i] = def.getInterfaces()[i].toString().replace(".", "/");
         }
 
-        cw.visit(V1_7, modifiers, def.getFullName(), def.getSignature(), def.getSuper().toString().replace(".", "/"), interfaces);
+        cw.visit(V1_7, modifiers, def.getFullName(), null, def.getSuper().toString().replace(".", "/"), interfaces);
         cw.visitAnnotation(Constants.ANNOTATION_TLFILE_SIG, true).visitEnd();
         cw.visitSource(def.getSourceTree().getSourceFile(), null);
 
@@ -64,6 +64,47 @@ public class ClassMaker {
             classCtx.setStatic(fun.hasModifier(Modifier.STATIC));
             defineMethod(classCtx, fun, fun.modifiers());
         }
+
+        for (QualifiedName iFace : def.getInterfaces()) {
+            Interface in = SymbolMap.resolveInterface(iFace.toString().replace(".", "/"));
+            for (int i = 0; i < in.getMethodTypes().length; i++) {
+                String name = in.getNames()[i];
+                String desc = in.getMethodTypes()[i].getDescriptor();
+
+                if (!def.containsMethod(name, in.getMethodTypes()[i].getArgumentTypes().length)) {
+                    System.err.println("Warning: unimplemented interface method: " + name + " " + desc);
+                } else if (!def.containsExact(name, desc)) {
+                    classCtx.setStatic(false);
+                    classCtx.setName(in.getNames()[i]);
+                    Fun delegate = createInterfaceDelegate(in.getMethodTypes()[i], in.getNames()[i]);
+                    defineMethod(classCtx, delegate, delegate.modifiers());
+                }
+            }
+        }
+    }
+
+    private Fun createInterfaceDelegate(Type t, String methodName) {
+        Block body = new Block();
+        VarDecl[] params = new VarDecl[t.getArgumentTypes().length];
+        for (int i = 0; i < params.length; i++) {
+            params[i] = new VarDecl(new QualifiedName("__" + i + "__"), null);
+        }
+        Fun fun = new Fun(new QualifiedName(methodName), body, new Modifier[]{Modifier.PUBLIC}, new String[0], params);
+        fun.forceDescriptor(t.getDescriptor());
+
+        Expression[] jParams = new Expression[fun.getParams().length];
+        for (int i = 0; i < jParams.length; i++) {
+            jParams[i] = new QualifiedName(fun.getParams()[i].getName().toString());
+        }
+        Call call = new Call(fun.getName(), jParams);
+
+        if (t.getReturnType().equals(Type.VOID_TYPE)) {
+            call.setPop(true);
+        }
+
+        body.addBefore(call);
+
+        return fun;
     }
 
     private void defineField(String name, int modifiers) {
