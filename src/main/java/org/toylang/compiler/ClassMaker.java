@@ -52,9 +52,6 @@ public class ClassMaker {
 
         List<Constructor> constructors = def.getConstructors();
 
-        if (constructors.size() == 0)
-            putDefaultConstructor();
-
         MethodContext classCtx = new MethodContext(def.getFullName(), "<init>", imports, def);
         for (Constructor constructor : constructors) {
             defineConstructor(classCtx, constructor);
@@ -156,16 +153,6 @@ public class ClassMaker {
             context.setName(lambdaName);
             defineMethod(context, lamba, ACC_STATIC + ACC_PRIVATE + ACC_SYNTHETIC);
         }
-    }
-
-    private void putDefaultConstructor() {
-        MethodVisitor method = cw.visitMethod(ACC_PUBLIC, "<init>", "()V", null, null);
-        method.visitCode();
-        method.visitVarInsn(ALOAD, 0);
-        method.visitMethodInsn(INVOKESPECIAL, def.getSuper().toString().replace(".", "/"), "<init>", "()V", false);
-        method.visitInsn(RETURN);
-        method.visitMaxs(0, 0);
-        method.visitEnd();
     }
 
     public byte[] getBytes() {

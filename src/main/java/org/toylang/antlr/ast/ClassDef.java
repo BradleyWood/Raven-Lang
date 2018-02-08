@@ -240,6 +240,12 @@ public class ClassDef extends Statement {
             initFieldsInConstructor(con);
             constructors.add(con);
         }
+
+        if (constructors.size() == 0) {
+            Constructor defaultConstructor = new Constructor(new Modifier[]{Modifier.PUBLIC}, new Block());
+            constructors.add(defaultConstructor);
+        }
+
         return constructors;
     }
 
