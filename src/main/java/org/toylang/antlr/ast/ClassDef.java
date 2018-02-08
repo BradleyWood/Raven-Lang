@@ -243,6 +243,7 @@ public class ClassDef extends Statement {
 
         if (constructors.size() == 0) {
             Constructor defaultConstructor = new Constructor(new Modifier[]{Modifier.PUBLIC}, new Block());
+            initFieldsInConstructor(defaultConstructor);
             constructors.add(defaultConstructor);
         }
 

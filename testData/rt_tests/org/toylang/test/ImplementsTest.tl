@@ -6,7 +6,8 @@ import java.lang.Thread;
 import java.lang.Runnable;
 
 public class SomeRunnableClass implements Runnable {
-    private var someValue;
+    private var someValue = 0;
+
 
     @Override
     public fun run() {
@@ -21,6 +22,7 @@ public class SomeRunnableClass implements Runnable {
 fun testRunnable() {
     var runnable = SomeRunnableClass();
     var thread = Thread(runnable);
+    Assert.assertEqual(0, runnable.getValue());
     thread.start();
     thread.join();
     Assert.assertEqual(100, runnable.getValue());
