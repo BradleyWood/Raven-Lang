@@ -14,8 +14,13 @@ public class Settings {
         return (int) SETTINGS.get(key);
     }
 
+    /**
+     * Get a boolean setting, returns false if the setting does not exist
+     * @param key The key
+     * @return The setting or false if the setting does not exist
+     */
     public static boolean getBoolean(final String key) {
-        return (boolean) SETTINGS.get(key);
+        return (boolean) SETTINGS.getOrDefault(key, false);
     }
 
     public static String getString(final String key) {
