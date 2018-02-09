@@ -6,6 +6,7 @@ import org.toylang.antlr.ToyLangBaseVisitor;
 import org.toylang.antlr.ToyLangParser;
 import org.toylang.antlr.ast.*;
 import org.toylang.core.Application;
+import org.toylang.util.Settings;
 
 
 public class StatementVisitor extends ToyLangBaseVisitor<Statement> {
@@ -42,11 +43,11 @@ public class StatementVisitor extends ToyLangBaseVisitor<Statement> {
             stmt = ctx.returnStatement().accept(ReturnVisitor.INSTANCE);
         } else if (ctx.expression() != null) {
             stmt = ctx.expression().accept(ExpressionVisitor.INSTANCE);
-            boolean b = true;
+            boolean printableExpression = true;
             if (stmt instanceof BinOp) {
-                b = ((BinOp) stmt).getOp() != Operator.ASSIGNMENT;
+                printableExpression = ((BinOp) stmt).getOp() != Operator.ASSIGNMENT;
             }
-            if (Application.REPL && b) {
+            if (Settings.getBoolean("REPL") && printableExpression) {
                 stmt = new Call(new QualifiedName("println"), (Expression) stmt);
             } else if (stmt instanceof Call) {
                 ((Call) stmt).setPop(true);

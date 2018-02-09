@@ -5,6 +5,7 @@ import org.junit.BeforeClass;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.After;
+import org.toylang.util.Settings;
 
 // this file has been automatically generated. Do not edit
 public class TestRepl {
@@ -15,14 +16,14 @@ public class TestRepl {
     @BeforeClass
     public static void before() {
         org.toylang.util.Utility.buildBuiltins();
-        org.toylang.core.Application.REPL = true;
+        Settings.set("REPL", true);
     }
 
     @AfterClass
     public static void after() {
         System.setOut(sout);
         System.setErr(serr);
-        org.toylang.core.Application.REPL = false;
+        Settings.set("REPL", false);
     }
     @Test
     public void comment() throws Throwable {

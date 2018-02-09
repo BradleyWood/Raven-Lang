@@ -4,6 +4,7 @@ import org.apache.commons.cli.*;
 import org.toylang.build.AppBuilder;
 import org.toylang.compiler.Errors;
 import org.toylang.repl.Repl;
+import org.toylang.util.Settings;
 
 import java.io.IOException;
 import java.util.*;
@@ -12,8 +13,6 @@ import static org.toylang.util.Utility.compile;
 import static org.toylang.util.Utility.compileAndRun;
 
 public class Application {
-
-    public static boolean REPL = false;
 
     public static void main(String[] args) {
         Options options = new Options();
@@ -59,7 +58,8 @@ public class Application {
             boolean correctness = cmd.hasOption("s");
             boolean build = cmd.hasOption("b");
             boolean run = cmd.hasOption("r");
-            REPL = cmd.hasOption("repl");
+            boolean REPL = cmd.hasOption("repl");
+            Settings.set("REPL", REPL);
 
             if (!onlyOneTrue(correctness, build, run, REPL)) {
                 cmdError(options);
@@ -93,6 +93,10 @@ public class Application {
             int comment = line.indexOf("//");
             if (comment > 0) {
                 line = line.substring(0, comment);
+            }
+            while (line.endsWith("\\")) {
+                System.out.print(">");
+                line = line.substring(0, line.length() - 1) + scanner.nextLine();
             }
             REPL.exec(line + ";");
         }
