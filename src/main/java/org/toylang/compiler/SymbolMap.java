@@ -4,6 +4,7 @@ import org.toylang.antlr.Modifier;
 import org.toylang.antlr.ast.*;
 import org.toylang.core.wrappers.TObject;
 
+import java.io.*;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.*;
@@ -91,13 +92,14 @@ public class SymbolMap {
             INTERFACE_MAP.put(clazz.getName().replace(".", "/"), Interface.valueOf(clazz));
             return;
         }
-        if (!clazz.getSuperclass().equals(Object.class))
+        if (!clazz.equals(Object.class) && !clazz.getSuperclass().equals(Object.class))
             map(clazz.getSuperclass());
         QualifiedName[] interfaces = new QualifiedName[clazz.getInterfaces().length];
         for (int i = 0; i < clazz.getInterfaces().length; i++) {
             interfaces[i] = QualifiedName.valueOf(clazz.getInterfaces()[i].getName());
         }
-        Inheritance inh = new Inheritance(QualifiedName.valueOf(clazz.getSuperclass().getName()),
+        QualifiedName superClass = clazz.equals(Object.class) ? null : QualifiedName.valueOf(clazz.getSuperclass().getName());
+        Inheritance inh = new Inheritance(superClass,
                 new Expression[0], interfaces);
         List<Statement> statements = new ArrayList<>();
         ClassDef def = new ClassDef(new Modifier[0], clazz.getName(), inh, statements);
