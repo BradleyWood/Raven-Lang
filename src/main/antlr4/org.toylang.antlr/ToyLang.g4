@@ -20,7 +20,6 @@ statement
     |   whileStatement
     |   returnStatement
     |   classDef
-    |   interfaceDef
     |   expression SEMI
     |   CONTINUE SEMI
     |   BREAK SEMI
@@ -104,9 +103,6 @@ varDeclaration
     ;
 classDef
     :   (modifier*) CLASS IDENTIFIER ('(' fields=paramList? ')')? inheritance? block
-    ;
-interfaceDef
-    :   annotation* (modifier*) INTER IDENTIFIER '{' (PUB? FUN IDENTIFIER '(' (paramDef (',' paramDef)*)? ')' SEMI)* '}'
     ;
 inheritance
     :   ext? impl?
