@@ -10,6 +10,7 @@ public enum Modifier {
     OPEN(-ACC_FINAL),
     STATIC(ACC_STATIC),
     ABSTRACT(ACC_ABSTRACT),
+    INTERFACE(ACC_INTERFACE),
     SYNTHETIC(ACC_SYNTHETIC);
     int modifier;
 

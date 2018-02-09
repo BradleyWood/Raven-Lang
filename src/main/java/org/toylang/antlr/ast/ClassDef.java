@@ -69,6 +69,10 @@ public class ClassDef extends Statement {
         }
     }
 
+    public boolean isInterface() {
+        return this instanceof Interface;
+    }
+
     /**
      * Checks if the class def contains a method with a given name and number of params
      * @param name The method name
