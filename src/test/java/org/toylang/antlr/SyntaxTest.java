@@ -368,25 +368,4 @@ public class SyntaxTest {
                 "fun anAnnotatedMethod() {}", false);
     }
 
-    @Test
-    public void testInterfaceDef() {
-        testSyntax("interface TestInterface {}", true);
-        testSyntax("@Test interface TestInterface {}", true);
-        testSyntax("@Test public interface TestInterface {}", true);
-        testSyntax("private interface TestInterface {}", true);
-        testSyntax("@Test private interface TestInterface {}", true);
-        testSyntax("@Test @Cool private interface TestInterface {}", true);
-
-        testSyntax("interface TestInterface { fun test(); }", true);
-        testSyntax("interface TestInterface { public fun test(); }", true);
-        testSyntax("@Test public interface TestInterface { public fun test(); }", true);
-        testSyntax("interface TestInterface { public fun test(); fun someFun(a, b, c); }", true);
-
-        testSyntax("interface TestInterface { private fun test(); }", false);
-        testSyntax("interface TestInterface { private fun test() }", false);
-        testSyntax("interface TestInterface { private fun test(; }", false);
-        testSyntax("interface TestInterface { private test(); }", false);
-        testSyntax("interface TestInterface  private test(); ", false);
-        testSyntax("interface TestInterface {{ private test(); }}", false);
-    }
 }

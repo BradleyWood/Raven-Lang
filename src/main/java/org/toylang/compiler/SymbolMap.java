@@ -4,7 +4,6 @@ import org.toylang.antlr.Modifier;
 import org.toylang.antlr.ast.*;
 import org.toylang.core.wrappers.TObject;
 
-import java.io.*;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.*;
@@ -84,7 +83,11 @@ public class SymbolMap {
     }
 
     public static void map(ClassDef def) {
-        CLASS_MAP.put(def.getFullName(), def);
+        if (def.isInterface()) {
+            INTERFACE_MAP.put(def.getFullName(), (Interface) def);
+        } else {
+            CLASS_MAP.put(def.getFullName(), def);
+        }
     }
 
     public static void map(Class<?> clazz) {

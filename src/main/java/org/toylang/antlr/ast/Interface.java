@@ -11,12 +11,13 @@ import java.util.List;
 public class Interface extends ClassDef {
 
     public static final QualifiedName IFACE_PARENT = new QualifiedName("java", "lang", "Object");
+    public static final Modifier[] IFACE_MODIFIERS = new Modifier[]{Modifier.PUBLIC, Modifier.ABSTRACT, Modifier.INTERFACE};
     private final String[] names;
     private final Type[] methodTypes;
 
-    public Interface(final QualifiedName pkg, final String name, final String[] names, final Type[] methodTypes,
-                     QualifiedName[] interfaces) {
-        super(new Modifier[]{Modifier.PUBLIC, Modifier.ABSTRACT, Modifier.INTERFACE}, pkg, name, IFACE_PARENT,
+    private Interface(final QualifiedName pkg, final String name, final String[] names, final Type[] methodTypes,
+                      QualifiedName[] interfaces) {
+        super(IFACE_MODIFIERS, pkg, name, IFACE_PARENT,
                 interfaces, new LinkedList<>());
         this.names = names;
         this.methodTypes = methodTypes;
@@ -47,9 +48,6 @@ public class Interface extends ClassDef {
             Interface pi = valueOf(p_interfaces[i]);
             names.addAll(Arrays.asList(pi.getNames()));
             types.addAll(Arrays.asList(pi.getMethodTypes()));
-        }
-        for (String name : names) {
-            System.err.println(clazz.getName()+":: "+ name);
         }
         return new Interface(QualifiedName.valueOf(clazz.getPackage().toString()), clazz.getSimpleName(),
                 names.toArray(new String[names.size()]), types.toArray(new Type[types.size()]), interfaceQualifiedNames);
