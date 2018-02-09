@@ -47,6 +47,12 @@ public class StatementVisitor extends ToyLangBaseVisitor<Statement> {
             if (stmt instanceof BinOp) {
                 printableExpression = ((BinOp) stmt).getOp() != Operator.ASSIGNMENT;
             }
+            if (stmt instanceof Call) {
+                Call c = (Call) stmt;
+                if (c.getName().toString().equals("println") || c.getName().toString().equals("print")) {
+                    printableExpression = false;
+                }
+            }
             if (Settings.getBoolean("REPL") && printableExpression) {
                 stmt = new Call(new QualifiedName("println"), (Expression) stmt);
             } else if (stmt instanceof Call) {
