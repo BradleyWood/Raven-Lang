@@ -64,6 +64,10 @@ public class ClassMaker {
 
         for (QualifiedName iFace : def.getInterfaces()) {
             Interface in = SymbolMap.resolveInterface(iFace.toString().replace(".", "/"));
+            if (in == null) {
+                Errors.put("Unresolved interface: " + iFace);
+                continue;
+            }
             for (int i = 0; i < in.getMethodTypes().length; i++) {
                 String name = in.getNames()[i];
                 String desc = in.getMethodTypes()[i].getDescriptor();
