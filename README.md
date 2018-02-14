@@ -21,7 +21,7 @@ To run a test script
 
 
 ```
-java -jar toylang-1.0-SNAPSHOT-jar-with-dependencies.jar -r <path to script>.tl
+java -jar target/toylang-1.0-SNAPSHOT-jar-with-dependencies.jar -r <path to script>.tl
 ```
 
 ### Command line options
@@ -100,7 +100,8 @@ fun main() {
 
 - Classes
     - Automatically generate constructors, getters and setters
-    - Inherit from java classes
+    - Inherit from java classes and interfaces
+    - Override from super class
 
 - Annotations and annotation processors
     - Generate adaptor methods through the @JvmMethod annotation
@@ -110,3 +111,9 @@ fun main() {
 ### Todo
 
 - More Unit tests
+
+- Import * from package
+
+- Static import
+
+- Import as
