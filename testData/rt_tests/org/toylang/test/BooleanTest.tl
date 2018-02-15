@@ -18,4 +18,6 @@ fun boolTest3() {
 fun boolNotTest() {
     Assert.assertEqual(!true, false);
     Assert.assertEqual(!false, true);
+    Assert.assertEqual(!!true, true);
+    Assert.assertEqual(!!false, false);
 }
