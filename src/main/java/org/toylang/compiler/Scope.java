@@ -1,27 +1,26 @@
 package org.toylang.compiler;
 
 import java.util.ArrayList;
-import java.util.LinkedList;
+import java.util.EmptyStackException;
+import java.util.Stack;
 
 public class Scope {
 
-    private final LinkedList<ArrayList<String>> scope = new LinkedList<>();
+    private final Stack<ArrayList<String>> scope = new Stack<>();
 
     public void beginScope() {
-        scope.addLast(new ArrayList<>());
+        scope.push(new ArrayList<>());
     }
 
     public void endScope() {
-        if (scope.isEmpty())
-            throw new RuntimeException("underflow");
-        scope.removeLast();
+        scope.pop();
     }
 
     public void putVar(final String name) {
         if (findVar(name) != -1) {
             Errors.put("Redeclaration of variable: " + name);
         } else {
-            scope.getLast().add(name);
+            scope.peek().add(name);
         }
     }
 
