@@ -1,7 +1,6 @@
 package org.toylang.compiler;
 
 import java.util.ArrayList;
-import java.util.EmptyStackException;
 import java.util.Stack;
 
 public class Scope {
