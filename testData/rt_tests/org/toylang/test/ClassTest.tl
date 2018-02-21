@@ -1,6 +1,6 @@
 package org.toylang.test;
 
-import org.toylang.test.Assert;
+import org.junit.Assert;
 
 import javax.swing.JFrame;
 
@@ -17,24 +17,24 @@ public class Ok(X, Y) {
 
 fun testOk() {
     var gg = Ok(10, 20);
-    Assert.assertEqual(10, gg.getX());
-    Assert.assertEqual(20, gg.getY());
-    Assert.assertEqual(100, gg.getZ());
+    Assert.assertEquals(10, gg.getX());
+    Assert.assertEquals(20, gg.getY());
+    Assert.assertEquals(100, gg.getZ());
 }
 
 public class SubClass extends Ok(100, 100) {}
 
 fun testSubClass() {
     var gg = SubClass();
-    Assert.assertEqual(100, gg.getX());
-    Assert.assertEqual(100, gg.getY());
-    Assert.assertEqual(100, gg.getZ());
+    Assert.assertEquals(100, gg.getX());
+    Assert.assertEquals(100, gg.getY());
+    Assert.assertEquals(100, gg.getZ());
     gg.setZ(200);
-    Assert.assertEqual(200, gg.getZ());
+    Assert.assertEquals(200, gg.getZ());
     gg.setY(300);
-    Assert.assertEqual(300, gg.getY());
+    Assert.assertEquals(300, gg.getY());
     gg.setX(400);
-    Assert.assertEqual(400, gg.getX());
+    Assert.assertEquals(400, gg.getX());
 }
 
 public class SuperClass(x) {}
@@ -47,7 +47,7 @@ public class Tester extends JFrame {
 
     public fun updateSize() {
         setSize(500, 600);
-        Assert.assertEqual(10, ClassTest.aFun());
+        Assert.assertEquals(10, ClassTest.aFun());
     }
 }
 
@@ -58,15 +58,15 @@ public fun aFun() {
 fun testInheritance() {
     var gg = Tester("ABCDEFG");
     gg.setSize(400, 401);
-    Assert.assertEqual(400, gg.getWidth());
-    Assert.assertEqual(401, gg.getHeight());
+    Assert.assertEquals(400, gg.getWidth());
+    Assert.assertEquals(401, gg.getHeight());
 
     gg.updateSize();
 
-    Assert.assertEqual(500, gg.getWidth());
-    Assert.assertEqual(600, gg.getHeight());
+    Assert.assertEquals(500, gg.getWidth());
+    Assert.assertEquals(600, gg.getHeight());
 
-    Assert.assertEqual("ABCDEFG", gg.getTitle());
+    Assert.assertEquals("ABCDEFG", gg.getTitle());
 }
 
 var aTestVar = 100;
@@ -74,12 +74,12 @@ var anotherTestVar = "test";
 
 public class FieldAccessSameFile {
     public constructor() {
-        Assert.assertEqual(100, ClassTest.aTestVar);
-        Assert.assertEqual("test", ClassTest.anotherTestVar);
+        Assert.assertEquals(100, ClassTest.aTestVar);
+        Assert.assertEquals("test", ClassTest.anotherTestVar);
         ClassTest.aTestVar = 500;
         ClassTest.anotherTestVar = true;
-        Assert.assertEqual(500, ClassTest.aTestVar);
-        Assert.assertEqual(true, ClassTest.anotherTestVar);
+        Assert.assertEquals(500, ClassTest.aTestVar);
+        Assert.assertEquals(true, ClassTest.anotherTestVar);
     }
 }
 

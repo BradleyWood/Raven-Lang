@@ -1,6 +1,6 @@
 package org.toylang.test;
 
-import org.toylang.test.Assert;
+import org.junit.Assert;
 
 f(x) = x * x * 50 + 5000;
 
@@ -15,14 +15,14 @@ fun g2(x) {
 }
 
 fun testFunction1() {
-    Assert.assertEqual(f(-10), f2(-10));
-    Assert.assertEqual(f(0), f2(0));
-    Assert.assertEqual(5000, f2(0));
-    Assert.assertEqual(f(10), f2(10));
+    Assert.assertEquals(f(-10), f2(-10));
+    Assert.assertEquals(f(0), f2(0));
+    Assert.assertEquals(5000, f2(0));
+    Assert.assertEquals(f(10), f2(10));
 }
 
 fun testFunction2() {
-    Assert.assertEqual(g(-10), g2(-10));
-    Assert.assertEqual(g(0), g2(0));
-    Assert.assertEqual(g(10), g2(10));
+    Assert.assertEquals(g(-10), g2(-10));
+    Assert.assertEquals(g(0), g2(0));
+    Assert.assertEquals(g(10), g2(10));
 }

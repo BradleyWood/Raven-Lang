@@ -8,26 +8,26 @@ import org.toylang.core.wrappers.TList;
 import org.toylang.core.wrappers.TDict;
 import org.toylang.core.wrappers.TBoolean;
 import org.toylang.core.wrappers.TType;
-import org.toylang.test.Assert;
+import org.junit.Assert;
 
 
 fun intConversionTest() {
     var num = "42";
-    Assert.assertEqual(int(num), 42);
+    Assert.assertEquals(int(num), 42);
     num = 42.0;
-    Assert.assertEqual(int(num), 42);
+    Assert.assertEquals(int(num), 42);
     num = 42;
-    Assert.assertEqual(int(num), 42);
+    Assert.assertEquals(int(num), 42);
 }
 
 fun realConversionTest() {
     var num = "42";
-    Assert.assertEqual(real(num), 42.0);
+    Assert.assertEquals(real(num), 42.0, 0.00000001);
     num = "42.0";
-    Assert.assertEqual(real(num), 42.0);
+    Assert.assertEquals(real(num), 42.0, 0.00000001);
     num = "1e6";
-    Assert.assertEqual(real(num), real(1000000));
-    Assert.assertEqual(real(100.00000000), 100.00000000);
+    Assert.assertEquals(real(num), real(1000000), 0.00000001);
+    Assert.assertEquals(real(100.00000000), 100.00000000, 0.00000001);
 }
 
 fun sortTest() {
@@ -40,43 +40,43 @@ fun sortTest() {
 
 fun lenTest() {
     var lst = [];
-    Assert.assertEqual(len(lst), 0);
+    Assert.assertEquals(len(lst), 0);
     lst = [1, 2, 3];
-    Assert.assertEqual(len(lst), 3);
+    Assert.assertEquals(len(lst), 3);
 
     var dict = {};
-    Assert.assertEqual(len(dict), 0);
+    Assert.assertEquals(len(dict), 0);
     dict = { 1 : "a", 2 : "b"};
-    Assert.assertEqual(len(dict), 2);
+    Assert.assertEquals(len(dict), 2);
 }
 
 fun typeTest() {
     var val = null;
-    Assert.assertEqual(type(val), TNull.TYPE);
+    Assert.assertEquals(type(val), TNull.TYPE);
     val = "";
-    Assert.assertEqual(type(val), TString.TYPE);
+    Assert.assertEquals(type(val), TString.TYPE);
     val = 40;
-    Assert.assertEqual(type(val), TInt.TYPE);
+    Assert.assertEquals(type(val), TInt.TYPE);
     val = 0.01;
-    Assert.assertEqual(type(val), TReal.TYPE);
+    Assert.assertEquals(type(val), TReal.TYPE);
     val = [];
-    Assert.assertEqual(type(val), TList.TYPE);
+    Assert.assertEquals(type(val), TList.TYPE);
     val = {};
-    Assert.assertEqual(type(val), TDict.TYPE);
+    Assert.assertEquals(type(val), TDict.TYPE);
     val = true;
-    Assert.assertEqual(type(val), TBoolean.TYPE);
+    Assert.assertEquals(type(val), TBoolean.TYPE);
 }
 
 fun sumTest() {
     var lst = [10, 10, 100, 1000, 100000];
-    Assert.assertEqual(sum(lst), 101120);
+    Assert.assertEquals(sum(lst), 101120);
     lst = ["a", "b", "c", "d"];
-    Assert.assertEqual(sum(lst), "abcd");
+    Assert.assertEquals(sum(lst), "abcd");
 }
 
 fun revsereTest() {
     var lst = [10, 10, 100, 1000, 100000];
     var reversed = [100000, 1000, 100, 10, 10];
-    Assert.assertEqual(reverse(lst), reversed);
+    Assert.assertEquals(reverse(lst), reversed);
     Assert.assertTrue(isError(reverse("abc")));
 }

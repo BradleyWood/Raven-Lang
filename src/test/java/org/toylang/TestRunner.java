@@ -15,6 +15,7 @@ import org.toylang.util.Utility;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.URL;
 import java.nio.file.Files;
@@ -51,11 +52,10 @@ public class TestRunner {
 
         Method m = clazz.getDeclaredMethod(method);
         m.setAccessible(true);
-        m.invoke(null);
-        if (org.toylang.test.Assert.errors.size() > 0) {
-            AssertionError e = org.toylang.test.Assert.errors.get(0);
-            org.toylang.test.Assert.errors.clear();
-            throw e;
+        try {
+            m.invoke(null);
+        } catch (InvocationTargetException e) {
+            throw e.getCause();
         }
     }
 

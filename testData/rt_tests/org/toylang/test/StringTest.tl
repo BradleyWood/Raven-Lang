@@ -1,101 +1,101 @@
 
 package org.toylang.test;
 
-import org.toylang.test.Assert;
+import org.junit.Assert;
 
 fun strTest1() {
-    Assert.assertEqual("abc", "abc");
+    Assert.assertEquals("abc", "abc");
 }
 
 fun strTest2() {
-    Assert.assertNotEqual("abcd", "abc");
+    Assert.assertNotEquals("abcd", "abc");
 }
 
 fun strTest3() {
-    Assert.assertEqual("abc", str("abc"));
+    Assert.assertEquals("abc", str("abc"));
 }
 
 fun strTest4() {
-    Assert.assertEqual("21", str(21));
+    Assert.assertEquals("21", str(21));
 }
 
 fun strTest5() {
-    Assert.assertEqual("true", str(true));
+    Assert.assertEquals("true", str(true));
 }
 
 fun strTest6() {
-    Assert.assertEqual("null", str(null));
+    Assert.assertEquals("null", str(null));
 }
 
 fun strTest7() {
-    Assert.assertEqual("3.14", str(3.14));
+    Assert.assertEquals("3.14", str(3.14));
 }
 
 fun strAddTest() {
     var result = "abcdef";
-    Assert.assertEqual(result, "abc" + "def");
+    Assert.assertEquals(result, "abc" + "def");
 }
 
 fun strAddTest2() {
     var result = "abc123";
-    Assert.assertEqual(result, "abc" + 123);
+    Assert.assertEquals(result, "abc" + 123);
 }
 
 fun strAddTest3() {
     var result = "123abc";
-    Assert.assertEqual(result, 123 + "abc");
+    Assert.assertEquals(result, 123 + "abc");
 }
 
 fun strGTTest() {
     var str1 = "aba";
     var str2 = "abz";
-    Assert.assertEqual(true, str1 > str2);
-    Assert.assertEqual(false, str2 > str1);
+    Assert.assertEquals(true, str1 > str2);
+    Assert.assertEquals(false, str2 > str1);
 }
 
 fun strLTTest() {
     var str1 = "aba";
     var str2 = "abz";
-    Assert.assertEqual(false, str1 < str2);
-    Assert.assertEqual(true, str2 < str1);
+    Assert.assertEquals(false, str1 < str2);
+    Assert.assertEquals(true, str2 < str1);
 }
 
 fun strGTETest() {
     var str1 = "aba";
     var str2 = "abz";
     var str3 = "aba";
-    Assert.assertEqual(true, str1 >= str2);
-    Assert.assertEqual(true, str1 >= str3);
-    Assert.assertEqual(false, str2 >= str3);
+    Assert.assertEquals(true, str1 >= str2);
+    Assert.assertEquals(true, str1 >= str3);
+    Assert.assertEquals(false, str2 >= str3);
 }
 
 fun strLTETest() {
     var str1 = "aba";
     var str2 = "abz";
     var str3 = "aba";
-    Assert.assertEqual(false, str1 <= str2);
-    Assert.assertEqual(true, str1 <= str3);
-    Assert.assertEqual(true, str2 <= str3);
+    Assert.assertEquals(false, str1 <= str2);
+    Assert.assertEquals(true, str1 <= str3);
+    Assert.assertEquals(true, str2 <= str3);
 }
 
 fun strEQTest() {
     var str1 = "aba";
     var str2 = "abz";
     var str3 = "aba";
-    Assert.assertEqual(true, str1 == str1);
-    Assert.assertEqual(false, str1 == str2);
-    Assert.assertEqual(true, str1 == str3);
-    Assert.assertEqual(false, str2 == str3);
+    Assert.assertEquals(true, str1 == str1);
+    Assert.assertEquals(false, str1 == str2);
+    Assert.assertEquals(true, str1 == str3);
+    Assert.assertEquals(false, str2 == str3);
 }
 
 fun strNETest() {
     var str1 = "aba";
     var str2 = "abz";
     var str3 = "aba";
-    Assert.assertEqual(false, str1 != str1);
-    Assert.assertEqual(true, str1 != str2);
-    Assert.assertEqual(false, str1 != str3);
-    Assert.assertEqual(true, str2 != str3);
+    Assert.assertEquals(false, str1 != str1);
+    Assert.assertEquals(true, str1 != str2);
+    Assert.assertEquals(false, str1 != str3);
+    Assert.assertEquals(true, str2 != str3);
 }
 
 fun strContainsTest() {
@@ -141,7 +141,7 @@ fun strReplaceTest() {
 
 fun strIndexOfTest() {
     var str = "ABCdefGHI";
-    Assert.assertEqual(3, str.indexOf("def"));
+    Assert.assertEquals(3, str.indexOf("def"));
 }
 
 fun testEqualsIgnoreCase() {

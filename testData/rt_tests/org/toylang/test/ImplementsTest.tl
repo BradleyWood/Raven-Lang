@@ -1,6 +1,6 @@
 package org.toylang.test;
 
-import org.toylang.test.Assert;
+import org.junit.Assert;
 
 import java.lang.Thread;
 import java.lang.Runnable;
@@ -22,8 +22,8 @@ public class SomeRunnableClass implements Runnable {
 fun testRunnable() {
     var runnable = SomeRunnableClass();
     var thread = Thread(runnable);
-    Assert.assertEqual(0, runnable.getValue());
+    Assert.assertEquals(0, runnable.getValue());
     thread.start();
     thread.join();
-    Assert.assertEqual(100, runnable.getValue());
+    Assert.assertEquals(100, runnable.getValue());
 }

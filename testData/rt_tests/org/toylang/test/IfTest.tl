@@ -1,6 +1,6 @@
 package org.toylang.test;
 
-import org.toylang.test.Assert;
+import org.junit.Assert;
 
 fun ifTest1() {
     if(false) {

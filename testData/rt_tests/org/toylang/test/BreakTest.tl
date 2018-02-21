@@ -1,6 +1,6 @@
 package org.toylang.test;
 
-import org.toylang.test.Assert;
+import org.junit.Assert;
 
 fun breakTest() {
     var j = 0;
@@ -9,7 +9,7 @@ fun breakTest() {
             break;
         j += 1;
     }
-    Assert.assertEqual(j, 50);
+    Assert.assertEquals(j, 50);
 }
 
 fun breakTest2() {
@@ -24,7 +24,7 @@ fun breakTest2() {
         }
         sum += 1;
     }
-    Assert.assertEqual(1275, sum);
+    Assert.assertEquals(1275, sum);
 }
 
 fun breakTest3() {
@@ -35,5 +35,5 @@ fun breakTest3() {
             break;
         }
     }
-    Assert.assertEqual(5, i);
+    Assert.assertEquals(5, i);
 }

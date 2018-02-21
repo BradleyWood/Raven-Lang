@@ -1,6 +1,6 @@
 package org.toylang.test;
 
-import org.toylang.test.Assert;
+import org.junit.Assert;
 
 
 fun forEachTest() {
@@ -9,7 +9,7 @@ fun forEachTest() {
     for i : lst {
         sum += i;
     }
-    Assert.assertEqual(sum(lst), sum);
+    Assert.assertEquals(sum(lst), sum);
 }
 
 fun forEachTest2() {
@@ -17,7 +17,7 @@ fun forEachTest2() {
     for i : [100, 1000, 10000] {
         sum += i;
     }
-    Assert.assertEqual(11100, sum);
+    Assert.assertEquals(11100, sum);
 }
 
 fun forEachTest3() {
@@ -25,5 +25,5 @@ fun forEachTest3() {
     for (i : [100, 1000, 10000]) {
         sum += i;
     }
-    Assert.assertEqual(11100, sum);
+    Assert.assertEquals(11100, sum);
 }

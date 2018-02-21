@@ -1,12 +1,12 @@
 package org.toylang.test;
 
-import org.toylang.test.Assert;
+import org.junit.Assert;
 
 fun whileTest1() {
     var i = 0;
     while(i < 10) i+=1;
 
-    Assert.assertEqual(i, 10);
+    Assert.assertEquals(i, 10);
 }
 
 fun whileTest2() {
@@ -14,7 +14,7 @@ fun whileTest2() {
     while(i < 10) {
         i += 1;
     }
-    Assert.assertEqual(i, 10);
+    Assert.assertEquals(i, 10);
 }
 
 fun whileTest3() {
@@ -22,7 +22,7 @@ fun whileTest3() {
     while(str != "aaaa") {
         str += "a";
     }
-    Assert.assertEqual(str, "aaaa");
+    Assert.assertEquals(str, "aaaa");
 }
 
 fun doWhileTest() {
@@ -30,7 +30,7 @@ fun doWhileTest() {
     do {
         counter += 1;
     } while (counter < 10);
-    Assert.assertEqual(10, counter);
+    Assert.assertEquals(10, counter);
 }
 
 fun doWhileTest2() {
@@ -38,5 +38,5 @@ fun doWhileTest2() {
         do {
             counter += 1;
         } while (false);
-    Assert.assertEqual(1, counter);
+    Assert.assertEquals(1, counter);
 }

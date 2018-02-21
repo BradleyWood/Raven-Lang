@@ -1,6 +1,6 @@
 package org.toylang.test;
 
-import org.toylang.test.Assert;
+import org.junit.Assert;
 
 fun continueTest() {
     var gg = 0;
@@ -10,7 +10,7 @@ fun continueTest() {
         }
         gg += 1;
     }
-    Assert.assertEqual(9, gg);
+    Assert.assertEquals(9, gg);
 }
 
 fun continueTest2() {
@@ -19,7 +19,7 @@ fun continueTest2() {
         continue;
         gg += 1;
     }
-    Assert.assertEqual(0, gg);
+    Assert.assertEquals(0, gg);
 }
 
 fun continueTest3() {
@@ -44,5 +44,5 @@ fun continueTest4() {
             continue;
         j += 1;
     }
-    Assert.assertEqual(9, j);
+    Assert.assertEquals(9, j);
 }

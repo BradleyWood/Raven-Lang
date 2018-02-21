@@ -1,10 +1,10 @@
 package org.toylang.test;
 
-import org.toylang.test.Assert;
+import org.junit.Assert;
 
 fun hashTest1() {
     var str = "an error";
     var error = error(str);
-    Assert.assertEqual(hash(str), hash(error));
-    Assert.assertEqual(error.hashCode(), hash(error));
+    Assert.assertEquals(hash(str), hash(error));
+    Assert.assertEquals(error.hashCode(), hash(error));
 }

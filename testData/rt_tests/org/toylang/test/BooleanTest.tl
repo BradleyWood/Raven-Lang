@@ -1,23 +1,23 @@
 package org.toylang.test;
 
-import org.toylang.test.Assert;
+import org.junit.Assert;
 
 fun boolTest1() {
-    Assert.assertEqual(true, true);
+    Assert.assertEquals(true, true);
 }
 
 fun boolTest2() {
-    Assert.assertEqual(false, false);
+    Assert.assertEquals(false, false);
 }
 
 fun boolTest3() {
-    Assert.assertNotEqual(true, false);
-    Assert.assertNotEqual(false, true);
+    Assert.assertNotEquals(true, false);
+    Assert.assertNotEquals(false, true);
 }
 
 fun boolNotTest() {
-    Assert.assertEqual(!true, false);
-    Assert.assertEqual(!false, true);
-    Assert.assertEqual(!!true, true);
-    Assert.assertEqual(!!false, false);
+    Assert.assertEquals(!true, false);
+    Assert.assertEquals(!false, true);
+    Assert.assertEquals(!!true, true);
+    Assert.assertEquals(!!false, false);
 }
