@@ -1,24 +1,58 @@
 package org.toylang;
 
 import org.junit.Assert;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
 import org.toylang.compiler.Errors;
 import org.toylang.repl.Repl;
+import org.toylang.util.Settings;
 
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.Collection;
 import java.util.LinkedList;
+import java.util.stream.Collectors;
 
+@RunWith(Parameterized.class)
 public class ReplTestRunner {
 
     private static final ByteArrayOutputStream baos = new ByteArrayOutputStream();
     private static final PrintStream newOut = new PrintStream(baos);
 
-    public static void doTest(final String file) {
+    private static final java.io.PrintStream sout = System.out;
+    private static final java.io.PrintStream serr = System.out;
+
+    private final String path;
+
+    public ReplTestRunner(final String path) {
+        this.path = path;
+    }
+
+    @BeforeClass
+    public static void before() {
+        org.toylang.util.Utility.buildBuiltins();
+        Settings.set("REPL", true);
+    }
+
+    @AfterClass
+    public static void after() {
+        System.setOut(sout);
+        System.setErr(serr);
+        Settings.set("REPL", false);
+    }
+
+    @Test
+    public void doTest() {
         System.setErr(newOut);
         System.setOut(newOut);
         Repl repl = new Repl();
 
         try {
-            FileInputStream fis = new FileInputStream(file);
+            FileInputStream fis = new FileInputStream(path);
             BufferedReader br = new BufferedReader(new InputStreamReader(fis));
             LinkedList<String> inputLines = new LinkedList<>();
             LinkedList<String> output = new LinkedList<>();
@@ -51,9 +85,17 @@ public class ReplTestRunner {
             Assert.assertEquals(output, actualOutput);
         } catch (IOException e) {
             baos.reset();
-            Assert.fail("Cannot read file " + file);
+            Assert.fail("Cannot read file " + path);
         } finally {
             baos.reset();
         }
+    }
+
+    @Parameterized.Parameters(name = "ReplTest {0}")
+    public static Collection getTests() throws IOException {
+        return Files.walk(Paths.get("testData/repl/"))
+                .filter(p -> p.toString().endsWith(".repl"))
+                .map(p -> new Object[]{p.toString()})
+                .collect(Collectors.toList());
     }
 }
