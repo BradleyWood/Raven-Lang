@@ -1,6 +1,10 @@
 package org.toylang;
 
 import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
 import org.toylang.antlr.ToyParser;
 import org.toylang.antlr.ToyTree;
 import org.toylang.compiler.Compiler;
@@ -10,17 +14,36 @@ import org.toylang.core.ByteClassLoader;
 import org.toylang.util.Utility;
 
 import java.io.File;
+import java.io.IOException;
 import java.lang.reflect.Method;
 import java.net.URL;
-import java.util.HashMap;
-import java.util.Map;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.*;
+import java.util.stream.Collectors;
 
+@RunWith(Parameterized.class)
 public class TestRunner {
 
     private static final ByteClassLoader byteClassLoader = new ByteClassLoader(new URL[0], TestRunner.class.getClassLoader(), new HashMap<>());
     private static final HashMap<String, Class<?>> classes = new HashMap<>();
 
-    public static void doTest(final String cl, final String method) throws Throwable {
+    private final String cl;
+    private final String method;
+
+    public TestRunner(final String cl, final String method) {
+        this.cl = cl;
+        this.method = method;
+    }
+
+    @Before
+    public void verifyState() {
+        Assert.assertNotNull("Test class failed to compile!", classes.get(cl));
+    }
+
+    @Test
+    public void doTest() throws Throwable {
         Class<?> clazz = classes.get(cl);
         if (clazz == null) {
             Assert.fail("Test class is null");
@@ -36,11 +59,13 @@ public class TestRunner {
         }
     }
 
-    public static void loadClass(final String file) {
+    private static Class<?> loadClass(final String file) {
         Utility.buildBuiltins();
         File f = new File(file);
-        if (f.isDirectory() || classes.containsKey(file)) {
-            return;
+        if (f.isDirectory()) {
+            return null;
+        } else if (classes.containsKey(file)) {
+            return classes.get(file);
         }
         try {
             ToyParser parser = new ToyParser(f.getPath());
@@ -54,9 +79,33 @@ public class TestRunner {
             }
             Class<?> clazz = byteClassLoader.loadClass(tree.getFullName().toString());
             classes.put(file, clazz);
+            return clazz;
         } catch (Exception e) {
             e.printStackTrace();
             classes.put(file, null);
         }
+        return null;
+    }
+
+    @Parameterized.Parameters(name = "{0} {1}()")
+    public static Collection getTests() throws IOException {
+        List<String> paths = Files.walk(Paths.get("testData/rt_tests/"))
+                .filter(p -> p.toString().endsWith(".tl"))
+                .map(Path::toString).collect(Collectors.toList());
+
+        List<Object[]> tests = new LinkedList<>();
+
+        paths.forEach(p -> {
+            Class<?> cl = loadClass(p);
+            if (cl == null) {
+                tests.add(new Object[]{p, null});
+            } else {
+                Arrays.stream(cl.getDeclaredMethods())
+                        .filter(m -> m.getName().toLowerCase().contains("test"))
+                        .filter(m -> !m.isSynthetic())
+                        .forEach(m -> tests.add(new Object[]{p, m.getName()}));
+            }
+        });
+        return tests;
     }
 }
