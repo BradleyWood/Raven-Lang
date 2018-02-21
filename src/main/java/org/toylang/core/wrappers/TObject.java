@@ -225,68 +225,60 @@ public class TObject implements Comparable<TObject> {
     }
 
     @Hidden
-    public static TObject newObj(Class clazz, TObject params) {
-        try {
-            if (clazz.getAnnotationsByType(Hidden.class).length == 0) {
-                Class<?>[] types = null;
-                Constructor con = null;
-                int rating = -1;
-                for (Constructor<?> constructor : clazz.getConstructors()) {
-                    if (constructor.getAnnotationsByType(Hidden.class).length > 0)
-                        continue;
-                    if (constructor.getParameterCount() == params.size()) {
-                        Class<?>[] t = constructor.getParameterTypes();
+    public static TObject newObj(Class clazz, TObject params) throws Throwable {
+        if (clazz.getAnnotationsByType(Hidden.class).length == 0) {
+            Class<?>[] types = null;
+            Constructor con = null;
+            int rating = -1;
+            for (Constructor<?> constructor : clazz.getConstructors()) {
+                if (constructor.getAnnotationsByType(Hidden.class).length > 0)
+                    continue;
+                if (constructor.getParameterCount() == params.size()) {
+                    Class<?>[] t = constructor.getParameterTypes();
 
-                        int r = rate(params, t);
-                        if (r > rating) {
-                            rating = r;
-                            con = constructor;
-                            types = t;
-                        }
+                    int r = rate(params, t);
+                    if (r > rating) {
+                        rating = r;
+                        con = constructor;
+                        types = t;
                     }
                 }
-                if (con != null) {
+            }
+            if (con != null) {
+                try {
                     Object o = con.newInstance(getParams(params, types, rating));
                     if (TObject.class.isAssignableFrom(o.getClass()))
                         return (TObject) o;
                     return new TObject(o);
+                } catch (InvocationTargetException e) {
+                    throw e.getCause();
                 }
             }
-        } catch (IllegalAccessException | InstantiationException | InvocationTargetException e) {
-            e.printStackTrace();
         }
         throw new RuntimeException("Constructor " + clazz.getName() + " not found.");
     }
 
     @Hidden
-    public void setField(String name, TObject value) {
-        try {
-            String[] names = name.split("\\.");
-            Object o = obj;
-            for (int i = 0; i < names.length - 1; i++) {
-                o = getField(o.getClass(), names[i]);
-            }
-            Field f = o.getClass().getField(name);
-            if (setField(value, o, f)) return;
-        } catch (NoSuchFieldException | IllegalAccessException e) {
-            e.printStackTrace();
+    public void setField(String name, TObject value) throws IllegalAccessException, NoSuchFieldException {
+        String[] names = name.split("\\.");
+        Object o = obj;
+        for (int i = 0; i < names.length - 1; i++) {
+            o = getField(o.getClass(), names[i]);
         }
+        Field f = o.getClass().getField(name);
+        if (setField(value, o, f)) return;
         throw new RuntimeException(obj + " has no attribute " + name);
     }
 
     @Hidden
-    public void setField(Class clazz, String name, TObject value) {
-        try {
-            String[] names = name.split("\\.");
-            Object o = obj;
-            for (int i = 0; i < names.length - 1; i++) {
-                o = getField(o.getClass(), names[i]);
-            }
-            Field f = clazz.getField(name);
-            if (setField(value, o, f)) return;
-        } catch (NoSuchFieldException | IllegalAccessException e) {
-            e.printStackTrace();
+    public void setField(Class clazz, String name, TObject value) throws IllegalAccessException, NoSuchFieldException {
+        String[] names = name.split("\\.");
+        Object o = obj;
+        for (int i = 0; i < names.length - 1; i++) {
+            o = getField(o.getClass(), names[i]);
         }
+        Field f = clazz.getField(name);
+        if (setField(value, o, f)) return;
         throw new RuntimeException(obj + " has no attribute " + name);
     }
 
@@ -306,60 +298,51 @@ public class TObject implements Comparable<TObject> {
         return false;
     }
 
-    public static void setField(Object o, String field, TObject value) {
+    public static void setField(Object o, String field, TObject value) throws NoSuchFieldException, IllegalAccessException {
         new TObject(o).setField(field, value);
     }
 
     @Hidden
-    public TObject getField(String name) {
+    public TObject getField(String name) throws NoSuchFieldException, IllegalAccessException {
         return getField(obj, name);
     }
 
-    public static TObject getField(Object obj, String name) {
-        try {
-            String[] names = name.split("\\.");
-            if (names.length == 0)
-                names = new String[]{name};
+    public static TObject getField(Object obj, String name) throws IllegalAccessException, NoSuchFieldException {
+        String[] names = name.split("\\.");
+        if (names.length == 0)
+            names = new String[]{name};
 
-            for (String name1 : names) {
-                Field f = obj.getClass().getField(name1);
-                if (f.getAnnotationsByType(Hidden.class) != null) {
-                    f.setAccessible(true);
-                    obj = f.get(obj);
-                } else {
-                    throw new RuntimeException("Field " + name + " is not accessible");
-                }
+        for (String name1 : names) {
+            Field f = obj.getClass().getField(name1);
+            if (f.getAnnotationsByType(Hidden.class) != null) {
+                f.setAccessible(true);
+                obj = f.get(obj);
+            } else {
+                throw new RuntimeException("Field " + name + " is not accessible");
             }
-            return toToyLang(obj);
-        } catch (NoSuchFieldException | IllegalAccessException e) {
-            e.printStackTrace();
         }
-        throw new RuntimeException(obj + " has no attribute " + name);
+        return toToyLang(obj);
+
     }
 
     @Hidden
-    public static TObject getField(Class clazz, String name) {
-        try {
-            String[] names = name.split("\\.");
-            if (names.length == 0)
-                names = new String[]{name};
+    public static TObject getField(Class clazz, String name) throws NoSuchFieldException, IllegalAccessException {
+        String[] names = name.split("\\.");
+        if (names.length == 0)
+            names = new String[]{name};
 
-            Field f = clazz.getField(names[0]);
-            f.setAccessible(true);
-            if (f.getAnnotationsByType(Hidden.class) == null || !Modifier.isStatic(f.getModifiers()))
-                throw new RuntimeException("Cannot find field");
-            Object o = f.get(null);
-            if (names.length == 1)
-                return toToyLang(o);
-            return new TObject(o).getField(name.substring(names[0].length()));
-        } catch (IllegalAccessException | NoSuchFieldException e) {
-            e.printStackTrace();
-        }
-        throw new RuntimeException("Attribute is not accessible: " + clazz.getName() + ":" + name);
+        Field f = clazz.getField(names[0]);
+        f.setAccessible(true);
+        if (f.getAnnotationsByType(Hidden.class) == null || !Modifier.isStatic(f.getModifiers()))
+            throw new RuntimeException("Cannot find field");
+        Object o = f.get(null);
+        if (names.length == 1)
+            return toToyLang(o);
+        return new TObject(o).getField(name.substring(names[0].length()));
     }
 
     @Hidden
-    public final TObject invoke(String name, TObject params) {
+    public final TObject invoke(String name, TObject params) throws Throwable {
         if (name.equals("getType"))
             return getType();
         if (obj == null)
@@ -368,48 +351,36 @@ public class TObject implements Comparable<TObject> {
     }
 
     @Hidden
-    public static TObject invoke(Class clazz, String name, TObject params) {
+    public static TObject invoke(Class clazz, String name, TObject params) throws Throwable {
         return invoke(clazz, null, name, params);
     }
 
     @Hidden
-    public TObject invokeV(int hash, TObject params) {
-        JavaMethod method = findMethod(hash);
-
-        if (method != null) {
-            Object[] pa = getParams(params, method.parameterTypes);
-            try {
-                return toToyLang(method.mh.invoke(this, pa));
-            } catch (IllegalAccessException | InvocationTargetException e) {
-                e.printStackTrace();
-                return new TError("Error at call to " + this.getClass().getName() + "." + method.mh.getName() + "(" + params + ")");
-            }
-        }
-        throw new RuntimeException("Method not found: " + hash + ":" + params);
+    public TObject invokeV(int hash, TObject params) throws Throwable {
+        return invoke(hash, this, params);
     }
 
     @Hidden
-    public static TObject invoke(int hash, TObject params) {
+    public static TObject invoke(int hash, TObject params) throws Throwable {
         return invoke(hash, null, params);
     }
 
     @Hidden
-    public static TObject invoke(int hash, Object obj, TObject params) {
+    public static TObject invoke(int hash, Object obj, TObject params) throws Throwable {
         JavaMethod jm = findMethod(hash);
         if (jm != null) {
-            Object[] pa = getParams(params, jm.parameterTypes);
             try {
+                Object[] pa = getParams(params, jm.parameterTypes);
                 return toToyLang(jm.mh.invoke(obj, pa));
-            } catch (IllegalAccessException | InvocationTargetException e) {
-                e.getCause().printStackTrace();
-                return new TError(e.getMessage());
+            } catch (InvocationTargetException e) {
+                throw e.getCause();
             }
         }
         throw new RuntimeException("Method not found: " + hash);
     }
 
     @Hidden
-    public static TObject invoke(Class clazz, Object obj, String name, TObject params) {
+    public static TObject invoke(Class clazz, Object obj, String name, TObject params) throws Throwable {
         JavaMethod method = findMethod(clazz, name, params);
         if (method != null) {
             try {
@@ -417,9 +388,8 @@ public class TObject implements Comparable<TObject> {
                 Object ret = method.mh.invoke(obj, pa);
 
                 return toToyLang(ret);
-            } catch (Throwable e) {
-                e.getCause().printStackTrace();
-                return new TError(e.getMessage());
+            } catch (InvocationTargetException e) {
+                throw e.getCause();
             }
         }
         for (Class cl : clazz.getClasses()) {
@@ -604,7 +574,7 @@ public class TObject implements Comparable<TObject> {
             return new TInt(((Number) o).intValue());
         }
         if (o instanceof Float || o instanceof Double) {
-            return new TReal(((Number)o).doubleValue());
+            return new TReal(((Number) o).doubleValue());
         }
         if (o instanceof Boolean) {
             return ((boolean) o) ? TBoolean.TRUE : TBoolean.FALSE;
