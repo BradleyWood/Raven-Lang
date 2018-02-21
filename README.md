@@ -77,7 +77,7 @@ fun main() {
 [View more examples](https://github.com/BradleyWood/TlDemo)
 
 
-### Bultins
+### Builtins
 <b>The following builtin functions are accessible globally<b><br><br>
 
  1. <b>print(var) : Prints a variable to the console</b><br>
