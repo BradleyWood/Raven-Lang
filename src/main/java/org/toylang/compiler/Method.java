@@ -332,10 +332,14 @@ public class Method extends MethodVisitor implements TreeVisitor, Opcodes {
                     if (ctx.isStatic()) {
                         invokeStaticMethod_D(funOwner, call.getName().toString(), desc, call.getParams());
                     } else {
-                        if (ctx.getClassDef().findFun(call.getName().toString(), call.getParams().length) != null) {
+                        Fun fun = ctx.getClassDef().findFun(call.getName().toString(), call.getParams().length);
+                        if (fun != null && (fun.modifiers() & ACC_STATIC) == 0) {
                             visitVarInsn(ALOAD, getLocal("this"));
                             Arrays.stream(call.getParams()).forEach(param -> param.accept(this));
                             visitMethodInsn(INVOKEVIRTUAL, funOwner, call.getName().toString(), desc, false);
+                        } else if (fun != null) {
+                            Arrays.stream(call.getParams()).forEach(param -> param.accept(this));
+                            visitMethodInsn(INVOKESTATIC, funOwner, call.getName().toString(), desc, false);
                         } else {
                             visitLdcInsn(Type.getType("L" + (funOwner.replace(".", "/")) + ";"));
                             visitVarInsn(ALOAD, getLocal("this"));
