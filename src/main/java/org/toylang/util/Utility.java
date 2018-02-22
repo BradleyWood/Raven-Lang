@@ -12,9 +12,11 @@ import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.Arrays;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.HashMap;
-import java.util.LinkedList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class Utility {
 
@@ -69,15 +71,16 @@ public class Utility {
         File file = new File(new File(".").getAbsoluteFile(), relativePath);
 
         HashMap<String, byte[]> classes = new HashMap<>();
-        LinkedList<File> files = new LinkedList<>();
 
         if (!file.isDirectory()) {
-            files.add(file);
-        } else {
-            File[] fs = file.listFiles();
-            if (fs != null)
-                files.addAll(Arrays.asList(fs));
+            file = file.getParentFile();
         }
+
+        List<File> files = Files.walk(Paths.get(file.getAbsolutePath()))
+                .filter(p -> p.toString().endsWith(".tl"))
+                .map(p -> new File(p.toString()))
+                .collect(Collectors.toList());
+
 
         for (File f : files) {
             if (!f.getAbsolutePath().endsWith(".tl"))
