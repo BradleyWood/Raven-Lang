@@ -20,6 +20,10 @@ public class TError extends TObject {
         this.msg = new TString(msg);
     }
 
+    public TString getMessage() {
+        return msg;
+    }
+
     @Hidden
     @Override
     public boolean equals(Object o) {
