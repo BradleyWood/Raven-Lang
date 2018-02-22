@@ -1,6 +1,16 @@
+# Intellij
 .idea/
-gen/
 *.iml
+
+# Build files
 target/
 *.jar
+*.class
+
+# Scripts
 *.bat
+*.sh
+
+# Antlr
+gen/
+symbols/
