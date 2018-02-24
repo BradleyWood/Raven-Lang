@@ -9,3 +9,8 @@
 
 > lst = []
 > for a : lst println(a)
+
+> for a : [5, 4, 3] println(a)
+5
+4
+3
