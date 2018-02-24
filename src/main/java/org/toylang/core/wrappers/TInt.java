@@ -135,7 +135,10 @@ public class TInt extends TObject {
                 return new TBigInt(toBigInt().pow(other));
             }
         } else if (obj instanceof TBigInt) {
-            return new TBigInt(toBigInt().pow(obj.toInt()));
+            Integer v = obj.toInt();
+            if (v == null)
+                throw new ArithmeticException("Exponent " + obj.toString() + " is too big");
+            return new TBigInt(toBigInt().pow(v));
         }
         return super.pow(obj);
     }

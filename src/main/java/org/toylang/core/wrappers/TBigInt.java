@@ -80,7 +80,7 @@ public class TBigInt extends TObject {
         if (bigInt != null) {
             return new TBigInt(value.pow(bigInt));
         }
-        return super.pow(obj);
+        throw new ArithmeticException("Exponent " + obj.toString() + " is too big");
     }
 
     @Override
