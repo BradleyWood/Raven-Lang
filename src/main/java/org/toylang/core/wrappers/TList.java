@@ -276,13 +276,9 @@ public class TList extends TObject implements List {
     @Hidden
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        if (!super.equals(o)) return false;
-
-        TList toyList = (TList) o;
-
-        return list != null ? list.equals(toyList.list) : toyList.list == null;
+        if (this == o)
+            return true;
+        return o instanceof TList && Objects.equals(list, ((TList) o).list);
     }
 
     @Hidden

@@ -614,13 +614,12 @@ public class TObject implements Comparable<TObject> {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        TObject toyObject = (TObject) o;
-
-        if (type != null ? !type.equals(toyObject.type) : toyObject.type != null) return false;
-        return obj != null ? obj.equals(toyObject.obj) : toyObject.obj == null;
+        if (this == o)
+            return true;
+        if (!(o instanceof TObject))
+            return false;
+        TObject to = (TObject) o;
+        return getType().equals(to.getType()) && obj.equals(to.obj);
     }
 
     @Override

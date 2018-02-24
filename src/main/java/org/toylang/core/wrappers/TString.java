@@ -197,12 +197,9 @@ public class TString extends TObject {
     @Hidden
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        TString toyString = (TString) o;
-
-        return str != null ? str.equals(toyString.str) : toyString.str == null;
+        if (this == o)
+            return true;
+        return o instanceof TString && str.equals(((TString) o).str);
     }
 
     @Hidden

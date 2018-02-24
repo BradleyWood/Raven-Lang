@@ -63,12 +63,9 @@ public class TType extends TObject {
     @Hidden
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        TType toyType = (TType) o;
-
-        return type != null ? type.equals(toyType.type) : toyType.type == null;
+        if (this == o)
+            return true;
+        return o instanceof TType && type.equals(((TType) o).type);
     }
 
     @Hidden

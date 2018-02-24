@@ -145,7 +145,8 @@ public class TBigInt extends TObject {
             try {
                 value.longValueExact();
                 return toLong();
-            } catch (Exception e) {}
+            } catch (Exception e) {
+            }
         }
         return super.coerce(clazz);
     }
@@ -158,7 +159,8 @@ public class TBigInt extends TObject {
             try {
                 value.longValueExact();
                 return COERCE_IDEAL;
-            } catch (Exception e) {}
+            } catch (Exception e) {
+            }
         }
         return super.coerceRating(clazz);
     }
@@ -234,13 +236,9 @@ public class TBigInt extends TObject {
 
     @Override
     public boolean equals(Object o) {
-        if (o instanceof TObject) {
-            try {
-                BigInteger bigInt = ((TObject) o).toBigInt();
-                return value.equals(bigInt);
-            } catch (Exception e) {}
-        }
-        return super.equals(o);
+        if (o == this)
+            return true;
+        return o instanceof TBigInt && value.equals(((TBigInt) o).value);
     }
 
     @Override

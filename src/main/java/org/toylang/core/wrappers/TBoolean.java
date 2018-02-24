@@ -86,13 +86,9 @@ public class TBoolean extends TObject {
     @Hidden
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        if (!super.equals(o)) return false;
-
-        TBoolean that = (TBoolean) o;
-
-        return value == that.value;
+        if (this == o)
+            return true;
+        return o instanceof TBoolean && ((TBoolean) o).value == value;
     }
 
     @Hidden

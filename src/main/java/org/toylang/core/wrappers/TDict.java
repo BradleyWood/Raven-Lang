@@ -113,7 +113,9 @@ public class TDict extends TObject implements Map<TObject, TObject> {
 
     @Override
     public boolean equals(Object o) {
-        return map.equals(o);
+        if (o == this)
+            return true;
+        return o instanceof TDict && ((TDict) o).map.equals(map);
     }
 
     @Override

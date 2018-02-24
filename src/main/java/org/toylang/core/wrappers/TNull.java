@@ -64,6 +64,6 @@ public class TNull extends TObject {
     @Hidden
     @Override
     public boolean equals(Object o) {
-        return o instanceof TNull;
+        return o == NULL;
     }
 }

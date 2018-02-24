@@ -334,12 +334,7 @@ public class TInt extends TObject {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o instanceof TObject) {
-            TObject eq = EQ((TObject) o);
-            if (eq != null)
-                return eq.isTrue();
-        }
-        return false;
+        return o instanceof TInt && ((TInt) o).value == value;
     }
 
     @Hidden

@@ -217,7 +217,7 @@ public class TReal extends TObject {
             return toLong();
         } else if (clazz.equals(short.class) || clazz.equals(Short.class)) {
             return toShort();
-        } else if(clazz.equals(byte.class) || clazz.equals(Byte.class)) {
+        } else if (clazz.equals(byte.class) || clazz.equals(Byte.class)) {
             return toByte();
         }
         return super.coerce(clazz);
@@ -291,12 +291,7 @@ public class TReal extends TObject {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o instanceof TObject) {
-            TObject eq = EQ((TObject) o);
-            if (eq != null)
-                return eq.isTrue();
-        }
-        return false;
+        return o instanceof TReal && value == ((TReal) o).value;
     }
 
     @Hidden

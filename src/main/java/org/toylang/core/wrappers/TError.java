@@ -27,11 +27,9 @@ public class TError extends TObject {
     @Hidden
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        if (!super.equals(o)) return false;
-        TError toyError = (TError) o;
-        return Objects.equals(msg, toyError.msg);
+        if (this == o)
+            return true;
+        return o instanceof TError && Objects.equals(((TError) o).msg, msg);
     }
 
     @Override

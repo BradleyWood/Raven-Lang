@@ -16,7 +16,7 @@ public class LiteralVisitorTest {
         literal = new Literal(new TInt(0));
         testStatement(LiteralVisitor.INSTANCE, "0;", literal);
 
-        literal = new Literal(new TInt(1000000));
+        literal = new Literal(new TReal(1000000));
         testStatement(LiteralVisitor.INSTANCE, "1e6;", literal);
 
         // can't test negatives here -- test under unary operator expressions
