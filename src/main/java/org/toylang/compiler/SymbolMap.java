@@ -125,17 +125,4 @@ public class SymbolMap {
 
         CLASS_MAP.put(clazz.getName().replace(".", "/"), def);
     }
-
-    public static void output() {
-        for (Map.Entry<String, ClassDef> stringClassDefEntry : CLASS_MAP.entrySet()) {
-            System.out.println("-----CLASS: " + stringClassDefEntry.getKey() + " ------");
-            ClassDef def = stringClassDefEntry.getValue();
-            for (VarDecl varDecl : def.getFields()) {
-                System.out.println("Field: " + varDecl.getName());
-            }
-            for (Fun fun : def.getMethods()) {
-                System.out.println("Method: " + fun.getName().toString() + " paramsCount=" + fun.getParams().length);
-            }
-        }
-    }
 }
