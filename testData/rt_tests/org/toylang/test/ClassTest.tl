@@ -2,8 +2,6 @@ package org.toylang.test;
 
 import org.junit.Assert;
 
-import javax.swing.JFrame;
-
 public class Ok(X, Y) {
     var Z = 100;
 
@@ -39,34 +37,9 @@ fun testSubClass() {
 
 public class SuperClass(x) {}
 
-public class Tester extends JFrame {
-
-    public constructor(a) {
-        super(a);
-    }
-
-    public fun updateSize() {
-        setSize(500, 600);
-        Assert.assertEquals(10, ClassTest.aFun());
-    }
-}
 
 public fun aFun() {
     return 10;
-}
-
-fun testInheritance() {
-    var gg = Tester("ABCDEFG");
-    gg.setSize(400, 401);
-    Assert.assertEquals(400, gg.getWidth());
-    Assert.assertEquals(401, gg.getHeight());
-
-    gg.updateSize();
-
-    Assert.assertEquals(500, gg.getWidth());
-    Assert.assertEquals(600, gg.getHeight());
-
-    Assert.assertEquals("ABCDEFG", gg.getTitle());
 }
 
 var aTestVar = 100;
