@@ -1,0 +1,9 @@
+> break
+Error: Break not allowed here
+> var i = 5
+> for (;i < 10; i += 1) break
+> i
+5
+> while (i < 10) { i += 90; break;}
+> i
+95
