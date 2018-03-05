@@ -1,0 +1,9 @@
+> continue
+Error: Continue not allowed here
+> var i = 0
+> while (i < 50) { i += 1; continue; }
+> i
+50
+> for (; i < 100; i += 1) continue
+> i
+100
