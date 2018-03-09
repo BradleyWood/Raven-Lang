@@ -12,8 +12,6 @@ import java.util.*;
 
 public class Method extends MethodVisitor implements TreeVisitor, Opcodes {
 
-    private static final LinkedList<ReflectiveMethod> reflectiveMethods = new LinkedList<>();
-
     private final ArrayList<Integer> lineNumbers = new ArrayList<>();
 
     private final Stack<Label> continueLabels = new Stack<>();
@@ -211,7 +209,6 @@ public class Method extends MethodVisitor implements TreeVisitor, Opcodes {
 
         if (fun.getName().toString().equals("<clinit>")) {
             writeConstants();
-            registerMethods();
         }
 
         fun.getBody().accept(this);
@@ -364,21 +361,75 @@ public class Method extends MethodVisitor implements TreeVisitor, Opcodes {
         return null;
     }
 
+    /**
+     * Used to check if a method is overloaded or non-existant
+     *
+     * @param funOwner
+     * @param name
+     * @param paramCount
+     * @return the number of methods with the name and given param count
+     */
+    private int methodCount(String funOwner, String name, int paramCount) {
+        int count = 0;
+        try {
+            Class<?> klazz = Class.forName(funOwner.replace("/", "."));
+            for (java.lang.reflect.Method method : klazz.getDeclaredMethods()) {
+                if (method.getName().equals(name) && method.getParameterCount() == paramCount) {
+                    count++;
+                }
+            }
+        } catch (ClassNotFoundException e) {
+        }
+        return count;
+    }
+
+    private void reflectiveInvokeStatic(String funOwner, String funName, Expression[] params) {
+        visitLdcInsn(Type.getType("L" + (funOwner.replace(".", "/")) + ";"));
+        visitLdcInsn(funName);
+        visitListDef(new ListDef(params));
+        visitMethodInsn(INVOKESTATIC, Constants.TOBJ_NAME, "invoke", getDesc(TObject.class, "invoke", Class.class, String.class, TObject.class), false);
+    }
+
     private void resolveStaticFun(String funOwner, String funName, String desc, Expression[] params) {
         Fun f = SymbolMap.resolveFun(ctx.getOwner(), funOwner, funName, params.length);
         // if the function can be resolved, it is a tl function
+        int count = methodCount(funOwner, funName, params.length);
+
         if (f != null && !f.isJavaMethod()) {
             invokeStaticMethod_D(funOwner, funName, desc, params);
+        } else if (f == null || count != 1) {
+            reflectiveInvokeStatic(funOwner, funName, params);
         } else {
-            String clazz = funOwner.replace("/", ".");
-            if (canRegisterMethod(clazz, funName, params.length)) {
-                invokeRegistered(clazz, funName, params);
-                visitMethodInsn(INVOKESTATIC, Constants.TOBJ_NAME, "invoke", getDesc(TObject.class, "invoke", int.class, TObject.class), false);
+            Type methodType = Type.getMethodType(f.getDesc());
+            Type[] types = Type.getArgumentTypes(f.getDesc());
+            for (int i = 0; i < params.length; i++) {
+                params[i].accept(this);
+                Primitive p = Primitive.getPrimitiveType(types[i].getDescriptor());
+                if (p == null) {
+                    visitLdcInsn(types[i]);
+                } else {
+                    p.putPrimitiveType(this);
+                }
+                visitMethodInsn(INVOKEVIRTUAL, Constants.TOBJ_NAME, "coerce", getDesc(TObject.class, "coerce", Class.class), false);
+                if (p != null) {
+                    p.unwrap(this);
+                } else {
+                    visitTypeInsn(CHECKCAST, types[i].getInternalName());
+                }
+            }
+            visitMethodInsn(INVOKESTATIC, funOwner, funName, f.getDesc(), false);
+
+            Primitive p = Primitive.getPrimitiveType(methodType.getReturnType().getDescriptor());
+
+            if (!methodType.getReturnType().equals(Type.VOID_TYPE)) {
+                if (p != null) {
+                    p.wrap(this);
+                }
+                visitMethodInsn(INVOKESTATIC, Constants.TOBJ_NAME, "toToyLang",
+                        getDesc(TObject.class, "toToyLang", Object.class), false);
             } else {
-                visitLdcInsn(Type.getType("L" + (funOwner.replace(".", "/")) + ";"));
-                visitLdcInsn(funName);
-                visitListDef(new ListDef(params));
-                visitMethodInsn(INVOKESTATIC, Constants.TOBJ_NAME, "invoke", getDesc(TObject.class, "invoke", Class.class, String.class, TObject.class), false);
+                // method returns void so push null onto stack
+                putNull();
             }
         }
     }
@@ -416,34 +467,10 @@ public class Method extends MethodVisitor implements TreeVisitor, Opcodes {
         }
     }
 
-    private void invokeRegistered(String owner, String funName, Expression[] params) {
-        try {
-            Class cl = Class.forName(owner);
-            ReflectiveMethod method = new ReflectiveMethod(cl, funName, params.length);
-            if (!reflectiveMethods.contains(method)) {
-                reflectiveMethods.add(method);
-            }
-            visitLdcInsn(Objects.hash(cl.getName(), funName, params.length));
-            visitListDef(new ListDef(params));
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        }
-    }
-
     private void newObject(String owner, Expression[] params) {
         visitLdcInsn(Type.getType("L" + (owner.replace(".", "/")) + ";"));
         visitListDef(new ListDef(params));
         visitMethodInsn(INVOKESTATIC, Constants.TOBJ_NAME, "newObj", getDesc(TObject.class, "newObj", Class.class, TObject.class), false);
-    }
-
-    private boolean canRegisterMethod(String owner, String name, int paramCount) {
-        try {
-            Class c = Class.forName(owner);
-            TObject.registerMethod(c, name, paramCount);
-            return true;
-        } catch (Exception e) {
-            return false;
-        }
     }
 
     @Override
@@ -737,16 +764,6 @@ public class Method extends MethodVisitor implements TreeVisitor, Opcodes {
         visitInsn(POP);
     }
 
-    private void registerMethods() {
-        for (ReflectiveMethod reflectiveMethod : reflectiveMethods) {
-            visitLdcInsn(Type.getType(reflectiveMethod.clazz));
-            visitLdcInsn(reflectiveMethod.getName());
-            visitLdcInsn(reflectiveMethod.getParamCount());
-            visitMethodInsn(INVOKESTATIC, Constants.TOBJ_NAME, "registerMethod", "(Ljava/lang/Class;Ljava/lang/String;I)V", false);
-        }
-        reflectiveMethods.clear();
-    }
-
     private void writeConstants() {
         visitLdcInsn(ctx.getConstants().size());
         visitTypeInsn(ANEWARRAY, Constants.TOBJ_NAME);
@@ -891,40 +908,5 @@ public class Method extends MethodVisitor implements TreeVisitor, Opcodes {
             }
         }
         return null;
-    }
-
-    private static class ReflectiveMethod {
-        private Class clazz;
-        private String name;
-        private int paramCount;
-
-        private ReflectiveMethod(Class clazz, String name, int paramCount) {
-            this.clazz = clazz;
-            this.name = name;
-            this.paramCount = paramCount;
-        }
-
-        @Override
-        public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
-            ReflectiveMethod that = (ReflectiveMethod) o;
-            return paramCount == that.paramCount &&
-                    Objects.equals(clazz, that.clazz) &&
-                    Objects.equals(name, that.name);
-        }
-
-        @Override
-        public int hashCode() {
-            return Objects.hash(clazz, name, paramCount);
-        }
-
-        private String getName() {
-            return name;
-        }
-
-        private int getParamCount() {
-            return paramCount;
-        }
     }
 }
