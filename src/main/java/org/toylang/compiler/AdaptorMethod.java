@@ -54,7 +54,7 @@ public class AdaptorMethod extends Method {
             } else {
                 visitName(varDecl.getName());
             }
-            visitMethodInsn(INVOKESTATIC, getInternalName(TObject.class), "toToyLang", getDesc(TObject.class, "toToyLang", Object.class), false);
+            visitMethodInsn(INVOKESTATIC, getInternalName(TObject.class), "wrap", getDesc(TObject.class, "wrap", Object.class), false);
 
             scope.putVar(var_);
             visitVarInsn(ASTORE, scope.findVar(var_));

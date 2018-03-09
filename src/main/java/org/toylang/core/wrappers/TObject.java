@@ -321,7 +321,7 @@ public class TObject implements Comparable<TObject> {
                 throw new RuntimeException("Field " + name + " is not accessible");
             }
         }
-        return toToyLang(obj);
+        return wrap(obj);
 
     }
 
@@ -337,7 +337,7 @@ public class TObject implements Comparable<TObject> {
             throw new RuntimeException("Cannot find field");
         Object o = f.get(null);
         if (names.length == 1)
-            return toToyLang(o);
+            return wrap(o);
         return new TObject(o).getField(name.substring(names[0].length()));
     }
 
@@ -371,7 +371,7 @@ public class TObject implements Comparable<TObject> {
         if (jm != null) {
             try {
                 Object[] pa = getParams(params, jm.parameterTypes);
-                return toToyLang(jm.mh.invoke(obj, pa));
+                return wrap(jm.mh.invoke(obj, pa));
             } catch (InvocationTargetException e) {
                 throw e.getCause();
             }
@@ -387,7 +387,7 @@ public class TObject implements Comparable<TObject> {
                 Object[] pa = getParams(params, method.parameterTypes);
                 Object ret = method.mh.invoke(obj, pa);
 
-                return toToyLang(ret);
+                return wrap(ret);
             } catch (InvocationTargetException e) {
                 throw e.getCause();
             }
@@ -564,7 +564,7 @@ public class TObject implements Comparable<TObject> {
     }
 
     @Hidden
-    public static TObject toToyLang(Object o) {
+    public static TObject wrap(Object o) {
         if (o instanceof TObject)
             return (TObject) o;
         if (o instanceof BigInteger) {

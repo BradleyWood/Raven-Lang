@@ -67,18 +67,18 @@ public class TDict extends TObject implements Map<TObject, TObject> {
 
     @Override
     public TObject get(Object key) {
-        return get(toToyLang(key));
+        return get(wrap(key));
     }
 
     @Override
     public TObject put(TObject key, TObject value) {
-        map.put(toToyLang(key), toToyLang(value));
+        map.put(wrap(key), wrap(value));
         return this;
     }
 
     @Override
     public TObject remove(Object key) {
-        return map.remove(toToyLang(key));
+        return map.remove(wrap(key));
     }
 
     @Override

@@ -186,7 +186,7 @@ public class Method extends MethodVisitor implements TreeVisitor, Opcodes {
             } else if (params.length == 1) {
                 scope.putVar(params[0].getName().toString());
                 visitVarInsn(ALOAD, 0);
-                visitMethodInsn(INVOKESTATIC, getInternalName(TObject.class), "toToyLang", getDesc(TObject.class, "toToyLang", Object.class), false);
+                visitMethodInsn(INVOKESTATIC, getInternalName(TObject.class), "wrap", getDesc(TObject.class, "wrap", Object.class), false);
                 visitTypeInsn(CHECKCAST, getInternalName(TList.class));
                 visitVarInsn(ASTORE, 1);
             }
@@ -425,8 +425,8 @@ public class Method extends MethodVisitor implements TreeVisitor, Opcodes {
                 if (p != null) {
                     p.wrap(this);
                 }
-                visitMethodInsn(INVOKESTATIC, Constants.TOBJ_NAME, "toToyLang",
-                        getDesc(TObject.class, "toToyLang", Object.class), false);
+                visitMethodInsn(INVOKESTATIC, Constants.TOBJ_NAME, "wrap",
+                        getDesc(TObject.class, "wrap", Object.class), false);
             } else {
                 // method returns void so push null onto stack
                 putNull();
@@ -463,7 +463,7 @@ public class Method extends MethodVisitor implements TreeVisitor, Opcodes {
         }
 
         if (!method.getReturnType().isAssignableFrom(TObject.class)) {
-            visitMethodInsn(INVOKESTATIC, getInternalName(TObject.class), "toToyLang", getDesc(TObject.class, "toToyLang", Object.class), false);
+            visitMethodInsn(INVOKESTATIC, getInternalName(TObject.class), "wrap", getDesc(TObject.class, "wrap", Object.class), false);
         }
     }
 
@@ -584,7 +584,7 @@ public class Method extends MethodVisitor implements TreeVisitor, Opcodes {
                 if (p != null) {
                     p.wrap(this);
                 }
-                mv.visitMethodInsn(INVOKESTATIC, "org/toylang/core/wrappers/TObject", "toToyLang", "(Ljava/lang/Object;)" + getDesc(TObject.class), false);
+                mv.visitMethodInsn(INVOKESTATIC, "org/toylang/core/wrappers/TObject", "wrap", "(Ljava/lang/Object;)" + getDesc(TObject.class), false);
             } else {
                 visitLdcInsn(Type.getType("L" + (owner) + ";"));
                 visitLdcInsn(name);

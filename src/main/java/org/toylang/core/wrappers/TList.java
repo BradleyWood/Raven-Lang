@@ -120,7 +120,7 @@ public class TList extends TObject implements List {
         if (o instanceof TObject) {
             add((TObject) o);
         } else {
-            add(TObject.toToyLang(o));
+            add(TObject.wrap(o));
         }
         return true;
     }
