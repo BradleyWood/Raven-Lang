@@ -78,9 +78,10 @@ public class TestRunner {
                 byteClassLoader.addDef(entry.getKey(), entry.getValue());
             }
             Class<?> clazz = byteClassLoader.loadClass(tree.getFullName().toString());
+            clazz.getMethods(); // force verifier to run
             classes.put(file, clazz);
             return clazz;
-        } catch (Exception e) {
+        } catch (Exception | VerifyError e) {
             e.printStackTrace();
             classes.put(file, null);
         }
