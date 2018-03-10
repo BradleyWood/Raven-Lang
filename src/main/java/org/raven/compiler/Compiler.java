@@ -2,7 +2,7 @@ package org.raven.compiler;
 
 import org.raven.antlr.Modifier;
 import org.raven.antlr.ToyParser;
-import org.raven.antlr.ToyTree;
+import org.raven.antlr.RavenTree;
 import org.raven.antlr.ast.*;
 import org.raven.error.Errors;
 
@@ -18,16 +18,16 @@ public class Compiler {
 
     private File file;
     private String name;
-    private ToyTree tree;
+    private RavenTree tree;
 
     private static HashMap<String, byte[]> classMap = new HashMap<>();
     private static ArrayList<String> IMPORTS = new ArrayList<>();
 
     private LinkedList<AnnotationProcessor> processors = new LinkedList<>();
-    private ArrayList<ToyTree> trees = new ArrayList<>();
+    private ArrayList<RavenTree> trees = new ArrayList<>();
     private ArrayList<String> classPath;
 
-    public Compiler(String file, String name, ToyTree tree, AnnotationProcessor... annotationProcessors) {
+    public Compiler(String file, String name, RavenTree tree, AnnotationProcessor... annotationProcessors) {
         this.file = new File(file);
         if (tree.getPackage() != null) {
             this.name = tree.getPackage().toString() + "." + name;
@@ -60,7 +60,7 @@ public class Compiler {
                 if (file != null) {
                     try {
                         ToyParser parser = new ToyParser(file);
-                        ToyTree tree = parser.parse();
+                        RavenTree tree = parser.parse();
                         trees.add(tree);
                         IMPORTS.add(tree.getPackage().add(tree.getName()).toString());
                     } catch (IOException e) {
@@ -135,7 +135,7 @@ public class Compiler {
         return classMap;
     }
 
-    private void modifyTree(ToyTree tree) {
+    private void modifyTree(RavenTree tree) {
         String name = tree.getPackage().add(tree.getName().toString()).toString().replace(".", "/");
         boolean exists = tree.getClasses().stream().filter(cd -> cd.getFullName().equals(name)).count() == 1;
         ClassDef def;

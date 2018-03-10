@@ -2,7 +2,7 @@ package org.raven.antlr.ast;
 
 import org.raven.antlr.Modifier;
 import org.raven.antlr.Operator;
-import org.raven.antlr.ToyTree;
+import org.raven.antlr.RavenTree;
 import org.raven.core.TLFile;
 
 import java.util.*;
@@ -18,7 +18,7 @@ public class ClassDef extends Statement {
     private Expression[] superParams = null;
     private List<Constructor> constructors = null;
     private List<VarDecl> varParams = new LinkedList<>();
-    private ToyTree sourceTree = null;
+    private RavenTree sourceTree = null;
 
     private List<Fun> methods = null;
 
@@ -57,11 +57,11 @@ public class ClassDef extends Statement {
         return varParams;
     }
 
-    public ToyTree getSourceTree() {
+    public RavenTree getSourceTree() {
         return sourceTree;
     }
 
-    public void setSourceTree(ToyTree sourceTree) {
+    public void setSourceTree(RavenTree sourceTree) {
         this.sourceTree = sourceTree;
         this.super_ = getName(super_);
         for (int i = 0; i < this.interfaces.length; i++) {

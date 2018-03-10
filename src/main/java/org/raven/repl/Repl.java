@@ -3,7 +3,7 @@ package org.raven.repl;
 import org.raven.antlr.Modifier;
 import org.raven.antlr.Operator;
 import org.raven.antlr.StatementParser;
-import org.raven.antlr.ToyTree;
+import org.raven.antlr.RavenTree;
 import org.raven.antlr.ast.*;
 import org.raven.compiler.ClassMaker;
 import org.raven.compiler.SymbolMap;
@@ -90,7 +90,7 @@ public class Repl {
         ClassDef def = new ClassDef(new Modifier[]{Modifier.PUBLIC}, new QualifiedName("repl"), name, superClass,
                 new QualifiedName[0], new ArrayList<>());
 
-        ToyTree tree = new ToyTree(Collections.singletonList(def));
+        RavenTree tree = new RavenTree(Collections.singletonList(def));
         tree.setSourceFile("<stdin>");
         def.setSourceTree(tree);
 

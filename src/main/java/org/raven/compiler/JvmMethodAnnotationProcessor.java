@@ -1,6 +1,6 @@
 package org.raven.compiler;
 
-import org.raven.antlr.ToyTree;
+import org.raven.antlr.RavenTree;
 import org.raven.antlr.ast.*;
 import org.raven.core.wrappers.TString;
 import org.raven.error.Errors;
@@ -11,7 +11,7 @@ public class JvmMethodAnnotationProcessor implements AnnotationProcessor {
     private final Literal DEFAULT_RET = new Literal(new TString("void"));
 
     @Override
-    public void process(ToyTree file, Statement stmt) {
+    public void process(RavenTree file, Statement stmt) {
         if (!(stmt instanceof Fun)) {
             return;
         }

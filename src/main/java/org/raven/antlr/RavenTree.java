@@ -8,7 +8,7 @@ import java.util.List;
 /**
  * Root of the src
  */
-public class ToyTree extends AST {
+public class RavenTree extends AST {
 
     private List<Statement> statements = new ArrayList<>();
     private QualifiedName pack = new QualifiedName();
@@ -16,10 +16,10 @@ public class ToyTree extends AST {
     private QualifiedName name = null;
     private String sourceFile = "";
 
-    public ToyTree() {
+    public RavenTree() {
     }
 
-    public ToyTree(List<Statement> statements) {
+    public RavenTree(List<Statement> statements) {
         this.statements = statements;
     }
 

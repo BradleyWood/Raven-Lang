@@ -2,7 +2,7 @@ package org.raven.js;
 
 
 import org.raven.antlr.ToyParser;
-import org.raven.antlr.ToyTree;
+import org.raven.antlr.RavenTree;
 import org.raven.antlr.ast.*;
 import org.raven.core.wrappers.TString;
 
@@ -16,7 +16,7 @@ public class JSCompiler implements TreeVisitor {
 
     private int spaces = 4;
 
-    private final ToyTree tree;
+    private final RavenTree tree;
 
     private int indentationLevel = 0;
 
@@ -26,7 +26,7 @@ public class JSCompiler implements TreeVisitor {
 
     private boolean compiled = false;
 
-    public JSCompiler(final ToyTree tree) {
+    public JSCompiler(final RavenTree tree) {
         this.tree = tree;
     }
 
@@ -35,7 +35,7 @@ public class JSCompiler implements TreeVisitor {
      *
      * @return The tree representing the program
      */
-    public final ToyTree getTree() {
+    public final RavenTree getTree() {
         return tree;
     }
 
@@ -356,7 +356,7 @@ public class JSCompiler implements TreeVisitor {
     }
     public static void main(String[] args) throws IOException {
         ToyParser tp = new ToyParser("test/org/raven/test/IfTest.tl");
-        ToyTree tree = tp.parse();
+        RavenTree tree = tp.parse();
         JSCompiler compiler = new JSCompiler(tree);
         compiler.compile();
         compiler.save("gg.js");

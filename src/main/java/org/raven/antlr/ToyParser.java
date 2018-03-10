@@ -18,14 +18,14 @@ public class ToyParser {
         this.file = file;
     }
 
-    public ToyTree parse() throws IOException {
+    public RavenTree parse() throws IOException {
         RavenLexer lexer = new RavenLexer(CharStreams.fromFileName(file));
         CommonTokenStream tokenStream = new CommonTokenStream(lexer);
         RavenParser parser = new RavenParser(tokenStream);
         parser.removeErrorListener(ConsoleErrorListener.INSTANCE);
         parser.addErrorListener(new RavenErrorListener(file));
         ToyFileVisitor fileVisitor = new ToyFileVisitor();
-        ToyTree tree = fileVisitor.visit(parser.toyFile());
+        RavenTree tree = fileVisitor.visit(parser.toyFile());
         tree.setSourceFile(file);
         String name = new File(file).getName();
         tree.setName(name.replaceAll(".tl", ""));

@@ -2,20 +2,20 @@ package org.raven.antlr.visitor;
 
 import org.raven.antlr.RavenBaseVisitor;
 import org.raven.antlr.RavenParser;
-import org.raven.antlr.ToyTree;
+import org.raven.antlr.RavenTree;
 import org.raven.antlr.ast.Fun;
 import org.raven.antlr.ast.Statement;
 
 import java.util.ArrayList;
 
-public class ToyFileVisitor extends RavenBaseVisitor<ToyTree> {
+public class ToyFileVisitor extends RavenBaseVisitor<RavenTree> {
 
     @Override
-    public ToyTree visitToyFile(RavenParser.ToyFileContext ctx) {
+    public RavenTree visitToyFile(RavenParser.ToyFileContext ctx) {
         ArrayList<Statement> statements = new ArrayList<>();
         ArrayList<Statement> functions = new ArrayList<>(); // functions at bottom
 
-        ToyTree tree = new ToyTree(statements);
+        RavenTree tree = new RavenTree(statements);
 
         if (ctx.packageDef() != null) {
             tree.setPackage(ctx.packageDef().qualifiedName().accept(QualifiedNameVisitor.INSTANCE));
