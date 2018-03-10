@@ -575,15 +575,14 @@ public class Method extends MethodVisitor implements TreeVisitor, Opcodes {
         VarDecl decl = SymbolMap.resolveField(ctx.getOwner(), owner, name);
 
         if (decl == null) {
-            System.err.println(owner + " :: " + owner + " : " + name);
-            Errors.put("Cannot resolve field " + owner + " : " + name);
+            Errors.put("Cannot resolve field " + owner + "." + name);
             return;
         }
 
         if (decl.isJavaField()) {
             Primitive p = null;
             if (load) {
-                String type = "Ljava/lang/Object;";
+                String type = getInternalName(Object.class);
                 try {
                     Field f = Class.forName(owner.replace("/", ".")).getField(name);
                     type = getDesc(f.getType());
@@ -591,11 +590,11 @@ public class Method extends MethodVisitor implements TreeVisitor, Opcodes {
                 } catch (ClassNotFoundException | NoSuchFieldException e) {
                     e.printStackTrace();
                 }
-                visitFieldInsn(load ? GETSTATIC : PUTSTATIC, owner, name, type);
+                visitFieldInsn(GETSTATIC, owner, name, type);
                 if (p != null) {
                     p.wrap(this);
                 }
-                mv.visitMethodInsn(INVOKESTATIC, "org/raven/core/wrappers/TObject", "wrap", "(Ljava/lang/Object;)" + getDesc(TObject.class), false);
+                visitMethodInsn(INVOKESTATIC, getInternalName(TObject.class), "wrap", getDesc(TObject.class, "wrap", Object.class), false);
             } else {
                 visitLdcInsn(Type.getType("L" + (owner) + ";"));
                 visitLdcInsn(name);
