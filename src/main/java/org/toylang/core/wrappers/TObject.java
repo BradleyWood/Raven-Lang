@@ -523,7 +523,7 @@ public class TObject implements Comparable<TObject> {
     }
 
     @Hidden
-    private static int rate(TObject params, Class<?>[] types) {
+    public static int rate(TObject params, Class<?>[] types) {
         if (!(params instanceof TList) || params.size() != types.length)
             throw new IllegalArgumentException();
         List<TObject> lst = ((TList) params).getList();

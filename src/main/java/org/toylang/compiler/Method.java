@@ -384,10 +384,15 @@ public class Method extends MethodVisitor implements TreeVisitor, Opcodes {
     }
 
     private void reflectiveInvokeStatic(String funOwner, String funName, Expression[] params) {
-        visitLdcInsn(Type.getType("L" + (funOwner.replace(".", "/")) + ";"));
-        visitLdcInsn(funName);
+        Type owner = Type.getType("L" + (funOwner.replace(".", "/")) + ";");
+
         visitListDef(new ListDef(params));
-        visitMethodInsn(INVOKESTATIC, Constants.TOBJ_NAME, "invoke", getDesc(TObject.class, "invoke", Class.class, String.class, TObject.class), false);
+        visitTypeInsn(CHECKCAST, "org/toylang/core/wrappers/TList");
+        visitInvokeDynamicInsn(funName, "(Lorg/toylang/core/wrappers/TList;)Lorg/toylang/core/wrappers/TObject;",
+                new Handle(H_INVOKESTATIC,
+                        "org/toylang/core/Intrinsics", "bootstrap",
+                        "(Ljava/lang/invoke/MethodHandles$Lookup;Ljava/lang/String;Ljava/lang/invoke/MethodType;Ljava/lang/Class;I)Ljava/lang/invoke/CallSite;", false),
+                owner, params.length);
     }
 
     private void resolveStaticFun(String funOwner, String funName, String desc, Expression[] params) {
