@@ -57,62 +57,62 @@ public class TObject implements Comparable<TObject> {
 
     @Hidden
     public TObject set(TObject index, TObject obj) {
-        throw new RuntimeException("Cannot set element in non list type: " + getType().toString());
+        throw new UnsupportedOperationException("Cannot set element in non list type: " + getType().toString());
     }
 
     @Hidden
     public TObject get(TObject obj) {
-        throw new RuntimeException("Cannot get element from non list type: " + getType().toString());
+        throw new UnsupportedOperationException("Cannot get element from non list type: " + getType().toString());
     }
 
     @Hidden
     public TObject add(TObject obj) {
-        throw new RuntimeException("Cannot add types '" + getType().toString() + "' and '" + obj.getType().toString() + "'");
+        throw new UnsupportedOperationException("Cannot add types '" + getType().toString() + "' and '" + obj.getType().toString() + "'");
     }
 
     @Hidden
     public TObject sub(TObject obj) {
-        throw new RuntimeException("Cannot subtract types '" + getType().toString() + "' and '" + obj.getType().toString() + "'");
+        throw new UnsupportedOperationException("Cannot subtract types '" + getType().toString() + "' and '" + obj.getType().toString() + "'");
     }
 
     @Hidden
     public TObject mul(TObject obj) {
-        throw new RuntimeException("Cannot multiply types '" + getType().toString() + "' and '" + obj.getType().toString() + "'");
+        throw new UnsupportedOperationException("Cannot multiply types '" + getType().toString() + "' and '" + obj.getType().toString() + "'");
     }
 
     @Hidden
     public TObject div(TObject obj) {
-        throw new RuntimeException("Cannot divide types '" + getType().toString() + "' and '" + obj.getType().toString() + "'");
+        throw new UnsupportedOperationException("Cannot divide types '" + getType().toString() + "' and '" + obj.getType().toString() + "'");
     }
 
     @Hidden
     public TObject mod(TObject obj) {
-        throw new RuntimeException("Cannot mod types '" + getType().toString() + "' and '" + obj.getType().toString() + "'");
+        throw new UnsupportedOperationException("Cannot mod types '" + getType().toString() + "' and '" + obj.getType().toString() + "'");
     }
 
     @Hidden
     public TObject pow(TObject obj) {
-        throw new RuntimeException("Cannot divide types '" + getType().toString() + "' and '" + obj.getType().toString() + "'");
+        throw new UnsupportedOperationException("Cannot divide types '" + getType().toString() + "' and '" + obj.getType().toString() + "'");
     }
 
     @Hidden
     public TObject GT(TObject obj) {
-        throw new RuntimeException("Cannot compare types '" + getType().toString() + "' and '" + obj.getType().toString() + "'");
+        throw new UnsupportedOperationException("Cannot compare types '" + getType().toString() + "' and '" + obj.getType().toString() + "'");
     }
 
     @Hidden
     public TObject LT(TObject obj) {
-        throw new RuntimeException("Cannot compare types '" + getType().toString() + "' and '" + obj.getType().toString() + "'");
+        throw new UnsupportedOperationException("Cannot compare types '" + getType().toString() + "' and '" + obj.getType().toString() + "'");
     }
 
     @Hidden
     public TObject GTE(TObject obj) {
-        throw new RuntimeException("Cannot compare types '" + getType().toString() + "' and '" + obj.getType().toString() + "'");
+        throw new UnsupportedOperationException("Cannot compare types '" + getType().toString() + "' and '" + obj.getType().toString() + "'");
     }
 
     @Hidden
     public TObject LTE(TObject obj) {
-        throw new RuntimeException("Cannot compare types '" + getType().toString() + "' and '" + obj.getType().toString() + "'");
+        throw new UnsupportedOperationException("Cannot compare types '" + getType().toString() + "' and '" + obj.getType().toString() + "'");
     }
 
     @Hidden
@@ -129,12 +129,12 @@ public class TObject implements Comparable<TObject> {
     }
 
     public TObject put(TObject key, TObject value) {
-        throw new RuntimeException("Cannot put " + key + ", " + value + " in non-map");
+        throw new UnsupportedOperationException("Cannot put " + key + ", " + value + " in non-map");
     }
 
     @Hidden
     public TObject not() {
-        throw new RuntimeException("Cannot invert " + getType().toString());
+        throw new UnsupportedOperationException("Cannot invert " + getType().toString());
     }
 
     @Hidden
@@ -181,7 +181,7 @@ public class TObject implements Comparable<TObject> {
 
     @Hidden
     public Boolean toBoolean() {
-        throw new RuntimeException(this + " cannot be converted to boolean");
+        throw new UnsupportedOperationException(this + " cannot be converted to boolean");
     }
 
     public BigInteger toBigInt() {
@@ -199,19 +199,19 @@ public class TObject implements Comparable<TObject> {
 
     @Hidden
     public Object[] toArray() {
-        throw new RuntimeException(this + " cannot be converted to array");
+        throw new UnsupportedOperationException(this + " cannot be converted to array");
     }
 
-    public Object coerce(Class clazz) {
+    public Object coerce(Class<?> clazz) {
         if (obj != null && clazz.isAssignableFrom(obj.getClass()) || clazz.equals(Object.class)) {
             return toObject();
         } else if (TObject.class.isAssignableFrom(clazz)) {
             return this;
         }
-        throw new RuntimeException("type " + getType().toString() + " is not coercible to " + clazz);
+        throw new UnsupportedOperationException("type " + getType().toString() + " is not coercible to " + clazz);
     }
 
-    public int coerceRating(Class clazz) {
+    public int coerceRating(Class<?> clazz) {
         if (TObject.class.isAssignableFrom(clazz)) {
             return COERCE_IDEAL;
         }
@@ -255,7 +255,7 @@ public class TObject implements Comparable<TObject> {
                 }
             }
         }
-        throw new RuntimeException("Constructor " + clazz.getName() + " not found.");
+        throw new NoSuchMethodException("Constructor " + clazz.getName() + " not found.");
     }
 
     @Hidden
@@ -267,7 +267,7 @@ public class TObject implements Comparable<TObject> {
         }
         Field f = o.getClass().getField(name);
         if (setField(value, o, f)) return;
-        throw new RuntimeException(obj + " has no attribute " + name);
+        throw new NoSuchFieldException(obj + " has no attribute " + name);
     }
 
     @Hidden
@@ -279,7 +279,7 @@ public class TObject implements Comparable<TObject> {
         }
         Field f = clazz.getField(name);
         if (setField(value, o, f)) return;
-        throw new RuntimeException(obj + " has no attribute " + name);
+        throw new NoSuchFieldException(obj + " has no attribute " + name);
     }
 
     @Hidden
@@ -318,7 +318,7 @@ public class TObject implements Comparable<TObject> {
                 f.setAccessible(true);
                 obj = f.get(obj);
             } else {
-                throw new RuntimeException("Field " + name + " is not accessible");
+                throw new NoSuchFieldException("Field " + name + " is not accessible");
             }
         }
         return wrap(obj);
@@ -334,7 +334,7 @@ public class TObject implements Comparable<TObject> {
         Field f = clazz.getField(names[0]);
         f.setAccessible(true);
         if (f.getAnnotationsByType(Hidden.class) == null || !Modifier.isStatic(f.getModifiers()))
-            throw new RuntimeException("Cannot find field");
+            throw new NoSuchFieldException("Cannot find field: " + name);
         Object o = f.get(null);
         if (names.length == 1)
             return wrap(o);
@@ -368,7 +368,7 @@ public class TObject implements Comparable<TObject> {
                 return newObj(cl, params);
             }
         }
-        throw new RuntimeException("Method " + clazz.getName() + ":" + name + " not found.");
+        throw new NoSuchMethodException("Method " + clazz.getName() + ":" + name + " not found.");
     }
 
     @Hidden
@@ -580,7 +580,7 @@ public class TObject implements Comparable<TObject> {
         if (obj instanceof Comparable && o.obj instanceof Comparable) {
             return ((Comparable) obj).compareTo(o.obj);
         }
-        throw new RuntimeException("Attempted to compare non comparable objects");
+        throw new UnsupportedOperationException("Attempted to compare non comparable objects");
     }
 
     @Override
