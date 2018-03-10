@@ -351,35 +351,6 @@ public class TObject implements Comparable<TObject> {
     }
 
     @Hidden
-    public static TObject invoke(Class clazz, String name, TObject params) throws Throwable {
-        return invoke(clazz, null, name, params);
-    }
-
-    @Hidden
-    public TObject invokeV(int hash, TObject params) throws Throwable {
-        return invoke(hash, this, params);
-    }
-
-    @Hidden
-    public static TObject invoke(int hash, TObject params) throws Throwable {
-        return invoke(hash, null, params);
-    }
-
-    @Hidden
-    public static TObject invoke(int hash, Object obj, TObject params) throws Throwable {
-        JavaMethod jm = findMethod(hash);
-        if (jm != null) {
-            try {
-                Object[] pa = getParams(params, jm.parameterTypes);
-                return wrap(jm.mh.invoke(obj, pa));
-            } catch (InvocationTargetException e) {
-                throw e.getCause();
-            }
-        }
-        throw new RuntimeException("Method not found: " + hash);
-    }
-
-    @Hidden
     public static TObject invoke(Class clazz, Object obj, String name, TObject params) throws Throwable {
         JavaMethod method = findMethod(clazz, name, params);
         if (method != null) {
