@@ -6,6 +6,7 @@ import org.toylang.antlr.Operator;
 import org.toylang.antlr.ast.*;
 import org.toylang.core.*;
 import org.toylang.core.wrappers.*;
+import org.toylang.error.CompilationError;
 import org.toylang.error.Errors;
 
 import java.lang.reflect.Field;
@@ -35,6 +36,10 @@ public class Method extends MethodVisitor implements TreeVisitor, Opcodes {
             return 0;
         }
         return idx;
+    }
+
+    void error(Statement statement, String message) {
+        Errors.put(new CompilationError(ctx.getClassDef().getSourceTree().getSourceFile(), ctx.getName(), statement, message));
     }
 
     @Override
