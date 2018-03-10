@@ -372,34 +372,6 @@ public class TObject implements Comparable<TObject> {
     }
 
     @Hidden
-    public static void registerMethod(Class clazz, String name, int paramCount) {
-        int found = 0;
-        Method m = null;
-        for (Method method : clazz.getDeclaredMethods()) {
-            if (method.getAnnotationsByType(Hidden.class).length > 0 || method.getParameterCount() != paramCount)
-                continue;
-            if (method.getName().equals(name)) {
-                found++;
-                m = method;
-            }
-        }
-        if (found != 1) {
-            if (found > 1)
-                throw new RuntimeException("Cannot register overloaded method: " + name);
-            else
-                throw new RuntimeException("Method not found: " + name);
-        } else {
-            int hash = Objects.hash(clazz.getName(), name, paramCount);
-            methodCache.put(hash, new JavaMethod(m, m.getParameterTypes()));
-        }
-    }
-
-    @Hidden
-    private static JavaMethod findMethod(int hash) {
-        return methodCache.get(hash);
-    }
-
-    @Hidden
     private static JavaMethod findMethod(Class clazz, String name, TObject params) {
         int hash = Objects.hash(clazz, name, params.size());
         JavaMethod m = methodCache.get(hash);
