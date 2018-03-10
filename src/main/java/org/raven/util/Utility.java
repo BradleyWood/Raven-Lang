@@ -1,6 +1,6 @@
 package org.raven.util;
 
-import org.raven.antlr.ToyParser;
+import org.raven.antlr.RParser;
 import org.raven.antlr.RavenTree;
 import org.raven.compiler.Compiler;
 import org.raven.error.Errors;
@@ -85,7 +85,7 @@ public class Utility {
         for (File f : files) {
             if (!f.getAbsolutePath().endsWith(".tl"))
                 continue;
-            ToyParser parser = new ToyParser(f.getPath());
+            RParser parser = new RParser(f.getPath());
             RavenTree tree = parser.parse();
             Compiler compiler = new Compiler(f.getAbsolutePath(), f.getName().replace(".tl", ""), tree, new JvmMethodAnnotationProcessor());
             classes.putAll(compiler.compile(save));

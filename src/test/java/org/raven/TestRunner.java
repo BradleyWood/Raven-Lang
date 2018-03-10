@@ -5,7 +5,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
-import org.raven.antlr.ToyParser;
+import org.raven.antlr.RParser;
 import org.raven.antlr.RavenTree;
 import org.raven.compiler.Compiler;
 import org.raven.error.Errors;
@@ -68,7 +68,7 @@ public class TestRunner {
             return classes.get(file);
         }
         try {
-            ToyParser parser = new ToyParser(f.getPath());
+            RParser parser = new RParser(f.getPath());
             RavenTree tree = parser.parse();
             Compiler compiler = new Compiler(f.getAbsolutePath(), f.getName().replace(".tl", ""), tree, new JvmMethodAnnotationProcessor());
             HashMap<String, byte[]> clazzes = compiler.compile(false);

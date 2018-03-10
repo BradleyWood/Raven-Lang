@@ -1,7 +1,7 @@
 package org.raven.js;
 
 
-import org.raven.antlr.ToyParser;
+import org.raven.antlr.RParser;
 import org.raven.antlr.RavenTree;
 import org.raven.antlr.ast.*;
 import org.raven.core.wrappers.TString;
@@ -355,7 +355,7 @@ public class JSCompiler implements TreeVisitor {
         }
     }
     public static void main(String[] args) throws IOException {
-        ToyParser tp = new ToyParser("test/org/raven/test/IfTest.tl");
+        RParser tp = new RParser("test/org/raven/test/IfTest.tl");
         RavenTree tree = tp.parse();
         JSCompiler compiler = new JSCompiler(tree);
         compiler.compile();

@@ -10,11 +10,11 @@ import org.raven.antlr.visitor.ToyFileVisitor;
 import java.io.File;
 import java.io.IOException;
 
-public class ToyParser {
+public class RParser {
 
     private final String file;
 
-    public ToyParser(final String file) {
+    public RParser(final String file) {
         this.file = file;
     }
 

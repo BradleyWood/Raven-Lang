@@ -1,7 +1,7 @@
 package org.raven.compiler;
 
 import org.raven.antlr.Modifier;
-import org.raven.antlr.ToyParser;
+import org.raven.antlr.RParser;
 import org.raven.antlr.RavenTree;
 import org.raven.antlr.ast.*;
 import org.raven.error.Errors;
@@ -59,7 +59,7 @@ public class Compiler {
 
                 if (file != null) {
                     try {
-                        ToyParser parser = new ToyParser(file);
+                        RParser parser = new RParser(file);
                         RavenTree tree = parser.parse();
                         trees.add(tree);
                         IMPORTS.add(tree.getPackage().add(tree.getName()).toString());
