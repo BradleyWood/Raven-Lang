@@ -21,7 +21,7 @@ To run a test script
 
 
 ```
-java -jar target/toylang-1.0-SNAPSHOT-jar-with-dependencies.jar -r <path to script>.tl
+java -jar target/raven-1.0-SNAPSHOT-jar-with-dependencies.jar -r <path to script>.tl
 ```
 
 ### Command line options
