@@ -1,5 +1,7 @@
 package org.toylang.compiler;
 
+import org.toylang.error.Errors;
+
 import java.util.ArrayList;
 import java.util.Stack;
 

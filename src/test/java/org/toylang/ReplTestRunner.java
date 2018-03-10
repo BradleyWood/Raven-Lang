@@ -6,7 +6,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
-import org.toylang.compiler.Errors;
+import org.toylang.error.Errors;
 import org.toylang.repl.Repl;
 import org.toylang.util.Settings;
 

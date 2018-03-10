@@ -1,6 +1,6 @@
 package org.toylang.antlr.visitor;
 
-import org.toylang.compiler.Errors;
+import org.toylang.error.Errors;
 import org.toylang.antlr.Operator;
 import org.toylang.antlr.ToyLangBaseVisitor;
 import org.toylang.antlr.ToyLangParser;

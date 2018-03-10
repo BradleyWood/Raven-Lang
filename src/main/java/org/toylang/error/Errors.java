@@ -1,12 +1,16 @@
-package org.toylang.compiler;
+package org.toylang.error;
 
 import java.util.LinkedList;
 
 public class Errors {
 
-    private static final LinkedList<String> ERRORS = new LinkedList<>();
+    private static final LinkedList<Error> ERRORS = new LinkedList<>();
 
     public static void put(String error) {
+        ERRORS.add(new Error(error));
+    }
+
+    public static void put(Error error) {
         ERRORS.add(error);
     }
 
@@ -16,8 +20,8 @@ public class Errors {
 
     public static void printErrors() {
         if (getErrorCount() > 0) {
-            for (String error : ERRORS) {
-                System.err.println("Error: " + error);
+            for (Error error : ERRORS) {
+                error.printError();
             }
             System.err.println();
         }

@@ -5,6 +5,7 @@ import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 import org.toylang.antlr.ast.*;
 import org.toylang.core.wrappers.TObject;
+import org.toylang.error.Errors;
 
 /**
  *

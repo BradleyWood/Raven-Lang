@@ -4,7 +4,7 @@ import org.toylang.antlr.Operator;
 import org.toylang.antlr.ToyLangBaseVisitor;
 import org.toylang.antlr.ToyLangParser;
 import org.toylang.antlr.ast.*;
-import org.toylang.compiler.Errors;
+import org.toylang.error.Errors;
 import org.toylang.core.wrappers.*;
 
 public class ExpressionVisitor extends ToyLangBaseVisitor<Expression> {

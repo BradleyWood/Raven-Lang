@@ -3,6 +3,7 @@ package org.toylang.compiler;
 import org.objectweb.asm.*;
 import org.toylang.antlr.ast.*;
 import org.toylang.core.wrappers.TObject;
+import org.toylang.error.Errors;
 
 import java.util.Arrays;
 import java.util.LinkedList;

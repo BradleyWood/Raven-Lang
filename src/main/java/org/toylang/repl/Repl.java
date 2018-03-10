@@ -6,9 +6,9 @@ import org.toylang.antlr.StatementParser;
 import org.toylang.antlr.ToyTree;
 import org.toylang.antlr.ast.*;
 import org.toylang.compiler.ClassMaker;
-import org.toylang.compiler.Errors;
 import org.toylang.compiler.SymbolMap;
 import org.toylang.core.ByteClassLoader;
+import org.toylang.error.Errors;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;

@@ -3,6 +3,7 @@ package org.toylang.compiler;
 
 import org.junit.Assert;
 import org.junit.Test;
+import org.toylang.error.Errors;
 
 public class ScopeTest {
 

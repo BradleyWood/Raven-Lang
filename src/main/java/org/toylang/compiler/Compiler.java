@@ -4,6 +4,7 @@ import org.toylang.antlr.Modifier;
 import org.toylang.antlr.ToyParser;
 import org.toylang.antlr.ToyTree;
 import org.toylang.antlr.ast.*;
+import org.toylang.error.Errors;
 
 import java.io.File;
 import java.io.FileOutputStream;

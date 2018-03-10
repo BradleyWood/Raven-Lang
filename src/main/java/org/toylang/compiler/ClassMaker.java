@@ -2,11 +2,11 @@ package org.toylang.compiler;
 
 
 import org.objectweb.asm.ClassWriter;
-import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Type;
 import org.toylang.antlr.Modifier;
 import org.toylang.antlr.ast.*;
 import org.toylang.core.wrappers.TNull;
+import org.toylang.error.Errors;
 
 import java.util.Arrays;
 import java.util.List;

@@ -2,7 +2,7 @@ package org.toylang.core;
 
 import org.apache.commons.cli.*;
 import org.toylang.build.AppBuilder;
-import org.toylang.compiler.Errors;
+import org.toylang.error.Errors;
 import org.toylang.repl.Repl;
 import org.toylang.util.Settings;
 

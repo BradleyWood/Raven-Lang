@@ -3,7 +3,7 @@ package org.toylang.antlr;
 import org.antlr.v4.runtime.*;
 import org.antlr.v4.runtime.atn.ATNConfigSet;
 import org.antlr.v4.runtime.dfa.DFA;
-import org.toylang.compiler.Errors;
+import org.toylang.error.Errors;
 
 import java.util.BitSet;
 

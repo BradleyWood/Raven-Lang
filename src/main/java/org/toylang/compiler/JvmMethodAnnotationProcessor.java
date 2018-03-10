@@ -3,10 +3,7 @@ package org.toylang.compiler;
 import org.toylang.antlr.ToyTree;
 import org.toylang.antlr.ast.*;
 import org.toylang.core.wrappers.TString;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
+import org.toylang.error.Errors;
 
 public class JvmMethodAnnotationProcessor implements AnnotationProcessor {
 

@@ -8,7 +8,7 @@ import org.junit.runners.Parameterized;
 import org.toylang.antlr.ToyParser;
 import org.toylang.antlr.ToyTree;
 import org.toylang.compiler.Compiler;
-import org.toylang.compiler.Errors;
+import org.toylang.error.Errors;
 import org.toylang.compiler.JvmMethodAnnotationProcessor;
 import org.toylang.core.ByteClassLoader;
 import org.toylang.util.Utility;
