@@ -94,5 +94,6 @@ public class ScopeTest {
 
         scope.endScope();
         scope.clear();
+        Errors.reset();
     }
 }
