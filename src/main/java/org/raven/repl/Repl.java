@@ -60,8 +60,15 @@ public class Repl {
 
         for (Statement statement : statementList) {
             if (statement instanceof Import) {
-                if (!imports.contains(statement))
-                    imports.add((Import) statement);
+                if (!imports.contains(statement)) {
+                    try {
+                        Class clazz = Class.forName(((Import) statement).getName().toString());
+                        SymbolMap.map(clazz);
+                        imports.add((Import) statement);
+                    } catch (ClassNotFoundException e) {
+                        System.err.println("Class not found: " + statement);
+                    }
+                }
             } else if (statement instanceof VarDecl) {
                 VarDecl decl = (VarDecl) statement;
                 decl.getModifiers().clear();
