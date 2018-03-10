@@ -23,7 +23,7 @@ public class ToyParser {
         CommonTokenStream tokenStream = new CommonTokenStream(lexer);
         RavenParser parser = new RavenParser(tokenStream);
         parser.removeErrorListener(ConsoleErrorListener.INSTANCE);
-        parser.addErrorListener(new ToyErrorListener(file));
+        parser.addErrorListener(new RavenErrorListener(file));
         ToyFileVisitor fileVisitor = new ToyFileVisitor();
         ToyTree tree = fileVisitor.visit(parser.toyFile());
         tree.setSourceFile(file);

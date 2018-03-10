@@ -15,7 +15,7 @@ public class StatementParser {
         CommonTokenStream tokenStream = new CommonTokenStream(lexer);
         org.raven.antlr.RavenParser parser = new org.raven.antlr.RavenParser(tokenStream);
         parser.removeErrorListener(ConsoleErrorListener.INSTANCE);
-        parser.addErrorListener(new ToyErrorListener("<stdin>"));
+        parser.addErrorListener(new RavenErrorListener("<stdin>"));
 
         ToyFileVisitor tfv = new ToyFileVisitor();
         return tfv.visitToyFile(parser.toyFile()).getStatements();

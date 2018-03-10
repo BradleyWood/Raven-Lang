@@ -7,11 +7,11 @@ import org.raven.error.Errors;
 
 import java.util.BitSet;
 
-public class ToyErrorListener extends BaseErrorListener {
+public class RavenErrorListener extends BaseErrorListener {
 
     private final String file;
 
-    public ToyErrorListener(final String file) {
+    public RavenErrorListener(final String file) {
         super();
         this.file = file;
     }
