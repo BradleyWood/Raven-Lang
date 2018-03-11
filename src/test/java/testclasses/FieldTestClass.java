@@ -6,4 +6,8 @@ public class FieldTestClass {
 
     public String virtualString = "world";
 
+    public int virtualPrimitiveInt = 50;
+
+    public Integer virtualWrappedInt = 500;
+
 }
