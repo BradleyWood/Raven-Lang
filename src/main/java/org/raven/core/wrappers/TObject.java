@@ -2,12 +2,9 @@ package org.raven.core.wrappers;
 
 import org.raven.core.Hidden;
 
-import java.lang.invoke.MethodType;
 import java.lang.reflect.*;
 import java.math.BigInteger;
 import java.util.*;
-import java.util.function.Predicate;
-import java.util.stream.Stream;
 
 public class TObject implements Comparable<TObject> {
 
@@ -269,89 +266,6 @@ public class TObject implements Comparable<TObject> {
             }
         }
         throw new NoSuchMethodException("Constructor " + clazz.getName() + " not found.");
-    }
-
-    @Hidden
-    public void setField(String name, TObject value) throws IllegalAccessException, NoSuchFieldException {
-        String[] names = name.split("\\.");
-        Object o = obj;
-        for (int i = 0; i < names.length - 1; i++) {
-            o = getField(o.getClass(), names[i]);
-        }
-        Field f = o.getClass().getField(name);
-        if (setField(value, o, f)) return;
-        throw new NoSuchFieldException(obj + " has no attribute " + name);
-    }
-
-    @Hidden
-    public void setField(Class clazz, String name, TObject value) throws IllegalAccessException, NoSuchFieldException {
-        String[] names = name.split("\\.");
-        Object o = obj;
-        for (int i = 0; i < names.length - 1; i++) {
-            o = getField(o.getClass(), names[i]);
-        }
-        Field f = clazz.getField(name);
-        if (setField(value, o, f)) return;
-        throw new NoSuchFieldException(obj + " has no attribute " + name);
-    }
-
-    @Hidden
-    private boolean setField(TObject value, Object o, Field f) throws IllegalAccessException {
-        if (f.getType().isAssignableFrom(TObject.class)) {
-            f.setAccessible(true);
-            f.set(o, value);
-            return true;
-        } else {
-            Object[] javaValue = getParams(new TList().add(value), new Class<?>[]{f.getType()});
-            if (javaValue != null) {
-                f.set(o, javaValue[0]);
-                return true;
-            }
-        }
-        return false;
-    }
-
-    public static void setField(Object o, String field, TObject value) throws NoSuchFieldException, IllegalAccessException {
-        new TObject(o).setField(field, value);
-    }
-
-    @Hidden
-    public TObject getField(String name) throws NoSuchFieldException, IllegalAccessException {
-        return getField(obj, name);
-    }
-
-    public static TObject getField(Object obj, String name) throws IllegalAccessException, NoSuchFieldException {
-        String[] names = name.split("\\.");
-        if (names.length == 0)
-            names = new String[]{name};
-
-        for (String name1 : names) {
-            Field f = obj.getClass().getField(name1);
-            if (f.getAnnotationsByType(Hidden.class) != null) {
-                f.setAccessible(true);
-                obj = f.get(obj);
-            } else {
-                throw new NoSuchFieldException("Field " + name + " is not accessible");
-            }
-        }
-        return wrap(obj);
-
-    }
-
-    @Hidden
-    public static TObject getField(Class clazz, String name) throws NoSuchFieldException, IllegalAccessException {
-        String[] names = name.split("\\.");
-        if (names.length == 0)
-            names = new String[]{name};
-
-        Field f = clazz.getField(names[0]);
-        f.setAccessible(true);
-        if (f.getAnnotationsByType(Hidden.class) == null || !Modifier.isStatic(f.getModifiers()))
-            throw new NoSuchFieldException("Cannot find field: " + name);
-        Object o = f.get(null);
-        if (names.length == 1)
-            return wrap(o);
-        return new TObject(o).getField(name.substring(names[0].length()));
     }
 
     @Hidden
