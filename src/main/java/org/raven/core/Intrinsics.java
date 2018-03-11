@@ -17,6 +17,10 @@ import java.util.stream.Collectors;
  */
 public class Intrinsics {
 
+    private static final List<String> INTRINSIC_METHODS = Arrays.asList(
+            "invokeVirtual", "invokeStatic", "requireType", "requireNonNull"
+    );
+
     private static Map<Integer, LinkedList<JMethod>> virtualMethodCache = Collections.synchronizedMap(new HashMap<>());
 
     /**
@@ -28,7 +32,7 @@ public class Intrinsics {
      */
     public static void requireType(TObject obj, TType type, String message) {
         if (!obj.getType().equals(type)) {
-            throw new RuntimeException(message);
+            throw sanitizeStackTrace(new RuntimeException(message));
         }
     }
 
@@ -39,7 +43,7 @@ public class Intrinsics {
      */
     public static void requireNonNull(TObject object) {
         if (object == null || object == TNull.NULL) {
-            throw new NullPointerException();
+            throw sanitizeStackTrace(new NullPointerException());
         }
     }
 
@@ -61,7 +65,7 @@ public class Intrinsics {
         Object v = instance.getObject();
 
         if (instance == TNull.NULL) {
-            throw new NullPointerException();
+            throw sanitizeStackTrace(new NullPointerException());
         }
 
         if (instance.getObject() == null) {
@@ -82,7 +86,7 @@ public class Intrinsics {
             }
         }
         if (methods.isEmpty()) {
-            throw new NoSuchMethodException(name);
+            throw sanitizeStackTrace(new NoSuchMethodException(name));
         }
 
         JMethod method = select(methods, args.size(), args);
@@ -90,7 +94,7 @@ public class Intrinsics {
             method.incCount();
             return TObject.wrap(method.methodHandle.bindTo(v).invokeWithArguments(TObject.getParams(args, method.types)));
         } else {
-            throw new RuntimeException("Type coercion impossible");
+            throw sanitizeStackTrace(new RuntimeException("Type coercion impossible"));
         }
     }
 
@@ -123,14 +127,14 @@ public class Intrinsics {
 
     public static TObject invokeStatic(LinkedList<JMethod> jm, String name, TList args) throws Throwable {
         if (jm == null || jm.size() == 0) {
-            throw new NoSuchMethodException(name);
+            throw sanitizeStackTrace(new NoSuchMethodException(name));
         }
         JMethod method = select(jm, args.size(), args);
         if (method != null) {
             method.incCount();
             return TObject.wrap(method.methodHandle.invokeWithArguments(TObject.getParams(args, method.types)));
         } else {
-            throw new RuntimeException("Type coercion impossible");
+            throw sanitizeStackTrace(new RuntimeException("Type coercion impossible"));
         }
     }
 
@@ -156,6 +160,23 @@ public class Intrinsics {
         }
 
         return bestMh;
+    }
+
+    public static <T extends Throwable> T sanitizeStackTrace(T throwable) {
+        StackTraceElement[] stackTrace = throwable.getStackTrace();
+        ArrayList<StackTraceElement> list = new ArrayList<>(stackTrace.length);
+        boolean skip = true;
+        for (StackTraceElement element : stackTrace) {
+            if (!skip) {
+                list.add(element);
+            } else if (element.getClassName().equals("org.raven.core.Intrinsics")) {
+                if (INTRINSIC_METHODS.contains(element.getMethodName())) {
+                    skip = false;
+                }
+            }
+        }
+        throwable.setStackTrace(list.toArray(new StackTraceElement[list.size()]));
+        return throwable;
     }
 
     private static class JMethod {
