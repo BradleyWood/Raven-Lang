@@ -14,6 +14,13 @@ import java.util.*;
 
 public class Method extends MethodVisitor implements TreeVisitor, Opcodes {
 
+
+    private static final Handle GET_BOOTSTRAP = new Handle(H_INVOKESTATIC,
+            "org/raven/core/Intrinsics", "bootstrapGetter",
+            "(Ljava/lang/invoke/MethodHandles$Lookup;Ljava/lang/String;Ljava/lang/invoke/MethodType;)Ljava/lang/invoke/CallSite;",
+            false);
+
+
     private final ArrayList<Integer> lineNumbers = new ArrayList<>();
 
     private final Stack<Label> continueLabels = new Stack<>();
@@ -616,7 +623,7 @@ public class Method extends MethodVisitor implements TreeVisitor, Opcodes {
     private void accessVirtualField(VarDecl var, boolean load) {
         int idx = getLocal("this");
         if (idx != 0) {
-            Errors.put(ctx.getOwner() + " line " + var.getName().getLineNumber() + ":Cannot access field in non static context: " + var.getName());
+            Errors.put(ctx.getOwner() + " line " + var.getName().getLineNumber() + " Cannot access field in non static context: " + var.getName());
             return;
         }
         visitVarInsn(ALOAD, idx);
@@ -628,8 +635,8 @@ public class Method extends MethodVisitor implements TreeVisitor, Opcodes {
 
     private void accessVirtualField(String name, boolean load) {
         if (load) {
-            visitLdcInsn(name);
-            visitMethodInsn(INVOKEVIRTUAL, Constants.TOBJ_NAME, "getField", getDesc(TObject.class, "getField", String.class), false);
+            mv.visitInvokeDynamicInsn("get" + name, "(Lorg/raven/core/wrappers/TObject;)Lorg/raven/core/wrappers/TObject;",
+                    GET_BOOTSTRAP);
         } else {
             visitInsn(SWAP);
             visitLdcInsn(name);

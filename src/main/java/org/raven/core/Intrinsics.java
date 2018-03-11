@@ -7,6 +7,7 @@ import org.raven.core.wrappers.TType;
 
 import java.lang.invoke.*;
 import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.*;
@@ -22,6 +23,8 @@ public class Intrinsics {
     );
 
     private static Map<Integer, LinkedList<JMethod>> virtualMethodCache = Collections.synchronizedMap(new HashMap<>());
+    private static Map<Integer, LinkedList<JMethod>> getterCache = Collections.synchronizedMap(new HashMap<>());
+    private static Map<Integer, LinkedList<JSetter>> setterCache = Collections.synchronizedMap(new HashMap<>());
 
     /**
      * Requires that an object be a specific type
@@ -47,7 +50,91 @@ public class Intrinsics {
         }
     }
 
-    public static CallSite bootstrapVirtual(MethodHandles.Lookup caller, String name, MethodType type, int paramCount) throws NoSuchMethodException, IllegalAccessException {
+    public static CallSite bootstrapSetter(MethodHandles.Lookup caller, String name, MethodType type, Class<?> clazz) throws Throwable {
+        int hash = Objects.hash(name, clazz);
+        LinkedList<JSetter> virtualMethods = setterCache.getOrDefault(hash, new LinkedList<>());
+
+        if (!setterCache.containsKey(hash)) {
+            setterCache.put(hash, virtualMethods);
+        }
+
+        MethodHandle mh = caller.findStatic(Intrinsics.class, "setField",
+                MethodType.methodType(TObject.class, MethodHandles.Lookup.class, LinkedList.class, String.class, TObject.class, TObject.class));
+        mh = mh.bindTo(caller).bindTo(virtualMethods).bindTo(name.substring(3));
+
+        return new ConstantCallSite(mh);
+    }
+
+    public static TObject setField(MethodHandles.Lookup caller, LinkedList<JSetter> jmethods, String name, TObject object, TObject value) throws Throwable {
+        Object obj = object.getObject();
+        if (object == TNull.NULL || obj == null) {
+            throw sanitizeStackTrace(new NullPointerException());
+        }
+        Class<?> clazz = obj.getClass();
+
+        List<JSetter> methods = jmethods.stream().filter(jm -> jm.owner.isAssignableFrom(clazz)).collect(Collectors.toList());
+
+        if (methods.isEmpty()) {
+            for (Field field : clazz.getFields()) {
+                if (field.getName().equals(name) && !Modifier.isStatic(field.getModifiers())) {
+                    MethodHandle getter = caller.unreflectSetter(field);
+                    JSetter jMethod = new JSetter(getter, clazz, field.getType());
+                    jmethods.add(jMethod);
+                    methods.add(jMethod);
+                    break;
+                }
+            }
+        }
+        if (methods.isEmpty()) {
+            throw sanitizeStackTrace(new NoSuchFieldException(name));
+        }
+        JSetter setter = methods.get(0);
+        setter.methodHandle.bindTo(obj).invoke(value.coerce(setter.targetType));
+        setter.incCount();
+        return TNull.NULL;
+    }
+
+    public static CallSite bootstrapGetter(MethodHandles.Lookup caller, String name, MethodType type) throws Throwable {
+        int hash = Objects.hash(true, name);
+        LinkedList<JMethod> virtualMethods = getterCache.getOrDefault(hash, new LinkedList<>());
+
+        if (!getterCache.containsKey(hash)) {
+            getterCache.put(hash, virtualMethods);
+        }
+
+        MethodHandle mh = caller.findStatic(Intrinsics.class, "getField",
+                MethodType.methodType(TObject.class, MethodHandles.Lookup.class, LinkedList.class, String.class, TObject.class));
+        mh = mh.bindTo(caller).bindTo(virtualMethods).bindTo(name.substring(3));
+        return new ConstantCallSite(mh);
+    }
+
+    public static TObject getField(MethodHandles.Lookup caller, LinkedList<JMethod> jmethods, String name, TObject object) throws Throwable {
+        Object obj = object.getObject();
+        if (object == TNull.NULL || obj == null) {
+            throw sanitizeStackTrace(new NullPointerException());
+        }
+        Class<?> clazz = obj.getClass();
+
+        List<JMethod> methods = jmethods.stream().filter(jm -> jm.owner.isAssignableFrom(clazz)).collect(Collectors.toList());
+
+        if (methods.isEmpty()) {
+            for (Field field : clazz.getFields()) {
+                if (field.getName().equals(name) && !Modifier.isStatic(field.getModifiers())) {
+                    MethodHandle getter = caller.unreflectGetter(field);
+                    JMethod jMethod = new JMethod(getter, clazz);
+                    jmethods.addFirst(jMethod);
+                    methods.add(jMethod);
+                    break;
+                }
+            }
+        }
+        if (methods.isEmpty()) {
+            throw sanitizeStackTrace(new NoSuchFieldException(name));
+        }
+        return TObject.wrap(methods.get(0).methodHandle.bindTo(obj).invoke());
+    }
+
+    public static CallSite bootstrapVirtual(MethodHandles.Lookup caller, String name, MethodType type, int paramCount) throws Throwable {
         int hash = Objects.hash(name, paramCount);
         LinkedList<JMethod> virtualMethods = virtualMethodCache.getOrDefault(hash, new LinkedList<>());
 
@@ -55,7 +142,8 @@ public class Intrinsics {
             virtualMethodCache.put(hash, virtualMethods);
         }
 
-        MethodHandle mh = caller.findStatic(Intrinsics.class, "invokeVirtual", MethodType.methodType(TObject.class, MethodHandles.Lookup.class, LinkedList.class, String.class, Integer.class, TObject.class, TList.class));
+        MethodHandle mh = caller.findStatic(Intrinsics.class, "invokeVirtual",
+                MethodType.methodType(TObject.class, MethodHandles.Lookup.class, LinkedList.class, String.class, Integer.class, TObject.class, TList.class));
         mh = mh.bindTo(caller).bindTo(virtualMethods).bindTo(name).bindTo(paramCount);
 
         return new ConstantCallSite(mh);
@@ -98,7 +186,7 @@ public class Intrinsics {
         }
     }
 
-    public static CallSite bootstrap(MethodHandles.Lookup caller, String name, MethodType type, Class<?> clazz, int paramCount) throws NoSuchMethodException, IllegalAccessException {
+    public static CallSite bootstrap(MethodHandles.Lookup caller, String name, MethodType type, Class<?> clazz, int paramCount) throws Throwable {
         LinkedList<JMethod> list = new LinkedList<>();
         for (Method method : clazz.getDeclaredMethods()) {
             if (method.getName().equals(name) && method.getParameterCount() == paramCount &&
@@ -179,13 +267,30 @@ public class Intrinsics {
         return throwable;
     }
 
+    private static class JSetter {
+        private MethodHandle methodHandle;
+        private Class<?> owner;
+        private Class<?> targetType;
+        int callCount;
+
+        public JSetter(MethodHandle methodHandle, Class<?> owner, Class<?> targetType) {
+            this.methodHandle = methodHandle;
+            this.owner = owner;
+            this.targetType = targetType;
+        }
+
+        void incCount() {
+            callCount++;
+        }
+    }
+
     private static class JMethod {
         private MethodHandle methodHandle;
         private Class<?>[] types;
         private Class<?> owner;
         private int callCount = 0;
 
-        JMethod(MethodHandle methodHandle, Class<?> owner, Class<?>[] types) {
+        JMethod(MethodHandle methodHandle, Class<?> owner, Class<?>... types) {
             this.methodHandle = methodHandle;
             this.owner = owner;
             this.types = types;
