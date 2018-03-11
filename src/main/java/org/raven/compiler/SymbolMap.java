@@ -6,6 +6,7 @@ import org.raven.core.wrappers.TObject;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.lang.reflect.Type;
 import java.util.*;
 
 public class SymbolMap {
@@ -114,8 +115,7 @@ public class SymbolMap {
             if (java.lang.reflect.Modifier.isPrivate(field.getModifiers()))
                 modifiers = new Modifier[]{Modifier.PRIVATE};
             VarDecl decl = new VarDecl(QualifiedName.valueOf(field.getName()), null, modifiers);
-            boolean isJavaField = !field.getType().equals(TObject.class);
-            decl.setJavaField(isJavaField);
+            decl.setType("L" + field.getType().getName().replace(".", "/" + ";"));
             statements.add(decl);
         }
 

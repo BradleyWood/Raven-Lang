@@ -10,11 +10,12 @@ import java.util.Objects;
 
 public class VarDecl extends Statement {
 
+    private static final String TYPE = "Lorg/raven/core/wrappers/TObject;";
 
     private final QualifiedName name;
     private final Expression initialValue;
     private List<Modifier> modifiers;
-    private boolean isJavaField = false;
+    private String typeDesc = TYPE;
 
     public VarDecl(QualifiedName name, Expression initialValue, Modifier... modifiers) {
         this(name, initialValue, new ArrayList<>(Arrays.asList(modifiers)));
@@ -26,12 +27,16 @@ public class VarDecl extends Statement {
         this.modifiers = modifiers;
     }
 
-    public void setJavaField(boolean isJavaField) {
-        this.isJavaField = isJavaField;
+    public void setType(String typeDesc) {
+        this.typeDesc = typeDesc;
+    }
+
+    public String getTypeDesc() {
+        return typeDesc;
     }
 
     public boolean isJavaField() {
-        return isJavaField;
+        return !typeDesc.equals(TYPE);
     }
 
     public QualifiedName getName() {
