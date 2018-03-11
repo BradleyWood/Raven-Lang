@@ -48,6 +48,12 @@ public class TInt extends TObject {
     }
 
     @Override
+    public TObject dec() {
+        value--;
+        return this;
+    }
+
+    @Override
     public TObject add(TObject obj) {
         if (obj instanceof TString) {
             return new TString(toString() + obj.toString());

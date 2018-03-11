@@ -42,6 +42,12 @@ public class TReal extends TObject {
     }
 
     @Override
+    public TObject dec() {
+        value--;
+        return this;
+    }
+
+    @Override
     public int compareTo(TObject o) {
         TObject result = sub(o);
         if (result instanceof TNull)
