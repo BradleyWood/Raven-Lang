@@ -23,6 +23,7 @@ public class Method extends MethodVisitor implements TreeVisitor, Opcodes {
 
 
     protected final MethodContext ctx;
+    private boolean disableConstantPool = false;
 
     Method(final MethodContext ctx, final MethodVisitor mv) {
         super(ASM5, mv);
@@ -88,6 +89,7 @@ public class Method extends MethodVisitor implements TreeVisitor, Opcodes {
 
         scope.beginScope();
 
+        disableConstantPool = true;
         if (forStatement.getInit() instanceof VarDecl) {
             VarDecl decl = (VarDecl) forStatement.getInit();
             int idx = scope.findVar(decl.getName().toString());
@@ -100,6 +102,7 @@ public class Method extends MethodVisitor implements TreeVisitor, Opcodes {
         } else {
             forStatement.getInit().accept(this);
         }
+        disableConstantPool = false;
 
         visitJumpInsn(GOTO, conditional);
         visitLabel(start);
@@ -669,7 +672,7 @@ public class Method extends MethodVisitor implements TreeVisitor, Opcodes {
 
     @Override
     public void visitBinOp(BinOp op) {
-        if (op.getOp() != Operator.ASSIGNMENT && op.getOp() != Operator.NOT)
+        if (op.getOp() != Operator.ASSIGNMENT && op.getLeft() != null)
             op.getLeft().accept(this);
 
         op.getRight().accept(this);
@@ -687,6 +690,8 @@ public class Method extends MethodVisitor implements TreeVisitor, Opcodes {
                     accessField((QualifiedName) op.getLeft(), false);
                 }
                 break;
+            case INC:
+            case DEC:
             case NOT:
                 visitMethodInsn(INVOKEVIRTUAL, Constants.TOBJ_NAME, op.getOp().name, getDesc(TObject.class, op.getOp().name), false);
                 break;
@@ -838,7 +843,7 @@ public class Method extends MethodVisitor implements TreeVisitor, Opcodes {
     }
 
     private void putString(TString str) {
-        if (ctx.getName().equals("<clinit>")) {
+        if (ctx.getName().equals("<clinit>") || disableConstantPool) {
             visitTypeInsn(NEW, getInternalName(str));
             visitInsn(DUP);
             visitLdcInsn(str.toString());
@@ -849,7 +854,7 @@ public class Method extends MethodVisitor implements TreeVisitor, Opcodes {
     }
 
     private void putReal(TReal real) {
-        if (ctx.getName().equals("<clinit>")) {
+        if (ctx.getName().equals("<clinit>") || disableConstantPool) {
             visitTypeInsn(NEW, getInternalName(real));
             visitInsn(DUP);
             visitLdcInsn(real.getValue());
@@ -860,7 +865,7 @@ public class Method extends MethodVisitor implements TreeVisitor, Opcodes {
     }
 
     private void putInt(TInt integer) {
-        if (ctx.getName().equals("<clinit>")) {
+        if (ctx.getName().equals("<clinit>") || disableConstantPool) {
             visitTypeInsn(NEW, getInternalName(integer));
             visitInsn(DUP);
             visitLdcInsn(integer.getValue());
@@ -871,7 +876,7 @@ public class Method extends MethodVisitor implements TreeVisitor, Opcodes {
     }
 
     private void putBigInt(TBigInt bigInt) {
-        if (ctx.getName().equals("<clinit>")) {
+        if (ctx.getName().equals("<clinit>") || disableConstantPool) {
             visitTypeInsn(NEW, getInternalName(bigInt));
             visitInsn(DUP);
             visitLdcInsn(bigInt.toString());

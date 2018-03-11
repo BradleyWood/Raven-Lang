@@ -18,6 +18,8 @@ public enum Operator {
 
 
     NOT("!", "not"),
+    INC("++", "inc"),
+    DEC("--", "dec"),
     GT(">", "GT"),
     LT("<", "LT"),
     GTE(">=", "GTE"),

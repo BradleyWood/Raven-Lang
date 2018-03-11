@@ -44,7 +44,7 @@ public class ForVisitor extends RavenBaseVisitor<For> {
             Expression condition = new BinOp(init.getName(), Operator.LT, new Call(new QualifiedName("len"), iterable));
             body.append(new BinOp(name, Operator.ASSIGNMENT, new ListIndex(iterableName, init.getName())));
             body.append(ctx.statement().accept(StatementVisitor.INSTANCE));
-            after.append(new BinOp(init.getName(), Operator.ASSIGNMENT, new BinOp(init.getName(), Operator.ADD, new Literal(new TInt(1)))));
+            after.append(new BinOp(init.getName(), Operator.ASSIGNMENT, new BinOp(null, Operator.INC, init.getName())));
 
             return new For(init, condition, body, after);
         } else if (forControl.range() != null) {
@@ -60,7 +60,7 @@ public class ForVisitor extends RavenBaseVisitor<For> {
             body.append(ctx.statement().accept(StatementVisitor.INSTANCE));
 
 
-            after.append(new BinOp(name, Operator.ASSIGNMENT, new BinOp(name, Operator.ADD, new Literal(new TInt(inc ? 1 : -1)))));
+            after.append(new BinOp(name, Operator.ASSIGNMENT, new BinOp(null, inc ? Operator.INC : Operator.DEC, name)));
 
             return new For(init, condition, body, after);
         } else if (ctx.statement() != null) {
