@@ -7,9 +7,8 @@ import org.raven.core.TLFile;
 
 import java.util.*;
 
-public class ClassDef extends Statement {
+public class ClassDef extends ModifiableStatement {
 
-    private final ArrayList<Modifier> modifiers;
     private final QualifiedName[] interfaces;
     private final List<Statement> statements;
     private final QualifiedName name;
@@ -23,8 +22,8 @@ public class ClassDef extends Statement {
     private List<Fun> methods = null;
 
     public ClassDef(Modifier[] modifiers, String name, Inheritance inh, List<Statement> statements) {
+        super(modifiers);
         this.statements = statements;
-        this.modifiers = new ArrayList<>(Arrays.asList(modifiers));
         this.superParams = inh.getSuperParams();
         this.name = new QualifiedName(name);
         this.superParams = inh.getSuperParams();
@@ -35,10 +34,6 @@ public class ClassDef extends Statement {
     public ClassDef(Modifier[] modifiers, QualifiedName package_, String name, QualifiedName super_, QualifiedName[] interfaces, List<Statement> statements) {
         this(modifiers, name, new Inheritance(super_, null, interfaces), statements);
         this.package_ = package_;
-    }
-
-    public void addModifier(Modifier modifier) {
-        modifiers.add(modifier);
     }
 
     public boolean hasVarParams() {
@@ -116,10 +111,6 @@ public class ClassDef extends Statement {
 
     public List<Statement> getStatements() {
         return statements;
-    }
-
-    public List<Modifier> getModifiers() {
-        return modifiers;
     }
 
     public QualifiedName getName() {
@@ -305,7 +296,7 @@ public class ClassDef extends Statement {
         if (o == null || getClass() != o.getClass()) return false;
 
         ClassDef classDef = (ClassDef) o;
-        return Objects.equals(modifiers, classDef.modifiers) &&
+        return Objects.equals(getModifiers(), classDef.getModifiers()) &&
                 Objects.equals(name, classDef.name) &&
                 Objects.equals(super_, classDef.super_) &&
                 Arrays.equals(interfaces, classDef.interfaces) &&
@@ -322,7 +313,7 @@ public class ClassDef extends Statement {
     @Override
     public int hashCode() {
         int result = Objects.hash(name, super_, package_, statements, constructors, varParams, sourceTree, methods);
-        result = 31 * result + Objects.hashCode(modifiers);
+        result = 31 * result + Objects.hashCode(getModifiers());
         result = 31 * result + Arrays.hashCode(interfaces);
         result = 31 * result + Arrays.hashCode(superParams);
         return result;

@@ -2,7 +2,6 @@ package org.raven.antlr.ast;
 
 import org.objectweb.asm.Type;
 import org.raven.antlr.Modifier;
-import org.raven.compiler.Constants;
 import org.raven.core.wrappers.TObject;
 
 import java.lang.reflect.Method;
@@ -11,7 +10,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 
-public class Fun extends Statement {
+public class Fun extends ModifiableStatement {
 
     private QualifiedName name;
     private final Block body;
@@ -21,15 +20,12 @@ public class Fun extends Statement {
     private String javaDesc = null;
 
     public Fun(QualifiedName name, Block body, Modifier[] modifiers, String[] exceptions, VarDecl... params) {
+        super(modifiers);
         this.name = name;
         this.body = body;
         this.modifiers = new LinkedList<>();
-
-        if (modifiers != null)
-            this.modifiers.addAll(Arrays.asList(modifiers));
         this.exceptions = exceptions;
         this.params = params;
-
 
         if (this.params == null)
             this.params = new VarDecl[0];
@@ -71,10 +67,6 @@ public class Fun extends Statement {
         return javaDesc != null;
     }
 
-    public void addModifier(Modifier modifier) {
-        this.modifiers.add(modifier);
-    }
-
     @Override
     public void accept(TreeVisitor visitor) {
         visitor.visitFun(this);
@@ -85,10 +77,6 @@ public class Fun extends Statement {
         StringBuilder builder = new StringBuilder();
         Arrays.stream(params).forEach(param -> builder.append(param).append(", "));
         return "fun " + name + "(" + builder.toString().substring(0, builder.length()) + ") " + body;
-    }
-
-    public List<Modifier> getModifiers() {
-        return modifiers;
     }
 
     public int modifiers() {

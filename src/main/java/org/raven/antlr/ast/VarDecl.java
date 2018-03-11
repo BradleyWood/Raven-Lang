@@ -8,13 +8,12 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
-public class VarDecl extends Statement {
+public class VarDecl extends ModifiableStatement {
 
     private static final String TYPE = "Lorg/raven/core/wrappers/TObject;";
 
     private final QualifiedName name;
     private final Expression initialValue;
-    private List<Modifier> modifiers;
     private String typeDesc = TYPE;
 
     public VarDecl(QualifiedName name, Expression initialValue, Modifier... modifiers) {
@@ -22,9 +21,9 @@ public class VarDecl extends Statement {
     }
 
     public VarDecl(QualifiedName name, Expression initialValue, List<Modifier> modifiers) {
+        super(modifiers);
         this.name = name;
         this.initialValue = initialValue;
-        this.modifiers = modifiers;
     }
 
     public void setType(String typeDesc) {
@@ -43,30 +42,6 @@ public class VarDecl extends Statement {
         return name;
     }
 
-    public List<Modifier> getModifiers() {
-        return modifiers;
-    }
-
-    public void addModifier(Modifier modifier) {
-        modifiers.add(modifier);
-    }
-
-    public boolean hasModifier(Modifier modifier) {
-        for (Modifier m : modifiers) {
-            if (m.equals(modifier))
-                return true;
-        }
-        return false;
-    }
-
-    public int modifiers() {
-        int mod = 0;
-        for (Modifier modifier : getModifiers()) {
-            mod += modifier.getModifier();
-        }
-        return mod;
-    }
-
     public Expression getInitialValue() {
         return initialValue != null ? initialValue : new Literal(TNull.NULL);
     }
@@ -83,14 +58,14 @@ public class VarDecl extends Statement {
         VarDecl decl = (VarDecl) o;
         return Objects.equals(name, decl.name) &&
                 Objects.equals(initialValue, decl.initialValue) &&
-                Objects.equals(modifiers, decl.modifiers) &&
+                Objects.equals(getModifiers(), decl.getModifiers()) &&
                 Objects.equals(getAnnotations(), decl.getAnnotations());
     }
 
     @Override
     public int hashCode() {
         int result = Objects.hash(name, initialValue);
-        result = 31 * result + Objects.hashCode(modifiers);
+        result = 31 * result + Objects.hashCode(getModifiers());
         return result;
     }
 

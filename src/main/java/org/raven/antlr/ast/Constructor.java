@@ -5,18 +5,15 @@ import org.raven.antlr.Modifier;
 import org.raven.antlr.Operator;
 import org.raven.core.wrappers.TObject;
 
-import java.util.Arrays;
-import java.util.LinkedList;
-import java.util.Objects;
+import java.util.*;
 
-public class Constructor extends Statement {
+public class Constructor extends ModifiableStatement {
 
     public static Constructor DEFAULT = new Constructor(new Modifier[]{Modifier.PUBLIC}, null);
 
     private Block initBlock = new Block();
     private Block body;
 
-    private final Modifier[] modifiers;
     private final VarDecl[] params;
     private final Expression[] superParams;
 
@@ -28,7 +25,7 @@ public class Constructor extends Statement {
      * @param params
      */
     public Constructor(final Modifier[] modifiers, final Block body, final VarDecl... params) {
-        this.modifiers = modifiers;
+        super(modifiers);
         this.body = body;
         this.params = params;
         this.superParams = null;
@@ -45,7 +42,7 @@ public class Constructor extends Statement {
      * @param params
      */
     public Constructor(Expression... params) {
-        this.modifiers = new Modifier[]{Modifier.PUBLIC};
+        super(Modifier.PUBLIC);
         this.body = null;
         LinkedList<VarDecl> p = new LinkedList<>();
         for (Expression param : params) {
@@ -55,10 +52,6 @@ public class Constructor extends Statement {
         }
         this.params = p.toArray(new VarDecl[p.size()]);
         this.superParams = params;
-    }
-
-    public Modifier[] getModifiers() {
-        return modifiers;
     }
 
     public Block getInitBlock() {
@@ -95,7 +88,7 @@ public class Constructor extends Statement {
 
     public String getSuperConstructorDesc() {
         StringBuilder stringBuilder = new StringBuilder("(");
-        if(getSuperParams() != null) {
+        if (getSuperParams() != null) {
             for (Expression ignored : getSuperParams()) {
                 stringBuilder.append(Type.getType(TObject.class).getDescriptor());
             }
@@ -111,7 +104,7 @@ public class Constructor extends Statement {
         Constructor that = (Constructor) o;
         return Objects.equals(initBlock, that.initBlock) &&
                 Objects.equals(body, that.body) &&
-                Arrays.equals(modifiers, that.modifiers) &&
+                getModifiers().equals(that.getModifiers()) &&
                 Arrays.equals(params, that.params) &&
                 Arrays.equals(superParams, that.superParams) &&
                 Objects.equals(getAnnotations(), that.getAnnotations());
@@ -120,7 +113,7 @@ public class Constructor extends Statement {
     @Override
     public int hashCode() {
         int result = Objects.hash(initBlock, body);
-        result = 31 * result + Arrays.hashCode(modifiers);
+        result = 31 * result + Objects.hashCode(getModifiers());
         result = 31 * result + Arrays.hashCode(params);
         result = 31 * result + Arrays.hashCode(superParams);
         return result;
