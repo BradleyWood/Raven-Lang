@@ -516,6 +516,7 @@ public class Method extends MethodVisitor implements TreeVisitor, Opcodes {
             }
         }
 
+        // some form of action on a local var
         if (localIdx != -1) {
             switch (names.length) {
                 case 1:
@@ -530,12 +531,15 @@ public class Method extends MethodVisitor implements TreeVisitor, Opcodes {
                     break;
             }
         } else {
+            // not a local variable
             String importedClass = getInternalNameFromImports(names[0]);
             VarDecl decl = SymbolMap.resolveField(ctx.getOwner(), ctx.getOwner(), names[0]);
+            // ^ not null if field exists in current class
 
             switch (names.length) {
                 case 1:
                     if (ctx.isStatic()) {
+                        // static field access in the same class
                         if (decl != null && decl.hasModifier(Modifier.STATIC)) {
                             accessStaticField(ctx.getOwner(), decl.getName().toString(), load);
                         } else if (decl != null) {
@@ -544,22 +548,12 @@ public class Method extends MethodVisitor implements TreeVisitor, Opcodes {
                             Errors.put("Variable " + names[0] + " has not been defined.");
                         }
                     } else {
+                        // (potential virtual field access) in the same class
                         VarDecl var = ctx.getClassDef().findVar(name.toString());
                         if (var != null) {
                             accessVirtualField(var, load);
                         } else {
-                            visitVarInsn(ALOAD, getLocal("this"));
-                            if (!load) {
-                                visitInsn(SWAP);
-                                visitLdcInsn(names[0]);
-                                visitInsn(SWAP);
-                                visitMethodInsn(INVOKESTATIC, getInternalName(TObject.class), "setField", getDesc(TObject.class, "setField", Object.class, String.class, TObject.class), false);
-                            } else {
-                                visitLdcInsn(names[0]);
-                                visitMethodInsn(INVOKESTATIC, getInternalName(TObject.class), "getField", getDesc(TObject.class, "getField", Object.class, String.class), false);
-                            }
-                            Warning.put("Warning: Variable may not exist: " + ctx.getClassDef().getName().toString() + ":" + name.toString());
-                            // var could exist in super class
+                            Errors.put("Variable " + names[0] + " has not been defined.");
                         }
                     }
                     break;
