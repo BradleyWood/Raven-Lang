@@ -35,14 +35,12 @@ public class ReplTestRunner {
     @BeforeClass
     public static void before() {
         org.raven.util.Utility.buildBuiltins();
-        Settings.set("REPL", true);
     }
 
     @AfterClass
     public static void after() {
         System.setOut(sout);
         System.setErr(serr);
-        Settings.set("REPL", false);
     }
 
     @Test

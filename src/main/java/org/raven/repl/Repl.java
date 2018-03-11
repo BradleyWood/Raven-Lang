@@ -9,6 +9,7 @@ import org.raven.compiler.ClassMaker;
 import org.raven.compiler.SymbolMap;
 import org.raven.core.ByteClassLoader;
 import org.raven.error.Errors;
+import org.raven.util.Settings;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
@@ -32,6 +33,7 @@ public class Repl {
     }
 
     public void exec(String line) {
+        Settings.set("REPL", true);
         try {
             Class<?> cl = build(line);
             if (cl != null) {
@@ -43,6 +45,7 @@ public class Repl {
         } catch (NoSuchMethodException | IllegalAccessException e) {
             System.err.println("REPL INTERNAL ERROR");
         }
+        Settings.set("REPL", false);
     }
 
     private Class build(String line) {

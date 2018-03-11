@@ -59,7 +59,6 @@ public class Application {
             boolean build = cmd.hasOption("b");
             boolean run = cmd.hasOption("r");
             boolean REPL = cmd.hasOption("repl");
-            Settings.set("REPL", REPL);
 
             if (!onlyOneTrue(correctness, build, run, REPL)) {
                 cmdError(options);
