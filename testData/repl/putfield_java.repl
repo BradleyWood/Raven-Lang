@@ -1,0 +1,9 @@
+> import testclasses.FieldTestClass
+> FieldTestClass.staticString
+hello
+> FieldTestClass.staticString = "world"
+> FieldTestClass.staticString
+world
+> FieldTestClass.staticString = "hello"
+> FieldTestClass.staticString
+hello
