@@ -119,6 +119,11 @@ public class TObject implements Comparable<TObject> {
     }
 
     @Hidden
+    public TObject inc() {
+        throw new UnsupportedOperationException("Cannot inc type '" + getType().toString());
+    }
+
+    @Hidden
     public TObject EQ(TObject obj) {
         if (this.obj != null && obj.obj != null) {
             return this.obj.equals(obj.obj) ? TBoolean.TRUE : TBoolean.FALSE;
