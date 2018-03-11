@@ -50,8 +50,8 @@ public class Intrinsics {
         }
     }
 
-    public static CallSite bootstrapSetter(MethodHandles.Lookup caller, String name, MethodType type, Class<?> clazz) throws Throwable {
-        int hash = Objects.hash(name, clazz);
+    public static CallSite bootstrapSetter(MethodHandles.Lookup caller, String name, MethodType type) throws Throwable {
+        int hash = Objects.hash(name);
         LinkedList<JSetter> virtualMethods = setterCache.getOrDefault(hash, new LinkedList<>());
 
         if (!setterCache.containsKey(hash)) {
@@ -89,13 +89,13 @@ public class Intrinsics {
             throw sanitizeStackTrace(new NoSuchFieldException(name));
         }
         JSetter setter = methods.get(0);
-        setter.methodHandle.bindTo(obj).invoke(value.coerce(setter.targetType));
         setter.incCount();
+        setter.methodHandle.bindTo(obj).invoke(value.coerce(setter.targetType));
         return TNull.NULL;
     }
 
     public static CallSite bootstrapGetter(MethodHandles.Lookup caller, String name, MethodType type) throws Throwable {
-        int hash = Objects.hash(true, name);
+        int hash = Objects.hash(name);
         LinkedList<JMethod> virtualMethods = getterCache.getOrDefault(hash, new LinkedList<>());
 
         if (!getterCache.containsKey(hash)) {

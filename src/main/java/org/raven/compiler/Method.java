@@ -20,6 +20,11 @@ public class Method extends MethodVisitor implements TreeVisitor, Opcodes {
             "(Ljava/lang/invoke/MethodHandles$Lookup;Ljava/lang/String;Ljava/lang/invoke/MethodType;)Ljava/lang/invoke/CallSite;",
             false);
 
+    private static final Handle SET_BOOTSTRAP = new Handle(H_INVOKESTATIC,
+            "org/raven/core/Intrinsics", "bootstrapSetter",
+            "(Ljava/lang/invoke/MethodHandles$Lookup;Ljava/lang/String;Ljava/lang/invoke/MethodType;)Ljava/lang/invoke/CallSite;",
+            false);
+
 
     private final ArrayList<Integer> lineNumbers = new ArrayList<>();
 
@@ -638,10 +643,8 @@ public class Method extends MethodVisitor implements TreeVisitor, Opcodes {
             mv.visitInvokeDynamicInsn("get" + name, "(Lorg/raven/core/wrappers/TObject;)Lorg/raven/core/wrappers/TObject;",
                     GET_BOOTSTRAP);
         } else {
-            visitInsn(SWAP);
-            visitLdcInsn(name);
-            visitInsn(SWAP);
-            visitMethodInsn(INVOKEVIRTUAL, Constants.TOBJ_NAME, "setField", getDesc(TObject.class, "setField", String.class, TObject.class), false);
+            mv.visitInvokeDynamicInsn("set" + name, "(Lorg/raven/core/wrappers/TObject;Lorg/raven/core/wrappers/TObject;)Lorg/raven/core/wrappers/TObject;",
+                    GET_BOOTSTRAP);
         }
     }
 
