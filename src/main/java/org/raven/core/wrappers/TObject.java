@@ -16,8 +16,6 @@ public class TObject implements Comparable<TObject> {
     public static final int COERCE_LESS_IDEAL = 2;
     public static final int COERCE_IDEAL = 3;
 
-    private static final HashMap<Integer, JavaMethod> methodCache = new HashMap<>();
-
     @Hidden
     private TType type;
     @Hidden
@@ -347,130 +345,6 @@ public class TObject implements Comparable<TObject> {
     }
 
     @Hidden
-    public final TObject invoke(String name, TObject params) throws Throwable {
-        if (name.equals("getType"))
-            return getType();
-        if (obj == null)
-            return invoke(this.getClass(), this, name, params);
-        return invoke(obj.getClass(), obj, name, params);
-    }
-
-    @Hidden
-    public static TObject invoke(Class clazz, Object obj, String name, TObject params) throws Throwable {
-        JavaMethod method = findMethod(clazz, name, params);
-        if (method != null) {
-            try {
-                Object[] pa = getParams(params, method.parameterTypes);
-                Object ret = method.mh.invoke(obj, pa);
-
-                return wrap(ret);
-            } catch (InvocationTargetException e) {
-                throw e.getCause();
-            }
-        }
-        for (Class cl : clazz.getClasses()) {
-            if (cl.getSimpleName().equals(name)) {
-                return newObj(cl, params);
-            }
-        }
-        throw new NoSuchMethodException("Method " + clazz.getName() + ":" + name + " not found.");
-    }
-
-    @Hidden
-    private static JavaMethod findMethod(Class clazz, String name, TObject params) {
-        int hash = Objects.hash(clazz, name, params.size());
-        JavaMethod m = methodCache.get(hash);
-        if (m != null) {
-            return m;
-        }
-        LinkedList<Method> methods = new LinkedList<>();
-        Method found = null;
-        int foundCoerceRating = -1;
-        for (Method method : getAllMethods(clazz, false, false)) {
-            if (method.getAnnotationsByType(Hidden.class).length > 0 || method.getParameterCount() != params.size())
-                continue;
-            if (method.getName().equals(name)) {
-                methods.add(method);
-                Class<?>[] types = method.getParameterTypes();
-                int rating = rate(params, types);
-
-                if (rating > foundCoerceRating) {
-                    found = method;
-                    foundCoerceRating = rating;
-                }
-            }
-        }
-        if (found == null)
-            return null;
-
-        JavaMethod jm = new JavaMethod(found, found.getParameterTypes());
-        // MethodHandle methodHandle = mhLookup.unreflect(found);
-        // dont put overloaded functions into the map!
-        if (methods.size() == 1) {
-            methodCache.put(hash, jm);
-        }
-        found.setAccessible(true);
-        return jm;
-    }
-
-    public static Collection<Method> getAllMethods(Class clazz,
-                                                   boolean includeAllPackageAndPrivateMethodsOfSuperclasses,
-                                                   boolean includeOverridenAndHidden) {
-
-        Predicate<Method> include = m -> !m.isBridge() && !m.isSynthetic() &&
-                Character.isJavaIdentifierStart(m.getName().charAt(0))
-                && m.getName().chars().skip(1).allMatch(Character::isJavaIdentifierPart);
-
-        Set<Method> methods = new LinkedHashSet<>();
-        Collections.addAll(methods, clazz.getMethods());
-        methods.removeIf(include.negate());
-        Stream.of(clazz.getDeclaredMethods()).filter(include).forEach(methods::add);
-
-        final int access = Modifier.PUBLIC | Modifier.PROTECTED | Modifier.PRIVATE;
-
-        Package p = clazz.getPackage();
-        if (!includeAllPackageAndPrivateMethodsOfSuperclasses) {
-            int pass = includeOverridenAndHidden ?
-                    Modifier.PUBLIC | Modifier.PROTECTED : Modifier.PROTECTED;
-            include = include.and(m -> {
-                int mod = m.getModifiers();
-                return (mod & pass) != 0
-                        || (mod & access) == 0 && m.getDeclaringClass().getPackage() == p;
-            });
-        }
-        if (!includeOverridenAndHidden) {
-            Map<Object, Set<Package>> types = new HashMap<>();
-            final Set<Package> pkgIndependent = Collections.emptySet();
-            for (Method m : methods) {
-                int acc = m.getModifiers() & access;
-                if (acc == Modifier.PRIVATE) continue;
-                if (acc != 0) types.put(methodKey(m), pkgIndependent);
-                else types.computeIfAbsent(methodKey(m), x -> new HashSet<>()).add(p);
-            }
-            include = include.and(m -> {
-                int acc = m.getModifiers() & access;
-                return acc != 0 ? acc == Modifier.PRIVATE
-                        || types.putIfAbsent(methodKey(m), pkgIndependent) == null :
-                        noPkgOverride(m, types, pkgIndependent);
-            });
-        }
-        for (clazz = clazz.getSuperclass(); clazz != null; clazz = clazz.getSuperclass())
-            Stream.of(clazz.getDeclaredMethods()).filter(include).forEach(methods::add);
-        return methods;
-    }
-
-    static boolean noPkgOverride(
-            Method m, Map<Object, Set<Package>> types, Set<Package> pkgIndependent) {
-        Set<Package> pkg = types.computeIfAbsent(methodKey(m), key -> new HashSet<>());
-        return pkg != pkgIndependent && pkg.add(m.getDeclaringClass().getPackage());
-    }
-
-    private static Object methodKey(Method m) {
-        return Arrays.asList(m.getName(),
-                MethodType.methodType(m.getReturnType(), m.getParameterTypes()));
-    }
-
-    @Hidden
     public static int rate(TObject params, Class<?>[] types) {
         if (!(params instanceof TList) || params.size() != types.length)
             throw new IllegalArgumentException();
@@ -575,15 +449,5 @@ public class TObject implements Comparable<TObject> {
         int result = type != null ? type.hashCode() : 0;
         result = 31 * result + (obj != null ? obj.hashCode() : 0);
         return result;
-    }
-
-    private static class JavaMethod {
-        Method mh;
-        Class<?>[] parameterTypes;
-
-        public JavaMethod(Method mh, Class<?>[] parameterTypes) {
-            this.mh = mh;
-            this.parameterTypes = parameterTypes;
-        }
     }
 }

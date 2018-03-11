@@ -475,10 +475,6 @@ public class Method extends MethodVisitor implements TreeVisitor, Opcodes {
         visitTypeInsn(CHECKCAST, getInternalName(TList.class));
         mv.visitInvokeDynamicInsn(name, "(Lorg/raven/core/wrappers/TObject;Lorg/raven/core/wrappers/TList;)Lorg/raven/core/wrappers/TObject;",
                 handle, params.length);
-
-        //visitLdcInsn(name);
-        //visitListDef(new ListDef(params));
-        //visitMethodInsn(INVOKEVIRTUAL, Constants.TOBJ_NAME, "invoke", getDesc(TObject.class, "invoke", String.class, TObject.class), false);
     }
 
     private void invokeVirtualFun(String name, Expression[] params, java.lang.reflect.Method method) {
