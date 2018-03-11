@@ -115,7 +115,7 @@ public class SymbolMap {
             if (java.lang.reflect.Modifier.isPrivate(field.getModifiers()))
                 modifiers = new Modifier[]{Modifier.PRIVATE};
             VarDecl decl = new VarDecl(QualifiedName.valueOf(field.getName()), null, modifiers);
-            decl.setType("L" + field.getType().getName().replace(".", "/" + ";"));
+            decl.setType("L" + field.getType().getName().replace(".", "/") + ";");
             statements.add(decl);
         }
 

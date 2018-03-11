@@ -401,6 +401,26 @@ public class Method extends MethodVisitor implements TreeVisitor, Opcodes {
                 owner, params.length);
     }
 
+    /**
+     * Assumes value is on stack
+     *
+     * @param type
+     */
+    private void coerce(Type type) {
+        Primitive p = Primitive.getPrimitiveType(type.getDescriptor());
+        if (p == null) {
+            visitLdcInsn(type);
+        } else {
+            p.putPrimitiveType(this);
+        }
+        visitMethodInsn(INVOKEVIRTUAL, Constants.TOBJ_NAME, "coerce", getDesc(TObject.class, "coerce", Class.class), false);
+        if (p != null) {
+            p.unwrap(this);
+        } else {
+            visitTypeInsn(CHECKCAST, type.getInternalName());
+        }
+    }
+
     private void resolveStaticFun(String funOwner, String funName, String desc, Expression[] params) {
         Fun f = SymbolMap.resolveFun(ctx.getOwner(), funOwner, funName, params.length);
         // if the function can be resolved, it is a tl function
@@ -415,18 +435,7 @@ public class Method extends MethodVisitor implements TreeVisitor, Opcodes {
             Type[] types = Type.getArgumentTypes(f.getDesc());
             for (int i = 0; i < params.length; i++) {
                 params[i].accept(this);
-                Primitive p = Primitive.getPrimitiveType(types[i].getDescriptor());
-                if (p == null) {
-                    visitLdcInsn(types[i]);
-                } else {
-                    p.putPrimitiveType(this);
-                }
-                visitMethodInsn(INVOKEVIRTUAL, Constants.TOBJ_NAME, "coerce", getDesc(TObject.class, "coerce", Class.class), false);
-                if (p != null) {
-                    p.unwrap(this);
-                } else {
-                    visitTypeInsn(CHECKCAST, types[i].getInternalName());
-                }
+                coerce(types[i]);
             }
             visitMethodInsn(INVOKESTATIC, funOwner, funName, f.getDesc(), false);
 
@@ -595,14 +604,11 @@ public class Method extends MethodVisitor implements TreeVisitor, Opcodes {
                     p.wrap(this);
                 }
                 visitMethodInsn(INVOKESTATIC, getInternalName(TObject.class), "wrap", getDesc(TObject.class, "wrap", Object.class), false);
-            } else {
-                visitLdcInsn(Type.getType("L" + (owner) + ";"));
-                visitLdcInsn(name);
-                visitMethodInsn(INVOKESTATIC, getInternalName(TObject.class), "setField", getDesc(TObject.class, "setField", Class.class, String.class, TObject.class), false);
+                return;
             }
-            return;
+            coerce(Type.getType(decl.getTypeDesc()));
         }
-        visitFieldInsn(load ? GETSTATIC : PUTSTATIC, owner, name, getDesc(TObject.class));
+        visitFieldInsn(load ? GETSTATIC : PUTSTATIC, owner, name, decl.getTypeDesc());
     }
 
     private void accessVirtualField(VarDecl var, boolean load) {
