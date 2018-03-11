@@ -8,6 +8,7 @@ import org.raven.core.wrappers.TType;
 import java.lang.invoke.*;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.util.*;
 
 /**
@@ -42,9 +43,10 @@ public class Intrinsics {
     public static CallSite bootstrap(MethodHandles.Lookup caller, String name, MethodType type, Class<?> clazz, int paramCount) throws NoSuchMethodException, IllegalAccessException {
         LinkedList<JMethod> list = new LinkedList<>();
         for (Method method : clazz.getDeclaredMethods()) {
-            if (method.getName().equals(name) && method.getParameterCount() == paramCount) {
+            if (method.getName().equals(name) && method.getParameterCount() == paramCount &&
+                    Modifier.isStatic(method.getModifiers())) {
                 MethodHandle mh = caller.unreflect(method);
-                JMethod jm = new JMethod(mh, method.getParameterTypes());
+                JMethod jm = new JMethod(mh, method.getParameterTypes(), false);
                 list.add(jm);
             }
         }
@@ -54,7 +56,7 @@ public class Intrinsics {
                 for (Constructor<?> constructor : klazz.getDeclaredConstructors()) {
                     if (constructor.getParameterCount() == paramCount) {
                         MethodHandle mh = caller.unreflectConstructor(constructor);
-                        JMethod jm = new JMethod(mh, constructor.getParameterTypes());
+                        JMethod jm = new JMethod(mh, constructor.getParameterTypes(), false);
                         list.add(jm);
                     }
                 }
@@ -91,10 +93,12 @@ public class Intrinsics {
         private MethodHandle methodHandle;
         private Class<?>[] types;
         private int callCount = 0;
+        private boolean virtual;
 
-        JMethod(MethodHandle methodHandle, Class<?>[] types) {
+        JMethod(MethodHandle methodHandle, Class<?>[] types, boolean virtual) {
             this.methodHandle = methodHandle;
             this.types = types;
+            this.virtual = virtual;
         }
 
         void incCount() {
