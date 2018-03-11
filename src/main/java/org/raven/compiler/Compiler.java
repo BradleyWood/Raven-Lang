@@ -103,6 +103,9 @@ public class Compiler {
         modifyTree(tree);
 
         for (ClassDef classDef : tree.getClasses()) {
+            if (!classDef.isPrivate()) {
+                classDef.setPublic();
+            }
             SymbolMap.map(classDef);
             tree.addImport(tree.getPackage().add(classDef.getName()));
             classDef.setSourceTree(tree);

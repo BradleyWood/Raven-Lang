@@ -47,6 +47,9 @@ public class ClassMaker {
 
         cw.visitField(ACC_PRIVATE + ACC_STATIC + ACC_FINAL, "__CONSTANTS__", "[" + Constants.TOBJ_SIG, null, null);
         for (VarDecl staticVariable : def.getFields()) {
+            if (!staticVariable.isPrivate()) {
+                staticVariable.setPublic();
+            }
             defineField(staticVariable.getName().toString(), staticVariable.modifiers());
         }
 
@@ -54,9 +57,15 @@ public class ClassMaker {
 
         MethodContext classCtx = new MethodContext(def.getFullName(), "<init>", imports, def);
         for (Constructor constructor : constructors) {
+            if (!constructor.isPrivate()) {
+                constructor.setPublic();
+            }
             defineConstructor(classCtx, constructor);
         }
         for (Fun fun : def.getMethods()) {
+            if (!fun.isPrivate()) {
+                fun.setPublic();
+            }
             classCtx.setName(fun.getName().toString());
             classCtx.setStatic(fun.hasModifier(Modifier.STATIC));
             defineMethod(classCtx, fun, fun.modifiers());
@@ -125,9 +134,6 @@ public class ClassMaker {
 
     private void defineMethod(MethodContext context, Fun fun, int modifiers) {
         String desc = fun.getDesc();
-
-        if (fun.getName().toString().equals("main"))
-            modifiers += ACC_PUBLIC;
 
         Method method;
 
