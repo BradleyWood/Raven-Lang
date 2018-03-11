@@ -56,6 +56,11 @@ public class TObject implements Comparable<TObject> {
     }
 
     @Hidden
+    public Object getObject() {
+        return obj;
+    }
+
+    @Hidden
     public TObject set(TObject index, TObject obj) {
         throw new UnsupportedOperationException("Cannot set element in non list type: " + getType().toString());
     }
