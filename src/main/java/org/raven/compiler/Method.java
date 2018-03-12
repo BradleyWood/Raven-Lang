@@ -502,6 +502,8 @@ public class Method extends MethodVisitor implements TreeVisitor, Opcodes {
     @Override
     public void visitName(QualifiedName name) {
         accessField(name, true);
+        if (name.pop())
+            visitInsn(POP);
     }
 
     private void accessField(QualifiedName name, boolean load) {
@@ -644,6 +646,8 @@ public class Method extends MethodVisitor implements TreeVisitor, Opcodes {
     @Override
     public void visitExpressionGroup(ExpressionGroup group) {
         group.accept(this);
+        if (group.pop())
+            visitInsn(POP);
     }
 
     @Override
@@ -695,6 +699,8 @@ public class Method extends MethodVisitor implements TreeVisitor, Opcodes {
                 visitMethodInsn(INVOKEVIRTUAL, Constants.TOBJ_NAME, op.getOp().name, getDesc(TObject.class, op.getOp().name, TObject.class), false);
                 break;
         }
+        if (op.pop() && op.getOp() != Operator.ASSIGNMENT)
+            visitInsn(POP);
     }
 
     @Override
@@ -714,6 +720,8 @@ public class Method extends MethodVisitor implements TreeVisitor, Opcodes {
         } else if (obj instanceof TBigInt) {
             putBigInt((TBigInt) literal.getValue());
         }
+        if (literal.pop())
+            visitInsn(POP);
     }
 
     @Override
@@ -726,6 +734,9 @@ public class Method extends MethodVisitor implements TreeVisitor, Opcodes {
             expression.accept(this);
             visitMethodInsn(INVOKEVIRTUAL, getInternalName(TObject.class), "add", getDesc(TList.class, "add", TObject.class), false);
         }
+
+        if (def.pop())
+            visitInsn(POP);
     }
 
     @Override
@@ -735,6 +746,8 @@ public class Method extends MethodVisitor implements TreeVisitor, Opcodes {
             expression.accept(this);
             visitMethodInsn(INVOKEVIRTUAL, Constants.TOBJ_NAME, "get", getDesc(TObject.class, "get", TObject.class), false);
         }
+        if (idx.pop())
+            visitInsn(POP);
     }
 
     @Override
