@@ -543,11 +543,11 @@ public class Method extends MethodVisitor implements TreeVisitor, Opcodes {
                     visitVarInsn(load ? ALOAD : ASTORE, localIdx);
                     break;
                 default:
-                    StringBuilder qname = new StringBuilder();
                     String[] nn = Arrays.copyOfRange(names, 1, names.length);
-                    Arrays.stream(nn).forEach(qname::append);
                     accessField(new QualifiedName(names[0]), true);
-                    accessVirtualField(qname.toString(), load);
+                    for (String s : nn) {
+                        accessVirtualField(s, load);
+                    }
                     break;
             }
         } else {
@@ -644,7 +644,7 @@ public class Method extends MethodVisitor implements TreeVisitor, Opcodes {
                     GET_BOOTSTRAP);
         } else {
             mv.visitInvokeDynamicInsn("set" + name, "(Lorg/raven/core/wrappers/TObject;Lorg/raven/core/wrappers/TObject;)Lorg/raven/core/wrappers/TObject;",
-                    GET_BOOTSTRAP);
+                    SET_BOOTSTRAP);
         }
     }
 
