@@ -54,10 +54,10 @@ public class StatementVisitor extends RavenBaseVisitor<Statement> {
             }
             if (Settings.getBoolean("REPL") && printableExpression) {
                 stmt = new Call(new QualifiedName("println"), (Expression) stmt);
-            } else if (stmt instanceof Call) {
-                ((Call) stmt).setPop(true);
             } else if (stmt instanceof QualifiedName) {
                 Errors.put("Not a statement: " + stmt.toString());
+            } else {
+                ((Expression) stmt).setPop(true);
             }
         } else if (ctx.goStatement() != null) {
             stmt = ctx.goStatement().accept(GoVisitor.INSTANCE);
