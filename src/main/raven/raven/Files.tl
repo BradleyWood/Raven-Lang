@@ -10,7 +10,7 @@ import java.io.OutputStreamWriter;
 
 // Returns a list containing each line
 // fully reads file
-public fun readLines(path) {
+fun readLines(path) {
     var fis = FileInputStream(path);
     var reader = InputStreamReader(fis);
     var br = BufferedReader(reader);
@@ -25,7 +25,7 @@ public fun readLines(path) {
 }
 
 // write each line to the file;
-public fun writeLines(path, lines) {
+fun writeLines(path, lines) {
     var fos = FileOutputStream(path);
     var writer = OutputStreamWriter(fos);
     var bw = BufferedWriter(writer);

@@ -11,40 +11,40 @@ import java.lang.Class;
 import org.raven.core.wrappers.TError;
 import org.raven.core.wrappers.TList;
 
-public fun isError(obj) {
+fun isError(obj) {
     return type(obj) == TError.TYPE;
 }
 
-public fun error(obj) {
+fun error(obj) {
     return TError(str(obj));
 }
 
-public fun println(obj) {
+fun println(obj) {
     System.out.println(str(obj));
 }
 
-public fun println() {
+fun println() {
     System.out.println();
 }
 
-public fun print(obj) {
+fun print(obj) {
     System.out.print(obj);
 }
 
-public fun str(obj) {
+fun str(obj) {
     return obj.toString();
 }
 
-public fun sort(list) {
+fun sort(list) {
     Collections.sort(list);
     return list;
 }
 
-public fun len(obj) {
+fun len(obj) {
     return obj.size();
 }
 
-public fun int(obj) {
+fun int(obj) {
     var intVal = obj.toInt();
     if (intVal == null) {
         return bigInt(obj);
@@ -52,31 +52,31 @@ public fun int(obj) {
     return intVal;
 }
 
-public fun bigInt(obj) {
+fun bigInt(obj) {
     return obj.toBigInt();
 }
 
-public fun real(obj) {
+fun real(obj) {
     return obj.toDouble();
 }
 
-public fun type(obj) {
+fun type(obj) {
     return obj.getType();
 }
 
-public fun readLine() {
+fun readLine() {
     return Scanner(System.in).nextLine();
 }
 
-public fun hash(obj) {
+fun hash(obj) {
     return obj.hashCode();
 }
 
-public fun exit(code) {
+fun exit(code) {
     System.exit(code);
 }
 
-public fun reverse(lst) {
+fun reverse(lst) {
     if (type(lst) != TList.TYPE) {
         return error("Illegal arguments of type: " + type(lst) + " expected: " + TList.TYPE);
     }
@@ -90,7 +90,7 @@ public fun reverse(lst) {
     return lst;
 }
 
-public fun sum(lst) {
+fun sum(lst) {
     if(len(lst) < 1)
         return null;
     var sum = lst[0];
