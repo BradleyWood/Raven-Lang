@@ -2,7 +2,6 @@ package org.raven.core.wrappers;
 
 import org.raven.core.Hidden;
 
-import java.lang.reflect.*;
 import java.math.BigInteger;
 import java.util.*;
 
@@ -273,42 +272,6 @@ public class TObject implements Comparable<TObject> {
         if (rating == COERCE_IMPOSSIBLE)
             return null;
         return getParams(params, types, rating);
-    }
-
-    @Hidden
-    public static TObject wrap(Object o) {
-        if (o instanceof TObject)
-            return (TObject) o;
-        if (o instanceof BigInteger) {
-            return new TBigInt((BigInteger) o);
-        }
-        if (o instanceof Integer || o instanceof Long || o instanceof Short || o instanceof Byte) {
-            return new TInt(((Number) o).intValue());
-        }
-        if (o instanceof Float || o instanceof Double) {
-            return new TReal(((Number) o).doubleValue());
-        }
-        if (o instanceof Boolean) {
-            return ((boolean) o) ? TBoolean.TRUE : TBoolean.FALSE;
-        }
-        if (o instanceof String) {
-            return new TString((String) o);
-        }
-        if (o == null) {
-            return TNull.NULL;
-        }
-        if (o instanceof List) {
-            return new TList((List) o);
-        }
-        if (o.getClass().isArray()) {
-            TList lst = new TList();
-            int length = Array.getLength(o);
-            for (int i = 0; i < length; i++) {
-                lst.add(Array.get(o, i));
-            }
-            return lst;
-        }
-        return new TObject(o);
     }
 
     @Override

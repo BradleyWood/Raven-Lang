@@ -1,5 +1,7 @@
 package org.raven.core.wrappers;
 
+import org.raven.core.Intrinsics;
+
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -67,18 +69,18 @@ public class TDict extends TObject implements Map<TObject, TObject> {
 
     @Override
     public TObject get(Object key) {
-        return get(wrap(key));
+        return get(Intrinsics.wrap(key));
     }
 
     @Override
     public TObject put(TObject key, TObject value) {
-        map.put(wrap(key), wrap(value));
+        map.put(Intrinsics.wrap(key), Intrinsics.wrap(value));
         return this;
     }
 
     @Override
     public TObject remove(Object key) {
-        return map.remove(wrap(key));
+        return map.remove(Intrinsics.wrap(key));
     }
 
     @Override

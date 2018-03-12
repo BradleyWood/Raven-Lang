@@ -1,6 +1,7 @@
 package org.raven.core.wrappers;
 
 import org.raven.core.Hidden;
+import org.raven.core.Intrinsics;
 
 import java.lang.reflect.Array;
 import java.util.*;
@@ -120,7 +121,7 @@ public class TList extends TObject implements List {
         if (o instanceof TObject) {
             add((TObject) o);
         } else {
-            add(TObject.wrap(o));
+            add(Intrinsics.wrap(o));
         }
         return true;
     }

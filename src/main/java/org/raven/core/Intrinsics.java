@@ -1,15 +1,10 @@
 package org.raven.core;
 
-import org.raven.core.wrappers.TList;
-import org.raven.core.wrappers.TNull;
-import org.raven.core.wrappers.TObject;
-import org.raven.core.wrappers.TType;
+import org.raven.core.wrappers.*;
 
 import java.lang.invoke.*;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
+import java.lang.reflect.*;
+import java.math.BigInteger;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -90,7 +85,7 @@ public class Intrinsics {
     }
 
     public static TObject newInstance(JMethod constructor, TList arguments) throws Throwable {
-        return TObject.wrap(constructor.methodHandle.invokeWithArguments(TObject.getParams(arguments, constructor.types)));
+        return wrap(constructor.methodHandle.invokeWithArguments(TObject.getParams(arguments, constructor.types)));
     }
 
     public static CallSite bootstrapSetter(MethodHandles.Lookup caller, String name, MethodType type) throws Throwable {
@@ -176,7 +171,7 @@ public class Intrinsics {
         if (methods.isEmpty()) {
             throw sanitizeStackTrace(new NoSuchFieldException(name));
         }
-        return TObject.wrap(methods.get(0).methodHandle.bindTo(obj).invoke());
+        return wrap(methods.get(0).methodHandle.bindTo(obj).invoke());
     }
 
     public static CallSite bootstrapVirtual(MethodHandles.Lookup caller, String name, MethodType type, int paramCount) throws Throwable {
@@ -226,7 +221,7 @@ public class Intrinsics {
         JMethod method = select(methods, args.size(), args);
         if (method != null) {
             method.incCount();
-            return TObject.wrap(method.methodHandle.bindTo(v).invokeWithArguments(TObject.getParams(args, method.types)));
+            return wrap(method.methodHandle.bindTo(v).invokeWithArguments(TObject.getParams(args, method.types)));
         } else {
             throw sanitizeStackTrace(new RuntimeException("Type coercion impossible"));
         }
@@ -267,7 +262,7 @@ public class Intrinsics {
         JMethod method = select(jm, args.size(), args);
         if (method != null) {
             method.incCount();
-            return TObject.wrap(method.methodHandle.invokeWithArguments(TObject.getParams(args, method.types)));
+            return wrap(method.methodHandle.invokeWithArguments(TObject.getParams(args, method.types)));
         } else {
             throw sanitizeStackTrace(new RuntimeException("Type coercion impossible"));
         }
@@ -295,6 +290,42 @@ public class Intrinsics {
         }
 
         return bestMh;
+    }
+
+    @Hidden
+    public static TObject wrap(Object o) {
+        if (o instanceof TObject)
+            return (TObject) o;
+        if (o instanceof BigInteger) {
+            return new TBigInt((BigInteger) o);
+        }
+        if (o instanceof Integer || o instanceof Long || o instanceof Short || o instanceof Byte) {
+            return new TInt(((Number) o).intValue());
+        }
+        if (o instanceof Float || o instanceof Double) {
+            return new TReal(((Number) o).doubleValue());
+        }
+        if (o instanceof Boolean) {
+            return ((boolean) o) ? TBoolean.TRUE : TBoolean.FALSE;
+        }
+        if (o instanceof String) {
+            return new TString((String) o);
+        }
+        if (o == null) {
+            return TNull.NULL;
+        }
+        if (o instanceof List) {
+            return new TList((List) o);
+        }
+        if (o.getClass().isArray()) {
+            TList lst = new TList();
+            int length = Array.getLength(o);
+            for (int i = 0; i < length; i++) {
+                lst.add(Array.get(o, i));
+            }
+            return lst;
+        }
+        return new TObject(o);
     }
 
     public static <T extends Throwable> T sanitizeStackTrace(T throwable) {

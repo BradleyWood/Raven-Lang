@@ -195,7 +195,7 @@ public class Method extends MethodVisitor implements TreeVisitor, Opcodes {
             } else if (params.length == 1) {
                 scope.putVar(params[0].getName().toString());
                 visitVarInsn(ALOAD, 0);
-                visitMethodInsn(INVOKESTATIC, getInternalName(TObject.class), "wrap", getDesc(TObject.class, "wrap", Object.class), false);
+                visitMethodInsn(INVOKESTATIC, getInternalName(Intrinsics.class), "wrap", getDesc(Intrinsics.class, "wrap", Object.class), false);
                 visitTypeInsn(CHECKCAST, getInternalName(TList.class));
                 visitVarInsn(ASTORE, 1);
             }
@@ -444,8 +444,8 @@ public class Method extends MethodVisitor implements TreeVisitor, Opcodes {
                 if (p != null) {
                     p.wrap(this);
                 }
-                visitMethodInsn(INVOKESTATIC, Constants.TOBJ_NAME, "wrap",
-                        getDesc(TObject.class, "wrap", Object.class), false);
+                visitMethodInsn(INVOKESTATIC, getName(Intrinsics.class), "wrap",
+                        getDesc(Intrinsics.class, "wrap", Object.class), false);
             } else {
                 // method returns void so push null onto stack
                 putNull();
@@ -483,7 +483,7 @@ public class Method extends MethodVisitor implements TreeVisitor, Opcodes {
         }
 
         if (!method.getReturnType().isAssignableFrom(TObject.class)) {
-            visitMethodInsn(INVOKESTATIC, getInternalName(TObject.class), "wrap", getDesc(TObject.class, "wrap", Object.class), false);
+            visitMethodInsn(INVOKESTATIC, getName(Intrinsics.class), "wrap", getDesc(Intrinsics.class, "wrap", Object.class), false);
         }
     }
 
@@ -603,7 +603,7 @@ public class Method extends MethodVisitor implements TreeVisitor, Opcodes {
                 if (p != null) {
                     p.wrap(this);
                 }
-                visitMethodInsn(INVOKESTATIC, getInternalName(TObject.class), "wrap", getDesc(TObject.class, "wrap", Object.class), false);
+                visitMethodInsn(INVOKESTATIC, getName(Intrinsics.class), "wrap", getDesc(Intrinsics.class, "wrap", Object.class), false);
                 return;
             }
             coerce(Type.getType(decl.getTypeDesc()));

@@ -4,7 +4,7 @@ import org.objectweb.asm.Type;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 import org.raven.antlr.ast.*;
-import org.raven.core.wrappers.TObject;
+import org.raven.core.Intrinsics;
 import org.raven.error.Errors;
 
 /**
@@ -55,7 +55,7 @@ public class AdaptorMethod extends Method {
             } else {
                 visitName(varDecl.getName());
             }
-            visitMethodInsn(INVOKESTATIC, getInternalName(TObject.class), "wrap", getDesc(TObject.class, "wrap", Object.class), false);
+            visitMethodInsn(INVOKESTATIC, getInternalName(Intrinsics.class), "wrap", getDesc(Intrinsics.class, "wrap", Object.class), false);
 
             scope.putVar(var_);
             visitVarInsn(ASTORE, scope.findVar(var_));
