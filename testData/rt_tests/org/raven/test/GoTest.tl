@@ -11,6 +11,12 @@ fun goTest1() {
     Assert.assertEquals(50, val);
 }
 
+fun goTest2() {
+    var thread = go toHell(20, 40);
+    thread.join();
+    Assert.assertEquals(60, val);
+}
+
 fun toHell(with, params) {
     val = with + params;
 }

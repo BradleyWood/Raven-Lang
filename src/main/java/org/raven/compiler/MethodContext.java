@@ -8,6 +8,7 @@ import java.util.List;
 
 public class MethodContext {
 
+    private final LinkedList<Fun> syntheticFunctions = new LinkedList<>();
     private LinkedList<TObject> constants = new LinkedList<>();
     private final String owner;
     private String name;
@@ -59,5 +60,13 @@ public class MethodContext {
 
     public void setConstants(LinkedList<TObject> constants) {
         this.constants = constants;
+    }
+
+    public void addSynthetic(Fun fun) {
+        syntheticFunctions.add(fun);
+    }
+
+    public List<Fun> getSyntheticFunctions() {
+        return syntheticFunctions;
     }
 }

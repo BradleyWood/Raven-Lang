@@ -27,6 +27,8 @@ public class ExpressionVisitor extends RavenBaseVisitor<Expression> {
             ((Call) expr).setPrecedingExpr(ctx.expression(0).accept(ExpressionVisitor.INSTANCE));
         } else if (ctx.literal() != null) {
             expr = ctx.literal().accept(LiteralVisitor.INSTANCE);
+        } else if (ctx.goExpression() != null) {
+            expr = ctx.goExpression().accept(GoVisitor.INSTANCE);
         } else if (ctx.dict() != null) {
             expr = ctx.dict().accept(DictDefVisitor.INSTANCE);
         } else if (ctx.list() != null) {

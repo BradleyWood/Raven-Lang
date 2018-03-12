@@ -71,6 +71,12 @@ public class ClassMaker {
             defineMethod(classCtx, fun, fun.modifiers());
         }
 
+        for (Fun fun : classCtx.getSyntheticFunctions()) {
+            classCtx.setName(fun.getName().toString());
+            classCtx.setStatic(fun.hasModifier(Modifier.STATIC));
+            defineMethod(classCtx, fun, fun.modifiers());
+        }
+
         for (QualifiedName iFace : def.getInterfaces()) {
             Interface in = SymbolMap.resolveInterface(iFace.toString().replace(".", "/"));
             if (in == null) {
@@ -148,21 +154,6 @@ public class ClassMaker {
         method.visitCode();
         fun.accept(method);
         method.visitEnd();
-
-        // generate methods for lambda expressions
-        List<Go> goStatements = fun.getBody().getStatements().stream().filter(stmt -> stmt instanceof Go).map(stmt -> (Go) stmt).collect(Collectors.toList());
-        String methodName = context.getName();
-        int counter = 0;
-        for (Go goStatement : goStatements) {
-            String lambdaName = "lambda$" + methodName + "$" + counter++;
-            VarDecl[] params = new VarDecl[goStatement.getGoFun().getParams().length];
-            for (int i = 0; i < params.length; i++) {
-                params[i] = new VarDecl(new QualifiedName(String.valueOf(i)), new Literal(TNull.NULL));
-            }
-            Fun lamba = new Fun(new QualifiedName(lambdaName), new Block(goStatement.getGoFun()), new Modifier[]{}, new String[0], params);
-            context.setName(lambdaName);
-            defineMethod(context, lamba, ACC_STATIC + ACC_PRIVATE + ACC_SYNTHETIC);
-        }
     }
 
     public byte[] getBytes() {

@@ -16,7 +16,6 @@ statement
     |   methodDeclaration
     |   constructor
     |   ifStatement
-    |   goStatement
     |   whileStatement
     |   returnStatement
     |   classDef
@@ -34,9 +33,6 @@ returnStatement
     ;
 ifStatement
     :   IF expression statement (ELSE statement)?
-    ;
-goStatement
-    :   GO (expression '.')? funCall SEMI
     ;
 whileStatement
     :   WHILE expression statement
@@ -121,6 +117,7 @@ expression
     |   expression DOT qualifiedName
     |   expression DOT funCall
     |   funCall
+    |   goExpression
     |   qualifiedName
     |   expression listIdx
     |   slice
@@ -154,6 +151,9 @@ funCall
     :   IDENTIFIER '(' paramList? ')'
     |   SUPER   '(' paramList? ')'
     |   THIS '(' paramList? ')'
+    ;
+goExpression
+    :   GO (expression '.')? funCall
     ;
 paramList
     :   param (',' param)*

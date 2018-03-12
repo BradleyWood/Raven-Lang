@@ -13,7 +13,7 @@ public class GoVisitor extends RavenBaseVisitor<Go> {
     }
 
     @Override
-    public Go visitGoStatement(RavenParser.GoStatementContext ctx) {
+    public Go visitGoExpression(RavenParser.GoExpressionContext ctx) {
         QualifiedName name = new QualifiedName(ctx.funCall().IDENTIFIER().getText());
         Expression[] expressions = new Expression[0];
         if (ctx.funCall().paramList() != null)

@@ -2,7 +2,7 @@ package org.raven.antlr.ast;
 
 import java.util.Objects;
 
-public class Go extends Statement {
+public class Go extends Expression {
 
     private Call goFun;
 

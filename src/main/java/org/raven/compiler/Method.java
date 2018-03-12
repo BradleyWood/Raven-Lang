@@ -249,22 +249,39 @@ public class Method extends MethodVisitor implements TreeVisitor, Opcodes {
 
     @Override
     public void visitGo(Go go) {
-        Call c = go.getGoFun();
+        Call goFun = go.getGoFun();
 
         String lambdaName = "lambda$" + ctx.getName() + "$" + counter++;
-        String desc = getFunDescriptor(c.getParams());
-        StringBuilder params = new StringBuilder();
-        for (int i = 0; i < c.getParams().length; i++) {
-            params.append(getDesc(TObject.class));
+        String desc = getFunDescriptor(goFun.getParams());
+        StringBuilder paramsDesc = new StringBuilder();
+        for (int i = 0; i < goFun.getParams().length; i++) {
+            paramsDesc.append(getDesc(TObject.class));
         }
         visitTypeInsn(NEW, "java/lang/Thread");
         visitInsn(DUP);
-        Arrays.stream(c.getParams()).forEach(a -> a.accept(this));
-        visitInvokeDynamicInsn("run", "(" + params + ")Ljava/lang/Runnable;", LAMBDA_BOOTSTRAP,
+        Arrays.stream(goFun.getParams()).forEach(a -> a.accept(this));
+        visitInvokeDynamicInsn("run", "(" + paramsDesc + ")Ljava/lang/Runnable;", LAMBDA_BOOTSTRAP,
                 Type.getType("()V"), new Handle(Opcodes.H_INVOKESTATIC, ctx.getOwner(), lambdaName, desc),
                 Type.getType("()V"));
         visitMethodInsn(INVOKESPECIAL, "java/lang/Thread", "<init>", "(Ljava/lang/Runnable;)V", false);
+
+        if (!go.pop()) {
+            visitInsn(DUP);
+        }
+
         visitMethodInsn(INVOKEVIRTUAL, "java/lang/Thread", "start", "()V", false);
+
+        if (!go.pop()) {
+            visitMethodInsn(INVOKESTATIC, getInternalName(Intrinsics.class), "wrap", getDesc(Intrinsics.class, "wrap", Object.class), false);
+        }
+
+        VarDecl[] params = new VarDecl[goFun.getParams().length];
+        for (int i = 0; i < params.length; i++) {
+            params[i] = new VarDecl(new QualifiedName(String.valueOf(i)), new Literal(TNull.NULL));
+        }
+        Fun lambda = new Fun(new QualifiedName(lambdaName), new Block(goFun),
+                new Modifier[]{ Modifier.PRIVATE, Modifier.STATIC, Modifier.SYNTHETIC}, new String[0], params);
+        ctx.addSynthetic(lambda);
     }
 
     @Override

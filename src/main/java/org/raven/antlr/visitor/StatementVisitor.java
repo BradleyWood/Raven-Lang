@@ -59,8 +59,6 @@ public class StatementVisitor extends RavenBaseVisitor<Statement> {
             } else {
                 ((Expression) stmt).setPop(true);
             }
-        } else if (ctx.goStatement() != null) {
-            stmt = ctx.goStatement().accept(GoVisitor.INSTANCE);
         } else if (ctx.SEMI() != null) {
             // empty statement
             stmt = new Statement();
