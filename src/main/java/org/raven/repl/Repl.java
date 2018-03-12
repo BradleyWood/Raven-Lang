@@ -42,7 +42,7 @@ public class Repl {
             }
         } catch (InvocationTargetException e) {
             e.getCause().printStackTrace();
-        } catch (NoSuchMethodException | IllegalAccessException e) {
+        } catch (VerifyError | NoSuchMethodException | IllegalAccessException e) {
             System.err.println("REPL INTERNAL ERROR");
         }
         Settings.set("REPL", false);
