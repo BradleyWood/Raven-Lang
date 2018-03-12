@@ -92,6 +92,8 @@ public class Application {
         Repl REPL = new Repl();
         Scanner scanner = new Scanner(System.in);
         while (true) {
+            System.out.println();
+            System.out.print(">>> ");
             String line = scanner.nextLine();
             int comment = line.indexOf("//");
             if (comment > 0) {
