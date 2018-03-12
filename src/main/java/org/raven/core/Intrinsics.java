@@ -77,6 +77,7 @@ public class Intrinsics {
         if (methods.isEmpty()) {
             for (Field field : clazz.getFields()) {
                 if (field.getName().equals(name) && !Modifier.isStatic(field.getModifiers())) {
+                    field.setAccessible(true);
                     MethodHandle getter = caller.unreflectSetter(field);
                     JSetter jMethod = new JSetter(getter, clazz, field.getType());
                     jmethods.add(jMethod);
@@ -120,6 +121,7 @@ public class Intrinsics {
         if (methods.isEmpty()) {
             for (Field field : clazz.getFields()) {
                 if (field.getName().equals(name) && !Modifier.isStatic(field.getModifiers())) {
+                    field.setAccessible(true);
                     MethodHandle getter = caller.unreflectGetter(field);
                     JMethod jMethod = new JMethod(getter, clazz);
                     jmethods.addFirst(jMethod);
@@ -166,6 +168,7 @@ public class Intrinsics {
             for (Method method : clazz.getMethods()) {
                 if (method.getName().equals(name) && method.getParameterCount() == paramCount
                         && !Modifier.isStatic(method.getModifiers())) {
+                    method.setAccessible(true);
                     MethodHandle mh = caller.unreflect(method);
                     JMethod jm = new JMethod(mh, clazz, method.getParameterTypes());
                     jmethods.add(jm);
@@ -191,13 +194,14 @@ public class Intrinsics {
         for (Method method : clazz.getDeclaredMethods()) {
             if (method.getName().equals(name) && method.getParameterCount() == paramCount &&
                     Modifier.isStatic(method.getModifiers())) {
+                method.setAccessible(true);
                 MethodHandle mh = caller.unreflect(method);
                 JMethod jm = new JMethod(mh, clazz, method.getParameterTypes());
                 list.add(jm);
             }
         }
 
-        for (Class<?> klazz : clazz.getDeclaredClasses()) {
+        for (Class<?> klazz : clazz.getClasses()) {
             if (klazz.getSimpleName().equals(name)) {
                 for (Constructor<?> constructor : klazz.getDeclaredConstructors()) {
                     if (constructor.getParameterCount() == paramCount) {
