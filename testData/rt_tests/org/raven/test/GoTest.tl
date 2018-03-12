@@ -17,7 +17,12 @@ fun goTest2() {
     Assert.assertEquals(60, val);
 }
 
+fun goTest3() {
+    (go toHell(1, 419)).join();
+    // dont to this: go toHell(1, 419).join();
+    Assert.assertEquals(420, val);
+}
+
 fun toHell(with, params) {
     val = with + params;
 }
-
