@@ -14,18 +14,6 @@ import java.util.*;
 
 public class Method extends MethodVisitor implements TreeVisitor, Opcodes {
 
-
-    private static final Handle GET_BOOTSTRAP = new Handle(H_INVOKESTATIC,
-            "org/raven/core/Intrinsics", "bootstrapGetter",
-            "(Ljava/lang/invoke/MethodHandles$Lookup;Ljava/lang/String;Ljava/lang/invoke/MethodType;)Ljava/lang/invoke/CallSite;",
-            false);
-
-    private static final Handle SET_BOOTSTRAP = new Handle(H_INVOKESTATIC,
-            "org/raven/core/Intrinsics", "bootstrapSetter",
-            "(Ljava/lang/invoke/MethodHandles$Lookup;Ljava/lang/String;Ljava/lang/invoke/MethodType;)Ljava/lang/invoke/CallSite;",
-            false);
-
-
     private final ArrayList<Integer> lineNumbers = new ArrayList<>();
 
     private final Stack<Label> continueLabels = new Stack<>();
@@ -272,9 +260,7 @@ public class Method extends MethodVisitor implements TreeVisitor, Opcodes {
         visitTypeInsn(NEW, "java/lang/Thread");
         visitInsn(DUP);
         Arrays.stream(c.getParams()).forEach(a -> a.accept(this));
-        visitInvokeDynamicInsn("run", "(" + params + ")Ljava/lang/Runnable;", new Handle(Opcodes.H_INVOKESTATIC,
-                        "java/lang/invoke/LambdaMetafactory", "metafactory",
-                        "(Ljava/lang/invoke/MethodHandles$Lookup;Ljava/lang/String;Ljava/lang/invoke/MethodType;Ljava/lang/invoke/MethodType;Ljava/lang/invoke/MethodHandle;Ljava/lang/invoke/MethodType;)Ljava/lang/invoke/CallSite;"),
+        visitInvokeDynamicInsn("run", "(" + params + ")Ljava/lang/Runnable;", LAMBDA_BOOTSTRAP,
                 Type.getType("()V"), new Handle(Opcodes.H_INVOKESTATIC, ctx.getOwner(), lambdaName, desc),
                 Type.getType("()V"));
         visitMethodInsn(INVOKESPECIAL, "java/lang/Thread", "<init>", "(Ljava/lang/Runnable;)V", false);
@@ -410,9 +396,7 @@ public class Method extends MethodVisitor implements TreeVisitor, Opcodes {
         visitListDef(new ListDef(params));
         visitTypeInsn(CHECKCAST, "org/raven/core/wrappers/TList");
         visitInvokeDynamicInsn(funName, "(Lorg/raven/core/wrappers/TList;)Lorg/raven/core/wrappers/TObject;",
-                new Handle(H_INVOKESTATIC,
-                        "org/raven/core/Intrinsics", "bootstrap",
-                        "(Ljava/lang/invoke/MethodHandles$Lookup;Ljava/lang/String;Ljava/lang/invoke/MethodType;Ljava/lang/Class;I)Ljava/lang/invoke/CallSite;", false),
+                INVOKE_STATIC_BOOTSTRAP,
                 owner, params.length);
     }
 
@@ -482,14 +466,10 @@ public class Method extends MethodVisitor implements TreeVisitor, Opcodes {
     }
 
     private void invokeVirtualFun(String name, Expression[] params) {
-        Handle handle = new Handle(H_INVOKESTATIC,
-                "org/raven/core/Intrinsics", "bootstrapVirtual",
-                "(Ljava/lang/invoke/MethodHandles$Lookup;Ljava/lang/String;Ljava/lang/invoke/MethodType;I)Ljava/lang/invoke/CallSite;", false);
-
         visitListDef(new ListDef(params));
         visitTypeInsn(CHECKCAST, getInternalName(TList.class));
         mv.visitInvokeDynamicInsn(name, "(Lorg/raven/core/wrappers/TObject;Lorg/raven/core/wrappers/TList;)Lorg/raven/core/wrappers/TObject;",
-                handle, params.length);
+                INVOKE_VIRTUAL_BOOTSTRAP, params.length);
     }
 
     private void invokeVirtualFun(String name, Expression[] params, java.lang.reflect.Method method) {
@@ -509,9 +489,6 @@ public class Method extends MethodVisitor implements TreeVisitor, Opcodes {
 
     private void newObject(String owner, Expression[] params) {
         Type type = Type.getType("L" + owner + ";");
-        Handle handle = new Handle(H_INVOKESTATIC,
-                "org/raven/core/Intrinsics", "bootstrapConstructor",
-                "(Ljava/lang/invoke/MethodHandles$Lookup;Ljava/lang/String;Ljava/lang/invoke/MethodType;Ljava/lang/Class;I)Ljava/lang/invoke/CallSite;", false);
 
         visitListDef(new ListDef(params));
         visitTypeInsn(CHECKCAST, getName(TList.class));
@@ -519,7 +496,7 @@ public class Method extends MethodVisitor implements TreeVisitor, Opcodes {
         String name = owner.substring(1 + owner.lastIndexOf("/"));
 
         mv.visitInvokeDynamicInsn("new" + name, "(Lorg/raven/core/wrappers/TList;)Lorg/raven/core/wrappers/TObject;",
-                handle, type, params.length);
+                CONSTRUCTOR_BOOTSTRAP, type, params.length);
     }
 
     @Override
@@ -948,4 +925,30 @@ public class Method extends MethodVisitor implements TreeVisitor, Opcodes {
         }
         return null;
     }
+
+    private static final Handle GET_BOOTSTRAP = new Handle(H_INVOKESTATIC,
+            "org/raven/core/Intrinsics", "bootstrapGetter",
+            "(Ljava/lang/invoke/MethodHandles$Lookup;Ljava/lang/String;Ljava/lang/invoke/MethodType;)Ljava/lang/invoke/CallSite;",
+            false);
+
+    private static final Handle SET_BOOTSTRAP = new Handle(H_INVOKESTATIC,
+            "org/raven/core/Intrinsics", "bootstrapSetter",
+            "(Ljava/lang/invoke/MethodHandles$Lookup;Ljava/lang/String;Ljava/lang/invoke/MethodType;)Ljava/lang/invoke/CallSite;",
+            false);
+
+    private static final Handle CONSTRUCTOR_BOOTSTRAP = new Handle(H_INVOKESTATIC,
+            "org/raven/core/Intrinsics", "bootstrapConstructor",
+            "(Ljava/lang/invoke/MethodHandles$Lookup;Ljava/lang/String;Ljava/lang/invoke/MethodType;Ljava/lang/Class;I)Ljava/lang/invoke/CallSite;", false);
+
+    private static final Handle LAMBDA_BOOTSTRAP = new Handle(Opcodes.H_INVOKESTATIC,
+            "java/lang/invoke/LambdaMetafactory", "metafactory",
+            "(Ljava/lang/invoke/MethodHandles$Lookup;Ljava/lang/String;Ljava/lang/invoke/MethodType;Ljava/lang/invoke/MethodType;Ljava/lang/invoke/MethodHandle;Ljava/lang/invoke/MethodType;)Ljava/lang/invoke/CallSite;", false);
+
+    private static final Handle INVOKE_STATIC_BOOTSTRAP = new Handle(H_INVOKESTATIC,
+            "org/raven/core/Intrinsics", "bootstrap",
+            "(Ljava/lang/invoke/MethodHandles$Lookup;Ljava/lang/String;Ljava/lang/invoke/MethodType;Ljava/lang/Class;I)Ljava/lang/invoke/CallSite;", false);
+
+    private static final Handle INVOKE_VIRTUAL_BOOTSTRAP = new Handle(H_INVOKESTATIC,
+            "org/raven/core/Intrinsics", "bootstrapVirtual",
+            "(Ljava/lang/invoke/MethodHandles$Lookup;Ljava/lang/String;Ljava/lang/invoke/MethodType;I)Ljava/lang/invoke/CallSite;", false);
 }
