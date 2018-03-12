@@ -583,10 +583,10 @@ public class Method extends MethodVisitor implements TreeVisitor, Opcodes {
                     } else {
                         if (decl != null) {
                             visitFieldInsn(GETSTATIC, ctx.getOwner().replace(".", "/"), names[0], Constants.TOBJ_SIG);
-                            StringBuilder qname = new StringBuilder();
                             String[] nn = Arrays.copyOfRange(names, 1, names.length);
-                            Arrays.stream(nn).forEach(qname::append);
-                            accessVirtualField(qname.toString(), load);
+                            for (String s : nn) {
+                                accessVirtualField(s, load);
+                            }
                         }
                     }
                     break;
