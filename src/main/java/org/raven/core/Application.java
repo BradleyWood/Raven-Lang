@@ -14,6 +14,10 @@ import static org.raven.util.Utility.compileAndRun;
 
 public class Application {
 
+    static {
+        Settings.set("OUT", "target/classes");
+    }
+
     public static void main(String[] args) {
         Options options = new Options();
         options.addOption("secure", false, "Run with security manager");

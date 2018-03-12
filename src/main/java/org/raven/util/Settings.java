@@ -27,6 +27,10 @@ public class Settings {
         return (String) SETTINGS.get(key);
     }
 
+    public static Object getOrDefault(String string, Object defaultValue) {
+        return SETTINGS.getOrDefault(string, defaultValue);
+    }
+
     public static void set(String key, Object value) {
         SETTINGS.put(key, value);
     }

@@ -5,6 +5,7 @@ import org.raven.antlr.RParser;
 import org.raven.antlr.RavenTree;
 import org.raven.antlr.ast.*;
 import org.raven.error.Errors;
+import org.raven.util.Settings;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -14,7 +15,7 @@ import java.util.stream.Collectors;
 
 public class Compiler {
 
-    public static final String BIN = "target/classes/";
+    private static final String DEFUALT_OUTPUT = "target/classes/";
 
     private File file;
     private String name;
@@ -99,7 +100,7 @@ public class Compiler {
         for (ClassDef classDef : tree.getClasses()) {
             classDef.setPackage(tree.getPackage());
         }
-        
+
         modifyTree(tree);
 
         for (ClassDef classDef : tree.getClasses()) {
@@ -123,7 +124,8 @@ public class Compiler {
         }
 
         for (String s : classBuilders.keySet()) {
-            String file = BIN + "/" + s.replace(".", "/") + ".class";
+            String file = Settings.getOrDefault("OUT", DEFUALT_OUTPUT)
+                    + "/" + s.replace(".", "/") + ".class";
             byte[] data = classBuilders.get(s).getBytes();
             classMap.put(s, data);
             if (save) {
