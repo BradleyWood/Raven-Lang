@@ -25,6 +25,7 @@ public class Intrinsics {
     private static Map<Integer, LinkedList<JMethod>> virtualMethodCache = Collections.synchronizedMap(new HashMap<>());
     private static Map<Integer, LinkedList<JMethod>> getterCache = Collections.synchronizedMap(new HashMap<>());
     private static Map<Integer, LinkedList<JSetter>> setterCache = Collections.synchronizedMap(new HashMap<>());
+    private static Map<Integer, LinkedList<JMethod>> constructorCache = Collections.synchronizedMap(new HashMap<>());
 
     /**
      * Requires that an object be a specific type
@@ -48,6 +49,48 @@ public class Intrinsics {
         if (object == null || object == TNull.NULL) {
             throw sanitizeStackTrace(new NullPointerException());
         }
+    }
+
+    public static CallSite bootstrapConstructor(MethodHandles.Lookup caller, String name, MethodType type, Class<?> clazz, int argCount) throws Throwable {
+
+        int hash = Objects.hash(clazz, argCount);
+
+        List<JMethod> constructorList;
+        if (constructorCache.containsKey(hash)) {
+            constructorList = constructorCache.get(hash);
+        } else {
+            Constructor<?>[] constructors = clazz.getConstructors();
+            if (constructors.length == 0) {
+                throw sanitizeStackTrace(new NoSuchMethodException("Class " + clazz.getName() + " has no public constructors"));
+            }
+            constructorList = new LinkedList<>();
+            for (Constructor<?> constructor : constructors) {
+                if (constructor.getParameterCount() == argCount) {
+                    MethodHandle ch = caller.unreflectConstructor(constructor);
+                    JMethod jMethod = new JMethod(ch, clazz, constructor.getParameterTypes());
+                    constructorList.add(jMethod);
+                }
+            }
+        }
+
+        if (constructorList.isEmpty()) {
+            throw sanitizeStackTrace(new NoSuchMethodException("Wrong number of arguments: " + argCount));
+        }
+
+        MethodHandle mh;
+        if (constructorList.size() == 1) {
+            mh = caller.findStatic(Intrinsics.class, "newInstance", MethodType.methodType(TObject.class, JMethod.class, TList.class));
+            mh = mh.bindTo(constructorList.get(0));
+        } else {
+            mh = caller.findStatic(Intrinsics.class, "invokeStatic", MethodType.methodType(TObject.class, LinkedList.class, String.class, TList.class));
+            mh = mh.bindTo(constructorList).bindTo(name);
+        }
+
+        return new ConstantCallSite(mh);
+    }
+
+    public static TObject newInstance(JMethod constructor, TList arguments) throws Throwable {
+        return TObject.wrap(constructor.methodHandle.invokeWithArguments(TObject.getParams(arguments, constructor.types)));
     }
 
     public static CallSite bootstrapSetter(MethodHandles.Lookup caller, String name, MethodType type) throws Throwable {

@@ -508,9 +508,18 @@ public class Method extends MethodVisitor implements TreeVisitor, Opcodes {
     }
 
     private void newObject(String owner, Expression[] params) {
-        visitLdcInsn(Type.getType("L" + (owner.replace(".", "/")) + ";"));
+        Type type = Type.getType("L" + owner + ";");
+        Handle handle = new Handle(H_INVOKESTATIC,
+                "org/raven/core/Intrinsics", "bootstrapConstructor",
+                "(Ljava/lang/invoke/MethodHandles$Lookup;Ljava/lang/String;Ljava/lang/invoke/MethodType;Ljava/lang/Class;I)Ljava/lang/invoke/CallSite;", false);
+
         visitListDef(new ListDef(params));
-        visitMethodInsn(INVOKESTATIC, Constants.TOBJ_NAME, "newObj", getDesc(TObject.class, "newObj", Class.class, TObject.class), false);
+        visitTypeInsn(CHECKCAST, getName(TList.class));
+
+        String name = owner.substring(1 + owner.lastIndexOf("/"));
+
+        mv.visitInvokeDynamicInsn("new" + name, "(Lorg/raven/core/wrappers/TList;)Lorg/raven/core/wrappers/TObject;",
+                handle, type, params.length);
     }
 
     @Override
