@@ -235,40 +235,6 @@ public class TObject implements Comparable<TObject> {
     }
 
     @Hidden
-    public static TObject newObj(Class clazz, TObject params) throws Throwable {
-        if (clazz.getAnnotationsByType(Hidden.class).length == 0) {
-            Class<?>[] types = null;
-            Constructor con = null;
-            int rating = -1;
-            for (Constructor<?> constructor : clazz.getConstructors()) {
-                if (constructor.getAnnotationsByType(Hidden.class).length > 0)
-                    continue;
-                if (constructor.getParameterCount() == params.size()) {
-                    Class<?>[] t = constructor.getParameterTypes();
-
-                    int r = rate(params, t);
-                    if (r > rating) {
-                        rating = r;
-                        con = constructor;
-                        types = t;
-                    }
-                }
-            }
-            if (con != null) {
-                try {
-                    Object o = con.newInstance(getParams(params, types, rating));
-                    if (TObject.class.isAssignableFrom(o.getClass()))
-                        return (TObject) o;
-                    return new TObject(o);
-                } catch (InvocationTargetException e) {
-                    throw e.getCause();
-                }
-            }
-        }
-        throw new NoSuchMethodException("Constructor " + clazz.getName() + " not found.");
-    }
-
-    @Hidden
     public static int rate(TObject params, Class<?>[] types) {
         if (!(params instanceof TList) || params.size() != types.length)
             throw new IllegalArgumentException();
