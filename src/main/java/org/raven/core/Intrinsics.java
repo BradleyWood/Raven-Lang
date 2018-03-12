@@ -85,7 +85,7 @@ public class Intrinsics {
     }
 
     public static TObject newInstance(JMethod constructor, TList arguments) throws Throwable {
-        return wrap(constructor.methodHandle.invokeWithArguments(TObject.getParams(arguments, constructor.types)));
+        return wrap(constructor.methodHandle.invokeWithArguments(getParams(arguments, constructor.types)));
     }
 
     public static CallSite bootstrapSetter(MethodHandles.Lookup caller, String name, MethodType type) throws Throwable {
@@ -221,7 +221,7 @@ public class Intrinsics {
         JMethod method = select(methods, args.size(), args);
         if (method != null) {
             method.incCount();
-            return wrap(method.methodHandle.bindTo(v).invokeWithArguments(TObject.getParams(args, method.types)));
+            return wrap(method.methodHandle.bindTo(v).invokeWithArguments(getParams(args, method.types)));
         } else {
             throw sanitizeStackTrace(new RuntimeException("Type coercion impossible"));
         }
@@ -262,7 +262,7 @@ public class Intrinsics {
         JMethod method = select(jm, args.size(), args);
         if (method != null) {
             method.incCount();
-            return wrap(method.methodHandle.invokeWithArguments(TObject.getParams(args, method.types)));
+            return wrap(method.methodHandle.invokeWithArguments(getParams(args, method.types)));
         } else {
             throw sanitizeStackTrace(new RuntimeException("Type coercion impossible"));
         }
@@ -273,7 +273,7 @@ public class Intrinsics {
         JMethod bestMh = null;
         if (argCount > 0) {
             for (JMethod method : methods) {
-                int rating = TObject.rate(args, method.types);
+                int rating = rate(args, method.types);
                 if (rating > bestRating) {
                     bestRating = rating;
                     bestMh = method;
@@ -326,6 +326,47 @@ public class Intrinsics {
             return lst;
         }
         return new TObject(o);
+    }
+
+    @Hidden
+    public static int rate(TObject params, Class<?>[] types) {
+        if (!(params instanceof TList) || params.size() != types.length)
+            throw new IllegalArgumentException();
+        List<TObject> lst = ((TList) params).getList();
+
+        int rating = 0;
+
+        for (int i = 0; i < lst.size(); i++) {
+            int r = lst.get(i).coerceRating(types[i]);
+            if (r == TObject.COERCE_IMPOSSIBLE)
+                return TObject.COERCE_IMPOSSIBLE;
+            rating += r;
+        }
+
+        return rating;
+    }
+
+
+    public static Object[] getParams(TObject params, Class<?>[] types, int rating) {
+        if (rating == -1) {
+            throw new IllegalArgumentException("Cannot coerce arguments: " + rating);
+        }
+        if (!(params instanceof TList) || params.size() != types.length)
+            throw new IllegalArgumentException();
+
+        List<TObject> lst = ((TList) params).getList();
+        Object[] ret = new Object[lst.size()];
+        for (int i = 0; i < lst.size(); i++) {
+            ret[i] = lst.get(i).coerce(types[i]);
+        }
+        return ret;
+    }
+
+    public static Object[] getParams(TObject params, Class<?>[] types) {
+        int rating = rate(params, types);
+        if (rating == TObject.COERCE_IMPOSSIBLE)
+            return null;
+        return getParams(params, types, rating);
     }
 
     public static <T extends Throwable> T sanitizeStackTrace(T throwable) {

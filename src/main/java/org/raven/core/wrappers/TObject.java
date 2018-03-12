@@ -3,7 +3,6 @@ package org.raven.core.wrappers;
 import org.raven.core.Hidden;
 
 import java.math.BigInteger;
-import java.util.*;
 
 public class TObject implements Comparable<TObject> {
 
@@ -231,47 +230,6 @@ public class TObject implements Comparable<TObject> {
             return COERCE_BAD;
         }
         return COERCE_IMPOSSIBLE;
-    }
-
-    @Hidden
-    public static int rate(TObject params, Class<?>[] types) {
-        if (!(params instanceof TList) || params.size() != types.length)
-            throw new IllegalArgumentException();
-        List<TObject> lst = ((TList) params).getList();
-
-        int rating = 0;
-
-        for (int i = 0; i < lst.size(); i++) {
-            int r = lst.get(i).coerceRating(types[i]);
-            if (r == COERCE_IMPOSSIBLE)
-                return COERCE_IMPOSSIBLE;
-            rating += r;
-        }
-
-        return rating;
-    }
-
-
-    public static Object[] getParams(TObject params, Class<?>[] types, int rating) {
-        if (rating == -1) {
-            throw new IllegalArgumentException("Cannot coerce arguments: " + rating);
-        }
-        if (!(params instanceof TList) || params.size() != types.length)
-            throw new IllegalArgumentException();
-
-        List<TObject> lst = ((TList) params).getList();
-        Object[] ret = new Object[lst.size()];
-        for (int i = 0; i < lst.size(); i++) {
-            ret[i] = lst.get(i).coerce(types[i]);
-        }
-        return ret;
-    }
-
-    public static Object[] getParams(TObject params, Class<?>[] types) {
-        int rating = rate(params, types);
-        if (rating == COERCE_IMPOSSIBLE)
-            return null;
-        return getParams(params, types, rating);
     }
 
     @Override
