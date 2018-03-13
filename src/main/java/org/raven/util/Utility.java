@@ -27,7 +27,7 @@ public class Utility {
         } catch (ClassNotFoundException e) {
             try {
                 Errors.reset();
-                Utility.compile("/src/main/raven/raven/", true);
+                Utility.compile("src/main/raven/raven/", true);
                 Class.forName("raven.Builtin");
             } catch (Exception e1) {
                 e1.printStackTrace();
