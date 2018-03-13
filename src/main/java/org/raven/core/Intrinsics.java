@@ -32,7 +32,7 @@ public class Intrinsics {
      */
     public static void requireType(TObject obj, TType type, String message) {
         if (!obj.getType().equals(type)) {
-            throw sanitizeStackTrace(new RuntimeException(message));
+            throw new RuntimeException(message);
         }
     }
 
@@ -43,7 +43,7 @@ public class Intrinsics {
      */
     public static void requireNonNull(TObject object) {
         if (object == null || object == TNull.NULL) {
-            throw sanitizeStackTrace(new NullPointerException());
+            throw new NullPointerException();
         }
     }
 
@@ -57,7 +57,7 @@ public class Intrinsics {
         } else {
             Constructor<?>[] constructors = clazz.getConstructors();
             if (constructors.length == 0) {
-                throw sanitizeStackTrace(new NoSuchMethodException("Class " + clazz.getName() + " has no public constructors"));
+                throw new NoSuchMethodException("Class " + clazz.getName() + " has no public constructors");
             }
             constructorList = new LinkedList<>();
             for (Constructor<?> constructor : constructors) {
@@ -70,7 +70,7 @@ public class Intrinsics {
         }
 
         if (constructorList.isEmpty()) {
-            throw sanitizeStackTrace(new NoSuchMethodException("Wrong number of arguments: " + argCount));
+            throw new NoSuchMethodException("Wrong number of arguments: " + argCount);
         }
 
         MethodHandle mh;
@@ -107,7 +107,7 @@ public class Intrinsics {
     public static TObject setField(MethodHandles.Lookup caller, LinkedList<JSetter> jmethods, String name, TObject object, TObject value) throws Throwable {
         Object obj = object.getObject();
         if (object == TNull.NULL || obj == null) {
-            throw sanitizeStackTrace(new NullPointerException());
+            throw new NullPointerException();
         }
         Class<?> clazz = obj.getClass();
 
@@ -126,7 +126,7 @@ public class Intrinsics {
             }
         }
         if (methods.isEmpty()) {
-            throw sanitizeStackTrace(new NoSuchFieldException(name));
+            throw new NoSuchFieldException(name);
         }
         JSetter setter = methods.get(0);
         setter.incCount();
@@ -151,7 +151,7 @@ public class Intrinsics {
     public static TObject getField(MethodHandles.Lookup caller, LinkedList<JMethod> jmethods, String name, TObject object) throws Throwable {
         Object obj = object.getObject();
         if (object == TNull.NULL || obj == null) {
-            throw sanitizeStackTrace(new NullPointerException());
+            throw new NullPointerException();
         }
         Class<?> clazz = obj.getClass();
 
@@ -170,7 +170,7 @@ public class Intrinsics {
             }
         }
         if (methods.isEmpty()) {
-            throw sanitizeStackTrace(new NoSuchFieldException(name));
+            throw new NoSuchFieldException(name);
         }
         return wrap(methods.get(0).methodHandle.bindTo(obj).invoke());
     }
@@ -194,7 +194,7 @@ public class Intrinsics {
         Object v = instance.getObject();
 
         if (instance == TNull.NULL) {
-            throw sanitizeStackTrace(new NullPointerException());
+            throw new NullPointerException();
         }
 
         if (instance.getObject() == null) {
@@ -216,7 +216,7 @@ public class Intrinsics {
             }
         }
         if (methods.isEmpty()) {
-            throw sanitizeStackTrace(new NoSuchMethodException(name));
+            throw new NoSuchMethodException(name);
         }
 
         JMethod method = select(methods, args.size(), args);
@@ -224,7 +224,7 @@ public class Intrinsics {
             method.incCount();
             return wrap(method.methodHandle.bindTo(v).invokeWithArguments(getParams(args, method.types)));
         } else {
-            throw sanitizeStackTrace(new RuntimeException("Type coercion impossible"));
+            throw new RuntimeException("Type coercion impossible");
         }
     }
 
@@ -258,14 +258,14 @@ public class Intrinsics {
 
     public static TObject invokeStatic(LinkedList<JMethod> jm, String name, TList args) throws Throwable {
         if (jm == null || jm.size() == 0) {
-            throw sanitizeStackTrace(new NoSuchMethodException(name));
+            throw new NoSuchMethodException(name);
         }
         JMethod method = select(jm, args.size(), args);
         if (method != null) {
             method.incCount();
             return wrap(method.methodHandle.invokeWithArguments(getParams(args, method.types)));
         } else {
-            throw sanitizeStackTrace(new RuntimeException("Type coercion impossible"));
+            throw new RuntimeException("Type coercion impossible");
         }
     }
 

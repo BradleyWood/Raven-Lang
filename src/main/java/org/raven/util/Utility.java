@@ -63,7 +63,7 @@ public class Utility {
         } catch (IOException | NoSuchMethodException | ClassNotFoundException | IllegalAccessException e) {
             System.err.println(e.getMessage());
         } catch (InvocationTargetException e) {
-            e.getCause().printStackTrace();
+            Thread.getDefaultUncaughtExceptionHandler().uncaughtException(Thread.currentThread(), e.getCause());
         }
     }
 
