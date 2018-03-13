@@ -220,6 +220,10 @@ public class Method extends MethodVisitor implements TreeVisitor, Opcodes {
             writeConstants();
         }
 
+        if (fun.getName().toString().equals("main") && fun.getParams().length < 2) {
+            visitMethodInsn(INVOKESTATIC, getInternalName(Intrinsics.class), "useSanitizedExceptionHandler", "()V", false);
+        }
+
         fun.getBody().accept(this);
         Statement stmt = null;
         int idx = fun.getBody().getStatements().size() - 1;

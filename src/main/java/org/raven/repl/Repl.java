@@ -8,6 +8,7 @@ import org.raven.antlr.ast.*;
 import org.raven.compiler.ClassMaker;
 import org.raven.compiler.SymbolMap;
 import org.raven.core.ByteClassLoader;
+import org.raven.core.ExceptionHandler;
 import org.raven.error.Errors;
 import org.raven.util.Settings;
 
@@ -20,6 +21,7 @@ import java.util.stream.Collectors;
  */
 public class Repl {
 
+    private static final ExceptionHandler exceptionHandler = new ExceptionHandler();
     private final ByteClassLoader classLoader = new ByteClassLoader(null, Repl.class.getClassLoader(), new HashMap<>());
     private final LinkedList<Import> imports = new LinkedList<>();
     private Class parent = null;
@@ -34,16 +36,20 @@ public class Repl {
 
     public void exec(String line) {
         Settings.set("REPL", true);
+        Thread.UncaughtExceptionHandler currentHandler = Thread.getDefaultUncaughtExceptionHandler();
         try {
             Class<?> cl = build(line);
             if (cl != null) {
+                Thread.setDefaultUncaughtExceptionHandler(exceptionHandler);
                 cl.getDeclaredMethod("exec").invoke(null);
                 parent = cl;
             }
         } catch (InvocationTargetException e) {
-            e.getCause().printStackTrace();
+            Thread.getDefaultUncaughtExceptionHandler().uncaughtException(Thread.currentThread(), e.getCause());
         } catch (VerifyError | NoSuchMethodException | IllegalAccessException e) {
             System.err.println("REPL INTERNAL ERROR");
+        } finally {
+            Thread.setDefaultUncaughtExceptionHandler(currentHandler);
         }
         Settings.set("REPL", false);
     }

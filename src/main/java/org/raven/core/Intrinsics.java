@@ -1,6 +1,7 @@
 package org.raven.core;
 
 import org.raven.core.wrappers.*;
+import org.raven.util.Settings;
 
 import java.lang.invoke.*;
 import java.lang.reflect.*;
@@ -369,6 +370,10 @@ public class Intrinsics {
         return getParams(params, types, rating);
     }
 
+    public static void useSanitizedExceptionHandler() {
+        Thread.setDefaultUncaughtExceptionHandler(new ExceptionHandler());
+    }
+
     public static <T extends Throwable> T sanitizeStackTrace(T throwable) {
         StackTraceElement[] stackTrace = throwable.getStackTrace();
         ArrayList<StackTraceElement> list = new ArrayList<>(stackTrace.length);
@@ -376,10 +381,13 @@ public class Intrinsics {
         for (StackTraceElement element : stackTrace) {
             if (!skip) {
                 list.add(element);
-            } else if (element.getClassName().equals("org.raven.core.Intrinsics")) {
-                if (INTRINSIC_METHODS.contains(element.getMethodName())) {
-                    skip = false;
-                }
+            } else if (element.getClassName().startsWith("org.raven.core")) {
+                list.clear();
+                skip = false;
+            }
+            if (Settings.getBoolean("REPL") && element.getMethodName().equals("exec")
+                    || element.getMethodName().equals("main")) {
+                break;
             }
         }
         throwable.setStackTrace(list.toArray(new StackTraceElement[list.size()]));
