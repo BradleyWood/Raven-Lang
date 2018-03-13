@@ -34,23 +34,6 @@ public class Application {
         programArgs.setArgs(Option.UNLIMITED_VALUES);
         options.addOption(programArgs);
 
-        try {
-            Class.forName("raven.Builtin");
-        } catch (ClassNotFoundException e) {
-            try {
-                compile("/src/main/raven/raven/", true);
-                if (Errors.getErrorCount() > 0) {
-                    Errors.printErrors();
-                } else {
-                    System.out.println("Builtins have been built");
-                }
-                return;
-            } catch (IOException e1) {
-                System.err.println("Cannot build builtins");
-                return;
-            }
-        }
-
         CommandLineParser parser = new DefaultParser();
         try {
             CommandLine cmd = parser.parse(options, args);
