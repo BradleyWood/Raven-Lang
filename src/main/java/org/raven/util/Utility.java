@@ -68,7 +68,10 @@ public class Utility {
     }
 
     public static HashMap<String, byte[]> compile(String relativePath, boolean save) throws IOException {
-        File file = new File(new File(".").getAbsoluteFile(), relativePath);
+        File file = new File(relativePath);
+        if (!file.isAbsolute()) {
+            file = new File(new File(".").getAbsolutePath(), relativePath);
+        }
 
         HashMap<String, byte[]> classes = new HashMap<>();
 
