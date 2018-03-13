@@ -284,7 +284,10 @@ public class Method extends MethodVisitor implements TreeVisitor, Opcodes {
             params[i] = new VarDecl(new QualifiedName(String.valueOf(i)), new Literal(TNull.NULL));
         }
         Fun lambda = new Fun(new QualifiedName(lambdaName), new Block(goFun),
-                new Modifier[]{ Modifier.PRIVATE, Modifier.STATIC, Modifier.SYNTHETIC}, new String[0], params);
+                new Modifier[]{ Modifier.PRIVATE, Modifier.SYNTHETIC}, new String[0], params);
+        if (ctx.isStatic()) {
+            lambda.addModifier(Modifier.STATIC);
+        }
         ctx.addSynthetic(lambda);
     }
 
