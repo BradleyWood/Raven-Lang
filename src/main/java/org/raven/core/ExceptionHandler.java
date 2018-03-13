@@ -9,7 +9,7 @@ public class ExceptionHandler implements Thread.UncaughtExceptionHandler {
         System.err.println(e.getClass().getSimpleName() + ": " + e.getMessage());
         for (StackTraceElement stackTraceElement : e.getStackTrace()) {
             System.err.println("\tat " + stackTraceElement.getClassName() + "." + stackTraceElement.getMethodName()
-                    + "(" + stackTraceElement.getFileName() + " on line " + stackTraceElement.getLineNumber() + ")");
+                    + "(" + stackTraceElement.getFileName() + ":" + stackTraceElement.getLineNumber() + ")");
         }
     }
 }
