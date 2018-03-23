@@ -22,6 +22,7 @@ public class Intrinsics {
     private static Map<Integer, LinkedList<JMethod>> getterCache = Collections.synchronizedMap(new HashMap<>());
     private static Map<Integer, LinkedList<JSetter>> setterCache = Collections.synchronizedMap(new HashMap<>());
     private static Map<Integer, LinkedList<JMethod>> constructorCache = Collections.synchronizedMap(new HashMap<>());
+    private static Map<Integer, LinkedList<JMethod>> specialCache = Collections.synchronizedMap(new HashMap<>());
 
     /**
      * Requires that an object be a specific type
@@ -41,7 +42,7 @@ public class Intrinsics {
      *
      * @param object The object
      */
-    public static void requireNonNull(TObject object) {
+    public static void requireNonNull(Object object) {
         if (object == null || object == TNull.NULL) {
             throw new NullPointerException();
         }
@@ -83,6 +84,78 @@ public class Intrinsics {
         }
 
         return new ConstantCallSite(mh);
+    }
+
+    public static CallSite bootstrapSpecial(MethodHandles.Lookup caller, String name, MethodType type, Class<?> superClass, int argCount) throws Throwable {
+        int hash = Objects.hash(name, superClass);
+
+        MethodHandle invokeSpecial = caller.findStatic(Intrinsics.class, "invokeSpecial",
+                MethodType.methodType(TObject.class, LinkedList.class, Object.class, TList.class));
+
+        if (specialCache.containsKey(hash)) {
+            LinkedList<JMethod> cache = specialCache.get(hash);
+            if (cache.size() == 1) {
+                return new ConstantCallSite(cache.get(0).methodHandle);
+            }
+            if (cache.size() > 1) {
+                return new ConstantCallSite(invokeSpecial.bindTo(cache));
+            } else {
+                throw new NoSuchMethodException(name);
+            }
+        }
+        LinkedList<JMethod> methods = new LinkedList<>();
+        virtualMethodCache.put(hash, methods);
+
+        MethodHandle mh = caller.findSpecial(superClass, name, type, caller.lookupClass());
+        if (mh != null) {
+            for (Class<?> clazz : type.parameterArray()) {
+                if (!TObject.class.isAssignableFrom(clazz)) {
+                    JMethod jm = new JMethod(mh, superClass, type.parameterArray());
+                    methods.add(jm);
+                    MethodHandle iv = caller.findStatic(Intrinsics.class, "invokeVirtual",
+                            MethodType.methodType(TObject.class, JMethod.class, Object.class, TList.class));
+                    return new ConstantCallSite(iv.bindTo(jm));
+                }
+            }
+            return new ConstantCallSite(mh);
+        }
+
+        if (name.equals("<init>")) {
+            List<JMethod> superConstructors = getConstructors(caller, superClass, argCount);
+            if (superConstructors.isEmpty()) {
+                throw new NoSuchMethodException("Class " + superClass.getName() + " has no public constructors");
+            }
+            methods.addAll(superConstructors);
+            if (methods.size() == 1) {
+                return new ConstantCallSite(methods.get(0).methodHandle);
+            }
+            if (methods.size() > 1) {
+                return new ConstantCallSite(invokeSpecial.bindTo(methods));
+            }
+        }
+        throw new NoSuchMethodException(name);
+    }
+
+    private static List<JMethod> getConstructors(MethodHandles.Lookup caller, Class<?> clazz, int paramCount) throws IllegalAccessException {
+        List<JMethod> methods = new LinkedList<>();
+        for (Constructor<?> constructor : clazz.getConstructors()) {
+            if (constructor.getParameterCount() == paramCount) {
+                MethodHandle ch = caller.unreflectConstructor(constructor);
+                JMethod jMethod = new JMethod(ch, clazz, constructor.getParameterTypes());
+                methods.add(jMethod);
+            }
+        }
+        return methods;
+    }
+
+    public static TObject invokeSpecial(LinkedList<JMethod> methods, Object instance, TList arguments) throws Throwable {
+        requireNonNull(instance);
+
+        JMethod method = select(methods, arguments.size(), arguments);
+        if (method != null) {
+            return invokeVirtual(method, instance, arguments);
+        }
+        throw new RuntimeException("Type coercion impossible");
     }
 
     public static TObject newInstance(JMethod constructor, TList arguments) throws Throwable {
@@ -193,9 +266,7 @@ public class Intrinsics {
     public static TObject invokeVirtual(MethodHandles.Lookup caller, LinkedList<JMethod> jmethods, String name, Integer paramCount, TObject instance, TList args) throws Throwable {
         Object v = instance.getObject();
 
-        if (instance == TNull.NULL) {
-            throw new NullPointerException();
-        }
+        requireNonNull(instance);
 
         if (instance.getObject() == null) {
             v = instance;
@@ -222,10 +293,14 @@ public class Intrinsics {
         JMethod method = select(methods, args.size(), args);
         if (method != null) {
             method.incCount();
-            return wrap(method.methodHandle.bindTo(v).invokeWithArguments(getParams(args, method.types)));
+            return invokeVirtual(method, v, args);
         } else {
             throw new RuntimeException("Type coercion impossible");
         }
+    }
+
+    public static TObject invokeVirtual(JMethod method, Object instance, TList args) throws Throwable {
+        return wrap(method.methodHandle.bindTo(instance).invokeWithArguments(getParams(args, method.types, 999)));
     }
 
     public static CallSite bootstrap(MethodHandles.Lookup caller, String name, MethodType type, Class<?> clazz, int paramCount) throws Throwable {
