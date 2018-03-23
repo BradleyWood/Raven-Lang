@@ -8,6 +8,10 @@ fun seed(seed) {
     rand.setSeed(seed);
 }
 
+fun nextInt() {
+    return rand.nextInt();
+}
+
 fun nextInt(bound) {
     return rand.nextInt(bound);
 }
