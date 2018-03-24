@@ -284,7 +284,7 @@ public class Method extends MethodVisitor implements TreeVisitor, Opcodes {
             params[i] = new VarDecl(new QualifiedName(String.valueOf(i)), new Literal(TNull.NULL));
         }
         Fun lambda = new Fun(new QualifiedName(lambdaName), new Block(goFun),
-                new Modifier[]{ Modifier.PRIVATE, Modifier.SYNTHETIC}, new String[0], params);
+                new Modifier[]{Modifier.PRIVATE, Modifier.SYNTHETIC}, new String[0], params);
         if (ctx.isStatic()) {
             lambda.addModifier(Modifier.STATIC);
         }
@@ -555,11 +555,9 @@ public class Method extends MethodVisitor implements TreeVisitor, Opcodes {
                     visitVarInsn(load ? ALOAD : ASTORE, localIdx);
                     break;
                 default:
-                    String[] nn = Arrays.copyOfRange(names, 1, names.length);
                     accessField(new QualifiedName(names[0]), true);
-                    for (String s : nn) {
-                        accessVirtualField(s, load);
-                    }
+                    String[] virtualNames = Arrays.copyOfRange(names, 1, names.length);
+                    accessVirtualField(virtualNames, load);
                     break;
             }
         } else {
@@ -591,16 +589,16 @@ public class Method extends MethodVisitor implements TreeVisitor, Opcodes {
                     break;
                 default:
                     if (importedClass != null) {
-                        accessStaticField(importedClass, names[1], load);
-                        for (int i = 2; i < names.length; i++) {
-                            accessVirtualField(names[i], load);
-                        }
+                        accessStaticField(importedClass, names[1], load || names.length > 2);
+                        String[] virtualNames = Arrays.copyOfRange(names, 2, names.length);
+                        accessVirtualField(virtualNames, load);
                     } else {
                         if (decl != null) {
                             visitFieldInsn(GETSTATIC, ctx.getOwner().replace(".", "/"), names[0], Constants.TOBJ_SIG);
-                            for (int i = 1; i < names.length; i++) {
-                                accessVirtualField(names[i], load);
-                            }
+                            String[] virtualNames = Arrays.copyOfRange(names, 1, names.length);
+                            accessVirtualField(virtualNames, load);
+                        } else {
+                            Errors.put("Variable " + names[0] + " has not been defined.");
                         }
                     }
                     break;
@@ -639,6 +637,13 @@ public class Method extends MethodVisitor implements TreeVisitor, Opcodes {
         visitFieldInsn(load ? GETSTATIC : PUTSTATIC, owner, name, decl.getTypeDesc());
     }
 
+    /**
+     * Read from or store to a virtual field in the current class.
+     * Must be in a non-static context.
+     *
+     * @param var  The var definition
+     * @param load whether we are reading or writing to the field
+     */
     private void accessVirtualField(VarDecl var, boolean load) {
         int idx = getLocal("this");
         if (idx != 0) {
@@ -652,6 +657,33 @@ public class Method extends MethodVisitor implements TreeVisitor, Opcodes {
         visitFieldInsn(load ? GETFIELD : PUTFIELD, ctx.getOwner(), var.getName().toString(), getDesc(TObject.class));
     }
 
+    /**
+     * Read from or store to a virtual field. The instance
+     * reference must be already on the stack
+     *
+     * @param names The names of the fields
+     * @param load  whether we are reading or writing to the field
+     */
+    private void accessVirtualField(String[] names, boolean load) {
+        if (names.length == 0) {
+            return;
+        }
+        for (int i = 0; i < names.length - 1; i++) {
+            accessVirtualField(names[i], true);
+        }
+        if (!load) {
+            visitInsn(SWAP);
+        }
+        accessVirtualField(names[names.length - 1], load);
+    }
+
+    /**
+     * Load or store to a virtual field
+     * Instance must already be on stack as well as the new value if we are writing to the field.
+     *
+     * @param name The field name
+     * @param load whether we are reading or writing to the field
+     */
     private void accessVirtualField(String name, boolean load) {
         if (load) {
             mv.visitInvokeDynamicInsn("get" + name, "(Lorg/raven/core/wrappers/TObject;)Lorg/raven/core/wrappers/TObject;",
