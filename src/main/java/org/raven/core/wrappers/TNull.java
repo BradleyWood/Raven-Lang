@@ -43,6 +43,8 @@ public class TNull extends TObject {
 
     @Override
     public int coerceRating(Class clazz) {
+        if (clazz.isPrimitive())
+            return COERCE_IMPOSSIBLE;
         return COERCE_IDEAL;
     }
 
