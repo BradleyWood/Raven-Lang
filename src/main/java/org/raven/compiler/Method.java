@@ -550,62 +550,83 @@ public class Method extends MethodVisitor implements TreeVisitor, Opcodes {
 
         // some form of action on a local var
         if (localIdx != -1) {
-            switch (names.length) {
-                case 1:
-                    visitVarInsn(load ? ALOAD : ASTORE, localIdx);
-                    break;
-                default:
-                    accessField(new QualifiedName(names[0]), true);
-                    String[] virtualNames = Arrays.copyOfRange(names, 1, names.length);
-                    accessVirtualField(virtualNames, load);
-                    break;
+            if (names.length == 1) {
+                visitVarInsn(load ? ALOAD : ASTORE, localIdx);
+            } else {
+                accessField(new QualifiedName(names[0]), true);
+                String[] virtualNames = Arrays.copyOfRange(names, 1, names.length);
+                accessVirtualField(virtualNames, load);
             }
         } else {
-            // not a local variable
-            String importedClass = getInternalNameFromImports(names[0]);
-            VarDecl decl = SymbolMap.resolveField(ctx.getOwner(), ctx.getOwner(), names[0]);
-            // ^ not null if field exists in current class
-
-            switch (names.length) {
-                case 1:
-                    if (ctx.isStatic()) {
-                        // static field access in the same class
-                        if (decl != null && decl.hasModifier(Modifier.STATIC)) {
-                            accessStaticField(ctx.getOwner(), decl.getName().toString(), load);
-                        } else if (decl != null) {
-                            Errors.put("Use of non-static variable " + names[0] + " in a static context");
-                        } else {
-                            Errors.put("Variable " + names[0] + " has not been defined.");
-                        }
-                    } else {
-                        // (potential virtual field access) in the same class
-                        VarDecl var = ctx.getClassDef().findVar(name.toString());
-                        if (var != null) {
-                            accessVirtualField(var, load);
-                        } else {
-                            Errors.put("Variable " + names[0] + " has not been defined.");
-                        }
-                    }
-                    break;
-                default:
-                    if (importedClass != null) {
-                        accessStaticField(importedClass, names[1], load || names.length > 2);
-                        String[] virtualNames = Arrays.copyOfRange(names, 2, names.length);
-                        accessVirtualField(virtualNames, load);
-                    } else {
-                        if (decl != null) {
-                            visitFieldInsn(GETSTATIC, ctx.getOwner().replace(".", "/"), names[0], Constants.TOBJ_SIG);
-                            String[] virtualNames = Arrays.copyOfRange(names, 1, names.length);
-                            accessVirtualField(virtualNames, load);
-                        } else {
-                            Errors.put("Variable " + names[0] + " has not been defined.");
-                        }
-                    }
-                    break;
+            if (names.length == 1) {
+                // local variable or field in the same class
+                accessLocalField(names[0], load);
+            } else {
+                accessNonLocalField(names, load);
             }
         }
     }
 
+    /**
+     * Access a locally defined field or variable
+     *
+     * @param name The field name
+     * @param load whether we are reading or writing to the field
+     */
+    private void accessLocalField(String name, boolean load) {
+        VarDecl decl = SymbolMap.resolveField(ctx.getOwner(), ctx.getOwner(), name);
+        if (ctx.isStatic()) {
+            // static field access in the same class
+            if (decl != null && decl.hasModifier(Modifier.STATIC)) {
+                accessStaticField(ctx.getOwner(), decl.getName().toString(), load);
+            } else if (decl != null) {
+                Errors.put("Use of non-static variable " + name + " in a static context");
+            } else {
+                Errors.put("Variable " + name + " has not been defined.");
+            }
+        } else {
+            // (potential virtual field access) in the same class
+            VarDecl var = ctx.getClassDef().findVar(name);
+            if (var != null) {
+                accessVirtualField(var, load);
+            } else {
+                Errors.put("Variable " + name + " has not been defined.");
+            }
+        }
+    }
+
+    /**
+     * Access a non-locally defined field. This may include static fields
+     * in other classes or fields nested inside of local variables or fields
+     *
+     * @param names Names of the fields (fields may have several levels of nesting)
+     * @param load whether we are reading or writing to the field
+     */
+    private void accessNonLocalField(String[] names, boolean load) {
+        String importedClass = getInternalNameFromImports(names[0]);
+        VarDecl decl = SymbolMap.resolveField(ctx.getOwner(), ctx.getOwner(), names[0]);
+        if (importedClass != null) {
+            accessStaticField(importedClass, names[1], load || names.length > 2);
+            String[] virtualNames = Arrays.copyOfRange(names, 2, names.length);
+            accessVirtualField(virtualNames, load);
+        } else {
+            if (decl != null) {
+                visitFieldInsn(GETSTATIC, ctx.getOwner().replace(".", "/"), names[0], Constants.TOBJ_SIG);
+                String[] virtualNames = Arrays.copyOfRange(names, 1, names.length);
+                accessVirtualField(virtualNames, load);
+            } else {
+                Errors.put("Variable " + names[0] + " has not been defined.");
+            }
+        }
+    }
+
+    /**
+     * Read or write to a static field in the specified class
+     *
+     * @param owner The class in which the field is defined
+     * @param name The name of the field
+     * @param load whether we are reading or writing to the field
+     */
     private void accessStaticField(String owner, String name, boolean load) {
         VarDecl decl = SymbolMap.resolveField(ctx.getOwner(), owner, name);
 
