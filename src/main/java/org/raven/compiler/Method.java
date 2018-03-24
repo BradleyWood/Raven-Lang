@@ -328,10 +328,10 @@ public class Method extends MethodVisitor implements TreeVisitor, Opcodes {
             if (precedingExpr instanceof QualifiedName) {
                 String owner = getInternalNameFromImports(precedingExpr.toString());
                 if (owner != null) {
-                    resolveStaticFun(owner, call.getName().toString(), desc, call.getParams());
+                    invokeStaticFun(owner, call.getName().toString(), desc, call.getParams());
                 } else {
                     precedingExpr.accept(this);
-                    java.lang.reflect.Method method = isRavenFunction(call.getName().toString(), call.getParams().length);
+                    java.lang.reflect.Method method = findRavenFunction(call.getName().toString(), call.getParams().length);
                     if (method != null) {
                         invokeVirtualFun(call.getName().toString(), call.getParams(), method);
                     } else {
@@ -340,7 +340,7 @@ public class Method extends MethodVisitor implements TreeVisitor, Opcodes {
                 }
             } else {
                 precedingExpr.accept(this);
-                java.lang.reflect.Method method = isRavenFunction(call.getName().toString(), call.getParams().length);
+                java.lang.reflect.Method method = findRavenFunction(call.getName().toString(), call.getParams().length);
                 if (method != null) {
                     invokeVirtualFun(call.getName().toString(), call.getParams(), method);
                 } else {
@@ -355,10 +355,10 @@ public class Method extends MethodVisitor implements TreeVisitor, Opcodes {
                 String funOwner = ctx.getOwner();
                 if (Builtin.isBuiltin(call.getName(), call.getParams().length)) {
                     funOwner = Constants.BUILTIN_NAME;
-                    invokeStaticMethod_D(funOwner, call.getName().toString(), desc, call.getParams());
+                    invokeStaticExact(funOwner, call.getName().toString(), desc, call.getParams());
                 } else {
                     if (ctx.isStatic()) {
-                        invokeStaticMethod_D(funOwner, call.getName().toString(), desc, call.getParams());
+                        invokeStaticExact(funOwner, call.getName().toString(), desc, call.getParams());
                     } else {
                         Fun fun = ctx.getClassDef().findFun(call.getName().toString(), call.getParams().length);
                         if (fun != null && (fun.modifiers() & ACC_STATIC) == 0) {
@@ -382,7 +382,14 @@ public class Method extends MethodVisitor implements TreeVisitor, Opcodes {
         }
     }
 
-    private java.lang.reflect.Method isRavenFunction(String name, int paramCount) {
+    /**
+     * Searches for builtin virtual functions that apply to all types.
+     *
+     * @param name The name of the method
+     * @param paramCount The number of parameters
+     * @return The reflective method handle if found, otherwise null
+     */
+    private java.lang.reflect.Method findRavenFunction(String name, int paramCount) {
         for (java.lang.reflect.Method m : TObject.class.getDeclaredMethods()) {
             if (m.getAnnotation(Hidden.class) != null || m.getParameterCount() != paramCount)
                 continue;
@@ -393,11 +400,11 @@ public class Method extends MethodVisitor implements TreeVisitor, Opcodes {
     }
 
     /**
-     * Used to check if a method is overloaded or non-existant
+     * Used to check if a method is overloaded or non-existent
      *
-     * @param funOwner
-     * @param name
-     * @param paramCount
+     * @param funOwner The owner of the method
+     * @param name The name of the method
+     * @param paramCount The number of parameters
      * @return the number of methods with the name and given param count
      */
     private int methodCount(String funOwner, String name, int paramCount) {
@@ -409,12 +416,20 @@ public class Method extends MethodVisitor implements TreeVisitor, Opcodes {
                     count++;
                 }
             }
-        } catch (ClassNotFoundException e) {
+        } catch (ClassNotFoundException ignored) {
         }
         return count;
     }
 
-    private void reflectiveInvokeStatic(String funOwner, String funName, Expression[] params) {
+    /**
+     * Invoke a static function with the invoke_dynamic instruction. Used when a method
+     * is overloaded with the same number of parameters.
+     *
+     * @param funOwner The owner of the method
+     * @param funName The name of the method
+     * @param params The parameters
+     */
+    private void dynamicInvokeStatic(String funOwner, String funName, Expression[] params) {
         Type owner = Type.getType("L" + (funOwner.replace(".", "/")) + ";");
 
         visitListDef(new ListDef(params));
@@ -444,15 +459,23 @@ public class Method extends MethodVisitor implements TreeVisitor, Opcodes {
         }
     }
 
-    private void resolveStaticFun(String funOwner, String funName, String desc, Expression[] params) {
+    /**
+     * Invoke a static function
+     *
+     * @param funOwner The class that owns this the function
+     * @param funName The name of the function
+     * @param desc The method descriptor
+     * @param params The method parameters
+     */
+    private void invokeStaticFun(String funOwner, String funName, String desc, Expression[] params) {
         Fun f = SymbolMap.resolveFun(ctx.getOwner(), funOwner, funName, params.length);
         // if the function can be resolved, it is a tl function
         int count = methodCount(funOwner, funName, params.length);
 
         if (f != null && !f.isJavaMethod()) {
-            invokeStaticMethod_D(funOwner, funName, desc, params);
+            invokeStaticExact(funOwner, funName, desc, params);
         } else if (f == null || count != 1) {
-            reflectiveInvokeStatic(funOwner, funName, params);
+            dynamicInvokeStatic(funOwner, funName, params);
         } else {
             Type methodType = Type.getMethodType(f.getDesc());
             Type[] types = Type.getArgumentTypes(f.getDesc());
@@ -477,11 +500,19 @@ public class Method extends MethodVisitor implements TreeVisitor, Opcodes {
         }
     }
 
-    private void invokeStaticMethod_D(String owner, String name, String desc, Expression[] params) {
+    /**
+     * Invokes the static function and performs no type coercions.
+     * Used when the method is a Raven-Lang function
+     *
+     * @param owner The class containing the method
+     * @param name The name of the method
+     * @param desc The method descriptor
+     * @param params The parameters
+     */
+    private void invokeStaticExact(String owner, String name, String desc, Expression[] params) {
         Fun f = SymbolMap.resolveFun(ctx.getOwner(), owner, name, params.length);
         if (f == null && !owner.equals(Constants.BUILTIN_NAME)) {
             Errors.put(ctx.getOwner() + " Cannot resolve function: " + owner + "." + name);
-            //throw new RuntimeException();
         }
         for (Expression param : params) {
             param.accept(this);
@@ -489,6 +520,12 @@ public class Method extends MethodVisitor implements TreeVisitor, Opcodes {
         visitMethodInsn(INVOKESTATIC, owner, name, desc, false);
     }
 
+    /**
+     * Invokes a virtual function. The receiver object must already be on the stack
+     *
+     * @param name The name of the method
+     * @param params The method parameters
+     */
     private void invokeVirtualFun(String name, Expression[] params) {
         visitListDef(new ListDef(params));
         visitTypeInsn(CHECKCAST, getInternalName(TList.class));
@@ -496,6 +533,13 @@ public class Method extends MethodVisitor implements TreeVisitor, Opcodes {
                 INVOKE_VIRTUAL_BOOTSTRAP, params.length);
     }
 
+    /**
+     * Invoke a virtual function when the type and method is known.
+     *
+     * @param name The name of the method
+     * @param params The parameters
+     * @param method The method handle
+     */
     private void invokeVirtualFun(String name, Expression[] params, java.lang.reflect.Method method) {
         String desc = Type.getMethodDescriptor(method);
         Arrays.stream(params).forEach(expression -> expression.accept(this));
@@ -511,6 +555,12 @@ public class Method extends MethodVisitor implements TreeVisitor, Opcodes {
         }
     }
 
+    /**
+     * Instantiate a new object
+     *
+     * @param owner The class type
+     * @param params The constructor parameters
+     */
     private void newObject(String owner, Expression[] params) {
         Type type = Type.getType("L" + owner + ";");
 
