@@ -70,7 +70,8 @@ public class ClassDef extends ModifiableStatement {
 
     /**
      * Checks if the class def contains a method with a given name and number of params
-     * @param name The method name
+     *
+     * @param name       The method name
      * @param paramCount The the number of params
      * @return True if the def contains the method
      */
@@ -84,6 +85,7 @@ public class ClassDef extends ModifiableStatement {
 
     /**
      * Checks if this def contains the method with a given name and descriptor
+     *
      * @param name The method name
      * @param desc The method descriptor
      * @return True if this class def contains a method with the given name and descriptor
@@ -248,7 +250,9 @@ public class ClassDef extends ModifiableStatement {
     private void initFieldsInConstructor(Constructor c) {
         for (Statement statement : statements) {
             if (statement instanceof VarDecl) {
-                c.initializeVar((VarDecl) statement);
+                VarDecl decl = (VarDecl) statement;
+                if (!decl.hasModifier(Modifier.STATIC))
+                    c.initializeVar((VarDecl) statement);
             }
         }
     }
