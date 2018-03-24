@@ -592,12 +592,14 @@ public class Method extends MethodVisitor implements TreeVisitor, Opcodes {
                 default:
                     if (importedClass != null) {
                         accessStaticField(importedClass, names[1], load);
+                        for (int i = 2; i < names.length; i++) {
+                            accessVirtualField(names[i], load);
+                        }
                     } else {
                         if (decl != null) {
                             visitFieldInsn(GETSTATIC, ctx.getOwner().replace(".", "/"), names[0], Constants.TOBJ_SIG);
-                            String[] nn = Arrays.copyOfRange(names, 1, names.length);
-                            for (String s : nn) {
-                                accessVirtualField(s, load);
+                            for (int i = 1; i < names.length; i++) {
+                                accessVirtualField(names[i], load);
                             }
                         }
                     }
