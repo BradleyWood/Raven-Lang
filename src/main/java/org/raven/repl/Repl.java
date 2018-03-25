@@ -9,6 +9,7 @@ import org.raven.compiler.ClassMaker;
 import org.raven.compiler.SymbolMap;
 import org.raven.core.ByteClassLoader;
 import org.raven.core.ExceptionHandler;
+import org.raven.core.wrappers.TObject;
 import org.raven.core.wrappers.TVoid;
 import org.raven.error.Errors;
 import org.raven.util.Settings;
@@ -36,6 +37,12 @@ public class Repl {
     }
 
     public void exec(String line) {
+        TObject result = eval(line);
+        if (result != null && !TVoid.VOID.equals(result))
+            System.out.println(result);
+    }
+
+    public TObject eval(String line) {
         Settings.set("REPL", true);
         Thread.UncaughtExceptionHandler currentHandler = Thread.getDefaultUncaughtExceptionHandler();
         try {
@@ -43,9 +50,8 @@ public class Repl {
             if (cl != null) {
                 Thread.setDefaultUncaughtExceptionHandler(exceptionHandler);
                 Object obj = cl.getDeclaredMethod("exec").invoke(null);
-                if (!TVoid.VOID.equals(obj))
-                    System.out.println(obj);
                 parent = cl;
+                return (TObject) obj;
             }
         } catch (InvocationTargetException e) {
             Thread.getDefaultUncaughtExceptionHandler().uncaughtException(Thread.currentThread(), e.getCause());
@@ -55,6 +61,7 @@ public class Repl {
             Thread.setDefaultUncaughtExceptionHandler(currentHandler);
         }
         Settings.set("REPL", false);
+        return null;
     }
 
     private Class build(String line) {
