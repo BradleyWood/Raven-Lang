@@ -21,7 +21,7 @@ public class TList extends TObject implements List {
     }
 
     @Hidden
-    public TList(TObject[] objects) {
+    public TList(TObject... objects) {
         this();
         list.addAll(Arrays.asList(objects));
     }

@@ -765,6 +765,22 @@ public class Method extends MethodVisitor implements TreeVisitor, Opcodes {
         }
     }
 
+    /**
+     * Initialize a new array with the specified values
+     *
+     * @param expressions The expressions to fill the array with
+     */
+    private void createArray(Expression[] expressions) {
+        visitLdcInsn(expressions.length);
+        visitTypeInsn(ANEWARRAY, Constants.TOBJ_NAME);
+        for (int i = 0; i < expressions.length; i++) {
+            visitInsn(DUP);
+            visitLdcInsn(i);
+            expressions[i].accept(this);
+            visitInsn(AASTORE);
+        }
+    }
+
     @Override
     public void visitBlock(Block block) {
         scope.beginScope();
@@ -857,12 +873,11 @@ public class Method extends MethodVisitor implements TreeVisitor, Opcodes {
     public void visitListDef(ListDef def) {
         visitTypeInsn(NEW, getInternalName(TList.class));
         visitInsn(DUP);
-        visitMethodInsn(INVOKESPECIAL, getInternalName(TList.class), "<init>", "()V", false);
 
-        for (Expression expression : def.getExpressions()) {
-            expression.accept(this);
-            visitMethodInsn(INVOKEVIRTUAL, getInternalName(TObject.class), "add", getDesc(TList.class, "add", TObject.class), false);
-        }
+        String typeDesc = Type.getMethodDescriptor(Type.VOID_TYPE, Type.getType(TObject[].class));
+        createArray(def.getExpressions());
+
+        visitMethodInsn(INVOKESPECIAL, getInternalName(TList.class), "<init>", typeDesc, false);
 
         if (def.pop())
             visitInsn(POP);
