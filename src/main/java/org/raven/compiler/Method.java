@@ -385,7 +385,7 @@ public class Method extends MethodVisitor implements TreeVisitor, Opcodes {
     /**
      * Searches for builtin virtual functions that apply to all types.
      *
-     * @param name The name of the method
+     * @param name       The name of the method
      * @param paramCount The number of parameters
      * @return The reflective method handle if found, otherwise null
      */
@@ -402,8 +402,8 @@ public class Method extends MethodVisitor implements TreeVisitor, Opcodes {
     /**
      * Used to check if a method is overloaded or non-existent
      *
-     * @param funOwner The owner of the method
-     * @param name The name of the method
+     * @param funOwner   The owner of the method
+     * @param name       The name of the method
      * @param paramCount The number of parameters
      * @return the number of methods with the name and given param count
      */
@@ -426,8 +426,8 @@ public class Method extends MethodVisitor implements TreeVisitor, Opcodes {
      * is overloaded with the same number of parameters.
      *
      * @param funOwner The owner of the method
-     * @param funName The name of the method
-     * @param params The parameters
+     * @param funName  The name of the method
+     * @param params   The parameters
      */
     private void dynamicInvokeStatic(String funOwner, String funName, Expression[] params) {
         Type owner = Type.getType("L" + (funOwner.replace(".", "/")) + ";");
@@ -463,9 +463,9 @@ public class Method extends MethodVisitor implements TreeVisitor, Opcodes {
      * Invoke a static function
      *
      * @param funOwner The class that owns this the function
-     * @param funName The name of the function
-     * @param desc The method descriptor
-     * @param params The method parameters
+     * @param funName  The name of the function
+     * @param desc     The method descriptor
+     * @param params   The method parameters
      */
     private void invokeStaticFun(String funOwner, String funName, String desc, Expression[] params) {
         Fun f = SymbolMap.resolveFun(ctx.getOwner(), funOwner, funName, params.length);
@@ -504,9 +504,9 @@ public class Method extends MethodVisitor implements TreeVisitor, Opcodes {
      * Invokes the static function and performs no type coercions.
      * Used when the method is a Raven-Lang function
      *
-     * @param owner The class containing the method
-     * @param name The name of the method
-     * @param desc The method descriptor
+     * @param owner  The class containing the method
+     * @param name   The name of the method
+     * @param desc   The method descriptor
      * @param params The parameters
      */
     private void invokeStaticExact(String owner, String name, String desc, Expression[] params) {
@@ -522,7 +522,8 @@ public class Method extends MethodVisitor implements TreeVisitor, Opcodes {
 
     /**
      * Invokes a virtual function. The receiver object must already be on the stack
-     * @param name The name of the method
+     *
+     * @param name   The name of the method
      * @param params The method parameters
      */
     private void invokeVirtualFun(String name, Expression[] params) {
@@ -535,7 +536,7 @@ public class Method extends MethodVisitor implements TreeVisitor, Opcodes {
     /**
      * Invoke a virtual function when the type and method is known.
      *
-     * @param name The name of the method
+     * @param name   The name of the method
      * @param params The parameters
      * @param method The method handle
      */
@@ -557,7 +558,7 @@ public class Method extends MethodVisitor implements TreeVisitor, Opcodes {
     /**
      * Instantiate a new object
      *
-     * @param owner The class type
+     * @param owner  The class type
      * @param params The constructor parameters
      */
     private void newObject(String owner, Expression[] params) {
@@ -649,7 +650,7 @@ public class Method extends MethodVisitor implements TreeVisitor, Opcodes {
      * in other classes or fields nested inside of local variables or fields
      *
      * @param names Names of the fields (fields may have several levels of nesting)
-     * @param load whether we are reading or writing to the field
+     * @param load  whether we are reading or writing to the field
      */
     private void accessNonLocalField(String[] names, boolean load) {
         String importedClass = getInternalNameFromImports(names[0]);
@@ -673,8 +674,8 @@ public class Method extends MethodVisitor implements TreeVisitor, Opcodes {
      * Read or write to a static field in the specified class
      *
      * @param owner The class in which the field is defined
-     * @param name The name of the field
-     * @param load whether we are reading or writing to the field
+     * @param name  The name of the field
+     * @param load  whether we are reading or writing to the field
      */
     private void accessStaticField(String owner, String name, boolean load) {
         VarDecl decl = SymbolMap.resolveField(ctx.getOwner(), owner, name);
@@ -966,27 +967,15 @@ public class Method extends MethodVisitor implements TreeVisitor, Opcodes {
     }
 
     private void putNull() {
-        if (ctx.getName().equals("<clinit>")) {
-            visitFieldInsn(GETSTATIC, getInternalName(TNull.NULL), "NULL", getDesc(TNull.NULL));
-        } else {
-            getConstant(TNull.NULL);
-        }
+        visitFieldInsn(GETSTATIC, getInternalName(TNull.NULL), "NULL", getDesc(TNull.NULL));
     }
 
     private void putVoid() {
-        if (ctx.getName().equals("<clinit>")) {
-            visitFieldInsn(GETSTATIC, getInternalName(TVoid.VOID), "VOID", getDesc(TVoid.VOID));
-        } else {
-            getConstant(TVoid.VOID);
-        }
+        visitFieldInsn(GETSTATIC, getInternalName(TVoid.VOID), "VOID", getDesc(TVoid.VOID));
     }
 
     private void putBoolean(TBoolean bool) {
-        if (ctx.getName().equals("<clinit>")) {
-            visitFieldInsn(GETSTATIC, getInternalName(bool), bool.isTrue() ? "TRUE" : "FALSE", getDesc(bool));
-        } else {
-            getConstant(bool);
-        }
+        visitFieldInsn(GETSTATIC, getInternalName(bool), bool.isTrue() ? "TRUE" : "FALSE", getDesc(bool));
     }
 
     private void putString(TString str) {
