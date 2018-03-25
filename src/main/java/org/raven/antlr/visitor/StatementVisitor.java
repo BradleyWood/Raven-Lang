@@ -42,23 +42,7 @@ public class StatementVisitor extends RavenBaseVisitor<Statement> {
             stmt = ctx.returnStatement().accept(ReturnVisitor.INSTANCE);
         } else if (ctx.expression() != null) {
             stmt = ctx.expression().accept(ExpressionVisitor.INSTANCE);
-            boolean printableExpression = true;
-            if (stmt instanceof BinOp) {
-                printableExpression = ((BinOp) stmt).getOp() != Operator.ASSIGNMENT;
-            }
-            if (stmt instanceof Call) {
-                Call c = (Call) stmt;
-                if (c.getName().toString().equals("println") || c.getName().toString().equals("print")) {
-                    printableExpression = false;
-                }
-            }
-            if (Settings.getBoolean("REPL") && printableExpression) {
-                stmt = new Call(new QualifiedName("println"), (Expression) stmt);
-            } else if (stmt instanceof QualifiedName) {
-                Errors.put("Not a statement: " + stmt.toString());
-            } else {
-                ((Expression) stmt).setPop(true);
-            }
+            ((Expression) stmt).setPop(true);
         } else if (ctx.SEMI() != null) {
             // empty statement
             stmt = new Statement();

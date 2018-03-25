@@ -172,7 +172,7 @@ public class Method extends MethodVisitor implements TreeVisitor, Opcodes {
             ret.getValue().accept(this);
             visitInsn(ARETURN);
         } else {
-            putNull();
+            putVoid();
             visitInsn(ARETURN);
         }
     }
@@ -233,7 +233,7 @@ public class Method extends MethodVisitor implements TreeVisitor, Opcodes {
             if (ctx.getName().equals("main") || ctx.getName().equals("<clinit>") || ctx.getName().endsWith("<init>")) {
                 visitInsn(RETURN);
             } else {
-                putNull();
+                putVoid();
                 visitInsn(ARETURN);
             }
         }
@@ -522,7 +522,6 @@ public class Method extends MethodVisitor implements TreeVisitor, Opcodes {
 
     /**
      * Invokes a virtual function. The receiver object must already be on the stack
-     *
      * @param name The name of the method
      * @param params The method parameters
      */
@@ -941,6 +940,8 @@ public class Method extends MethodVisitor implements TreeVisitor, Opcodes {
                 putReal((TReal) obj);
             } else if (obj instanceof TBigInt) {
                 putBigInt((TBigInt) obj);
+            } else if (obj instanceof TVoid) {
+                putVoid();
             } else {
                 Errors.put("Unidentified Constant type");
                 visitInsn(ACONST_NULL);
@@ -969,6 +970,14 @@ public class Method extends MethodVisitor implements TreeVisitor, Opcodes {
             visitFieldInsn(GETSTATIC, getInternalName(TNull.NULL), "NULL", getDesc(TNull.NULL));
         } else {
             getConstant(TNull.NULL);
+        }
+    }
+
+    private void putVoid() {
+        if (ctx.getName().equals("<clinit>")) {
+            visitFieldInsn(GETSTATIC, getInternalName(TVoid.VOID), "VOID", getDesc(TVoid.VOID));
+        } else {
+            getConstant(TVoid.VOID);
         }
     }
 

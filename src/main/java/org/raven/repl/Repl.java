@@ -9,6 +9,7 @@ import org.raven.compiler.ClassMaker;
 import org.raven.compiler.SymbolMap;
 import org.raven.core.ByteClassLoader;
 import org.raven.core.ExceptionHandler;
+import org.raven.core.wrappers.TVoid;
 import org.raven.error.Errors;
 import org.raven.util.Settings;
 
@@ -41,7 +42,9 @@ public class Repl {
             Class<?> cl = build(line);
             if (cl != null) {
                 Thread.setDefaultUncaughtExceptionHandler(exceptionHandler);
-                cl.getDeclaredMethod("exec").invoke(null);
+                Object obj = cl.getDeclaredMethod("exec").invoke(null);
+                if (!TVoid.VOID.equals(obj))
+                    System.out.println(obj);
                 parent = cl;
             }
         } catch (InvocationTargetException e) {
@@ -94,6 +97,17 @@ public class Repl {
             } else {
                 statements.add(statement);
             }
+        }
+
+        if (!statements.isEmpty()) {
+            Statement stmt = statements.removeLast();
+            if (stmt instanceof BinOp && ((BinOp) stmt).getOp() != Operator.ASSIGNMENT ||
+                    (stmt instanceof Expression && !(stmt instanceof BinOp))) {
+                Expression expr = (Expression) stmt;
+                expr.setPop(false);
+                stmt = new Return(expr);
+            }
+            statements.addLast(stmt);
         }
 
         QualifiedName superClass = new QualifiedName("java", "lang", "Object");
