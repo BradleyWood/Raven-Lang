@@ -4,7 +4,7 @@ import org.raven.core.Hidden;
 
 public class TVoid extends TObject {
 
-    public static TVoid VOID = new TVoid();
+    public static final TVoid VOID = new TVoid();
 
     @Hidden
     public static TType TYPE = new TType(TVoid.class);
