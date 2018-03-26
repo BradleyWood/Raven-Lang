@@ -36,17 +36,26 @@ public class Repl {
         id = instanceCount++;
     }
 
-    public void exec(String line) {
-        TObject result = eval(line);
+    public void exec(String input) {
+        TObject result = eval(input);
         if (result != null && !TVoid.VOID.equals(result))
             System.out.println(result);
     }
 
-    public TObject eval(String line) {
+    /**
+     * Evaluate a script or expression and get the result
+     *
+     * @param input The input source code
+     * @return The result of expression or the result of the last statement in the script. Returns null on error.
+     */
+    public TObject eval(String input) {
+        if (input == null || input.isEmpty())
+            return null;
+
         Settings.set("REPL", true);
         Thread.UncaughtExceptionHandler currentHandler = Thread.getDefaultUncaughtExceptionHandler();
         try {
-            Class<?> cl = build(line);
+            Class<?> cl = build(input);
             if (cl != null) {
                 Thread.setDefaultUncaughtExceptionHandler(exceptionHandler);
                 Object obj = cl.getDeclaredMethod("exec").invoke(null);
