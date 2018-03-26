@@ -7,6 +7,7 @@ fun testNestedFieldGetters() {
     Assert.assertEquals("a", NestedField.instance.value);
     Assert.assertEquals("b", NestedField.instance.nestedField.value);
     Assert.assertEquals("c", NestedField.instance.nestedField.nestedField.value);
+    Assert.assertEquals("c", NestedField.instance.nestedField.nestedField.getValue());
 }
 
 fun testNestedFieldSetters() {
@@ -34,6 +35,9 @@ fun testGetNestedFieldLocalVar() {
     Assert.assertEquals("a", localVar.value);
     Assert.assertEquals("b", localVar.nestedField.value);
     Assert.assertEquals("c", localVar.nestedField.nestedField.value);
+
+    Assert.assertEquals("c", localVar.nestedField.nestedField.getValue());
+    Assert.assertEquals("c", field.nestedField.nestedField.getValue());
 
     Assert.assertEquals("a", field.value);
     Assert.assertEquals("b", field.nestedField.value);
