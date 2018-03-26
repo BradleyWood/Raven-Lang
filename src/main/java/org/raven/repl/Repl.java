@@ -26,6 +26,7 @@ public class Repl {
     private static final ExceptionHandler exceptionHandler = new ExceptionHandler();
     private final ByteClassLoader classLoader = new ByteClassLoader(null, Repl.class.getClassLoader(), new HashMap<>());
     private final LinkedList<Import> imports = new LinkedList<>();
+    private String lastLine = null;
     private Class parent = null;
     private int counter = 0;
 
@@ -52,24 +53,42 @@ public class Repl {
         if (input == null || input.isEmpty())
             return null;
 
+        if (input.equals(lastLine)) {
+            return eval(parent);
+        }
+
+        lastLine = input;
+
+        try {
+            Class<?> cl = build(input);
+            return eval(cl);
+        } catch (VerifyError e) {
+            System.err.println("REPL INTERNAL ERROR");
+            lastLine = null;
+        }
+        return null;
+    }
+
+    private TObject eval(Class<?> clazz) {
         Settings.set("REPL", true);
         Thread.UncaughtExceptionHandler currentHandler = Thread.getDefaultUncaughtExceptionHandler();
         try {
-            Class<?> cl = build(input);
-            if (cl != null) {
+            if (clazz != null) {
                 Thread.setDefaultUncaughtExceptionHandler(exceptionHandler);
-                Object obj = cl.getDeclaredMethod("exec").invoke(null);
-                parent = cl;
+                Object obj = clazz.getDeclaredMethod("exec").invoke(null);
+                parent = clazz;
                 return (TObject) obj;
             }
         } catch (InvocationTargetException e) {
             Thread.getDefaultUncaughtExceptionHandler().uncaughtException(Thread.currentThread(), e.getCause());
-        } catch (VerifyError | NoSuchMethodException | IllegalAccessException e) {
+            lastLine = null;
+        } catch (NoSuchMethodException | IllegalAccessException e) {
             System.err.println("REPL INTERNAL ERROR");
+            lastLine = null;
         } finally {
             Thread.setDefaultUncaughtExceptionHandler(currentHandler);
+            Settings.set("REPL", false);
         }
-        Settings.set("REPL", false);
         return null;
     }
 
