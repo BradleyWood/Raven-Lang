@@ -27,6 +27,11 @@ public class TryCatchFinally extends Statement {
     }
 
     @Override
+    public void accept(TreeVisitor visitor) {
+        visitor.visitTryCatchFinally(this);
+    }
+
+    @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass())

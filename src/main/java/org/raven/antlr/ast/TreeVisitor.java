@@ -41,6 +41,8 @@ public interface TreeVisitor {
 
     void visitAnnotationDef(AnnoDef def);
 
+    void visitTryCatchFinally(TryCatchFinally tcf);
+
     void visitGo(Go go);
 
     void visitContinue();
