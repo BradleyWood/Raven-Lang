@@ -15,7 +15,7 @@ public class QualifiedNameVisitorTest {
 
     @Test
     public void qNameTest2() {
-        QualifiedName name = new QualifiedName("someName", "anotherName", "finally");
-        testStatement(QualifiedNameVisitor.INSTANCE, "someName.anotherName.finally", name);
+        QualifiedName name = new QualifiedName("someName", "anotherName", "done");
+        testStatement(QualifiedNameVisitor.INSTANCE, "someName.anotherName.done", name);
     }
 }
