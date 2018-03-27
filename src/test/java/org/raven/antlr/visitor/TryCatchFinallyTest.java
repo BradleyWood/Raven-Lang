@@ -12,6 +12,7 @@ public class TryCatchFinallyTest {
 
     private final Call call = new Call(new QualifiedName("aMethod"));
     private final Call handlerCall = new Call(new QualifiedName("println"));
+    private final QualifiedName cName = new QualifiedName("e");
 
     @Test
     public void testTryCatchNoFinally() {
@@ -19,9 +20,9 @@ public class TryCatchFinallyTest {
         Block handler = new Block(handlerCall);
         Block finallyBlock = null;
 
-        TryCatchFinally expected = new TryCatchFinally(body, handler, finallyBlock);
+        TryCatchFinally expected = new TryCatchFinally(body, cName, handler, finallyBlock);
 
-        testStatement(TryCatchFinallyVisitor.INSTANCE, "try { aMethod(); } catch { println(); }", expected);
+        testStatement(TryCatchFinallyVisitor.INSTANCE, "try { aMethod(); } catch e { println(); }", expected);
     }
 
     @Test
@@ -30,8 +31,8 @@ public class TryCatchFinallyTest {
         Block handler = new Block(handlerCall);
         Block finallyBlock = new Block(call, handlerCall);
 
-        TryCatchFinally expected = new TryCatchFinally(body, handler, finallyBlock);
+        TryCatchFinally expected = new TryCatchFinally(body, cName, handler, finallyBlock);
 
-        testStatement(TryCatchFinallyVisitor.INSTANCE, "try { aMethod(); } catch { println(); } finally { aMethod(); println(); }", expected);
+        testStatement(TryCatchFinallyVisitor.INSTANCE, "try { aMethod(); } catch e { println(); } finally { aMethod(); println(); }", expected);
     }
 }

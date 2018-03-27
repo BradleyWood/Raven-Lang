@@ -5,11 +5,13 @@ import java.util.Objects;
 public class TryCatchFinally extends Statement {
 
     private final Block body;
+    private final QualifiedName exName;
     private final Block handler;
     private final Block finallyBlock;
 
-    public TryCatchFinally(Block body, Block handler, Block finallyBlock) {
+    public TryCatchFinally(Block body, QualifiedName exName, Block handler, Block finallyBlock) {
         this.body = body;
+        this.exName = exName;
         this.handler = handler;
         this.finallyBlock = finallyBlock;
     }

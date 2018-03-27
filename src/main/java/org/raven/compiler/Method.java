@@ -923,6 +923,11 @@ public class Method extends MethodVisitor implements TreeVisitor, Opcodes {
 
     }
 
+    @Override
+    public void visitTryCatchFinally(TryCatchFinally tcf) {
+
+    }
+
     private void assignListIdx(ListIndex idx) {
         idx.getPrecedingExpr().accept(this);
         for (int i = 0; i < idx.getIndex().length - 1; i++) {

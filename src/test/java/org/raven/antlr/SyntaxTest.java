@@ -34,11 +34,11 @@ public class SyntaxTest {
 
     @Test
     public void testTryCatchFinally() {
-        testSyntax("try {} catch {}", true);
-        testSyntax("try {} catch {} finally {}", true);
-        testSyntax("try { println(); } catch {}", true);
-        testSyntax("try { println(); } catch { println(); }", true);
-        testSyntax("try { println(); } catch { println(); } finally { println(); }", true);
+        testSyntax("try {} catch e {}", true);
+        testSyntax("try {} catch e {} finally {}", true);
+        testSyntax("try { println(); } catch e {}", true);
+        testSyntax("try { println(); } catch e { println(); }", true);
+        testSyntax("try { println(); } catch e { println(); } finally { println(); }", true);
 
         testSyntax("try ; catch {}", false);
         testSyntax("try {} catch ;", false);

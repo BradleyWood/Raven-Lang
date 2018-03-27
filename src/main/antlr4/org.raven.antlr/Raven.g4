@@ -36,7 +36,7 @@ ifStatement
     :   IF expression statement (ELSE statement)?
     ;
 tryCatchFinally
-    :   TRY block CATCH block (FINALLY block)?
+    :   TRY block CATCH IDENTIFIER block (FINALLY block)?
     ;
 whileStatement
     :   WHILE expression statement
