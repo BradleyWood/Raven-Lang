@@ -10,6 +10,7 @@ toyFile
     ;
 statement
     :   block
+    |   tryCatchFinally
     |   forStatement
     |   varDeclaration
     |   annotationDeclaration
@@ -33,6 +34,9 @@ returnStatement
     ;
 ifStatement
     :   IF expression statement (ELSE statement)?
+    ;
+tryCatchFinally
+    :   TRY block CATCH block (FINALLY block)?
     ;
 whileStatement
     :   WHILE expression statement
@@ -244,9 +248,11 @@ DO      :   'do';
 GO      :   'go';
 ELSE    :   'else';
 FOR     :   'for';
+TRY     :   'try';
 VAR     :   'var';
 THIS    :   'this';
 TRUE    :   'true';
+CATCH   :   'catch';
 WHILE   :   'while';
 BREAK   :   'break';
 FALSE   :   'false';
@@ -254,6 +260,7 @@ SUPER   :   'super';
 CLASS   :   'class';
 RETURN  :   'return';
 PUB     :   'public';
+FINALLY :   'finally';
 EXTENDS :   'extends';
 IMPL    :   'implements';
 PRIV    :   'private';
