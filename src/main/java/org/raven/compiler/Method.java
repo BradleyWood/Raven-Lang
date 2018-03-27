@@ -229,7 +229,7 @@ public class Method extends MethodVisitor implements TreeVisitor, Opcodes {
         int idx = fun.getBody().getStatements().size() - 1;
         if (idx != -1)
             stmt = fun.getBody().getStatements().get(idx);
-        if (stmt == null || !(stmt instanceof Return)) { // last stmt isnt return so add one
+        if (!(stmt instanceof Return)) { // last stmt isnt return so add one
             if (ctx.getName().equals("main") || ctx.getName().equals("<clinit>") || ctx.getName().endsWith("<init>")) {
                 visitInsn(RETURN);
             } else {
