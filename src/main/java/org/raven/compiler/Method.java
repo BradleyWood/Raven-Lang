@@ -987,7 +987,24 @@ public class Method extends MethodVisitor implements TreeVisitor, Opcodes {
 
     @Override
     public void visitRaise(Raise raise) {
+        raise.getExpression().accept(this);
+        visitMethodInsn(INVOKEVIRTUAL, getName(TObject.class), "toObject", getDesc(TObject.class, "toObject"), false);
+        visitInsn(DUP);
+        visitTypeInsn(INSTANCEOF, "java/lang/Throwable");
 
+        Label invalidException = new Label();
+        visitJumpInsn(IFEQ, invalidException);
+
+        visitTypeInsn(CHECKCAST, "java/lang/Throwable");
+        visitInsn(ATHROW);
+
+        visitLabel(invalidException);
+        visitInsn(POP);
+        visitTypeInsn(NEW, "java/lang/RuntimeException");
+        visitInsn(DUP);
+        visitLdcInsn("Cannot throw non-exception type");
+        visitMethodInsn(INVOKESPECIAL, "java/lang/RuntimeException", "<init>", "(Ljava/lang/String;)V", false);
+        visitInsn(ATHROW);
     }
 
     private void assignListIdx(ListIndex idx) {
