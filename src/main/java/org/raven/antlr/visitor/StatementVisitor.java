@@ -24,6 +24,8 @@ public class StatementVisitor extends RavenBaseVisitor<Statement> {
             stmt = ctx.tryCatchFinally().accept(TryCatchFinallyVisitor.INSTANCE);
         } else if (ctx.constructor() != null) {
             stmt = ctx.constructor().accept(ConstructorVisitor.INSTANCE);
+        } else if (ctx.raiseStatement() != null) {
+            stmt = ctx.raiseStatement().accept(RaiseVisitor.INSTANCE);
         } else if (ctx.CONTINUE() != null) {
             stmt = new Continue();
         } else if (ctx.BREAK() != null) {
