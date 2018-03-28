@@ -11,6 +11,7 @@ toyFile
 statement
     :   block
     |   tryCatchFinally
+    |   raiseStatement
     |   forStatement
     |   varDeclaration
     |   annotationDeclaration
@@ -27,6 +28,9 @@ statement
     ;
 packageDef
     :   PACK qualifiedName SEMI
+    ;
+raiseStatement
+    :   RAISE expression SEMI
     ;
 returnStatement
     :   RETURN expression SEMI
@@ -253,6 +257,7 @@ VAR     :   'var';
 THIS    :   'this';
 TRUE    :   'true';
 CATCH   :   'catch';
+RAISE   :   'raise';
 WHILE   :   'while';
 BREAK   :   'break';
 FALSE   :   'false';
