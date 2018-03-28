@@ -925,7 +925,64 @@ public class Method extends MethodVisitor implements TreeVisitor, Opcodes {
 
     @Override
     public void visitTryCatchFinally(TryCatchFinally tcf) {
+        boolean hasFinally = tcf.getFinallyBlock() != null;
 
+        // empty try; can optimize away
+        if (tcf.getBody().getStatements().isEmpty()) {
+            if (hasFinally && !tcf.getFinallyBlock().getStatements().isEmpty()) {
+                tcf.getFinallyBlock().accept(this);
+            }
+            return;
+        }
+
+        Label bodyStart = new Label();
+        Label bodyEnd = new Label();
+        Label catchBlock = new Label();
+        Label after = new Label();
+
+        Label f1 = new Label();
+        Label f2 = new Label();
+
+        visitTryCatchBlock(bodyStart, bodyEnd, catchBlock, "java/lang/Throwable");
+
+        if (hasFinally) {
+            visitTryCatchBlock(bodyStart, bodyEnd, f1, null);
+            visitTryCatchBlock(catchBlock, f2, f1, null);
+        }
+
+        visitLabel(bodyStart);
+        tcf.getBody().accept(this);
+        visitLabel(bodyEnd);
+
+        if (hasFinally) {
+            tcf.getFinallyBlock().accept(this);
+        }
+
+        visitJumpInsn(GOTO, after);
+
+        visitLabel(catchBlock);
+
+        scope.putVar(tcf.getExceptionName().toString());
+        visitVarInsn(ASTORE, getLocal(tcf.getExceptionName().toString()));
+
+        tcf.getHandler().accept(this);
+
+        if (hasFinally) {
+            visitLabel(f2);
+            tcf.getFinallyBlock().accept(this);
+            visitJumpInsn(GOTO, after);
+            visitLabel(f1);
+
+            scope.putVar(" __ex__ ");
+            visitVarInsn(ASTORE, getLocal(" __ex__ "));
+
+            tcf.getFinallyBlock().accept(this);
+
+            visitVarInsn(ALOAD, getLocal(" __ex__ "));
+            visitInsn(ATHROW);
+        }
+
+        visitLabel(after);
     }
 
     private void assignListIdx(ListIndex idx) {

@@ -16,6 +16,10 @@ public class TryCatchFinally extends Statement {
         this.finallyBlock = finallyBlock;
     }
 
+    public QualifiedName getExceptionName() {
+        return exName;
+    }
+
     public Block getBody() {
         return body;
     }
