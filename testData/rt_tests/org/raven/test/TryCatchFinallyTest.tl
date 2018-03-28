@@ -31,3 +31,33 @@ fun testTryCatchFinally2() {
     }
     Assert.fail("Finally not executed");
 }
+
+fun testNestedTryCatch() {
+    try {
+        try {
+            Assert.fail();
+        } catch e {
+            return;
+        }
+        Assert.fail("Exception not caught");
+    } catch e {
+        Assert.fail("Exception should not be caught here");
+    }
+    Assert.fail("No branch executed");
+}
+
+fun testNestedTryCatchFinally() {
+    try {
+        try {
+            Assert.fail("abc");
+        } catch e {
+            return;
+        } finally {
+        }
+        Assert.fail("Exception not caught");
+    } catch e {
+        Assert.fail("Exception should not be caught here");
+    } finally {
+    }
+    Assert.fail("No branch executed");
+}

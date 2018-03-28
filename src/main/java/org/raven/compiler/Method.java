@@ -943,13 +943,6 @@ public class Method extends MethodVisitor implements TreeVisitor, Opcodes {
         Label f1 = new Label();
         Label f2 = new Label();
 
-        visitTryCatchBlock(bodyStart, bodyEnd, catchBlock, "java/lang/Throwable");
-
-        if (hasFinally) {
-            visitTryCatchBlock(bodyStart, bodyEnd, f1, null);
-            visitTryCatchBlock(catchBlock, f2, f1, null);
-        }
-
         visitLabel(bodyStart);
         tcf.getBody().accept(this);
         visitLabel(bodyEnd);
@@ -983,6 +976,13 @@ public class Method extends MethodVisitor implements TreeVisitor, Opcodes {
         }
 
         visitLabel(after);
+
+        visitTryCatchBlock(bodyStart, bodyEnd, catchBlock, "java/lang/Throwable");
+
+        if (hasFinally) {
+            visitTryCatchBlock(bodyStart, bodyEnd, f1, null);
+            visitTryCatchBlock(catchBlock, f2, f1, null);
+        }
     }
 
     @Override
