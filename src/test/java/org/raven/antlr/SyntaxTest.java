@@ -47,6 +47,18 @@ public class SyntaxTest {
     }
 
     @Test
+    public void testRaise() {
+        testSyntax("raise NullPointerException();", true);
+        testSyntax("raise hell;", true);
+        testSyntax("raise abc.d.e.f();", true);
+
+        testSyntax("raise ;", false);
+        testSyntax("raise {}", false);
+        testSyntax("raise hell", false);
+        testSyntax("raise NullPointerException()", false);
+    }
+
+    @Test
     public void testWhile() {
         testSyntax("while true ;", true);
         testSyntax("while a > b ;", true);
