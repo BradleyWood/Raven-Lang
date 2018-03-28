@@ -43,6 +43,8 @@ public interface TreeVisitor {
 
     void visitTryCatchFinally(TryCatchFinally tcf);
 
+    void visitRaise(Raise raise);
+
     void visitGo(Go go);
 
     void visitContinue();

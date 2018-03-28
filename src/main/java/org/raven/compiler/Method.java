@@ -985,6 +985,11 @@ public class Method extends MethodVisitor implements TreeVisitor, Opcodes {
         visitLabel(after);
     }
 
+    @Override
+    public void visitRaise(Raise raise) {
+
+    }
+
     private void assignListIdx(ListIndex idx) {
         idx.getPrecedingExpr().accept(this);
         for (int i = 0; i < idx.getIndex().length - 1; i++) {

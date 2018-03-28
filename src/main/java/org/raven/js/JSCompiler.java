@@ -336,6 +336,11 @@ public class JSCompiler implements TreeVisitor {
     }
 
     @Override
+    public void visitRaise(Raise raise) {
+
+    }
+
+    @Override
     public void visitGo(Go go) {
         throw new RuntimeException("Go not allowed");
     }
