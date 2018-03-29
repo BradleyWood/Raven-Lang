@@ -956,6 +956,7 @@ public class Method extends MethodVisitor implements TreeVisitor, Opcodes {
         visitLabel(catchBlock);
 
         scope.putVar(tcf.getExceptionName().toString());
+        visitMethodInsn(INVOKESTATIC, getInternalName(Intrinsics.class), "wrap", getDesc(Intrinsics.class, "wrap", Object.class), false);
         visitVarInsn(ASTORE, getLocal(tcf.getExceptionName().toString()));
 
         tcf.getHandler().accept(this);
