@@ -3,15 +3,14 @@ package raven;
 import org.raven.core.wrappers.TList;
 import java.io.File;
 import java.io.BufferedWriter;
-import java.io.FileOutputStream;
 import java.io.OutputStreamWriter;
 
-fun getWriter(path) {
-    return getWriter(path, null);
+fun getWriter(out) {
+    return getWriter(out, null);
 }
 
-fun getWriter(path, header) {
-    var bw = BufferedWriter(OutputStreamWriter(FileOutputStream(path)));
+fun getWriter(out, header) {
+    var bw = BufferedWriter(OutputStreamWriter(out));
     var writer = CSVWriter(bw, ",");
 
     if header != null
@@ -27,7 +26,11 @@ class CSVWriter(bufferedWriter, delim) {
     fun write(arg) {
         if !newRecord
             bufferedWriter.write(str(delim));
-
+        if type(arg) == TList.TYPE {
+            for a : arg {
+                write(a);
+            }
+        }
         bufferedWriter.write(str(arg));
         newRecord = false;
     }
@@ -37,13 +40,7 @@ class CSVWriter(bufferedWriter, delim) {
     }
 
     fun printRecord(args) {
-        if type(args) == TList.TYPE {
-            for arg : args {
-                write(arg);
-            }
-        } else {
-            write(args);
-        }
+        write(args);
         bufferedWriter.newLine();
         newRecord = true;
     }
