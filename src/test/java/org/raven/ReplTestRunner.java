@@ -65,7 +65,7 @@ public class ReplTestRunner {
                     }
                     inputLines.add(line + ";");
                 } else if (line.length() > 0) {
-                    output.add(line);
+                    output.add(line.trim());
                 }
             }
             Errors.reset();
@@ -76,7 +76,7 @@ public class ReplTestRunner {
             LinkedList<String> actualOutput = new LinkedList<>();
             while ((line = outputReader.readLine()) != null) {
                 if (!line.equals("")) {
-                    actualOutput.add(line);
+                    actualOutput.add(line.trim());
                 }
             }
             baos.reset();
