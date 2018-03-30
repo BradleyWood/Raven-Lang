@@ -1,0 +1,8 @@
+> raise "str"
+Exception in thread: main (most recent call last)
+RuntimeException: Cannot throw non-exception type
+> import java.lang.RuntimeException
+> raise RuntimeException("error");
+Exception in thread: main (most recent call last)
+RuntimeException: error
+at repl.Repl21_2.exec(<stdin>:1)
