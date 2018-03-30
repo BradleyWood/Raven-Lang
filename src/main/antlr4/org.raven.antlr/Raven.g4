@@ -42,6 +42,10 @@ ifStatement
 tryCatchFinally
     :   TRY block CATCH IDENTIFIER block (FINALLY block)?
     ;
+boxedId
+    :   '(' boxedId ')'
+    |   IDENTIFIER
+    ;
 whileStatement
     :   WHILE expression statement
     |   DO statement WHILE expression SEMI
