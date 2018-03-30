@@ -40,7 +40,7 @@ ifStatement
     :   IF expression statement (ELSE statement)?
     ;
 tryCatchFinally
-    :   TRY block CATCH IDENTIFIER block (FINALLY block)?
+    :   TRY block CATCH boxedId block (FINALLY block)?
     ;
 boxedId
     :   '(' boxedId ')'

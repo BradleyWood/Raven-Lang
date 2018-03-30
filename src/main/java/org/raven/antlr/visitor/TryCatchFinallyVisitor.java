@@ -15,7 +15,7 @@ public class TryCatchFinallyVisitor extends RavenBaseVisitor<TryCatchFinally> {
     public TryCatchFinally visitTryCatchFinally(RavenParser.TryCatchFinallyContext ctx) {
         Block body = ctx.block(0).accept(BlockVisitor.INSTANCE);
         Block handler = ctx.block(1).accept(BlockVisitor.INSTANCE);
-        QualifiedName exName = new QualifiedName(ctx.IDENTIFIER().getText());
+        QualifiedName exName = ctx.boxedId().accept(BoxedIdVisitor.INSTANCE);
         Block finallyBlock = null;
 
         if (ctx.block().size() == 3) {
