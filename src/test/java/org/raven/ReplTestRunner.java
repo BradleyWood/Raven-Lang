@@ -20,6 +20,7 @@ import java.util.stream.Collectors;
 @RunWith(Parameterized.class)
 public class ReplTestRunner {
 
+    private static final String ANY = "*";
     private static final ByteArrayOutputStream baos = new ByteArrayOutputStream();
     private static final PrintStream newOut = new PrintStream(baos);
 
@@ -80,7 +81,14 @@ public class ReplTestRunner {
                 }
             }
             baos.reset();
-            Assert.assertEquals(output, actualOutput);
+
+            Assert.assertEquals("Wrong number of output lines", output.size(), actualOutput.size());
+
+            for (int i = 0; i < actualOutput.size() && i < output.size(); i++) {
+                if (ANY.equals(output.get(i)))
+                    continue;
+                Assert.assertEquals(output.get(i), actualOutput.get(i));
+            }
         } catch (IOException e) {
             baos.reset();
             Assert.fail("Cannot read file " + path);
