@@ -30,6 +30,7 @@ class CSVWriter(bufferedWriter, delim) {
             for a : arg {
                 write(a);
             }
+            return;
         }
         bufferedWriter.write(str(arg));
         newRecord = false;
