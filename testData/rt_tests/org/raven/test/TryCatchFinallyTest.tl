@@ -11,6 +11,16 @@ fun testTryCatch() {
     Assert.fail("Exception not caught");
 }
 
+fun testTryCatch2() {
+    try {
+        Assert.fail("a message");
+    } catch e {
+        Assert.assertEquals("a message", e.getMessage());
+        return;
+    }
+    Assert.fail("Exception not caught");
+}
+
 // test finally with exception thrown
 fun testTryCatchFinally() {
     try {
