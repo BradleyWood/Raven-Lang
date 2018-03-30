@@ -35,6 +35,8 @@ public class SyntaxTest {
     @Test
     public void testTryCatchFinally() {
         testSyntax("try {} catch e {}", true);
+        testSyntax("try {} catch (e) {}", true);
+        testSyntax("try {} catch (((e))) {}", true);
         testSyntax("try {} catch e {} finally {}", true);
         testSyntax("try { println(); } catch e {}", true);
         testSyntax("try { println(); } catch e { println(); }", true);
@@ -42,6 +44,7 @@ public class SyntaxTest {
 
         testSyntax("try ; catch {}", false);
         testSyntax("try {} catch ;", false);
+        testSyntax("try {} catch (((e)) {}", false);
         testSyntax("try {} catch {} finally ;", false);
         testSyntax("try { catch {}}", false);
     }
