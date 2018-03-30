@@ -24,14 +24,14 @@ class CSVWriter(bufferedWriter, delim) {
     private var newRecord = true;
 
     fun write(arg) {
-        if !newRecord
-            bufferedWriter.write(str(delim));
         if type(arg) == TList.TYPE {
             for a : arg {
                 write(a);
             }
             return;
         }
+        if !newRecord
+            bufferedWriter.write(str(delim));
         bufferedWriter.write(str(arg));
         newRecord = false;
     }
