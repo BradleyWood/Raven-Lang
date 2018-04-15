@@ -5,7 +5,7 @@ grammar Raven;
 // PARSER
 
 
-toyFile
+ravenFile
     :   packageDef? (importStatement*) statement* EOF
     ;
 statement

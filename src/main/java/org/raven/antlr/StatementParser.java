@@ -18,7 +18,7 @@ public class StatementParser {
         parser.addErrorListener(new RavenErrorListener("<stdin>"));
 
         ToyFileVisitor tfv = new ToyFileVisitor();
-        return tfv.visitToyFile(parser.toyFile()).getStatements();
+        return tfv.visitRavenFile(parser.ravenFile()).getStatements();
     }
 
 }

@@ -26,7 +26,7 @@ public class RuleTester {
         p.removeErrorListener(ConsoleErrorListener.INSTANCE);
 
         try {
-            new ToyFileVisitor().visit(p.toyFile());
+            new ToyFileVisitor().visit(p.ravenFile());
         } catch (Exception e) {
             if (pass) {
                 Assert.fail();

@@ -11,7 +11,7 @@ import java.util.ArrayList;
 public class ToyFileVisitor extends RavenBaseVisitor<RavenTree> {
 
     @Override
-    public RavenTree visitToyFile(RavenParser.ToyFileContext ctx) {
+    public RavenTree visitRavenFile(RavenParser.RavenFileContext ctx) {
         ArrayList<Statement> statements = new ArrayList<>();
         ArrayList<Statement> functions = new ArrayList<>(); // functions at bottom
 
