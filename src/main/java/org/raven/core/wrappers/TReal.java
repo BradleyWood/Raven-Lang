@@ -11,7 +11,7 @@ public class TReal extends TObject {
     @Hidden
     private double value;
 
-    public TReal(double value) {
+    public TReal(final double value) {
         this.value = value;
     }
 
@@ -48,8 +48,8 @@ public class TReal extends TObject {
     }
 
     @Override
-    public int compareTo(TObject o) {
-        TObject result = sub(o);
+    public int compareTo(final TObject o) {
+        final TObject result = sub(o);
         if (result instanceof TNull)
             throw new RuntimeException("Cannot compare real with " + o.getClass().getName());
         if (result.LT(ZERO).isTrue())
@@ -60,7 +60,7 @@ public class TReal extends TObject {
     }
 
     @Override
-    public TObject add(TObject obj) {
+    public TObject add(final TObject obj) {
         if (obj instanceof TString) {
             return new TString(toString() + obj.toString());
         } else if (obj instanceof TReal) {
@@ -76,7 +76,7 @@ public class TReal extends TObject {
     }
 
     @Override
-    public TObject sub(TObject obj) {
+    public TObject sub(final TObject obj) {
         if (obj instanceof TReal) {
             double other = ((TReal) obj).value;
             double result = value - other;
@@ -90,7 +90,7 @@ public class TReal extends TObject {
     }
 
     @Override
-    public TObject mul(TObject obj) {
+    public TObject mul(final TObject obj) {
         if (obj instanceof TReal) {
             double other = ((TReal) obj).value;
             double result = value * other;
@@ -104,7 +104,7 @@ public class TReal extends TObject {
     }
 
     @Override
-    public TObject div(TObject obj) {
+    public TObject div(final TObject obj) {
         if (obj instanceof TReal) {
             double other = ((TReal) obj).value;
             double result = value / other;
@@ -118,7 +118,7 @@ public class TReal extends TObject {
     }
 
     @Override
-    public TObject mod(TObject obj) {
+    public TObject mod(final TObject obj) {
         if (obj instanceof TReal) {
             double other = ((TReal) obj).value;
             double result = value % other;
@@ -132,7 +132,7 @@ public class TReal extends TObject {
     }
 
     @Override
-    public TObject pow(TObject obj) {
+    public TObject pow(final TObject obj) {
         if (obj instanceof TReal) {
             double other = ((TReal) obj).value;
             double result = Math.pow(value, other);
@@ -146,7 +146,7 @@ public class TReal extends TObject {
     }
 
     @Override
-    public TObject GT(TObject obj) {
+    public TObject GT(final TObject obj) {
         if (obj instanceof TReal) {
             double other = ((TReal) obj).value;
             return value > other ? TBoolean.TRUE : TBoolean.FALSE;
@@ -158,7 +158,7 @@ public class TReal extends TObject {
     }
 
     @Override
-    public TObject LT(TObject obj) {
+    public TObject LT(final TObject obj) {
         if (obj instanceof TReal) {
             double other = ((TReal) obj).value;
             return value < other ? TBoolean.TRUE : TBoolean.FALSE;
@@ -170,7 +170,7 @@ public class TReal extends TObject {
     }
 
     @Override
-    public TObject GTE(TObject obj) {
+    public TObject GTE(final TObject obj) {
         if (obj instanceof TReal) {
             double other = ((TReal) obj).value;
             return value >= other ? TBoolean.TRUE : TBoolean.FALSE;
@@ -182,7 +182,7 @@ public class TReal extends TObject {
     }
 
     @Override
-    public TObject LTE(TObject obj) {
+    public TObject LTE(final TObject obj) {
         if (obj instanceof TReal) {
             double other = ((TReal) obj).value;
             return value <= other ? TBoolean.TRUE : TBoolean.FALSE;
@@ -194,7 +194,7 @@ public class TReal extends TObject {
     }
 
     @Override
-    public TObject EQ(TObject obj) {
+    public TObject EQ(final TObject obj) {
         if (obj instanceof TReal) {
             double other = ((TReal) obj).value;
             return value == other ? TBoolean.TRUE : TBoolean.FALSE;
@@ -206,7 +206,7 @@ public class TReal extends TObject {
     }
 
     @Override
-    public TObject NE(TObject obj) {
+    public TObject NE(final TObject obj) {
         if (obj instanceof TReal) {
             double other = ((TReal) obj).value;
             return value != other ? TBoolean.TRUE : TBoolean.FALSE;
@@ -218,7 +218,7 @@ public class TReal extends TObject {
     }
 
     @Override
-    public Object coerce(Class clazz) {
+    public Object coerce(final Class clazz) {
         if (clazz.equals(double.class) || clazz.equals(Double.class)) {
             return toDouble();
         } else if (clazz.equals(float.class) || clazz.equals(Float.class)) {
@@ -236,7 +236,7 @@ public class TReal extends TObject {
     }
 
     @Override
-    public int coerceRating(Class clazz) {
+    public int coerceRating(final Class clazz) {
         if (clazz.equals(double.class) || clazz.equals(Double.class)
                 || clazz.equals(float.class) || clazz.equals(Float.class)) {
             return COERCE_IDEAL;
@@ -301,7 +301,7 @@ public class TReal extends TObject {
 
     @Hidden
     @Override
-    public boolean equals(Object o) {
+    public boolean equals(final Object o) {
         if (this == o) return true;
         return o instanceof TReal && value == ((TReal) o).value;
     }

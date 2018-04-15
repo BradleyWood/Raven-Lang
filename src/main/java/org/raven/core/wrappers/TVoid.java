@@ -14,12 +14,12 @@ public class TVoid extends TObject {
     }
 
     @Override
-    public int coerceRating(Class<?> clazz) {
+    public int coerceRating(final Class<?> clazz) {
         return COERCE_IMPOSSIBLE;
     }
 
     @Override
-    public boolean equals(Object o) {
+    public boolean equals(final Object o) {
         return o == VOID;
     }
 }

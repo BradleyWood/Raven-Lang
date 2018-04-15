@@ -30,31 +30,31 @@ public class TNull extends TObject {
     }
 
     @Override
-    public int compareTo(TObject o) {
+    public int compareTo(final TObject o) {
         if (!(o instanceof TNull))
             return 0;
         throw new RuntimeException("Cannot compare null with " + o.getClass().getName());
     }
 
     @Override
-    public Object coerce(Class clazz) {
+    public Object coerce(final Class clazz) {
         return toObject();
     }
 
     @Override
-    public int coerceRating(Class clazz) {
+    public int coerceRating(final Class clazz) {
         if (clazz.isPrimitive())
             return COERCE_IMPOSSIBLE;
         return COERCE_IDEAL;
     }
 
     @Override
-    public TObject EQ(TObject obj) {
+    public TObject EQ(final TObject obj) {
         return ((obj == null) || (obj instanceof TNull)) ? TBoolean.TRUE : TBoolean.FALSE;
     }
 
     @Override
-    public TObject NE(TObject obj) {
+    public TObject NE(final TObject obj) {
         return EQ(obj).not();
     }
 
@@ -65,7 +65,7 @@ public class TNull extends TObject {
 
     @Hidden
     @Override
-    public boolean equals(Object o) {
+    public boolean equals(final Object o) {
         return o == NULL;
     }
 }

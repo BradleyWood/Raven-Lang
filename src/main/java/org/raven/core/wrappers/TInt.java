@@ -11,7 +11,7 @@ public class TInt extends TObject {
 
     private int value;
 
-    public TInt(int value) {
+    public TInt(final int value) {
         this.value = value;
     }
 
@@ -35,7 +35,7 @@ public class TInt extends TObject {
     }
 
     @Override
-    public int compareTo(TObject o) {
+    public int compareTo(final TObject o) {
         if (!(o instanceof TInt))
             throw new RuntimeException("Cannot compare int with " + o.getClass().getName());
         return Integer.compare(value, ((TInt) o).value);
@@ -54,7 +54,7 @@ public class TInt extends TObject {
     }
 
     @Override
-    public TObject add(TObject obj) {
+    public TObject add(final TObject obj) {
         if (obj instanceof TString) {
             return new TString(toString() + obj.toString());
         } else if (obj instanceof TReal) {
@@ -73,7 +73,7 @@ public class TInt extends TObject {
     }
 
     @Override
-    public TObject sub(TObject obj) {
+    public TObject sub(final TObject obj) {
         if (obj instanceof TReal) {
             return new TReal((double) value).sub(obj);
         } else if (obj instanceof TInt) {
@@ -90,7 +90,7 @@ public class TInt extends TObject {
     }
 
     @Override
-    public TObject mul(TObject obj) {
+    public TObject mul(final TObject obj) {
         if (obj instanceof TReal) {
             return new TReal((double) value).mul(obj);
         } else if (obj instanceof TInt) {
@@ -107,7 +107,7 @@ public class TInt extends TObject {
     }
 
     @Override
-    public TObject div(TObject obj) {
+    public TObject div(final TObject obj) {
         if (obj instanceof TReal) {
             return new TReal((double) value).div(obj);
         } else if (obj instanceof TInt) {
@@ -120,7 +120,7 @@ public class TInt extends TObject {
     }
 
     @Override
-    public TObject mod(TObject obj) {
+    public TObject mod(final TObject obj) {
         if (obj instanceof TReal) {
             return new TReal((double) value).mod(obj);
         } else if (obj instanceof TInt) {
@@ -133,7 +133,7 @@ public class TInt extends TObject {
     }
 
     @Override
-    public TObject pow(TObject obj) {
+    public TObject pow(final TObject obj) {
         if (obj instanceof TReal) {
             return new TReal((double) value).pow(obj);
         } else if (obj instanceof TInt) {
@@ -147,7 +147,7 @@ public class TInt extends TObject {
                 return new TBigInt(toBigInt().pow(other));
             }
         } else if (obj instanceof TBigInt) {
-            Integer v = obj.toInt();
+            final Integer v = obj.toInt();
             if (v == null)
                 throw new ArithmeticException("Exponent " + obj.toString() + " is too big");
             return new TBigInt(toBigInt().pow(v));
@@ -179,7 +179,7 @@ public class TInt extends TObject {
     }
 
     @Override
-    public TObject GT(TObject obj) {
+    public TObject GT(final TObject obj) {
         if (obj instanceof TReal) {
             return new TReal(value).GT(obj);
         } else if (obj instanceof TInt) {
@@ -192,7 +192,7 @@ public class TInt extends TObject {
     }
 
     @Override
-    public TObject LT(TObject obj) {
+    public TObject LT(final TObject obj) {
         if (obj instanceof TReal) {
             return new TReal(value).LT(obj);
         } else if (obj instanceof TInt) {
@@ -205,7 +205,7 @@ public class TInt extends TObject {
     }
 
     @Override
-    public TObject GTE(TObject obj) {
+    public TObject GTE(final TObject obj) {
         if (obj instanceof TReal) {
             return new TReal(value).GTE(obj);
         } else if (obj instanceof TInt) {
@@ -218,7 +218,7 @@ public class TInt extends TObject {
     }
 
     @Override
-    public TObject LTE(TObject obj) {
+    public TObject LTE(final TObject obj) {
         if (obj instanceof TReal) {
             return new TReal(value).LTE(obj);
         } else if (obj instanceof TInt) {
@@ -231,7 +231,7 @@ public class TInt extends TObject {
     }
 
     @Override
-    public TObject EQ(TObject obj) {
+    public TObject EQ(final TObject obj) {
         if (obj instanceof TReal) {
             return new TReal(value).EQ(obj);
         } else if (obj instanceof TInt) {
@@ -244,7 +244,7 @@ public class TInt extends TObject {
     }
 
     @Override
-    public TObject NE(TObject obj) {
+    public TObject NE(final TObject obj) {
         if (obj instanceof TReal) {
             return new TReal(value).NE(obj);
         } else if (obj instanceof TInt) {
@@ -316,7 +316,7 @@ public class TInt extends TObject {
         return Integer.toString(value);
     }
 
-    public Object coerce(Class clazz) {
+    public Object coerce(final Class clazz) {
         if (clazz.equals(int.class) || clazz.equals(Integer.class)) {
             return toInt();
         } else if (clazz.equals(long.class) || clazz.equals(Long.class)) {
@@ -334,7 +334,7 @@ public class TInt extends TObject {
     }
 
     @Override
-    public int coerceRating(Class clazz) {
+    public int coerceRating(final Class clazz) {
         if (clazz.equals(int.class) || clazz.equals(long.class) || clazz.equals(Integer.class) || clazz.equals(Long.class)) {
             return COERCE_IDEAL;
         } else if (clazz.equals(byte.class) || clazz.equals(Byte.class) || clazz.equals(short.class) || clazz.equals(Short.class)) {
@@ -347,7 +347,7 @@ public class TInt extends TObject {
 
     @Hidden
     @Override
-    public boolean equals(Object o) {
+    public boolean equals(final Object o) {
         if (this == o) return true;
         return o instanceof TInt && ((TInt) o).value == value;
     }

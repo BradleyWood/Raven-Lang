@@ -21,18 +21,18 @@ public class TObject implements Comparable<TObject> {
     }
 
     @Hidden
-    public TObject(Object obj) {
+    public TObject(final Object obj) {
         this.obj = obj;
         this.type = new TType(obj.getClass());
     }
 
     @Hidden
-    public TObject(TType type) {
+    public TObject(final TType type) {
         this.type = type;
     }
 
     @Hidden
-    public void setType(TType type) {
+    public void setType(final TType type) {
         this.type = type;
     }
 
@@ -54,62 +54,62 @@ public class TObject implements Comparable<TObject> {
     }
 
     @Hidden
-    public TObject set(TObject index, TObject obj) {
+    public TObject set(final TObject index, final TObject obj) {
         throw new UnsupportedOperationException("Cannot set element in non list type: " + getType().toString());
     }
 
     @Hidden
-    public TObject get(TObject obj) {
+    public TObject get(final TObject obj) {
         throw new UnsupportedOperationException("Cannot get element from non list type: " + getType().toString());
     }
 
     @Hidden
-    public TObject add(TObject obj) {
+    public TObject add(final TObject obj) {
         throw new UnsupportedOperationException("Cannot add types '" + getType().toString() + "' and '" + obj.getType().toString() + "'");
     }
 
     @Hidden
-    public TObject sub(TObject obj) {
+    public TObject sub(final TObject obj) {
         throw new UnsupportedOperationException("Cannot subtract types '" + getType().toString() + "' and '" + obj.getType().toString() + "'");
     }
 
     @Hidden
-    public TObject mul(TObject obj) {
+    public TObject mul(final TObject obj) {
         throw new UnsupportedOperationException("Cannot multiply types '" + getType().toString() + "' and '" + obj.getType().toString() + "'");
     }
 
     @Hidden
-    public TObject div(TObject obj) {
+    public TObject div(final TObject obj) {
         throw new UnsupportedOperationException("Cannot divide types '" + getType().toString() + "' and '" + obj.getType().toString() + "'");
     }
 
     @Hidden
-    public TObject mod(TObject obj) {
+    public TObject mod(final TObject obj) {
         throw new UnsupportedOperationException("Cannot mod types '" + getType().toString() + "' and '" + obj.getType().toString() + "'");
     }
 
     @Hidden
-    public TObject pow(TObject obj) {
+    public TObject pow(final TObject obj) {
         throw new UnsupportedOperationException("Cannot divide types '" + getType().toString() + "' and '" + obj.getType().toString() + "'");
     }
 
     @Hidden
-    public TObject GT(TObject obj) {
+    public TObject GT(final TObject obj) {
         throw new UnsupportedOperationException("Cannot compare types '" + getType().toString() + "' and '" + obj.getType().toString() + "'");
     }
 
     @Hidden
-    public TObject LT(TObject obj) {
+    public TObject LT(final TObject obj) {
         throw new UnsupportedOperationException("Cannot compare types '" + getType().toString() + "' and '" + obj.getType().toString() + "'");
     }
 
     @Hidden
-    public TObject GTE(TObject obj) {
+    public TObject GTE(final TObject obj) {
         throw new UnsupportedOperationException("Cannot compare types '" + getType().toString() + "' and '" + obj.getType().toString() + "'");
     }
 
     @Hidden
-    public TObject LTE(TObject obj) {
+    public TObject LTE(final TObject obj) {
         throw new UnsupportedOperationException("Cannot compare types '" + getType().toString() + "' and '" + obj.getType().toString() + "'");
     }
 
@@ -124,7 +124,7 @@ public class TObject implements Comparable<TObject> {
     }
 
     @Hidden
-    public TObject EQ(TObject obj) {
+    public TObject EQ(final TObject obj) {
         if (this.obj != null && obj.obj != null) {
             return this.obj.equals(obj.obj) ? TBoolean.TRUE : TBoolean.FALSE;
         }
@@ -132,11 +132,11 @@ public class TObject implements Comparable<TObject> {
     }
 
     @Hidden
-    public TObject NE(TObject obj) {
+    public TObject NE(final TObject obj) {
         return EQ(obj).not();
     }
 
-    public TObject put(TObject key, TObject value) {
+    public TObject put(final TObject key, final TObject value) {
         throw new UnsupportedOperationException("Cannot put " + key + ", " + value + " in non-map");
     }
 
@@ -146,12 +146,12 @@ public class TObject implements Comparable<TObject> {
     }
 
     @Hidden
-    public TObject and(TObject b) {
+    public TObject and(final TObject b) {
         return (isTrue() && b.isTrue()) ? TBoolean.TRUE : TBoolean.FALSE;
     }
 
     @Hidden
-    public TObject or(TObject b) {
+    public TObject or(final TObject b) {
         return (isTrue() || b.isTrue()) ? TBoolean.TRUE : TBoolean.FALSE;
     }
 
@@ -210,7 +210,7 @@ public class TObject implements Comparable<TObject> {
         throw new UnsupportedOperationException(this + " cannot be converted to array");
     }
 
-    public Object coerce(Class<?> clazz) {
+    public Object coerce(final Class<?> clazz) {
         if (obj != null && clazz.isAssignableFrom(obj.getClass()) || clazz.equals(Object.class)) {
             return toObject();
         } else if (TObject.class.isAssignableFrom(clazz)) {
@@ -219,7 +219,7 @@ public class TObject implements Comparable<TObject> {
         throw new UnsupportedOperationException("type " + getType().toString() + " is not coercible to " + clazz);
     }
 
-    public int coerceRating(Class<?> clazz) {
+    public int coerceRating(final Class<?> clazz) {
         if (TObject.class.isAssignableFrom(clazz)) {
             return COERCE_IDEAL;
         }
@@ -238,7 +238,7 @@ public class TObject implements Comparable<TObject> {
     }
 
     @Override
-    public int compareTo(TObject o) {
+    public int compareTo(final TObject o) {
         if (obj instanceof Comparable && o.obj instanceof Comparable) {
             return ((Comparable) obj).compareTo(o.obj);
         }
@@ -246,7 +246,7 @@ public class TObject implements Comparable<TObject> {
     }
 
     @Override
-    public boolean equals(Object o) {
+    public boolean equals(final Object o) {
         if (this == o)
             return true;
         if (!(o instanceof TObject))

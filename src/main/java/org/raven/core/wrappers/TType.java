@@ -11,7 +11,7 @@ public class TType extends TObject {
     private final Class<?> type;
 
     @Hidden
-    public TType(Class<?> type) {
+    public TType(final Class<?> type) {
         this.type = type;
     }
 
@@ -21,7 +21,7 @@ public class TType extends TObject {
     }
 
     @Override
-    public TObject EQ(TObject obj) {
+    public TObject EQ(final TObject obj) {
         if (obj instanceof TType) {
             TType type = (TType) obj;
             return this.type == type.type ? TBoolean.TRUE : TBoolean.FALSE;
@@ -30,7 +30,7 @@ public class TType extends TObject {
     }
 
     @Override
-    public TObject NE(TObject obj) {
+    public TObject NE(final TObject obj) {
         return EQ(obj).not();
     }
 
@@ -45,7 +45,7 @@ public class TType extends TObject {
     }
 
     @Override
-    public Object coerce(Class clazz) {
+    public Object coerce(final Class clazz) {
         if (clazz.equals(Class.class)) {
             return toObject();
         }
@@ -53,7 +53,7 @@ public class TType extends TObject {
     }
 
     @Override
-    public int coerceRating(Class clazz) {
+    public int coerceRating(final Class clazz) {
         if (clazz.equals(Class.class)) {
             return COERCE_IDEAL;
         }
@@ -62,7 +62,7 @@ public class TType extends TObject {
 
     @Hidden
     @Override
-    public boolean equals(Object o) {
+    public boolean equals(final Object o) {
         if (this == o)
             return true;
         return o instanceof TType && type.equals(((TType) o).type);

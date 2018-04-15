@@ -21,7 +21,7 @@ public class TList extends TObject implements List {
     }
 
     @Hidden
-    public TList(TObject... objects) {
+    public TList(final TObject... objects) {
         this();
         list.addAll(Arrays.asList(objects));
     }
@@ -31,7 +31,7 @@ public class TList extends TObject implements List {
     }
 
     @Hidden
-    public TList(List<Object> obj) {
+    public TList(final List<Object> obj) {
         this();
         addAll(obj);
     }
@@ -52,12 +52,12 @@ public class TList extends TObject implements List {
     }
 
     @Override
-    public boolean contains(Object o) {
+    public boolean contains(final Object o) {
         return list.contains(o);
     }
 
     @Override
-    public TObject EQ(TObject obj) {
+    public TObject EQ(final TObject obj) {
         if (obj instanceof TList) {
             return list.equals(((TList) obj).list) ? TBoolean.TRUE : TBoolean.FALSE;
         }
@@ -65,7 +65,7 @@ public class TList extends TObject implements List {
     }
 
     @Override
-    public TObject NE(TObject obj) {
+    public TObject NE(final TObject obj) {
         return EQ(obj).not();
     }
 
@@ -74,7 +74,7 @@ public class TList extends TObject implements List {
         return list.iterator();
     }
 
-    private void checkType(TType c) {
+    private void checkType(final TType c) {
         if (componentType == null) {
             componentType = c;
         } else if (allSameType && !componentType.equals(c)) {
@@ -83,14 +83,14 @@ public class TList extends TObject implements List {
     }
 
     @Override
-    public TObject add(TObject obj) {
+    public TObject add(final TObject obj) {
         list.add(obj);
         checkType((TType) obj.getType());
         return this;
     }
 
     @Override
-    public TObject set(TObject index, TObject obj) {
+    public TObject set(final TObject index, final TObject obj) {
         checkType((TType) obj.getType());
         if (index instanceof TInt) {
             return list.set(index.toInt(), obj);
@@ -99,7 +99,7 @@ public class TList extends TObject implements List {
     }
 
     @Override
-    public TObject get(TObject obj) {
+    public TObject get(final TObject obj) {
         if (obj instanceof TInt) {
             return list.get(obj.toInt());
         }
@@ -117,7 +117,7 @@ public class TList extends TObject implements List {
     }
 
     @Override
-    public boolean add(Object o) {
+    public boolean add(final Object o) {
         if (o instanceof TObject) {
             add((TObject) o);
         } else {
@@ -127,13 +127,13 @@ public class TList extends TObject implements List {
     }
 
     @Override
-    public boolean remove(Object o) {
+    public boolean remove(final Object o) {
         return list.remove(o);
     }
 
     @Override
-    public boolean addAll(Collection c) {
-        int size = list.size();
+    public boolean addAll(final Collection c) {
+        final int size = list.size();
         for (Object o : c) {
             add(o);
         }
@@ -141,9 +141,9 @@ public class TList extends TObject implements List {
     }
 
     @Override
-    public boolean addAll(int index, Collection c) {
-        int size = list.size();
-        Iterator it = c.iterator();
+    public boolean addAll(final int index, final Collection c) {
+        final int size = list.size();
+        final Iterator it = c.iterator();
         for (int i = index; i < c.size(); i++) {
             add(i, it.next());
         }
@@ -156,12 +156,12 @@ public class TList extends TObject implements List {
     }
 
     @Override
-    public Object get(int index) {
+    public Object get(final int index) {
         return list.get(index);
     }
 
     @Override
-    public Object set(int index, Object element) {
+    public Object set(final int index, final Object element) {
         if (element instanceof TObject) {
             return list.set(index, (TObject) element);
         } else {
@@ -170,7 +170,7 @@ public class TList extends TObject implements List {
     }
 
     @Override
-    public void add(int index, Object element) {
+    public void add(final int index, final Object element) {
         TObject tobj;
         if (element instanceof TObject) {
             tobj = (TObject) element;
@@ -182,17 +182,17 @@ public class TList extends TObject implements List {
     }
 
     @Override
-    public Object remove(int index) {
+    public Object remove(final int index) {
         return list.remove(index);
     }
 
     @Override
-    public int indexOf(Object o) {
+    public int indexOf(final Object o) {
         return list.indexOf(o);
     }
 
     @Override
-    public int lastIndexOf(Object o) {
+    public int lastIndexOf(final Object o) {
         return list.lastIndexOf(o);
     }
 
@@ -204,33 +204,33 @@ public class TList extends TObject implements List {
 
     @Hidden
     @Override
-    public ListIterator listIterator(int index) {
+    public ListIterator listIterator(final int index) {
         return list.listIterator(index);
     }
 
     @Override
-    public List subList(int fromIndex, int toIndex) {
+    public List subList(final int fromIndex, final int toIndex) {
         return list.subList(fromIndex, toIndex);
     }
 
     @Override
-    public boolean retainAll(Collection c) {
+    public boolean retainAll(final Collection c) {
         return list.retainAll(c);
     }
 
     @Override
-    public boolean removeAll(Collection c) {
+    public boolean removeAll(final Collection c) {
         return list.removeAll(c);
     }
 
     @Override
-    public boolean containsAll(Collection c) {
+    public boolean containsAll(final Collection c) {
         return list.containsAll(c);
     }
 
     @Hidden
     @Override
-    public Object[] toArray(Object[] a) {
+    public Object[] toArray(final Object[] a) {
         return toArray();
     }
 
@@ -246,7 +246,7 @@ public class TList extends TObject implements List {
     }
 
     @Override
-    public Object coerce(Class clazz) {
+    public Object coerce(final Class clazz) {
         if (clazz.isArray()) {
             Object array;
             if (allSameType && clazz.isArray()) {
@@ -267,7 +267,7 @@ public class TList extends TObject implements List {
     }
 
     @Override
-    public int coerceRating(Class clazz) {
+    public int coerceRating(final Class clazz) {
         if (clazz.isArray() || List.class.isAssignableFrom(clazz)) {
             return COERCE_IDEAL;
         }
@@ -276,7 +276,7 @@ public class TList extends TObject implements List {
 
     @Hidden
     @Override
-    public boolean equals(Object o) {
+    public boolean equals(final Object o) {
         if (this == o)
             return true;
         return o instanceof TList && Objects.equals(list, ((TList) o).list);

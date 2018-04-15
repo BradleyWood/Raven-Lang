@@ -10,12 +10,12 @@ public class TError extends TObject {
 
     private final TString msg;
 
-    public TError(TString msg) {
+    public TError(final TString msg) {
         super(TYPE);
         this.msg = msg;
     }
 
-    public TError(String msg) {
+    public TError(final String msg) {
         super(TYPE);
         this.msg = new TString(msg);
     }
@@ -26,7 +26,7 @@ public class TError extends TObject {
 
     @Hidden
     @Override
-    public boolean equals(Object o) {
+    public boolean equals(final Object o) {
         if (this == o)
             return true;
         return o instanceof TError && Objects.equals(((TError) o).msg, msg);
@@ -38,14 +38,14 @@ public class TError extends TObject {
     }
 
     @Override
-    public TObject EQ(TObject obj) {
+    public TObject EQ(final TObject obj) {
         if (equals(obj))
             return TBoolean.TRUE;
         return TBoolean.FALSE;
     }
 
     @Override
-    public TObject NE(TObject obj) {
+    public TObject NE(final TObject obj) {
         return EQ(obj).not();
     }
 

@@ -12,7 +12,7 @@ public class TString extends TObject {
     private final String str;
 
     @Hidden
-    public TString(String str) {
+    public TString(final String str) {
         this.str = str;
     }
 
@@ -22,19 +22,19 @@ public class TString extends TObject {
     }
 
     @Override
-    public TObject add(TObject obj) {
+    public TObject add(final TObject obj) {
         return new TString(str + obj);
     }
 
     @Override
-    public TObject EQ(TObject obj) {
+    public TObject EQ(final TObject obj) {
         if (obj == null || !(obj instanceof TString))
             return TBoolean.FALSE;
         return str.equals(obj.toString()) ? TBoolean.TRUE : TBoolean.FALSE;
     }
 
     @Override
-    public TObject GT(TObject obj) {
+    public TObject GT(final TObject obj) {
         if (obj instanceof TString) {
             return str.compareTo(((TString) obj).str) < 0 ? TBoolean.TRUE : TBoolean.FALSE;
         }
@@ -42,7 +42,7 @@ public class TString extends TObject {
     }
 
     @Override
-    public TObject LT(TObject obj) {
+    public TObject LT(final TObject obj) {
         if (obj instanceof TString) {
             return str.compareTo(((TString) obj).str) > 0 ? TBoolean.TRUE : TBoolean.FALSE;
         }
@@ -50,7 +50,7 @@ public class TString extends TObject {
     }
 
     @Override
-    public TObject GTE(TObject obj) {
+    public TObject GTE(final TObject obj) {
         if (obj instanceof TString) {
             return str.compareTo(((TString) obj).str) <= 0 ? TBoolean.TRUE : TBoolean.FALSE;
         }
@@ -58,7 +58,7 @@ public class TString extends TObject {
     }
 
     @Override
-    public TObject LTE(TObject obj) {
+    public TObject LTE(final TObject obj) {
         if (obj instanceof TString) {
             return str.compareTo(((TString) obj).str) >= 0 ? TBoolean.TRUE : TBoolean.FALSE;
         }
@@ -66,7 +66,7 @@ public class TString extends TObject {
     }
 
     @Override
-    public TObject NE(TObject obj) {
+    public TObject NE(final TObject obj) {
         return EQ(obj).not();
     }
 
@@ -82,7 +82,7 @@ public class TString extends TObject {
     }
 
     @Override
-    public Object coerce(Class clazz) {
+    public Object coerce(final Class clazz) {
         if (clazz.equals(String.class)) {
             return toObject();
         }
@@ -90,7 +90,7 @@ public class TString extends TObject {
     }
 
     @Override
-    public int coerceRating(Class clazz) {
+    public int coerceRating(final Class clazz) {
         if (clazz.equals(String.class)) {
             return COERCE_IDEAL;
         }
@@ -103,10 +103,9 @@ public class TString extends TObject {
     }
 
     @Override
-    public int compareTo(TObject o) {
+    public int compareTo(final TObject o) {
         if (o instanceof TString) {
-            String str = o.toString();
-            return this.str.compareTo(str);
+            return this.str.compareTo(o.toString());
         }
         throw new RuntimeException("Cannot compare String with " + o.getClass().getName());
     }
@@ -130,27 +129,27 @@ public class TString extends TObject {
         return Double.parseDouble(toString());
     }
 
-    public String[] split(String regex) {
+    public String[] split(final String regex) {
         return str.split(regex);
     }
 
-    public String[] split(String regex, int limit) {
+    public String[] split(final String regex, final int limit) {
         return str.split(regex, limit);
     }
 
-    public boolean startsWith(String prefix) {
+    public boolean startsWith(final String prefix) {
         return str.startsWith(prefix);
     }
 
-    public boolean endsWith(String suffix) {
+    public boolean endsWith(final String suffix) {
         return str.endsWith(suffix);
     }
 
-    public String substring(int beginIndex) {
+    public String substring(final int beginIndex) {
         return str.substring(beginIndex);
     }
 
-    public String substring(int beginIndex, int endIndex) {
+    public String substring(final int beginIndex, final int endIndex) {
         return str.substring(beginIndex, endIndex);
     }
 
@@ -162,7 +161,7 @@ public class TString extends TObject {
         return str.toLowerCase();
     }
 
-    public boolean contains(String str) {
+    public boolean contains(final String str) {
         return this.str.contains(str);
     }
 
@@ -170,11 +169,11 @@ public class TString extends TObject {
         return str.trim();
     }
 
-    public String replace(String target, String replacement) {
+    public String replace(final String target, final String replacement) {
         return str.replace(target, replacement);
     }
 
-    public int indexOf(String str) {
+    public int indexOf(final String str) {
         return this.str.indexOf(str);
     }
 
@@ -182,21 +181,21 @@ public class TString extends TObject {
         return str.isEmpty();
     }
 
-    public boolean matches(String regex) {
+    public boolean matches(final String regex) {
         return str.matches(regex);
     }
 
-    public int lastIndexOf(String str) {
+    public int lastIndexOf(final String str) {
         return this.str.lastIndexOf(str);
     }
 
-    public boolean equalsIgnoreCase(String str) {
+    public boolean equalsIgnoreCase(final String str) {
         return this.str.equalsIgnoreCase(str);
     }
 
     @Hidden
     @Override
-    public boolean equals(Object o) {
+    public boolean equals(final Object o) {
         if (this == o)
             return true;
         return o instanceof TString && str.equals(((TString) o).str);

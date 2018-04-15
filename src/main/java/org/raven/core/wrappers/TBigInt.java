@@ -8,19 +8,19 @@ public class TBigInt extends TObject {
 
     private final BigInteger value;
 
-    public TBigInt(int value) {
+    public TBigInt(final int value) {
         this.value = BigInteger.valueOf(value);
     }
 
-    public TBigInt(long value) {
+    public TBigInt(final long value) {
         this.value = BigInteger.valueOf(value);
     }
 
-    public TBigInt(String value) {
+    public TBigInt(final String value) {
         this.value = new BigInteger(value);
     }
 
-    public TBigInt(BigInteger value) {
+    public TBigInt(final BigInteger value) {
         this.value = value;
     }
 
@@ -30,8 +30,8 @@ public class TBigInt extends TObject {
     }
 
     @Override
-    public TObject add(TObject obj) {
-        BigInteger bigInt = obj.toBigInt();
+    public TObject add(final TObject obj) {
+        final BigInteger bigInt = obj.toBigInt();
         if (bigInt != null) {
             return new TBigInt(value.add(bigInt));
         }
@@ -39,8 +39,8 @@ public class TBigInt extends TObject {
     }
 
     @Override
-    public TObject sub(TObject obj) {
-        BigInteger bigInt = obj.toBigInt();
+    public TObject sub(final TObject obj) {
+        final BigInteger bigInt = obj.toBigInt();
         if (bigInt != null) {
             return new TBigInt(value.subtract(bigInt));
         }
@@ -48,8 +48,8 @@ public class TBigInt extends TObject {
     }
 
     @Override
-    public TObject mul(TObject obj) {
-        BigInteger bigInt = obj.toBigInt();
+    public TObject mul(final TObject obj) {
+        final BigInteger bigInt = obj.toBigInt();
         if (bigInt != null) {
             return new TBigInt(value.multiply(bigInt));
         }
@@ -57,8 +57,8 @@ public class TBigInt extends TObject {
     }
 
     @Override
-    public TObject div(TObject obj) {
-        BigInteger bigInt = obj.toBigInt();
+    public TObject div(final TObject obj) {
+        final BigInteger bigInt = obj.toBigInt();
         if (bigInt != null) {
             return new TBigInt(value.divide(bigInt));
         }
@@ -66,8 +66,8 @@ public class TBigInt extends TObject {
     }
 
     @Override
-    public TObject mod(TObject obj) {
-        BigInteger bigInt = obj.toBigInt();
+    public TObject mod(final TObject obj) {
+        final BigInteger bigInt = obj.toBigInt();
         if (bigInt != null) {
             return new TBigInt(value.mod(bigInt));
         }
@@ -75,8 +75,8 @@ public class TBigInt extends TObject {
     }
 
     @Override
-    public TObject pow(TObject obj) {
-        Integer bigInt = obj.toInt();
+    public TObject pow(final TObject obj) {
+        final Integer bigInt = obj.toInt();
         if (bigInt != null) {
             return new TBigInt(value.pow(bigInt));
         }
@@ -84,8 +84,8 @@ public class TBigInt extends TObject {
     }
 
     @Override
-    public TObject GT(TObject obj) {
-        BigInteger bigInt = obj.toBigInt();
+    public TObject GT(final TObject obj) {
+        final BigInteger bigInt = obj.toBigInt();
         if (bigInt != null) {
             return value.compareTo(bigInt) > 0 ? TBoolean.TRUE : TBoolean.FALSE;
         }
@@ -93,8 +93,8 @@ public class TBigInt extends TObject {
     }
 
     @Override
-    public TObject LT(TObject obj) {
-        BigInteger bigInt = obj.toBigInt();
+    public TObject LT(final TObject obj) {
+        final BigInteger bigInt = obj.toBigInt();
         if (bigInt != null) {
             return value.compareTo(bigInt) < 0 ? TBoolean.TRUE : TBoolean.FALSE;
         }
@@ -102,8 +102,8 @@ public class TBigInt extends TObject {
     }
 
     @Override
-    public TObject GTE(TObject obj) {
-        BigInteger bigInt = obj.toBigInt();
+    public TObject GTE(final TObject obj) {
+        final BigInteger bigInt = obj.toBigInt();
         if (bigInt != null) {
             return value.compareTo(bigInt) >= 0 ? TBoolean.TRUE : TBoolean.FALSE;
         }
@@ -111,8 +111,8 @@ public class TBigInt extends TObject {
     }
 
     @Override
-    public TObject LTE(TObject obj) {
-        BigInteger bigInt = obj.toBigInt();
+    public TObject LTE(final TObject obj) {
+        final BigInteger bigInt = obj.toBigInt();
         if (bigInt != null) {
             return value.compareTo(bigInt) <= 0 ? TBoolean.TRUE : TBoolean.FALSE;
         }
@@ -120,8 +120,8 @@ public class TBigInt extends TObject {
     }
 
     @Override
-    public TObject EQ(TObject obj) {
-        BigInteger bigInt = obj.toBigInt();
+    public TObject EQ(final TObject obj) {
+        final BigInteger bigInt = obj.toBigInt();
         if (bigInt != null) {
             return value.compareTo(bigInt) == 0 ? TBoolean.TRUE : TBoolean.FALSE;
         }
@@ -129,8 +129,8 @@ public class TBigInt extends TObject {
     }
 
     @Override
-    public TObject NE(TObject obj) {
-        BigInteger bigInt = obj.toBigInt();
+    public TObject NE(final TObject obj) {
+        final BigInteger bigInt = obj.toBigInt();
         if (bigInt != null) {
             return value.compareTo(bigInt) != 0 ? TBoolean.TRUE : TBoolean.FALSE;
         }
@@ -138,7 +138,7 @@ public class TBigInt extends TObject {
     }
 
     @Override
-    public Object coerce(Class clazz) {
+    public Object coerce(final Class clazz) {
         if (clazz.equals(BigInteger.class)) {
             return this;
         } else if (clazz.equals(long.class) || clazz.equals(Long.class)) {
@@ -152,7 +152,7 @@ public class TBigInt extends TObject {
     }
 
     @Override
-    public int coerceRating(Class clazz) {
+    public int coerceRating(final Class clazz) {
         if (clazz.equals(BigInteger.class)) {
             return COERCE_IDEAL;
         } else if (clazz.equals(long.class) || clazz.equals(Long.class)) {
@@ -168,11 +168,6 @@ public class TBigInt extends TObject {
     @Override
     public BigInteger toBigInt() {
         return value;
-    }
-
-    @Override
-    public TObject put(TObject key, TObject value) {
-        return super.put(key, value);
     }
 
     @Override
@@ -230,12 +225,12 @@ public class TBigInt extends TObject {
     }
 
     @Override
-    public int compareTo(TObject o) {
+    public int compareTo(final TObject o) {
         return value.compareTo(o.toBigInt());
     }
 
     @Override
-    public boolean equals(Object o) {
+    public boolean equals(final Object o) {
         if (o == this)
             return true;
         return o instanceof TBigInt && value.equals(((TBigInt) o).value);

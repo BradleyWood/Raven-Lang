@@ -17,7 +17,7 @@ public class TDict extends TObject implements Map<TObject, TObject> {
     }
 
     @Override
-    public Object coerce(Class clazz) {
+    public Object coerce(final Class clazz) {
         if (Map.class.isAssignableFrom(clazz)) {
             return map;
         }
@@ -25,7 +25,7 @@ public class TDict extends TObject implements Map<TObject, TObject> {
     }
 
     @Override
-    public int coerceRating(Class clazz) {
+    public int coerceRating(final Class<?> clazz) {
         if (clazz.isAssignableFrom(Map.class)) {
             return COERCE_IDEAL;
         }
@@ -38,12 +38,12 @@ public class TDict extends TObject implements Map<TObject, TObject> {
     }
 
     @Override
-    public TObject set(TObject index, TObject obj) {
+    public TObject set(final TObject index, final TObject obj) {
         return put(index, obj);
     }
 
     @Override
-    public TObject get(TObject obj) {
+    public TObject get(final TObject obj) {
         return map.get(obj);
     }
 
@@ -58,33 +58,33 @@ public class TDict extends TObject implements Map<TObject, TObject> {
     }
 
     @Override
-    public boolean containsKey(Object key) {
+    public boolean containsKey(final Object key) {
         return map.containsKey(key);
     }
 
     @Override
-    public boolean containsValue(Object value) {
+    public boolean containsValue(final Object value) {
         return map.containsValue(value);
     }
 
     @Override
-    public TObject get(Object key) {
+    public TObject get(final Object key) {
         return get(Intrinsics.wrap(key));
     }
 
     @Override
-    public TObject put(TObject key, TObject value) {
+    public TObject put(final TObject key, final TObject value) {
         map.put(Intrinsics.wrap(key), Intrinsics.wrap(value));
         return this;
     }
 
     @Override
-    public TObject remove(Object key) {
+    public TObject remove(final Object key) {
         return map.remove(Intrinsics.wrap(key));
     }
 
     @Override
-    public void putAll(Map<? extends TObject, ? extends TObject> m) {
+    public void putAll(final Map<? extends TObject, ? extends TObject> m) {
         map.putAll(m);
     }
 

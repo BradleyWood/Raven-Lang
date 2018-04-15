@@ -10,7 +10,7 @@ public class TBoolean extends TObject {
 
     private boolean value;
 
-    private TBoolean(boolean value) {
+    private TBoolean(final boolean value) {
         this.value = value;
     }
 
@@ -32,7 +32,7 @@ public class TBoolean extends TObject {
     }
 
     @Override
-    public Object coerce(Class clazz) {
+    public Object coerce(final Class clazz) {
         if (clazz.equals(boolean.class) || clazz.equals(Boolean.class)) {
             return toBoolean();
         }
@@ -40,7 +40,7 @@ public class TBoolean extends TObject {
     }
 
     @Override
-    public int coerceRating(Class clazz) {
+    public int coerceRating(final Class clazz) {
         if (clazz.equals(boolean.class) || clazz.equals(Boolean.class)) {
             return COERCE_IDEAL;
         }
@@ -63,7 +63,7 @@ public class TBoolean extends TObject {
     }
 
     @Override
-    public TObject EQ(TObject obj) {
+    public TObject EQ(final TObject obj) {
         if (obj instanceof TBoolean) {
             return (value == ((TBoolean) obj).value) ? TBoolean.TRUE : TBoolean.FALSE;
         }
@@ -71,21 +71,23 @@ public class TBoolean extends TObject {
     }
 
     @Override
-    public TObject NE(TObject obj) {
+    public TObject NE(final TObject obj) {
         return EQ(obj).not();
     }
 
     @Override
-    public int compareTo(TObject o) {
+    public int compareTo(final TObject o) {
         if (!(o instanceof TBoolean))
             throw new RuntimeException("Cannot compare boolean and " + o.getClass().getName());
-        TBoolean other = (TBoolean) o;
+
+        final TBoolean other = (TBoolean) o;
+
         return (value == other.value) ? 0 : (value ? 1 : -1);
     }
 
     @Hidden
     @Override
-    public boolean equals(Object o) {
+    public boolean equals(final Object o) {
         if (this == o)
             return true;
         return o instanceof TBoolean && ((TBoolean) o).value == value;
