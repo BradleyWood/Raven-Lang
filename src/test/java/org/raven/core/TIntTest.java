@@ -2,6 +2,7 @@ package org.raven.core;
 
 import org.junit.Test;
 import org.raven.core.wrappers.TInt;
+import org.raven.core.wrappers.TObject;
 import org.raven.core.wrappers.TReal;
 import org.raven.core.wrappers.TString;
 
@@ -228,5 +229,55 @@ public class TIntTest {
 
         assertTrue(a.EQ(new TReal(123)).isTrue());
         assertTrue(!a.EQ(new TReal(123.000000001)).isTrue());
+    }
+
+    @Test
+    public void testIntRating() {
+        final TInt anInt = new TInt(50);
+
+        assertEquals(TObject.COERCE_IDEAL, anInt.coerceRating(int.class));
+        assertEquals(TObject.COERCE_IDEAL, anInt.coerceRating(Integer.class));
+
+        assertEquals(TObject.COERCE_IDEAL, anInt.coerceRating(long.class));
+        assertEquals(TObject.COERCE_IDEAL, anInt.coerceRating(Long.class));
+
+        assertEquals(TObject.COERCE_LESS_IDEAL, anInt.coerceRating(short.class));
+        assertEquals(TObject.COERCE_LESS_IDEAL, anInt.coerceRating(Short.class));
+
+        assertEquals(TObject.COERCE_LESS_IDEAL, anInt.coerceRating(Byte.class));
+        assertEquals(TObject.COERCE_LESS_IDEAL, anInt.coerceRating(Byte.class));
+
+        assertEquals(TObject.COERCE_BAD, anInt.coerceRating(float.class));
+        assertEquals(TObject.COERCE_BAD, anInt.coerceRating(Float.class));
+
+        assertEquals(TObject.COERCE_BAD, anInt.coerceRating(double.class));
+        assertEquals(TObject.COERCE_BAD, anInt.coerceRating(Double.class));
+
+        assertEquals(TObject.COERCE_IMPOSSIBLE, anInt.coerceRating(String.class));
+        assertEquals(TObject.COERCE_IMPOSSIBLE, anInt.coerceRating(Boolean.class));
+        assertEquals(TObject.COERCE_IMPOSSIBLE, anInt.coerceRating(boolean.class));
+    }
+
+    @Test
+    public void testIntCoercion() {
+        final TInt anInt = new TInt(50);
+
+        assertEquals(50, (int) anInt.coerce(int.class));
+        assertEquals(50, anInt.coerce(Integer.class));
+
+        assertEquals(50, (long) anInt.coerce(long.class));
+        assertEquals(50L, anInt.coerce(Long.class));
+
+        assertEquals((short) 50, (short) anInt.coerce(short.class));
+        assertEquals((short) 50, anInt.coerce(Short.class));
+
+        assertEquals((byte) 50, (byte) anInt.coerce(byte.class));
+        assertEquals((byte) 50, anInt.coerce(Byte.class));
+
+        assertEquals((float) 50, (float) anInt.coerce(float.class), 0.000000001);
+        assertEquals((float) 50, (Float) anInt.coerce(Float.class), 0.000000001);
+
+        assertEquals((double) 50, (double) anInt.coerce(double.class), 0.000000001);
+        assertEquals((double) 50, (Double) anInt.coerce(Double.class), 0.000000001);
     }
 }
