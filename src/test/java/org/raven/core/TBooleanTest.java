@@ -27,13 +27,13 @@ public class TBooleanTest {
 
     @Test
     public void toObjectTest() {
-        assertTrue(TBoolean.TRUE.toObject() == Boolean.TRUE);
-        assertTrue(TBoolean.FALSE.toObject() == Boolean.FALSE);
+        assertSame(TBoolean.TRUE.toObject(), Boolean.TRUE);
+        assertSame(TBoolean.FALSE.toObject(), Boolean.FALSE);
     }
 
     @Test
     public void toStringTest() {
-        assertTrue(TBoolean.TRUE.toString().equals("true"));
-        assertTrue(TBoolean.FALSE.toString().equals("false"));
+        assertEquals("true", TBoolean.TRUE.toString());
+        assertEquals("false", TBoolean.FALSE.toString());
     }
 }

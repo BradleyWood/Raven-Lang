@@ -13,16 +13,16 @@ public class TIntTest {
     @Test
     public void getValueTest() {
         TInt a = new TInt(10000000);
-        assertTrue(a.getValue() == 10000000);
+        assertEquals(10000000, a.getValue());
     }
 
     @Test
     public void notTest() {
         TInt a = new TInt(0);
-        assertTrue(a.not().equals(a));
+        assertEquals(a.not(), a);
         a = new TInt(-100);
-        assertTrue(a.not().equals(a.not()));
-        assertTrue(a.not().toInt() == 100);
+        assertEquals(a.not(), a.not());
+        assertEquals(100, (int) a.not().toInt());
     }
 
     @Test
@@ -42,15 +42,15 @@ public class TIntTest {
 
         TString expected = new TString("100 add a string");
 
-        assertTrue(a.add(b).toInt() == 0);
-        assertTrue(a.add(c).toInt() == 2000000100);
+        assertEquals(0, (int) a.add(b).toInt());
+        assertEquals(2000000100, (int) a.add(c).toInt());
 
-        assertTrue(a.add(a).add(a).add(a).toInt() == 400);
+        assertEquals(400, (int) a.add(a).add(a).add(a).toInt());
 
         // coercion
 
-        assertTrue(a.add(str).equals(expected));
-        assertTrue(a.add(new TReal(100.0)).equals(new TReal(200.0)));
+        assertEquals(a.add(str), expected);
+        assertEquals(a.add(new TReal(100.0)), new TReal(200.0));
     }
 
     @Test
@@ -58,16 +58,16 @@ public class TIntTest {
         TInt a = new TInt(100);
         TInt b = new TInt(-100);
 
-        assertTrue(a.sub(b).equals(new TInt(200)));
-        assertTrue(a.sub(new TReal(100.0)).equals(new TReal(0)));
+        assertEquals(a.sub(b), new TInt(200));
+        assertEquals(a.sub(new TReal(100.0)), new TReal(0));
 
     }
 
     @Test
     public void mulTest() {
         TInt a = new TInt(10);
-        assertTrue(a.mul(a).toInt() == 100);
-        assertTrue(a.mul(a).mul(a).toInt() == 1000);
+        assertEquals(100, (int) a.mul(a).toInt());
+        assertEquals(1000, (int) a.mul(a).mul(a).toInt());
     }
 
     @Test
@@ -82,19 +82,19 @@ public class TIntTest {
         TInt c = new TInt(0);
         TInt d = new TInt(21);
 
-        assertTrue(a.mod(b).toInt() == 2);
-        assertTrue(c.mod(a).toInt() == 0);
-        assertTrue(c.mod(a).toInt() == 0);
-        assertTrue(d.mod(b).toInt() == 1);
+        assertEquals(2, (int) a.mod(b).toInt());
+        assertEquals(0, (int) c.mod(a).toInt());
+        assertEquals(0, (int) c.mod(a).toInt());
+        assertEquals(1, (int) d.mod(b).toInt());
 
-        assertTrue(b.mod(d.not()).toInt() == (10 % -21));
+        assertEquals((int) b.mod(d.not()).toInt(), (10 % -21));
     }
 
     @Test
     public void powTest() {
         TInt a = new TInt(2);
-        assertTrue(a.pow(a).pow(a).toInt() == 16);
-        assertTrue(a.pow(a.not()).toFloat() == 0.25);
+        assertEquals(16, (int) a.pow(a).pow(a).toInt());
+        assertEquals(0.25, a.pow(a.not()).toFloat(), 0.0);
     }
 
     @Test
@@ -163,43 +163,43 @@ public class TIntTest {
 
     @Test
     public void toIntTest() {
-        assertTrue(new TInt(100).toInt() == 100);
-        assertTrue(new TInt(-100).toInt() == -100);
+        assertEquals(100, (int) new TInt(100).toInt());
+        assertEquals((int) new TInt(-100).toInt(), -100);
     }
 
     @Test
     public void toByteTest() {
-        assertTrue(new TInt(0xffffff).toByte() == -1);
-        assertTrue(new TInt(100).toByte() == 100);
+        assertEquals((byte) new TInt(0xffffff).toByte(), -1);
+        assertEquals(100, (byte) new TInt(100).toByte());
     }
 
     @Test
     public void toShortTest() {
-        assertTrue(new TInt(0xffffffff).toShort() == -1);
-        assertTrue(new TInt(32000).toShort() == 32000);
+        assertEquals((short) new TInt(0xffffffff).toShort(), -1);
+        assertEquals(32000, (short) new TInt(32000).toShort());
     }
 
     @Test
     public void toLongTest() {
-        assertTrue(new TInt(10000).toLong() == 10000);
-        assertTrue(new TInt(-10000).toLong() == -10000);
+        assertEquals(10000, (long) new TInt(10000).toLong());
+        assertEquals((long) new TInt(-10000).toLong(), -10000);
     }
 
     @Test
     public void toFloatTest() {
-        assertTrue(new TInt(0).toFloat() == 0);
-        assertTrue(new TInt(123).toFloat() == 123);
+        assertEquals(0, new TInt(0).toFloat(), 0.00000001);
+        assertEquals(123, new TInt(123).toFloat(), 0.00000001);
     }
 
     @Test
     public void toDoubleTest() {
-        assertTrue(new TInt(0).toDouble() == 0);
-        assertTrue(new TInt(123).toDouble() == 123);
+        assertEquals(0, new TInt(0).toDouble(), 0.00000001);
+        assertEquals(123, new TInt(123).toDouble(), 0.00000001);
     }
 
     @Test
     public void toBooleanTest() {
-        assertTrue(new TInt(10000).toBoolean() != null);
+        assertNotNull(new TInt(10000).toBoolean());
         assertTrue(new TInt(100).toBoolean());
         assertTrue(!new TInt(0).toBoolean());
     }
@@ -207,14 +207,14 @@ public class TIntTest {
     @Test
     public void toObjectTest() {
         assertTrue(new TInt(100).toObject() instanceof Integer);
-        assertTrue(new TInt(-100).toObject().equals(-100));
+        assertEquals(-100, new TInt(-100).toObject());
     }
 
     @Test
     public void toStringTest() {
-        assertTrue(new TInt(100).toString().equals("100"));
-        assertTrue(new TInt(-100).toString().equals("-100"));
-        assertTrue(new TInt(Integer.MAX_VALUE).toString().equals("" + Integer.MAX_VALUE));
+        assertEquals("100", new TInt(100).toString());
+        assertEquals("-100", new TInt(-100).toString());
+        assertEquals(new TInt(Integer.MAX_VALUE).toString(), "" + Integer.MAX_VALUE);
     }
 
     @Test

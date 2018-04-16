@@ -31,12 +31,12 @@ public class TStringTest {
         TString bPlusObj = new TString("bstring" + obj.toString());
 
 
-        assertTrue(a.add(b).equals(aPlusB));
-        assertTrue(b.add(toyInt).equals(bPlusInt));
-        assertTrue(a.add(real).equals(aPlusReal));
-        assertTrue(b.add(bool).equals(bPlusBool));
-        assertTrue(a.add(toyNull).equals(aPlusNull));
-        assertTrue(b.add(obj).equals(bPlusObj));
+        assertEquals(aPlusB, a.add(b));
+        assertEquals(bPlusInt, b.add(toyInt));
+        assertEquals(aPlusReal, a.add(real));
+        assertEquals(bPlusBool, b.add(bool));
+        assertEquals(aPlusNull, a.add(toyNull));
+        assertEquals(bPlusObj, b.add(obj));
 
     }
 
@@ -71,8 +71,8 @@ public class TStringTest {
         TString a = new TString("");
         TString b = new TString("abc");
 
-        assertTrue(a.toObject().equals(""));
-        assertTrue(b.toObject().equals("abc"));
+        assertEquals("", a.toObject());
+        assertEquals("abc", b.toObject());
     }
 
     @Test
@@ -80,8 +80,8 @@ public class TStringTest {
         TString a = new TString("");
         TString b = new TString("abc");
 
-        assertTrue(a.toString().equals(""));
-        assertTrue(b.toString().equals("abc"));
+        assertEquals("", a.toString());
+        assertEquals("abc", b.toString());
     }
 
     @Test
@@ -89,7 +89,7 @@ public class TStringTest {
         TString a = new TString("");
         TString b = new TString("abc");
 
-        assertTrue(a.size() == 0);
-        assertTrue(b.size() == 3);
+        assertEquals(0, a.size());
+        assertEquals(3, b.size());
     }
 }
