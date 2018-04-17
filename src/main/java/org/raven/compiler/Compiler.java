@@ -28,7 +28,7 @@ public class Compiler {
     private ArrayList<RavenTree> trees = new ArrayList<>();
     private ArrayList<String> classPath;
 
-    public Compiler(String file, String name, RavenTree tree, AnnotationProcessor... annotationProcessors) {
+    public Compiler(final String file, final String name, final RavenTree tree, final AnnotationProcessor... annotationProcessors) {
         this.file = new File(file);
         if (tree.getPackage() != null) {
             this.name = tree.getPackage().toString() + "." + name;
@@ -41,11 +41,11 @@ public class Compiler {
         Arrays.stream(annotationProcessors).forEach(this::addAnnotationProcessor);
     }
 
-    public void addAnnotationProcessor(AnnotationProcessor annotationProcessor) {
+    public void addAnnotationProcessor(final AnnotationProcessor annotationProcessor) {
         processors.add(annotationProcessor);
     }
 
-    public void removeAnnotationProcessor(AnnotationProcessor annotationProcessor) {
+    public void removeAnnotationProcessor(final AnnotationProcessor annotationProcessor) {
         processors.remove(annotationProcessor);
     }
 
@@ -80,7 +80,7 @@ public class Compiler {
         }
     }
 
-    public HashMap<String, byte[]> compile(boolean save) throws IOException {
+    public HashMap<String, byte[]> compile(final boolean save) throws IOException {
         int max = tree.getStatements().size();
         for (int i = 0; i < max; i++) {
             Statement statement = tree.getStatements().get(i);
@@ -140,7 +140,7 @@ public class Compiler {
         return classMap;
     }
 
-    private void modifyTree(RavenTree tree) {
+    private void modifyTree(final RavenTree tree) {
         String name = tree.getPackage().add(tree.getName().toString()).toString().replace(".", "/");
         boolean exists = tree.getClasses().stream().filter(cd -> cd.getFullName().equals(name)).count() == 1;
         ClassDef def;
@@ -177,7 +177,7 @@ public class Compiler {
         }
     }
 
-    private String findFile(QualifiedName name) {
+    private String findFile(final QualifiedName name) {
         QualifiedName pack = tree.getPackage();
         File basePath = file.getParentFile();
         if (pack != null) {

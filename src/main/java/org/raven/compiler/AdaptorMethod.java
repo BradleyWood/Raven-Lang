@@ -12,12 +12,12 @@ import org.raven.error.Errors;
  */
 public class AdaptorMethod extends Method {
 
-    protected AdaptorMethod(MethodContext ctx, MethodVisitor mv) {
+    protected AdaptorMethod(final MethodContext ctx, final MethodVisitor mv) {
         super(ctx, mv);
     }
 
     @Override
-    public void visitFun(Fun fun) {
+    public void visitFun(final Fun fun) {
         Call c = (Call) fun.getBody().getStatements().get(0);
 
         Type ret = Type.getReturnType(fun.getDesc());
@@ -89,7 +89,7 @@ public class AdaptorMethod extends Method {
         scope.endScope();
     }
 
-    private boolean isPrimitive(Type type) {
+    private boolean isPrimitive(final Type type) {
         return Primitive.isPrimitive(type.getDescriptor());
     }
 }

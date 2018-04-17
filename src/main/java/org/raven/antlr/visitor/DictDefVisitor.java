@@ -11,7 +11,7 @@ public class DictDefVisitor extends RavenBaseVisitor<DictDef> {
     }
 
     @Override
-    public DictDef visitDict(RavenParser.DictContext ctx) {
+    public DictDef visitDict(final RavenParser.DictContext ctx) {
         int size = 0;
         if (ctx.dictParamList() != null) {
             if (ctx.dictParamList().dictParam() != null) {

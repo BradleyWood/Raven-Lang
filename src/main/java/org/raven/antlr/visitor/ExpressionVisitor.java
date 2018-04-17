@@ -13,7 +13,7 @@ public class ExpressionVisitor extends RavenBaseVisitor<Expression> {
     }
 
     @Override
-    public Expression visitExpression(RavenParser.ExpressionContext ctx) {
+    public Expression visitExpression(final RavenParser.ExpressionContext ctx) {
         Expression expr = null;
 
         if (ctx.expression().size() == 1 && ctx.qualifiedName() != null) {
@@ -79,7 +79,7 @@ public class ExpressionVisitor extends RavenBaseVisitor<Expression> {
         return expr;
     }
 
-    private static Operator getOperator(RavenParser.ExpressionContext ctx) {
+    private static Operator getOperator(final RavenParser.ExpressionContext ctx) {
         if (ctx.EXP() != null) {
             return Operator.EXP;
         } else if (ctx.MULT() != null) {

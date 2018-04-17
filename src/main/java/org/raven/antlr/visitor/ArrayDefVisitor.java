@@ -11,7 +11,7 @@ public class ArrayDefVisitor extends RavenBaseVisitor<ListDef> {
     }
 
     @Override
-    public ListDef visitList(RavenParser.ListContext ctx) {
+    public ListDef visitList(final RavenParser.ListContext ctx) {
         if (ctx.paramList() != null) {
             Expression[] expra = new Expression[ctx.paramList().param().size()];
             for (int i = 0; i < expra.length; i++) {

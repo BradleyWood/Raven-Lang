@@ -10,7 +10,7 @@ public class Warning {
         return WARNINGS.size();
     }
 
-    public static void put(String warning) {
+    public static void put(final String warning) {
         WARNINGS.add(warning);
     }
 

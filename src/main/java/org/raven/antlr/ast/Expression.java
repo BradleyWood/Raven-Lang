@@ -7,7 +7,7 @@ public class Expression extends Statement {
     private boolean pop = false;
 
     @Override
-    public void accept(TreeVisitor visitor) {
+    public void accept(final TreeVisitor visitor) {
         throw new RuntimeException("Invalid Expression Node");
     }
 
@@ -25,12 +25,12 @@ public class Expression extends Statement {
      *
      * @param pop Whether to pop the return value off the stack
      */
-    public void setPop(boolean pop) {
+    public void setPop(final boolean pop) {
         this.pop = pop;
     }
 
     @Override
-    public boolean equals(Object o) {
+    public boolean equals(final Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 

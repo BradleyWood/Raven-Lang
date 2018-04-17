@@ -10,7 +10,7 @@ public class RangeVisitor extends RavenBaseVisitor<Range> {
     }
 
     @Override
-    public Range visitRange(RavenParser.RangeContext ctx) {
+    public Range visitRange(final RavenParser.RangeContext ctx) {
         return new Range(ctx.expression(0).accept(ExpressionVisitor.INSTANCE), ctx.expression(1).accept(ExpressionVisitor.INSTANCE));
     }
 

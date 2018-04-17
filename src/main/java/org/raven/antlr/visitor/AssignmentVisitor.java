@@ -13,7 +13,7 @@ public class AssignmentVisitor extends RavenBaseVisitor<BinOp> {
     }
 
     @Override
-    public BinOp visitVarAssignment(RavenParser.VarAssignmentContext ctx) {
+    public BinOp visitVarAssignment(final RavenParser.VarAssignmentContext ctx) {
         Expression lhs = null;
         if (ctx.qualifiedName() != null) {
             lhs = ctx.qualifiedName().accept(QualifiedNameVisitor.INSTANCE);
@@ -28,7 +28,7 @@ public class AssignmentVisitor extends RavenBaseVisitor<BinOp> {
         return new BinOp(lhs, Operator.ASSIGNMENT, value);
     }
 
-    private Operator getOperator(RavenParser.VarAssignmentContext ctx) {
+    private Operator getOperator(final RavenParser.VarAssignmentContext ctx) {
         if (ctx.ASSIGNMENT() != null) {
             return Operator.ASSIGNMENT;
         } else if (ctx.ADD_ASSIGNMENT() != null) {

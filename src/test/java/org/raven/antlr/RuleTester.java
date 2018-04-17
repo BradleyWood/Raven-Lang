@@ -19,7 +19,7 @@ public class RuleTester {
      * @param txt The input
      * @param pass Whether there should or shouldn't be syntax errors
      */
-    public static void testSyntax(String txt, boolean pass) {
+    public static void testSyntax(final String txt, final boolean pass) {
         RavenLexer lexer = new RavenLexer(CharStreams.fromString(txt));
         CommonTokenStream ts = new CommonTokenStream(lexer);
         RavenParser p = new RavenParser(ts);
@@ -48,7 +48,7 @@ public class RuleTester {
      * @param txt The input text
      * @param expected The expected output
      */
-    public static void testStatement(RavenBaseVisitor v, String txt, Statement expected) {
+    public static void testStatement(final RavenBaseVisitor v, final String txt, final Statement expected) {
         RavenLexer lexer = new RavenLexer(CharStreams.fromString(txt));
         CommonTokenStream tokenStream = new CommonTokenStream(lexer);
         RavenParser parser = new RavenParser(tokenStream);

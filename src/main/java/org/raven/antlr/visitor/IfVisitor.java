@@ -12,7 +12,7 @@ public class IfVisitor extends RavenBaseVisitor<If> {
     }
 
     @Override
-    public If visitIfStatement(RavenParser.IfStatementContext ctx) {
+    public If visitIfStatement(final RavenParser.IfStatementContext ctx) {
         Expression condition = ctx.expression().accept(ExpressionVisitor.INSTANCE);
 
         Statement body = ctx.statement().get(0).accept(StatementVisitor.INSTANCE);

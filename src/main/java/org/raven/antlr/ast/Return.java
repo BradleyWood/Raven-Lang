@@ -6,7 +6,7 @@ public class Return extends Statement {
 
     private final Expression value;
 
-    public Return(Expression value) {
+    public Return(final Expression value) {
         this.value = value;
     }
 
@@ -15,12 +15,12 @@ public class Return extends Statement {
     }
 
     @Override
-    public void accept(TreeVisitor visitor) {
+    public void accept(final TreeVisitor visitor) {
         visitor.visitReturn(this);
     }
 
     @Override
-    public boolean equals(Object o) {
+    public boolean equals(final Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 

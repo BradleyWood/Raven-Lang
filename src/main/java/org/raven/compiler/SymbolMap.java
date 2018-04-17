@@ -14,11 +14,11 @@ public class SymbolMap {
     private static HashMap<String, ClassDef> CLASS_MAP = new HashMap<>();
     private static HashMap<String, Interface> INTERFACE_MAP = new HashMap<>();
 
-    public static Interface resolveInterface(String clazz) {
+    public static Interface resolveInterface(final String clazz) {
         return INTERFACE_MAP.get(clazz);
     }
 
-    public static VarDecl resolveField(String callingClass, String funOwner, String name) {
+    public static VarDecl resolveField(final String callingClass, final String funOwner, final String name) {
         ClassDef def = CLASS_MAP.get(funOwner);
         if (def != null) {
             String clazz = funOwner;
@@ -34,7 +34,7 @@ public class SymbolMap {
         return null;
     }
 
-    public static Fun resolveFun(String callingClass, String funOwner, String name, int paramCount) {
+    public static Fun resolveFun(final String callingClass, final String funOwner, final String name, final int paramCount) {
         ClassDef def = CLASS_MAP.get(funOwner);
         if (def != null) {
             String clazz = funOwner;
@@ -50,7 +50,7 @@ public class SymbolMap {
         return null;
     }
 
-    private static VarDecl findField(String callingClass, String funOwner, String name) {
+    private static VarDecl findField(final String callingClass, final String funOwner, final String name) {
         ClassDef def = CLASS_MAP.get(funOwner);
         if (def != null) {
             for (VarDecl field : def.getFields()) {
@@ -67,7 +67,7 @@ public class SymbolMap {
         return null;
     }
 
-    private static Fun findFun(String callingClass, String funOwner, String name, int paramCount) {
+    private static Fun findFun(final String callingClass, final String funOwner, final String name, final int paramCount) {
         ClassDef def = CLASS_MAP.get(funOwner);
         if (def != null) {
             for (Fun fun : def.getMethods()) {
@@ -83,7 +83,7 @@ public class SymbolMap {
         return null;
     }
 
-    public static void map(ClassDef def) {
+    public static void map(final ClassDef def) {
         if (def.isInterface()) {
             INTERFACE_MAP.put(def.getFullName(), (Interface) def);
         } else {
@@ -91,7 +91,7 @@ public class SymbolMap {
         }
     }
 
-    public static void map(Class<?> clazz) {
+    public static void map(final Class<?> clazz) {
         if (clazz.isInterface()) {
             INTERFACE_MAP.put(clazz.getName().replace(".", "/"), Interface.valueOf(clazz));
             return;

@@ -10,7 +10,7 @@ public class Import extends Statement {
      * Initializes an import statement
      * @param name The fully qualified name
      */
-    public Import(QualifiedName name) {
+    public Import(final QualifiedName name) {
         this.name = name;
     }
 
@@ -23,7 +23,7 @@ public class Import extends Statement {
     }
 
     @Override
-    public void accept(TreeVisitor visitor) {
+    public void accept(final TreeVisitor visitor) {
         visitor.visitImport(this);
     }
 
@@ -33,7 +33,7 @@ public class Import extends Statement {
     }
 
     @Override
-    public boolean equals(Object o) {
+    public boolean equals(final Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Import anImport = (Import) o;

@@ -37,7 +37,7 @@ public class Repl {
         id = instanceCount++;
     }
 
-    public void exec(String input) {
+    public void exec(final String input) {
         TObject result = eval(input);
         if (result != null && !TVoid.VOID.equals(result))
             System.out.println(result);
@@ -49,7 +49,7 @@ public class Repl {
      * @param input The input source code
      * @return The result of expression or the result of the last statement in the script. Returns null on error.
      */
-    public TObject eval(String input) {
+    public TObject eval(final String input) {
         if (input == null || input.isEmpty())
             return null;
 
@@ -69,7 +69,7 @@ public class Repl {
         return null;
     }
 
-    private TObject eval(Class<?> clazz) {
+    private TObject eval(final Class<?> clazz) {
         Settings.set("REPL", true);
         Thread.UncaughtExceptionHandler currentHandler = Thread.getDefaultUncaughtExceptionHandler();
         try {
@@ -92,7 +92,7 @@ public class Repl {
         return null;
     }
 
-    private Class build(String line) {
+    private Class build(final String line) {
         List<Statement> statementList = StatementParser.parseStatements(line);
 
         if (Errors.getErrorCount() > 0) {
@@ -186,7 +186,7 @@ public class Repl {
         return null;
     }
 
-    private static Fun createExec(List<Statement> statements) {
+    private static Fun createExec(final List<Statement> statements) {
         return new Fun(new QualifiedName("exec"),
                 new Block(statements.toArray(new Statement[statements.size()])), new Modifier[]{Modifier.PUBLIC, Modifier.STATIC}, new String[0]);
     }

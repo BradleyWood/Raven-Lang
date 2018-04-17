@@ -16,7 +16,7 @@ public class ListIndex extends Expression {
      * @param precedingExpr expression that puts a list on the stack
      * @param index The indices
      */
-    public ListIndex(Expression precedingExpr, Expression... index) {
+    public ListIndex(final Expression precedingExpr, final Expression... index) {
         this.precedingExpr = precedingExpr;
         this.index = index;
     }
@@ -29,7 +29,7 @@ public class ListIndex extends Expression {
         return precedingExpr;
     }
 
-    public void setPrecedingExpr(Expression precedingExpr) {
+    public void setPrecedingExpr(final Expression precedingExpr) {
         this.precedingExpr = precedingExpr;
     }
 
@@ -42,12 +42,12 @@ public class ListIndex extends Expression {
     }
 
     @Override
-    public void accept(TreeVisitor visitor) {
+    public void accept(final TreeVisitor visitor) {
         visitor.visitListIdx(this);
     }
 
     @Override
-    public boolean equals(Object o) {
+    public boolean equals(final Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 

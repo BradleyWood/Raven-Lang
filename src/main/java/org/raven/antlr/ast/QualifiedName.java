@@ -15,7 +15,7 @@ public class QualifiedName extends Expression {
      * Initializes a fully qualified name with the specified names
      * @param names The names
      */
-    public QualifiedName(String... names) {
+    public QualifiedName(final String... names) {
         this.names = names;
     }
 
@@ -44,7 +44,7 @@ public class QualifiedName extends Expression {
      * @param name The name to add
      * @return The new qualified name
      */
-    public QualifiedName add(String name) {
+    public QualifiedName add(final String name) {
         String[] sa = new String[names.length + 1];
         System.arraycopy(names, 0, sa, 0, names.length);
         sa[names.length] = name;
@@ -57,7 +57,7 @@ public class QualifiedName extends Expression {
      * @param name The fqn to add
      * @return The new name
      */
-    public QualifiedName add(QualifiedName name) {
+    public QualifiedName add(final QualifiedName name) {
         String[] sa = new String[names.length + name.getNames().length];
         int i;
         for (i = 0; i < names.length; i++) {
@@ -71,12 +71,12 @@ public class QualifiedName extends Expression {
     }
 
     @Override
-    public void accept(TreeVisitor visitor) {
+    public void accept(final TreeVisitor visitor) {
         visitor.visitName(this);
     }
 
     @Override
-    public boolean equals(Object o) {
+    public boolean equals(final Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         QualifiedName that = (QualifiedName) o;
@@ -88,7 +88,7 @@ public class QualifiedName extends Expression {
         return Arrays.hashCode(names);
     }
 
-    public static QualifiedName valueOf(String str) {
+    public static QualifiedName valueOf(final String str) {
         return new QualifiedName(str.split("\\."));
     }
 }

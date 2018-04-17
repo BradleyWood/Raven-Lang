@@ -21,12 +21,12 @@ public class WebSecurityManager extends SecurityManager {
     }
 
     @Override
-    public void checkPermission(Permission perm) {
+    public void checkPermission(final Permission perm) {
         super.checkPermission(perm);
     }
 
     @Override
-    public void checkPermission(Permission perm, Object context) {
+    public void checkPermission(final Permission perm, final Object context) {
         super.checkPermission(perm, context);
     }
 
@@ -36,82 +36,82 @@ public class WebSecurityManager extends SecurityManager {
     }
 
     @Override
-    public void checkAccess(Thread t) {
+    public void checkAccess(final Thread t) {
         super.checkAccess(t);
     }
 
     @Override
-    public void checkAccess(ThreadGroup g) {
+    public void checkAccess(final ThreadGroup g) {
         super.checkAccess(g);
     }
 
     @Override
-    public void checkExit(int status) {
+    public void checkExit(final int status) {
         super.checkExit(status);
     }
 
     @Override
-    public void checkExec(String cmd) {
+    public void checkExec(final String cmd) {
         throw new SecurityException("Program cannot call exec()");
     }
 
     @Override
-    public void checkLink(String lib) {
+    public void checkLink(final String lib) {
         throw new SecurityException("Program cannot load dynamic link library");
     }
 
     @Override
-    public void checkRead(FileDescriptor fd) {
+    public void checkRead(final FileDescriptor fd) {
         throw new SecurityException("Program cannot cannot read from file");
     }
 
     @Override
-    public void checkRead(String file) {
+    public void checkRead(final String file) {
         throw new SecurityException("Program cannot cannot read from file");
     }
 
     @Override
-    public void checkRead(String file, Object context) {
+    public void checkRead(final String file, final Object context) {
         throw new SecurityException("Program cannot cannot read from file");
     }
 
     @Override
-    public void checkWrite(FileDescriptor fd) {
+    public void checkWrite(final FileDescriptor fd) {
         throw new SecurityException("Program cannot cannot write to file");
     }
 
     @Override
-    public void checkWrite(String file) {
+    public void checkWrite(final String file) {
         throw new SecurityException("Program cannot cannot write to file: " + file);
     }
 
     @Override
-    public void checkDelete(String file) {
+    public void checkDelete(final String file) {
         throw new SecurityException("Program cannot cannot delete file: " + file);
     }
 
     @Override
-    public void checkConnect(String host, int port) {
+    public void checkConnect(final String host, final int port) {
         throw new SecurityException("Program cannot connect to " + host + ":" + port);
     }
 
     @Override
-    public void checkConnect(String host, int port, Object context) {
+    public void checkConnect(final String host, final int port, final Object context) {
         throw new SecurityException("Program cannot connect to " + host + ":" + port);
     }
 
     @Override
-    public void checkListen(int port) {
+    public void checkListen(final int port) {
         throw new SecurityException("Program cannot listen on port " + port);
     }
 
     @Override
-    public void checkAccept(String host, int port) {
+    public void checkAccept(final String host, final int port) {
         throw new SecurityException("Program cannot accept connections");
     }
 
     @Override
-    public void checkMulticast(InetAddress maddr) {
+    public void checkMulticast(final InetAddress maddr) {
         throw new SecurityException("Program cannot multicast");
     }
 
@@ -121,7 +121,7 @@ public class WebSecurityManager extends SecurityManager {
     }
 
     @Override
-    public void checkPropertyAccess(String key) {
+    public void checkPropertyAccess(final String key) {
         if (key.contains("os") || key.contains("user")) {
             throw new SecurityException("Program cannot access system property: "+key);
         }
@@ -134,12 +134,12 @@ public class WebSecurityManager extends SecurityManager {
 
 
     @Override
-    public void checkPackageAccess(String pkg) {
+    public void checkPackageAccess(final String pkg) {
         super.checkPackageAccess(pkg);
     }
 
     @Override
-    public void checkPackageDefinition(String pkg) {
+    public void checkPackageDefinition(final String pkg) {
         super.checkPackageDefinition(pkg);
     }
 
@@ -149,7 +149,7 @@ public class WebSecurityManager extends SecurityManager {
     }
 
     @Override
-    public void checkSecurityAccess(String target) {
+    public void checkSecurityAccess(final String target) {
         super.checkSecurityAccess(target);
     }
 

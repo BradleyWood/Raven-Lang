@@ -16,7 +16,7 @@ public class ForVisitor extends RavenBaseVisitor<For> {
     }
 
     @Override
-    public For visitForStatement(RavenParser.ForStatementContext ctx) {
+    public For visitForStatement(final RavenParser.ForStatementContext ctx) {
         Block body = new Block();
         Block after = new Block();
 

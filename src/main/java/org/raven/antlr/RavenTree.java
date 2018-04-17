@@ -19,7 +19,7 @@ public class RavenTree extends AST {
     public RavenTree() {
     }
 
-    public RavenTree(List<Statement> statements) {
+    public RavenTree(final List<Statement> statements) {
         this.statements = statements;
     }
 
@@ -27,20 +27,20 @@ public class RavenTree extends AST {
         return sourceFile;
     }
 
-    public void setSourceFile(String sourceFile) {
+    public void setSourceFile(final String sourceFile) {
         this.sourceFile = sourceFile;
     }
 
-    public void setPackage(QualifiedName pack) {
+    public void setPackage(final QualifiedName pack) {
         this.pack = pack;
     }
 
-    public void addImport(QualifiedName name) {
+    public void addImport(final QualifiedName name) {
         imports.add(name);
         statements.add(new Import(name));
     }
 
-    public void setName(String name) {
+    public void setName(final String name) {
         this.name = new QualifiedName(name);
     }
 
@@ -67,13 +67,13 @@ public class RavenTree extends AST {
         return statements;
     }
 
-    public void accept(TreeVisitor visitor) {
+    public void accept(final TreeVisitor visitor) {
         for (Statement statement : statements) {
             statement.accept(visitor);
         }
     }
 
-    public VarDecl findVar(String name) {
+    public VarDecl findVar(final String name) {
         for (Statement statement : statements) {
             if (statement instanceof VarDecl) {
                 VarDecl decl = (VarDecl) statement;
@@ -94,7 +94,7 @@ public class RavenTree extends AST {
         return classes;
     }
 
-    public Fun findFun(String name) {
+    public Fun findFun(final String name) {
         for (Statement statement : statements) {
             if (statement instanceof Fun) {
                 Fun decl = (Fun) statement;

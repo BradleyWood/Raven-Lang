@@ -6,11 +6,11 @@ public class Errors {
 
     private static final LinkedList<Error> ERRORS = new LinkedList<>();
 
-    public static void put(String error) {
+    public static void put(final String error) {
         ERRORS.add(new Error(error));
     }
 
-    public static void put(Error error) {
+    public static void put(final Error error) {
         ERRORS.add(error);
     }
 

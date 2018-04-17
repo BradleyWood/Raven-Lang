@@ -10,11 +10,11 @@ public class ModifiableStatement extends Statement {
 
     private List<Modifier> modifiers;
 
-    ModifiableStatement(Modifier... modifiers) {
+    ModifiableStatement(final Modifier... modifiers) {
         this(new ArrayList<>(Arrays.asList(modifiers)));
     }
 
-    ModifiableStatement(List<Modifier> modifiers) {
+    ModifiableStatement(final List<Modifier> modifiers) {
         this.modifiers = modifiers;
     }
 
@@ -38,13 +38,13 @@ public class ModifiableStatement extends Statement {
         return !isOpen();
     }
 
-    public void addModifier(Modifier modifier) {
+    public void addModifier(final Modifier modifier) {
         if (hasModifier(modifier))
             return;
         getModifiers().add(modifier);
     }
 
-    public void removeModifier(Modifier modifier) {
+    public void removeModifier(final Modifier modifier) {
         getModifiers().remove(modifier);
     }
 
@@ -62,7 +62,7 @@ public class ModifiableStatement extends Statement {
         }
     }
 
-    public boolean hasModifier(Modifier modifier) {
+    public boolean hasModifier(final Modifier modifier) {
         return getModifiers().contains(modifier);
     }
 

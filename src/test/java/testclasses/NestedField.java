@@ -13,7 +13,7 @@ public class NestedField {
     public NestedField nestedField;
     public String value;
 
-    public NestedField(final NestedField nestedField, String value) {
+    public NestedField(final NestedField nestedField, final String value) {
         this.nestedField = nestedField;
         this.value = value;
     }

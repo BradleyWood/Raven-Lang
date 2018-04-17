@@ -27,11 +27,11 @@ public class Settings {
         return (String) SETTINGS.get(key);
     }
 
-    public static Object getOrDefault(String string, Object defaultValue) {
+    public static Object getOrDefault(final String string, final Object defaultValue) {
         return SETTINGS.getOrDefault(string, defaultValue);
     }
 
-    public static void set(String key, Object value) {
+    public static void set(final String key, final Object value) {
         SETTINGS.put(key, value);
     }
 

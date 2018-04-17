@@ -24,7 +24,7 @@ public class ClassMaker {
 
     private final List<QualifiedName> imports;
 
-    public ClassMaker(ClassDef def, List<QualifiedName> imports) {
+    public ClassMaker(final ClassDef def, final List<QualifiedName> imports) {
         this.def = def;
         cw = new ClassWriter(ClassWriter.COMPUTE_FRAMES);
         this.imports = imports;
@@ -99,7 +99,7 @@ public class ClassMaker {
         }
     }
 
-    private Fun createInterfaceDelegate(Type t, String methodName) {
+    private Fun createInterfaceDelegate(final Type t, final String methodName) {
         Block body = new Block();
         VarDecl[] params = new VarDecl[t.getArgumentTypes().length];
         for (int i = 0; i < params.length; i++) {
@@ -123,11 +123,11 @@ public class ClassMaker {
         return fun;
     }
 
-    private void defineField(String name, int modifiers) {
+    private void defineField(final String name, final int modifiers) {
         cw.visitField(modifiers, name, Constants.TOBJ_SIG, null, null);
     }
 
-    private void defineConstructor(MethodContext ctx, Constructor constructor) {
+    private void defineConstructor(final MethodContext ctx, final Constructor constructor) {
         int modifiers = 0;
         for (Modifier modifier : constructor.getModifiers()) {
             modifiers += modifier.getModifier();
@@ -138,7 +138,7 @@ public class ClassMaker {
         cc.visitEnd();
     }
 
-    private void defineMethod(MethodContext context, Fun fun, int modifiers) {
+    private void defineMethod(final MethodContext context, final Fun fun, final int modifiers) {
         String desc = fun.getDesc();
 
         Method method;

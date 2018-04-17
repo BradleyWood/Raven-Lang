@@ -13,7 +13,7 @@ public class LiteralVisitor extends RavenBaseVisitor<Expression> {
     }
 
     @Override
-    public Expression visitLiteral(RavenParser.LiteralContext ctx) {
+    public Expression visitLiteral(final RavenParser.LiteralContext ctx) {
         Expression expr = null;
         if (ctx.number() != null) {
             if (ctx.number().getText().contains(".") || ctx.number().getText().toLowerCase().contains("e")) {

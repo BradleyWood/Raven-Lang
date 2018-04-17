@@ -21,7 +21,7 @@ public class ClassDef extends ModifiableStatement {
 
     private List<Fun> methods = null;
 
-    public ClassDef(Modifier[] modifiers, String name, Inheritance inh, List<Statement> statements) {
+    public ClassDef(final Modifier[] modifiers, final String name, final Inheritance inh, final List<Statement> statements) {
         super(modifiers);
         this.statements = statements;
         this.superParams = inh.getSuperParams();
@@ -31,7 +31,7 @@ public class ClassDef extends ModifiableStatement {
         this.interfaces = inh.getInterfaces();
     }
 
-    public ClassDef(Modifier[] modifiers, QualifiedName package_, String name, QualifiedName super_, QualifiedName[] interfaces, List<Statement> statements) {
+    public ClassDef(final Modifier[] modifiers, final QualifiedName package_, final String name, final QualifiedName super_, final QualifiedName[] interfaces, final List<Statement> statements) {
         this(modifiers, name, new Inheritance(super_, null, interfaces), statements);
         this.package_ = package_;
     }
@@ -40,11 +40,11 @@ public class ClassDef extends ModifiableStatement {
         return varParams.size() > 0;
     }
 
-    public void addVarParam(VarDecl decl) {
+    public void addVarParam(final VarDecl decl) {
         varParams.add(decl);
     }
 
-    public void setVarParams(List<VarDecl> varParams) {
+    public void setVarParams(final List<VarDecl> varParams) {
         this.varParams = varParams;
     }
 
@@ -56,7 +56,7 @@ public class ClassDef extends ModifiableStatement {
         return sourceTree;
     }
 
-    public void setSourceTree(RavenTree sourceTree) {
+    public void setSourceTree(final RavenTree sourceTree) {
         this.sourceTree = sourceTree;
         this.super_ = getName(super_);
         for (int i = 0; i < this.interfaces.length; i++) {
@@ -75,7 +75,7 @@ public class ClassDef extends ModifiableStatement {
      * @param paramCount The the number of params
      * @return True if the def contains the method
      */
-    public boolean containsMethod(String name, int paramCount) {
+    public boolean containsMethod(final String name, final int paramCount) {
         for (Fun fun : getMethods()) {
             if (fun.getName().toString().equals(name) && fun.getParams().length == paramCount)
                 return true;
@@ -90,7 +90,7 @@ public class ClassDef extends ModifiableStatement {
      * @param desc The method descriptor
      * @return True if this class def contains a method with the given name and descriptor
      */
-    public boolean containsExact(String name, String desc) {
+    public boolean containsExact(final String name, final String desc) {
         for (Fun fun : getMethods()) {
             if (fun.getName().toString().equals(name) && fun.getDesc().equals(desc))
                 return true;
@@ -99,7 +99,7 @@ public class ClassDef extends ModifiableStatement {
     }
 
     @Override
-    public void accept(TreeVisitor visitor) {
+    public void accept(final TreeVisitor visitor) {
         visitor.visitClassDef(this);
     }
 
@@ -107,7 +107,7 @@ public class ClassDef extends ModifiableStatement {
         return package_;
     }
 
-    public void setPackage(QualifiedName package_) {
+    public void setPackage(final QualifiedName package_) {
         this.package_ = package_;
     }
 
@@ -123,7 +123,7 @@ public class ClassDef extends ModifiableStatement {
         return super_;
     }
 
-    private QualifiedName getName(QualifiedName name) {
+    private QualifiedName getName(final QualifiedName name) {
         if (sourceTree != null) {
             for (QualifiedName qualifiedName : sourceTree.getImports()) {
                 if (qualifiedName.toString().endsWith(name.toString())) {
@@ -154,7 +154,7 @@ public class ClassDef extends ModifiableStatement {
         return fields;
     }
 
-    public VarDecl findVar(String name) {
+    public VarDecl findVar(final String name) {
         for (Statement statement : getFields()) {
             VarDecl decl = (VarDecl) statement;
             if (decl.getName().toString().equals(name))
@@ -163,7 +163,7 @@ public class ClassDef extends ModifiableStatement {
         return null;
     }
 
-    public Fun findFun(String name, int paramCount) {
+    public Fun findFun(final String name, final int paramCount) {
         for (Fun fun : getMethods()) {
             if (fun.getName().toString().equals(name) && fun.getParams().length == paramCount) {
                 return fun;
@@ -247,7 +247,7 @@ public class ClassDef extends ModifiableStatement {
         return constructors;
     }
 
-    private void initFieldsInConstructor(Constructor c) {
+    private void initFieldsInConstructor(final Constructor c) {
         for (Statement statement : statements) {
             if (statement instanceof VarDecl) {
                 VarDecl decl = (VarDecl) statement;
@@ -295,7 +295,7 @@ public class ClassDef extends ModifiableStatement {
     }
 
     @Override
-    public boolean equals(Object o) {
+    public boolean equals(final Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 

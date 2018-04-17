@@ -12,7 +12,7 @@ public class FunCallVisitor extends RavenBaseVisitor<Expression> {
     }
 
     @Override
-    public Expression visitFunCall(RavenParser.FunCallContext ctx) {
+    public Expression visitFunCall(final RavenParser.FunCallContext ctx) {
         QualifiedName name;
         if (ctx.SUPER() != null) {
             name = new QualifiedName("super");

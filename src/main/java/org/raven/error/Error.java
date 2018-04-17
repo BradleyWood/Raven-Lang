@@ -6,7 +6,7 @@ public class Error {
 
     private final String message;
 
-    public Error(String message) {
+    public Error(final String message) {
         this.message = message;
     }
 
@@ -14,7 +14,7 @@ public class Error {
         printError(System.err);
     }
 
-    public void printError(PrintStream stream) {
+    public void printError(final PrintStream stream) {
         stream.println("Error: " + message);
     }
 

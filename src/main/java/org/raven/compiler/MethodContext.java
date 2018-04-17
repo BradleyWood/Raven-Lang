@@ -19,7 +19,7 @@ public class MethodContext {
     private final ClassDef def;
 
 
-    public MethodContext(String owner, String name, List<QualifiedName> imports, ClassDef def) {
+    public MethodContext(final String owner, final String name, final List<QualifiedName> imports, final ClassDef def) {
         this.owner = owner;
         this.name = name;
         this.imports = imports;
@@ -38,11 +38,11 @@ public class MethodContext {
         return name;
     }
 
-    public void setStatic(boolean isStatic) {
+    public void setStatic(final boolean isStatic) {
         this.isStatic = isStatic;
     }
 
-    public void setName(String name) {
+    public void setName(final String name) {
         this.name = name;
     }
 
@@ -58,11 +58,11 @@ public class MethodContext {
         return constants;
     }
 
-    public void setConstants(LinkedList<TObject> constants) {
+    public void setConstants(final LinkedList<TObject> constants) {
         this.constants = constants;
     }
 
-    public void addSynthetic(Fun fun) {
+    public void addSynthetic(final Fun fun) {
         syntheticFunctions.add(fun);
     }
 

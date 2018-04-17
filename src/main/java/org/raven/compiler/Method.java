@@ -30,7 +30,7 @@ public class Method extends MethodVisitor implements TreeVisitor, Opcodes {
         this.ctx = ctx;
     }
 
-    int getLocal(String name) {
+    int getLocal(final String name) {
         int idx = scope.findVar(name);
         if (idx == -1) {
             Errors.put("Use of variable: " + name + " before it is defined");
@@ -789,7 +789,7 @@ public class Method extends MethodVisitor implements TreeVisitor, Opcodes {
     }
 
     @Override
-    public void visitExpressionGroup(ExpressionGroup group) {
+    public void visitExpressionGroup(final ExpressionGroup group) {
         group.accept(this);
         if (group.pop())
             visitInsn(POP);

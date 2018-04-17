@@ -17,7 +17,7 @@ public class BinOp extends Expression {
      * @param op The operator to apply
      * @param right The right-hand-side of the expression
      */
-    public BinOp(Expression left, Operator op, Expression right) {
+    public BinOp(final Expression left, final Operator op, final Expression right) {
         this.left = left;
         this.op = op;
         this.right = right;
@@ -48,7 +48,7 @@ public class BinOp extends Expression {
     }
 
     @Override
-    public void accept(TreeVisitor visitor) {
+    public void accept(final TreeVisitor visitor) {
         visitor.visitBinOp(this);
     }
 
@@ -58,7 +58,7 @@ public class BinOp extends Expression {
     }
 
     @Override
-    public boolean equals(Object o) {
+    public boolean equals(final Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 

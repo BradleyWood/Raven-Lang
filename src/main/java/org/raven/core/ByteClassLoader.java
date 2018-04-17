@@ -8,12 +8,12 @@ public class ByteClassLoader extends ClassLoader {
 
     private final Map<String, byte[]> extraClassDefs;
 
-    public ByteClassLoader(URL[] urls, ClassLoader parent, Map<String, byte[]> extraClassDefs) {
+    public ByteClassLoader(final URL[] urls, final ClassLoader parent, final Map<String, byte[]> extraClassDefs) {
         super(parent);
         this.extraClassDefs = new HashMap<>(extraClassDefs);
     }
 
-    public void addDef(String name, byte[] def) {
+    public void addDef(final String name, final byte[] def) {
         extraClassDefs.put(name, def);
     }
 

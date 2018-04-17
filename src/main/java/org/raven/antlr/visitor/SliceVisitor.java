@@ -14,7 +14,7 @@ public class SliceVisitor extends RavenBaseVisitor<Expression> {
     }
 
     @Override
-    public Expression visitSlice(RavenParser.SliceContext ctx) {
+    public Expression visitSlice(final RavenParser.SliceContext ctx) {
         QualifiedName varName = ctx.qualifiedName().accept(QualifiedNameVisitor.INSTANCE);
         QualifiedName funName = new QualifiedName("subList");
         Expression start = new Literal(new TInt(0));

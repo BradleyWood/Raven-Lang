@@ -19,7 +19,7 @@ public class Fun extends ModifiableStatement {
     private VarDecl[] params;
     private String javaDesc = null;
 
-    public Fun(QualifiedName name, Block body, Modifier[] modifiers, String[] exceptions, VarDecl... params) {
+    public Fun(final QualifiedName name, final Block body, final Modifier[] modifiers, final String[] exceptions, final VarDecl... params) {
         super(modifiers);
         this.name = name;
         this.body = body;
@@ -31,7 +31,7 @@ public class Fun extends ModifiableStatement {
             this.params = new VarDecl[0];
     }
 
-    public Fun(QualifiedName name, Block body, List<Modifier> modifiers, String[] exceptions, VarDecl... params) {
+    public Fun(final QualifiedName name, final Block body, final List<Modifier> modifiers, final String[] exceptions, final VarDecl... params) {
         this.name = name;
         this.body = body;
         this.modifiers = new LinkedList<>(modifiers);
@@ -43,7 +43,7 @@ public class Fun extends ModifiableStatement {
             this.params = new VarDecl[0];
     }
 
-    public void forceDescriptor(String desc) {
+    public void forceDescriptor(final String desc) {
         this.javaDesc = desc;
     }
 
@@ -59,7 +59,7 @@ public class Fun extends ModifiableStatement {
         return params;
     }
 
-    public void setName(String name) {
+    public void setName(final String name) {
         this.name = new QualifiedName(name);
     }
 
@@ -68,7 +68,7 @@ public class Fun extends ModifiableStatement {
     }
 
     @Override
-    public void accept(TreeVisitor visitor) {
+    public void accept(final TreeVisitor visitor) {
         visitor.visitFun(this);
     }
 
@@ -109,7 +109,7 @@ public class Fun extends ModifiableStatement {
     }
 
     @Override
-    public boolean equals(Object o) {
+    public boolean equals(final Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
@@ -131,7 +131,7 @@ public class Fun extends ModifiableStatement {
         return result;
     }
 
-    public boolean hasModifier(Modifier modifier) {
+    public boolean hasModifier(final Modifier modifier) {
         for (Modifier m : getModifiers()) {
             if (m.equals(modifier))
                 return true;
@@ -139,7 +139,7 @@ public class Fun extends ModifiableStatement {
         return false;
     }
 
-    public static Fun valueOf(Method method) {
+    public static Fun valueOf(final Method method) {
         List<Modifier> modifierList = new LinkedList<>();
         int modifiers = method.getModifiers();
         if (java.lang.reflect.Modifier.isStatic(modifiers)) {

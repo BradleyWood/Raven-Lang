@@ -14,7 +14,7 @@ public class QualifiedNameVisitor extends RavenBaseVisitor<QualifiedName> {
     }
 
     @Override
-    public QualifiedName visitQualifiedName(RavenParser.QualifiedNameContext ctx) {
+    public QualifiedName visitQualifiedName(final RavenParser.QualifiedNameContext ctx) {
         List<String> list = new ArrayList<>();
 
         if (ctx.THIS() != null) {

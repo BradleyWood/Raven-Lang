@@ -53,7 +53,7 @@ public class JSCompiler implements TreeVisitor {
      *
      * @param spaces Number of spaces to use
      */
-    public void setSpaces(int spaces) {
+    public void setSpaces(final int spaces) {
         this.spaces = spaces;
     }
 
@@ -79,11 +79,11 @@ public class JSCompiler implements TreeVisitor {
         return output.toString();
     }
 
-    public boolean save(String file) {
+    public boolean save(final String file) {
         return save(new File(file));
     }
 
-    public boolean save(File file) {
+    public boolean save(final File file) {
         if (!file.getAbsoluteFile().getParentFile().exists()) {
             boolean success = file.getParentFile().mkdirs();
             if (!success) {
@@ -99,7 +99,7 @@ public class JSCompiler implements TreeVisitor {
         return true;
     }
 
-    public void writeOutput(OutputStream output) throws IOException {
+    public void writeOutput(final OutputStream output) throws IOException {
         output.write(getOutput().getBytes());
     }
 
@@ -108,13 +108,13 @@ public class JSCompiler implements TreeVisitor {
         compiled = true;
     }
 
-    private void putSpaces(int count) {
+    private void putSpaces(final int count) {
         for (int i = 0; i < count; i++) {
             line.append(' ');
         }
     }
 
-    private void newLine(Statement stmt) {
+    private void newLine(final Statement stmt) {
         // check whether the new line needs a semi colon
         if (!(stmt instanceof For) && !(stmt instanceof While) && !(stmt instanceof If)
                 && !(stmt instanceof Fun)) {
@@ -124,7 +124,7 @@ public class JSCompiler implements TreeVisitor {
         }
     }
 
-    private void newLine(boolean b) {
+    private void newLine(final boolean b) {
         if (b) {
             line.append(';');
         }
@@ -141,7 +141,7 @@ public class JSCompiler implements TreeVisitor {
     }
 
     @Override
-    public void visitIf(If ifStatement) {
+    public void visitIf(final If ifStatement) {
         line.append("if");
         putSpaces(1);
         line.append('(');
@@ -171,12 +171,12 @@ public class JSCompiler implements TreeVisitor {
     }
 
     @Override
-    public void visitFor(For forStatement) {
+    public void visitFor(final For forStatement) {
 
     }
 
     @Override
-    public void visitWhile(While whileStatement) {
+    public void visitWhile(final While whileStatement) {
         line.append("while");
         putSpaces(1);
         line.append('(');
@@ -190,7 +190,7 @@ public class JSCompiler implements TreeVisitor {
     }
 
     @Override
-    public void visitReturn(Return ret) {
+    public void visitReturn(final Return ret) {
         line.append("return");
         if (ret.getValue() != null) {
             line.append(' ');
@@ -199,7 +199,7 @@ public class JSCompiler implements TreeVisitor {
     }
 
     @Override
-    public void visitFun(Fun fun) {
+    public void visitFun(final Fun fun) {
         line.append("function");
         putSpaces(1);
         fun.getName().accept(this);
@@ -226,7 +226,7 @@ public class JSCompiler implements TreeVisitor {
     }
 
     @Override
-    public void visitFunCall(Call call) {
+    public void visitFunCall(final Call call) {
         if (call.getPrecedingExpr() != null) {
             call.getPrecedingExpr().accept(this);
             line.append('.');
@@ -245,7 +245,7 @@ public class JSCompiler implements TreeVisitor {
     }
 
     @Override
-    public void visitBlock(Block block) {
+    public void visitBlock(final Block block) {
         block.getStatements().forEach(stmt -> {
             stmt.accept(this);
             newLine(stmt);
@@ -253,12 +253,12 @@ public class JSCompiler implements TreeVisitor {
     }
 
     @Override
-    public void visitExpressionGroup(ExpressionGroup group) {
+    public void visitExpressionGroup(final ExpressionGroup group) {
 
     }
 
     @Override
-    public void visitVarDecl(VarDecl decl) {
+    public void visitVarDecl(final VarDecl decl) {
         line.append("var");
         putSpaces(1);
         decl.getName().accept(this);
@@ -271,12 +271,12 @@ public class JSCompiler implements TreeVisitor {
     }
 
     @Override
-    public void visitImport(Import importStatement) {
+    public void visitImport(final Import importStatement) {
 
     }
 
     @Override
-    public void visitBinOp(BinOp op) {
+    public void visitBinOp(final BinOp op) {
         op.getLeft().accept(this);
         putSpaces(1);
         line.append(op.getOp().op);
@@ -285,7 +285,7 @@ public class JSCompiler implements TreeVisitor {
     }
 
     @Override
-    public void visitLiteral(Literal literal) {
+    public void visitLiteral(final Literal literal) {
         if (literal.getValue() instanceof TString) {
             line.append("\"");
         }
@@ -296,52 +296,52 @@ public class JSCompiler implements TreeVisitor {
     }
 
     @Override
-    public void visitName(QualifiedName name) {
+    public void visitName(final QualifiedName name) {
         line.append(name.toString());
     }
 
     @Override
-    public void visitListDef(ListDef def) {
+    public void visitListDef(final ListDef def) {
 
     }
 
     @Override
-    public void visitListIdx(ListIndex idx) {
+    public void visitListIdx(final ListIndex idx) {
 
     }
 
     @Override
-    public void visitClassDef(ClassDef def) {
+    public void visitClassDef(final ClassDef def) {
         throw new RuntimeException("Classes not allowed");
     }
 
     @Override
-    public void visitDictDef(DictDef def) {
+    public void visitDictDef(final DictDef def) {
 
     }
 
     @Override
-    public void visitAnnotation(Annotation annotation) {
+    public void visitAnnotation(final Annotation annotation) {
 
     }
 
     @Override
-    public void visitAnnotationDef(AnnoDef def) {
+    public void visitAnnotationDef(final AnnoDef def) {
 
     }
 
     @Override
-    public void visitTryCatchFinally(TryCatchFinally tcf) {
+    public void visitTryCatchFinally(final TryCatchFinally tcf) {
 
     }
 
     @Override
-    public void visitRaise(Raise raise) {
+    public void visitRaise(final Raise raise) {
 
     }
 
     @Override
-    public void visitGo(Go go) {
+    public void visitGo(final Go go) {
         throw new RuntimeException("Go not allowed");
     }
 
@@ -359,12 +359,12 @@ public class JSCompiler implements TreeVisitor {
         String line;
         int level;
 
-        public Line(String line, int level) {
+        public Line(final String line, final int level) {
             this.line = line;
             this.level = level;
         }
     }
-    public static void main(String[] args) throws IOException {
+    public static void main(final String[] args) throws IOException {
         RParser tp = new RParser("test/org/raven/test/IfTest.tl");
         RavenTree tree = tp.parse();
         JSCompiler compiler = new JSCompiler(tree);

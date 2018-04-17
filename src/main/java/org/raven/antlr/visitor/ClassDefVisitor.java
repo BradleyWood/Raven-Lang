@@ -17,7 +17,7 @@ public class ClassDefVisitor extends RavenBaseVisitor<ClassDef> {
     }
 
     @Override
-    public ClassDef visitClassDef(RavenParser.ClassDefContext ctx) {
+    public ClassDef visitClassDef(final RavenParser.ClassDefContext ctx) {
         Modifier[] modifiers = new Modifier[0];
         QualifiedName super_ = ClassMaker.OBJECT;
 

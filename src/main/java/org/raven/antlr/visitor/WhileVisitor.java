@@ -12,7 +12,7 @@ public class WhileVisitor extends RavenBaseVisitor<While> {
     }
 
     @Override
-    public While visitWhileStatement(RavenParser.WhileStatementContext ctx) {
+    public While visitWhileStatement(final RavenParser.WhileStatementContext ctx) {
         Expression condition = ctx.expression().accept(ExpressionVisitor.INSTANCE);
         Statement body = ctx.statement().accept(StatementVisitor.INSTANCE);
 

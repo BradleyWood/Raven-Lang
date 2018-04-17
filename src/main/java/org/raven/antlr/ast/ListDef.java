@@ -10,7 +10,7 @@ public class ListDef extends Expression {
      * Initializes a list holding specified expressions
      * @param expressions The list of expressions in the list
      */
-    public ListDef(Expression... expressions) {
+    public ListDef(final Expression... expressions) {
         this.expressions = expressions;
     }
 
@@ -23,7 +23,7 @@ public class ListDef extends Expression {
     }
 
     @Override
-    public void accept(TreeVisitor visitor) {
+    public void accept(final TreeVisitor visitor) {
         visitor.visitListDef(this);
     }
 
@@ -37,7 +37,7 @@ public class ListDef extends Expression {
     }
 
     @Override
-    public boolean equals(Object o) {
+    public boolean equals(final Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 

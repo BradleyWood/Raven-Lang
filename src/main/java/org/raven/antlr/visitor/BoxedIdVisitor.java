@@ -13,7 +13,7 @@ public class BoxedIdVisitor extends RavenBaseVisitor<QualifiedName> {
     }
 
     @Override
-    public QualifiedName visitBoxedId(RavenParser.BoxedIdContext ctx) {
+    public QualifiedName visitBoxedId(final RavenParser.BoxedIdContext ctx) {
         RavenParser.BoxedIdContext bid = ctx;
         while (bid.boxedId() != null) {
             bid = bid.boxedId();

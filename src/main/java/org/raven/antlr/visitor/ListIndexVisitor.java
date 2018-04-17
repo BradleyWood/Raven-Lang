@@ -11,7 +11,7 @@ public class ListIndexVisitor extends RavenBaseVisitor<ListIndex> {
     }
 
     @Override
-    public ListIndex visitListIdx(RavenParser.ListIdxContext ctx) {
+    public ListIndex visitListIdx(final RavenParser.ListIdxContext ctx) {
         Expression preceding = null;
 
 //        if (ctx.qualifiedName() != null) {

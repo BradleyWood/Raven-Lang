@@ -11,7 +11,7 @@ public class JvmMethodAnnotationProcessor implements AnnotationProcessor {
     private final Literal DEFAULT_RET = new Literal(new TString("void"));
 
     @Override
-    public void process(RavenTree file, Statement stmt) {
+    public void process(final RavenTree file, final Statement stmt) {
         if (!(stmt instanceof Fun)) {
             return;
         }
@@ -29,7 +29,7 @@ public class JvmMethodAnnotationProcessor implements AnnotationProcessor {
         }
     }
 
-    private Fun createJavaMethod(Fun fun, Annotation annotation) {
+    private Fun createJavaMethod(final Fun fun, final Annotation annotation) {
         Block body = new Block();
         Fun javaMethod = new Fun(fun.getName(), body, fun.getModifiers(), fun.getExceptions(), fun.getParams());
         if (annotation.get("name") != null) {
@@ -54,7 +54,7 @@ public class JvmMethodAnnotationProcessor implements AnnotationProcessor {
         return javaMethod;
     }
 
-    private void updateDesc(Fun fun, String params, String ret) {
+    private void updateDesc(final Fun fun, final String params, final String ret) {
         String[] types = params.replace(" ", "").split(",");
         if (params.length() == 0)
             types = new String[0];
@@ -71,7 +71,7 @@ public class JvmMethodAnnotationProcessor implements AnnotationProcessor {
         fun.forceDescriptor(builder.toString());
     }
 
-    private String getType(String type) {
+    private String getType(final String type) {
         switch (type) {
             case "int":
                 return "I";

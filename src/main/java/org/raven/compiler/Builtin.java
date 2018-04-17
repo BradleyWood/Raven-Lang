@@ -12,12 +12,12 @@ public class Builtin {
     private String name;
     private int numParams;
 
-    public Builtin(String name, int numParams) {
+    public Builtin(final String name, final int numParams) {
         this.name = name;
         this.numParams = numParams;
     }
 
-    public static boolean isBuiltin(QualifiedName name, int numParams) {
+    public static boolean isBuiltin(final QualifiedName name, final int numParams) {
         if (builtins.size() == 0) {
             loadBuiltins();
         }

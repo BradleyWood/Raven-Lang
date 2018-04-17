@@ -14,7 +14,7 @@ public class Annotation extends Statement {
      * @param keys The parameter names for the annotation
      * @param values The values associated with the param
      */
-    public Annotation(String name, QualifiedName[] keys, Literal[] values) {
+    public Annotation(final String name, final QualifiedName[] keys, final Literal[] values) {
         this.name = name;
         this.keys = keys;
         this.values = values;
@@ -36,7 +36,7 @@ public class Annotation extends Statement {
     }
 
     @Override
-    public void accept(TreeVisitor visitor) {
+    public void accept(final TreeVisitor visitor) {
         visitor.visitAnnotation(this);
     }
 
@@ -48,7 +48,7 @@ public class Annotation extends Statement {
         return values;
     }
 
-    public Literal get(QualifiedName name) {
+    public Literal get(final QualifiedName name) {
         for (int i = 0; i < keys.length; i++) {
             if (keys[i].equals(name)) {
                 return values[i];
@@ -57,23 +57,23 @@ public class Annotation extends Statement {
         return null;
     }
 
-    public Literal get(String name) {
+    public Literal get(final String name) {
         return get(new QualifiedName(name));
     }
 
-    public Literal getOrDefault(QualifiedName name, Literal defaultValue) {
+    public Literal getOrDefault(final QualifiedName name, final Literal defaultValue) {
         Literal val = get(name);
         if (val != null)
             return val;
         return defaultValue;
     }
 
-    public Literal getOrDefault(String name, Literal defaultValue) {
+    public Literal getOrDefault(final String name, final Literal defaultValue) {
         return getOrDefault(new QualifiedName(name), defaultValue);
     }
 
     @Override
-    public boolean equals(Object o) {
+    public boolean equals(final Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 

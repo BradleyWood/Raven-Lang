@@ -18,7 +18,7 @@ public class Application {
         Settings.set("OUT", "target/classes");
     }
 
-    public static void main(String[] args) {
+    public static void main(final String[] args) {
         Options options = new Options();
         options.addOption("secure", false, "Run with security manager");
         options.addOption("s", true, "Check files for correctness");
@@ -90,7 +90,7 @@ public class Application {
         }
     }
 
-    private static void build(String[] buildOptions) throws IOException {
+    private static void build(final String[] buildOptions) throws IOException {
         HashMap<String, byte[]> classes = compile(buildOptions[0], false);
         if (Errors.getErrorCount() > 0) {
             return;
@@ -111,13 +111,13 @@ public class Application {
         }
     }
 
-    private static void cmdError(Options options) {
+    private static void cmdError(final Options options) {
         System.err.println("Invalid usage");
         HelpFormatter formatter = new HelpFormatter();
         formatter.printHelp("ant", options);
     }
 
-    private static boolean onlyOneTrue(boolean... booleans) {
+    private static boolean onlyOneTrue(final boolean... booleans) {
         int c = 0;
         for (boolean b : booleans) {
             c += b ? 1 : 0;

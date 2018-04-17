@@ -6,7 +6,7 @@ package org.raven.antlr.ast;
 public class Break extends Statement {
 
     @Override
-    public void accept(TreeVisitor visitor) {
+    public void accept(final TreeVisitor visitor) {
         visitor.visitBreak();
     }
 

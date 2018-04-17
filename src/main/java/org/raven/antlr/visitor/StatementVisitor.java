@@ -16,7 +16,7 @@ public class StatementVisitor extends RavenBaseVisitor<Statement> {
 
 
     @Override
-    public Statement visitStatement(RavenParser.StatementContext ctx) {
+    public Statement visitStatement(final RavenParser.StatementContext ctx) {
         Statement stmt = null;
         if (ctx.block() != null) {
             stmt = ctx.block().accept(BlockVisitor.INSTANCE);

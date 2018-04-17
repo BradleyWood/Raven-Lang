@@ -16,7 +16,7 @@ public class Interface extends ClassDef {
     private final Type[] methodTypes;
 
     private Interface(final QualifiedName pkg, final String name, final String[] names, final Type[] methodTypes,
-                      QualifiedName[] interfaces) {
+                      final QualifiedName[] interfaces) {
         super(IFACE_MODIFIERS, pkg, name, IFACE_PARENT,
                 interfaces, new LinkedList<>());
         this.names = names;
@@ -31,7 +31,7 @@ public class Interface extends ClassDef {
         return methodTypes;
     }
 
-    public static Interface valueOf(Class<?> clazz) {
+    public static Interface valueOf(final Class<?> clazz) {
         if (!clazz.isInterface())
             throw new IllegalArgumentException("Not an interface");
         Method[] methods = clazz.getDeclaredMethods();

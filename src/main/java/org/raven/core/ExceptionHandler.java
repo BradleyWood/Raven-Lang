@@ -3,7 +3,7 @@ package org.raven.core;
 public class ExceptionHandler implements Thread.UncaughtExceptionHandler {
 
     @Override
-    public void uncaughtException(Thread t, Throwable e) {
+    public void uncaughtException(final Thread t, Throwable e) {
         e = Intrinsics.sanitizeStackTrace(e);
         System.err.println("Exception in thread: " + t.getName() + " (most recent call last)");
         System.err.println(e.getClass().getSimpleName() + ": " + e.getMessage());

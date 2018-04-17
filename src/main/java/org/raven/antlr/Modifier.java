@@ -14,7 +14,7 @@ public enum Modifier {
     SYNTHETIC(ACC_SYNTHETIC);
     int modifier;
 
-    Modifier(int modifier) {
+    Modifier(final int modifier) {
         this.modifier = modifier;
     }
 
@@ -22,7 +22,7 @@ public enum Modifier {
         return modifier;
     }
 
-    public static Modifier getModifier(String name) {
+    public static Modifier getModifier(final String name) {
         switch (name) {
             case "public":
                 return PUBLIC;

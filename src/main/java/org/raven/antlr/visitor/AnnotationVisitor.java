@@ -12,7 +12,7 @@ public class AnnotationVisitor extends RavenBaseVisitor<Annotation> {
     }
 
     @Override
-    public Annotation visitAnnotation(RavenParser.AnnotationContext ctx) {
+    public Annotation visitAnnotation(final RavenParser.AnnotationContext ctx) {
         QualifiedName name = ctx.qualifiedName().accept(QualifiedNameVisitor.INSTANCE);
         QualifiedName[] names = new QualifiedName[0];
         Literal[] params = new Literal[0];

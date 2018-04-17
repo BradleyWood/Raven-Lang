@@ -12,7 +12,7 @@ public class TryCatchFinallyVisitor extends RavenBaseVisitor<TryCatchFinally> {
     }
 
     @Override
-    public TryCatchFinally visitTryCatchFinally(RavenParser.TryCatchFinallyContext ctx) {
+    public TryCatchFinally visitTryCatchFinally(final RavenParser.TryCatchFinallyContext ctx) {
         Block body = ctx.block(0).accept(BlockVisitor.INSTANCE);
         Block handler = ctx.block(1).accept(BlockVisitor.INSTANCE);
         QualifiedName exName = ctx.boxedId().accept(BoxedIdVisitor.INSTANCE);

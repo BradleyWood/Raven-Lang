@@ -18,7 +18,7 @@ public class Call extends Expression {
      * @param name   The name of the function to call
      * @param params The function parameters as expressions
      */
-    public Call(QualifiedName name, Expression... params) {
+    public Call(final QualifiedName name, final Expression... params) {
         this.name = name;
         this.params = params;
     }
@@ -30,7 +30,7 @@ public class Call extends Expression {
      * @param name          The name of the function to call
      * @param params        The function parameters as expressions
      */
-    public Call(Expression precedingExpr, QualifiedName name, Expression... params) {
+    public Call(final Expression precedingExpr, final QualifiedName name, final Expression... params) {
         this.precedingExpr = precedingExpr;
         this.name = name;
         this.params = params;
@@ -50,7 +50,7 @@ public class Call extends Expression {
      *
      * @param precedingExpr The new expression
      */
-    public void setPrecedingExpr(Expression precedingExpr) {
+    public void setPrecedingExpr(final Expression precedingExpr) {
         this.precedingExpr = precedingExpr;
     }
 
@@ -68,7 +68,7 @@ public class Call extends Expression {
      *
      * @param name The qualified name
      */
-    public void setQualifiedName(QualifiedName name) {
+    public void setQualifiedName(final QualifiedName name) {
         this.name = name;
     }
 
@@ -82,7 +82,7 @@ public class Call extends Expression {
     }
 
     @Override
-    public void accept(TreeVisitor visitor) {
+    public void accept(final TreeVisitor visitor) {
         visitor.visitFunCall(this);
     }
 
@@ -94,7 +94,7 @@ public class Call extends Expression {
     }
 
     @Override
-    public boolean equals(Object o) {
+    public boolean equals(final Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 

@@ -15,7 +15,7 @@ public class InheritanceVisitor extends RavenBaseVisitor<Inheritance> {
     }
 
     @Override
-    public Inheritance visitInheritance(RavenParser.InheritanceContext ctx) {
+    public Inheritance visitInheritance(final RavenParser.InheritanceContext ctx) {
         QualifiedName superClass = ClassMaker.OBJECT;
         LinkedList<Expression> superParams = new LinkedList<>();
 

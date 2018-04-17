@@ -13,7 +13,7 @@ public class MethodDeclVisitor extends RavenBaseVisitor<Fun> {
     }
 
     @Override
-    public Fun visitMethodDeclaration(RavenParser.MethodDeclarationContext ctx) {
+    public Fun visitMethodDeclaration(final RavenParser.MethodDeclarationContext ctx) {
         QualifiedName name = new QualifiedName(ctx.IDENTIFIER().getText());
         Block body;
         if (ctx.block() != null) {

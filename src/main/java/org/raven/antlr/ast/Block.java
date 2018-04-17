@@ -17,7 +17,7 @@ public class Block extends Statement {
      *
      * @param statements The list of statements in the block
      */
-    public Block(Statement... statements) {
+    public Block(final Statement... statements) {
         for (Statement statement : statements) {
             append(statement);
         }
@@ -27,7 +27,7 @@ public class Block extends Statement {
      * Append a statement to the end of this block
      * @param statement The statement or expression
      */
-    public void append(Statement statement) {
+    public void append(final Statement statement) {
         statements.add(statement);
     }
 
@@ -35,7 +35,7 @@ public class Block extends Statement {
      * Add a statement to the beginning of this block
      * @param statement The statement or expression
      */
-    public void addBefore(Statement statement) {
+    public void addBefore(final Statement statement) {
         statements.addFirst(statement);
     }
 
@@ -48,7 +48,7 @@ public class Block extends Statement {
     }
 
     @Override
-    public void accept(TreeVisitor visitor) {
+    public void accept(final TreeVisitor visitor) {
         visitor.visitBlock(this);
     }
 
@@ -60,7 +60,7 @@ public class Block extends Statement {
     }
 
     @Override
-    public boolean equals(Object o) {
+    public boolean equals(final Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 

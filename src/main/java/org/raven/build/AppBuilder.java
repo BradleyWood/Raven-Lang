@@ -73,7 +73,7 @@ public class AppBuilder {
         return false;
     }
 
-    private static void copy(InputStream in, OutputStream out) throws IOException {
+    private static void copy(final InputStream in, final OutputStream out) throws IOException {
         byte[] buffer = new byte[2048];
         int len;
         while ((len = in.read(buffer)) != -1) {
@@ -81,7 +81,7 @@ public class AppBuilder {
         }
     }
 
-    private static boolean ignore(String entry) {
+    private static boolean ignore(final String entry) {
         for (String s : IGNORE) {
             if (entry.equals(s))
                 return true;

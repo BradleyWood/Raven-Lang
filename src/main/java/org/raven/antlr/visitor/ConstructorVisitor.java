@@ -16,7 +16,7 @@ public class ConstructorVisitor extends RavenBaseVisitor<Constructor> {
     }
 
     @Override
-    public Constructor visitConstructor(RavenParser.ConstructorContext ctx) {
+    public Constructor visitConstructor(final RavenParser.ConstructorContext ctx) {
 
         Annotation[] annotations = new Annotation[0];
         if (ctx.annotation() != null) {

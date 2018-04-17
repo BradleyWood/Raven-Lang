@@ -13,7 +13,7 @@ public class VarDeclVisitor extends RavenBaseVisitor<VarDecl> {
     }
 
     @Override
-    public VarDecl visitVarDeclaration(RavenParser.VarDeclarationContext ctx) {
+    public VarDecl visitVarDeclaration(final RavenParser.VarDeclarationContext ctx) {
         QualifiedName name = new QualifiedName(ctx.IDENTIFIER().getText());
         Expression expr = null;
 

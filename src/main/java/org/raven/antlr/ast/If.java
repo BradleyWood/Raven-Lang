@@ -14,7 +14,7 @@ public class If extends Statement {
      * @param body
      * @param else_
      */
-    public If(Expression condition, Statement body, Statement else_) {
+    public If(final Expression condition, final Statement body, final Statement else_) {
         this.condition = condition;
         this.body = body;
         this.else_ = else_;
@@ -45,7 +45,7 @@ public class If extends Statement {
     }
 
     @Override
-    public void accept(TreeVisitor visitor) {
+    public void accept(final TreeVisitor visitor) {
         visitor.visitIf(this);
     }
 
@@ -56,7 +56,7 @@ public class If extends Statement {
     }
 
     @Override
-    public boolean equals(Object o) {
+    public boolean equals(final Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 

@@ -35,7 +35,7 @@ public class Utility {
         }
     }
 
-    public static void compileAndRun(String path, String[] args) {
+    public static void compileAndRun(String path, final String[] args) {
         path = path.replace("/", "\\");
         File file = new File(path);
 
@@ -67,7 +67,7 @@ public class Utility {
         }
     }
 
-    public static HashMap<String, byte[]> compile(String relativePath, boolean save) throws IOException {
+    public static HashMap<String, byte[]> compile(final String relativePath, final boolean save) throws IOException {
         File file = new File(relativePath);
         if (!file.isAbsolute()) {
             file = new File(new File(".").getAbsolutePath(), relativePath);

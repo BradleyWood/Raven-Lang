@@ -11,7 +11,7 @@ public class RaiseVisitor extends RavenBaseVisitor<Raise> {
     }
 
     @Override
-    public Raise visitRaiseStatement(RavenParser.RaiseStatementContext ctx) {
+    public Raise visitRaiseStatement(final RavenParser.RaiseStatementContext ctx) {
         Expression expression = ctx.expression().accept(ExpressionVisitor.INSTANCE);
         return new Raise(expression);
     }

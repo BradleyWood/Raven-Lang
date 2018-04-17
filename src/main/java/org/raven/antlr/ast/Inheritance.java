@@ -10,7 +10,7 @@ public class Inheritance {
 
     private final QualifiedName[] interfaces;
 
-    public Inheritance(QualifiedName superClass, Expression[] superParams, QualifiedName[] interfaces) {
+    public Inheritance(final QualifiedName superClass, final Expression[] superParams, final QualifiedName[] interfaces) {
         this.super_ = superClass;
         this.superParams = superParams;
         this.interfaces = interfaces;
@@ -29,7 +29,7 @@ public class Inheritance {
     }
 
     @Override
-    public boolean equals(Object o) {
+    public boolean equals(final Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Inheritance that = (Inheritance) o;

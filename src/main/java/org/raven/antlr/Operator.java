@@ -39,7 +39,7 @@ public enum Operator {
     public final String op;
     public final String name;
 
-    Operator(String op, String name) {
+    Operator(final String op, final String name) {
         this.op = op;
         this.name = name;
     }

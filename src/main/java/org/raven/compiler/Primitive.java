@@ -40,7 +40,7 @@ public enum Primitive {
      *
      * @param mv
      */
-    public void unwrap(MethodVisitor mv) {
+    public void unwrap(final MethodVisitor mv) {
         mv.visitTypeInsn(CHECKCAST, wrapper);
         mv.visitMethodInsn(INVOKEVIRTUAL, wrapper, name + "Value", "()" + desc, false);
     }
@@ -50,7 +50,7 @@ public enum Primitive {
      *
      * @param mv
      */
-    public void wrap(MethodVisitor mv) {
+    public void wrap(final MethodVisitor mv) {
         mv.visitMethodInsn(INVOKESTATIC, wrapper, "valueOf", "(" + desc + ")" + getInternalName(), false);
     }
 
@@ -59,7 +59,7 @@ public enum Primitive {
      *
      * @param mv
      */
-    public void putPrimitiveType(MethodVisitor mv) {
+    public void putPrimitiveType(final MethodVisitor mv) {
         mv.visitFieldInsn(GETSTATIC, wrapper, "TYPE", "Ljava/lang/Class;");
     }
 
@@ -68,7 +68,7 @@ public enum Primitive {
      *
      * @param mv
      */
-    public void ret(MethodVisitor mv) {
+    public void ret(final MethodVisitor mv) {
         mv.visitInsn(retInstruction);
     }
 
@@ -78,7 +78,7 @@ public enum Primitive {
      * @param mv
      * @param idx
      */
-    public void load(MethodVisitor mv, int idx) {
+    public void load(final MethodVisitor mv, final int idx) {
         mv.visitVarInsn(loadInstruction, idx);
     }
 
@@ -101,7 +101,7 @@ public enum Primitive {
         return wrapper;
     }
 
-    public static Primitive getPrimitiveType(Class<?> clazz) {
+    public static Primitive getPrimitiveType(final Class<?> clazz) {
         Primitive unboxed = getUnboxedPrimitive(clazz);
         if (unboxed != null) {
             return unboxed;
@@ -109,7 +109,7 @@ public enum Primitive {
         return getBoxedPrimitive(clazz);
     }
 
-    public static Primitive getUnboxedPrimitive(Class<?> clazz) {
+    public static Primitive getUnboxedPrimitive(final Class<?> clazz) {
         for (Primitive primitive : Primitive.values()) {
             if (primitive.primitiveClass.equals(clazz))
                 return primitive;
@@ -117,7 +117,7 @@ public enum Primitive {
         return null;
     }
 
-    public static Primitive getBoxedPrimitive(Class<?> clazz) {
+    public static Primitive getBoxedPrimitive(final Class<?> clazz) {
         for (Primitive primitive : Primitive.values()) {
             if (primitive.boxedClass.equals(clazz))
                 return primitive;
@@ -125,7 +125,7 @@ public enum Primitive {
         return null;
     }
 
-    public static Primitive getPrimitiveType(String desc) {
+    public static Primitive getPrimitiveType(final String desc) {
         for (Primitive primitive : Primitive.values()) {
             if (primitive.getDesc().equals(desc))
                 return primitive;
@@ -133,7 +133,7 @@ public enum Primitive {
         return null;
     }
 
-    public static boolean isPrimitive(String desc) {
+    public static boolean isPrimitive(final String desc) {
         return getPrimitiveType(desc) != null;
     }
 }

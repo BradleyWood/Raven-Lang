@@ -11,11 +11,11 @@ import java.util.List;
 
 public class ClassConstructor extends Method {
 
-    public ClassConstructor(MethodContext ctx, MethodVisitor mv) {
+    public ClassConstructor(final MethodContext ctx, final MethodVisitor mv) {
         super(ctx, mv);
     }
 
-    public void visitConstructor(Constructor constructor) {
+    public void visitConstructor(final Constructor constructor) {
         scope.beginScope();
         scope.putVar("this");
         if (constructor.getParams() != null) {
@@ -64,7 +64,7 @@ public class ClassConstructor extends Method {
         scope.endScope();
     }
 
-    private void invokeJavaSuper(Expression[] params) {
+    private void invokeJavaSuper(final Expression[] params) {
         try {
             Class clazz = Class.forName(ctx.getClassDef().getSuper().toString());
             LinkedList<Class[]> candidates = new LinkedList<>();
@@ -88,7 +88,7 @@ public class ClassConstructor extends Method {
         }
     }
 
-    private void putSuperCalls(Class clazz, LinkedList<Class[]> candidates, Expression[] params) throws NoSuchMethodException {
+    private void putSuperCalls(final Class clazz, final LinkedList<Class[]> candidates, final Expression[] params) throws NoSuchMethodException {
         Class[] candidate = candidates.getFirst();
 
         String getParamDesc = "(Lorg/raven/core/wrappers/TObject;[Ljava/lang/Class;)[Ljava/lang/Object;";
@@ -149,7 +149,7 @@ public class ClassConstructor extends Method {
         visitInsn(ATHROW);
     }
 
-    private void toPrimitive(Class cl) {
+    private void toPrimitive(final Class cl) {
         Primitive primitive = Primitive.getPrimitiveType(cl);
 
         if (primitive != null) {
@@ -159,7 +159,7 @@ public class ClassConstructor extends Method {
         }
     }
 
-    private void putType(Class c) {
+    private void putType(final Class c) {
         Primitive type = Primitive.getPrimitiveType(c);
         if (type != null) {
             type.putPrimitiveType(this);
@@ -168,7 +168,7 @@ public class ClassConstructor extends Method {
         }
     }
 
-    private String getDesc(int paramCount) {
+    private String getDesc(final int paramCount) {
         StringBuilder builder = new StringBuilder("(");
         for (int i = 0; i < paramCount; i++) {
             builder.append(Type.getType(TObject.class).getDescriptor());
@@ -176,7 +176,7 @@ public class ClassConstructor extends Method {
         return builder.append(")V").toString();
     }
 
-    private boolean hasSuperCall(Constructor constructor) {
+    private boolean hasSuperCall(final Constructor constructor) {
         Block block = constructor.getBody();
         if (block != null) {
             List<Statement> lst = block.getStatements();

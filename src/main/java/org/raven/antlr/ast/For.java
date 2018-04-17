@@ -9,7 +9,7 @@ public class For extends Statement {
     private final Statement body;
     private final Statement after;
 
-    public For(Statement init, Expression condition, Statement body, Statement after) {
+    public For(final Statement init, final Expression condition, final Statement body, final Statement after) {
         this.init = init;
         this.condition = condition;
         this.body = body;
@@ -33,12 +33,12 @@ public class For extends Statement {
     }
 
     @Override
-    public void accept(TreeVisitor visitor) {
+    public void accept(final TreeVisitor visitor) {
         visitor.visitFor(this);
     }
 
     @Override
-    public boolean equals(Object o) {
+    public boolean equals(final Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 

@@ -11,7 +11,7 @@ public class ReturnVisitor extends RavenBaseVisitor<Return> {
     }
 
     @Override
-    public Return visitReturnStatement(RavenParser.ReturnStatementContext ctx) {
+    public Return visitReturnStatement(final RavenParser.ReturnStatementContext ctx) {
         Expression expression = null;
 
         if (ctx.expression() != null)

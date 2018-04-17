@@ -8,13 +8,13 @@ public class While extends Statement {
     private final Statement body;
     private final boolean doWhile;
 
-    public While(Expression condition, Statement body, boolean doWhile) {
+    public While(final Expression condition, final Statement body, final boolean doWhile) {
         this.condition = condition;
         this.body = body;
         this.doWhile = doWhile;
     }
 
-    public While(Expression condition, Statement body) {
+    public While(final Expression condition, final Statement body) {
         this(condition, body, false);
     }
 
@@ -31,7 +31,7 @@ public class While extends Statement {
     }
 
     @Override
-    public void accept(TreeVisitor visitor) {
+    public void accept(final TreeVisitor visitor) {
         visitor.visitWhile(this);
     }
 
@@ -41,7 +41,7 @@ public class While extends Statement {
     }
 
     @Override
-    public boolean equals(Object o) {
+    public boolean equals(final Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         While aWhile = (While) o;

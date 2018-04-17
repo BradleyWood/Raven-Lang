@@ -10,7 +10,7 @@ public class BlockVisitor extends RavenBaseVisitor<Block> {
     }
 
     @Override
-    public Block visitBlock(RavenParser.BlockContext ctx) {
+    public Block visitBlock(final RavenParser.BlockContext ctx) {
         Block block = new Block();
 
         ctx.statement().forEach(stmt -> block.append(stmt.accept(StatementVisitor.INSTANCE)));

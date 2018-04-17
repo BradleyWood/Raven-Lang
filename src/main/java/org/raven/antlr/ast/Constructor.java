@@ -31,7 +31,7 @@ public class Constructor extends ModifiableStatement {
         this.superParams = null;
     }
 
-    public void initializeVar(VarDecl decl) {
+    public void initializeVar(final VarDecl decl) {
         BinOp bop = new BinOp(decl.getName(), Operator.ASSIGNMENT, decl.getInitialValue());
         initBlock.append(bop);
     }
@@ -41,7 +41,7 @@ public class Constructor extends ModifiableStatement {
      *
      * @param params
      */
-    public Constructor(Expression... params) {
+    public Constructor(final Expression... params) {
         super(Modifier.PUBLIC);
         this.body = null;
         LinkedList<VarDecl> p = new LinkedList<>();
@@ -62,7 +62,7 @@ public class Constructor extends ModifiableStatement {
         return body;
     }
 
-    public void setBody(Block body) {
+    public void setBody(final Block body) {
         this.body = body;
     }
 
@@ -97,7 +97,7 @@ public class Constructor extends ModifiableStatement {
     }
 
     @Override
-    public boolean equals(Object o) {
+    public boolean equals(final Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 

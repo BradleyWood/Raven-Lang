@@ -9,7 +9,7 @@ public class TryCatchFinally extends Statement {
     private final Block handler;
     private final Block finallyBlock;
 
-    public TryCatchFinally(Block body, QualifiedName exName, Block handler, Block finallyBlock) {
+    public TryCatchFinally(final Block body, final QualifiedName exName, final Block handler, final Block finallyBlock) {
         this.body = body;
         this.exName = exName;
         this.handler = handler;
@@ -33,12 +33,12 @@ public class TryCatchFinally extends Statement {
     }
 
     @Override
-    public void accept(TreeVisitor visitor) {
+    public void accept(final TreeVisitor visitor) {
         visitor.visitTryCatchFinally(this);
     }
 
     @Override
-    public boolean equals(Object o) {
+    public boolean equals(final Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass())
             return false;

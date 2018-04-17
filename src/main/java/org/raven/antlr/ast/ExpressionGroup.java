@@ -10,12 +10,12 @@ public class ExpressionGroup extends Expression {
 
     private LinkedList<Statement> statements = new LinkedList<>();
 
-    public ExpressionGroup(Statement... statements) {
+    public ExpressionGroup(final Statement... statements) {
         this.statements.addAll(Arrays.asList(statements));
     }
 
     @Override
-    public void accept(TreeVisitor visitor) {
+    public void accept(final TreeVisitor visitor) {
         statements.forEach(statement -> statement.accept(visitor));
     }
 }

@@ -18,7 +18,7 @@ public class Statement extends AST {
         return annotations;
     }
 
-    public void setText(String text) {
+    public void setText(final String text) {
         this.text = text;
     }
 
@@ -26,7 +26,7 @@ public class Statement extends AST {
         return text;
     }
 
-    public void addAnnotation(Annotation annotation) {
+    public void addAnnotation(final Annotation annotation) {
         annotations.add(annotation);
     }
 
@@ -34,16 +34,16 @@ public class Statement extends AST {
         return lineNumber;
     }
 
-    public void setLineNumber(int lineNumber) {
+    public void setLineNumber(final int lineNumber) {
         this.lineNumber = lineNumber;
     }
 
     @Override
-    public void accept(TreeVisitor visitor) {
+    public void accept(final TreeVisitor visitor) {
     }
 
     @Override
-    public boolean equals(Object o) {
+    public boolean equals(final Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Statement statement = (Statement) o;

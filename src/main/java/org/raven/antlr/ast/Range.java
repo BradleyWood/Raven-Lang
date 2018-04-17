@@ -17,7 +17,7 @@ public class Range extends Expression {
      * @param start The start of the range
      * @param end The end of the range
      */
-    public Range(Expression start, Expression end) {
+    public Range(final Expression start, final Expression end) {
         this.start = start;
         this.end = end;
     }
@@ -39,7 +39,7 @@ public class Range extends Expression {
     }
 
     @Override
-    public boolean equals(Object o) {
+    public boolean equals(final Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Range range = (Range) o;

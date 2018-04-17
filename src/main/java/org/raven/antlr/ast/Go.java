@@ -10,7 +10,7 @@ public class Go extends Expression {
      * Initializes a Go statement
      * @param goFun The function to call
      */
-    public Go(Call goFun) {
+    public Go(final Call goFun) {
         this.goFun = goFun;
     }
 
@@ -18,17 +18,17 @@ public class Go extends Expression {
         return goFun;
     }
 
-    public void setGoFun(Call goFun) {
+    public void setGoFun(final Call goFun) {
         this.goFun = goFun;
     }
 
     @Override
-    public void accept(TreeVisitor visitor) {
+    public void accept(final TreeVisitor visitor) {
         visitor.visitGo(this);
     }
 
     @Override
-    public boolean equals(Object o) {
+    public boolean equals(final Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 

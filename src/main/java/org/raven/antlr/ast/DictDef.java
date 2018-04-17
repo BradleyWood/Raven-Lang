@@ -8,7 +8,7 @@ public class DictDef extends Expression {
     private final Expression[] keys;
     private final Expression[] values;
 
-    public DictDef(Expression[] keys, Expression[] values) {
+    public DictDef(final Expression[] keys, final Expression[] values) {
         this.keys = keys;
         this.values = values;
     }
@@ -22,12 +22,12 @@ public class DictDef extends Expression {
     }
 
     @Override
-    public void accept(TreeVisitor visitor) {
+    public void accept(final TreeVisitor visitor) {
         visitor.visitDictDef(this);
     }
 
     @Override
-    public boolean equals(Object o) {
+    public boolean equals(final Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
