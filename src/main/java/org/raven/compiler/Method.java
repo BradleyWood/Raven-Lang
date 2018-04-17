@@ -39,7 +39,7 @@ public class Method extends MethodVisitor implements TreeVisitor, Opcodes {
         return idx;
     }
 
-    void error(Statement statement, String message) {
+    void error(final Statement statement, final String message) {
         Errors.put(new CompilationError(ctx.getClassDef().getSourceTree().getSourceFile(), ctx.getName(), statement, message));
     }
 
@@ -50,7 +50,7 @@ public class Method extends MethodVisitor implements TreeVisitor, Opcodes {
     }
 
     @Override
-    public void visitIf(If ifStatement) {
+    public void visitIf(final If ifStatement) {
         Label else_ = new Label();
         Label end = new Label();
 
@@ -78,7 +78,7 @@ public class Method extends MethodVisitor implements TreeVisitor, Opcodes {
     }
 
     @Override
-    public void visitFor(For forStatement) {
+    public void visitFor(final For forStatement) {
         Label start = new Label();
         Label conditional = new Label();
         Label after = new Label();
@@ -126,7 +126,7 @@ public class Method extends MethodVisitor implements TreeVisitor, Opcodes {
     }
 
     @Override
-    public void visitWhile(While whileStatement) {
+    public void visitWhile(final While whileStatement) {
         Label start = new Label();
         Label conditional = new Label();
         Label end = new Label();
@@ -157,7 +157,7 @@ public class Method extends MethodVisitor implements TreeVisitor, Opcodes {
     }
 
     @Override
-    public void visitReturn(Return ret) {
+    public void visitReturn(final Return ret) {
         if (ret.getValue() != null)
             visitLine(ret.getValue());
 
@@ -177,7 +177,7 @@ public class Method extends MethodVisitor implements TreeVisitor, Opcodes {
         }
     }
 
-    private void visitLine(Expression stmt) {
+    private void visitLine(final Expression stmt) {
         int line = stmt.getLineNumber();
         if (line >= 0 && !lineNumbers.contains(line)) {
             visitLineNumber(line, new Label());
@@ -185,7 +185,7 @@ public class Method extends MethodVisitor implements TreeVisitor, Opcodes {
         }
     }
 
-    private void visitParams(VarDecl[] params) {
+    private void visitParams(final VarDecl[] params) {
         if (!ctx.isStatic()) {
             scope.putVar("this");
         } else if (ctx.getName().equals("main")) {
@@ -212,7 +212,7 @@ public class Method extends MethodVisitor implements TreeVisitor, Opcodes {
     }
 
     @Override
-    public void visitFun(Fun fun) {
+    public void visitFun(final Fun fun) {
         scope.beginScope();
         visitParams(fun.getParams());
 
@@ -240,7 +240,7 @@ public class Method extends MethodVisitor implements TreeVisitor, Opcodes {
         scope.endScope();
     }
 
-    private String getFunDescriptor(Expression[] params) {
+    private String getFunDescriptor(final Expression[] params) {
         StringBuilder sig = new StringBuilder("(");
         for (Expression ignored : params) {
             sig.append(Constants.TOBJ_SIG);
@@ -252,7 +252,7 @@ public class Method extends MethodVisitor implements TreeVisitor, Opcodes {
     int counter = 0;
 
     @Override
-    public void visitGo(Go go) {
+    public void visitGo(final Go go) {
         Call goFun = go.getGoFun();
 
         String lambdaName = "lambda$" + ctx.getName() + "$" + counter++;
@@ -310,7 +310,7 @@ public class Method extends MethodVisitor implements TreeVisitor, Opcodes {
     }
 
     @Override
-    public void visitFunCall(Call call) {
+    public void visitFunCall(final Call call) {
         visitLine(call);
 
         String desc = getFunDescriptor(call.getParams());
@@ -389,7 +389,7 @@ public class Method extends MethodVisitor implements TreeVisitor, Opcodes {
      * @param paramCount The number of parameters
      * @return The reflective method handle if found, otherwise null
      */
-    private java.lang.reflect.Method findRavenFunction(String name, int paramCount) {
+    private java.lang.reflect.Method findRavenFunction(final String name, final int paramCount) {
         for (java.lang.reflect.Method m : TObject.class.getDeclaredMethods()) {
             if (m.getAnnotation(Hidden.class) != null || m.getParameterCount() != paramCount)
                 continue;
@@ -407,7 +407,7 @@ public class Method extends MethodVisitor implements TreeVisitor, Opcodes {
      * @param paramCount The number of parameters
      * @return the number of methods with the name and given param count
      */
-    private int methodCount(String funOwner, String name, int paramCount) {
+    private int methodCount(final String funOwner, final String name, final int paramCount) {
         int count = 0;
         try {
             Class<?> klazz = Class.forName(funOwner.replace("/", "."));
@@ -429,7 +429,7 @@ public class Method extends MethodVisitor implements TreeVisitor, Opcodes {
      * @param funName  The name of the method
      * @param params   The parameters
      */
-    private void dynamicInvokeStatic(String funOwner, String funName, Expression[] params) {
+    private void dynamicInvokeStatic(final String funOwner, final String funName, final Expression[] params) {
         Type owner = Type.getType("L" + (funOwner.replace(".", "/")) + ";");
 
         visitListDef(new ListDef(params));
@@ -444,7 +444,7 @@ public class Method extends MethodVisitor implements TreeVisitor, Opcodes {
      *
      * @param type
      */
-    private void coerce(Type type) {
+    private void coerce(final Type type) {
         Primitive p = Primitive.getPrimitiveType(type.getDescriptor());
         if (p == null) {
             visitLdcInsn(type);
@@ -467,7 +467,7 @@ public class Method extends MethodVisitor implements TreeVisitor, Opcodes {
      * @param desc     The method descriptor
      * @param params   The method parameters
      */
-    private void invokeStaticFun(String funOwner, String funName, String desc, Expression[] params) {
+    private void invokeStaticFun(final String funOwner, final String funName, final String desc, final Expression[] params) {
         Fun f = SymbolMap.resolveFun(ctx.getOwner(), funOwner, funName, params.length);
         // if the function can be resolved, it is a tl function
         int count = methodCount(funOwner, funName, params.length);
@@ -509,7 +509,7 @@ public class Method extends MethodVisitor implements TreeVisitor, Opcodes {
      * @param desc   The method descriptor
      * @param params The parameters
      */
-    private void invokeStaticExact(String owner, String name, String desc, Expression[] params) {
+    private void invokeStaticExact(final String owner, final String name, final String desc, final Expression[] params) {
         Fun f = SymbolMap.resolveFun(ctx.getOwner(), owner, name, params.length);
         if (f == null && !owner.equals(Constants.BUILTIN_NAME)) {
             Errors.put(ctx.getOwner() + " Cannot resolve function: " + owner + "." + name);
@@ -526,7 +526,7 @@ public class Method extends MethodVisitor implements TreeVisitor, Opcodes {
      * @param name   The name of the method
      * @param params The method parameters
      */
-    private void invokeVirtualFun(String name, Expression[] params) {
+    private void invokeVirtualFun(final String name, final Expression[] params) {
         visitListDef(new ListDef(params));
         visitTypeInsn(CHECKCAST, getInternalName(TList.class));
         mv.visitInvokeDynamicInsn(name, "(Lorg/raven/core/wrappers/TObject;Lorg/raven/core/wrappers/TList;)Lorg/raven/core/wrappers/TObject;",
@@ -540,7 +540,7 @@ public class Method extends MethodVisitor implements TreeVisitor, Opcodes {
      * @param params The parameters
      * @param method The method handle
      */
-    private void invokeVirtualFun(String name, Expression[] params, java.lang.reflect.Method method) {
+    private void invokeVirtualFun(final String name, final Expression[] params, final java.lang.reflect.Method method) {
         String desc = Type.getMethodDescriptor(method);
         Arrays.stream(params).forEach(expression -> expression.accept(this));
         visitMethodInsn(INVOKEVIRTUAL, Constants.TOBJ_NAME, name, desc, false);
@@ -561,7 +561,7 @@ public class Method extends MethodVisitor implements TreeVisitor, Opcodes {
      * @param owner  The class type
      * @param params The constructor parameters
      */
-    private void newObject(String owner, Expression[] params) {
+    private void newObject(final String owner, final Expression[] params) {
         Type type = Type.getType("L" + owner + ";");
 
         visitListDef(new ListDef(params));
@@ -574,13 +574,13 @@ public class Method extends MethodVisitor implements TreeVisitor, Opcodes {
     }
 
     @Override
-    public void visitName(QualifiedName name) {
+    public void visitName(final QualifiedName name) {
         accessField(name, true);
         if (name.pop())
             visitInsn(POP);
     }
 
-    private void accessField(QualifiedName name, boolean load) {
+    private void accessField(final QualifiedName name, final boolean load) {
         visitLine(name);
 
         String[] names = name.getNames();
@@ -623,7 +623,7 @@ public class Method extends MethodVisitor implements TreeVisitor, Opcodes {
      * @param name The field name
      * @param load whether we are reading or writing to the field
      */
-    private void accessLocalField(String name, boolean load) {
+    private void accessLocalField(final String name, final boolean load) {
         VarDecl decl = SymbolMap.resolveField(ctx.getOwner(), ctx.getOwner(), name);
         if (ctx.isStatic()) {
             // static field access in the same class
@@ -652,7 +652,7 @@ public class Method extends MethodVisitor implements TreeVisitor, Opcodes {
      * @param names Names of the fields (fields may have several levels of nesting)
      * @param load  whether we are reading or writing to the field
      */
-    private void accessNonLocalField(String[] names, boolean load) {
+    private void accessNonLocalField(final String[] names, final boolean load) {
         String importedClass = getInternalNameFromImports(names[0]);
         VarDecl decl = SymbolMap.resolveField(ctx.getOwner(), ctx.getOwner(), names[0]);
         if (importedClass != null) {
@@ -677,7 +677,7 @@ public class Method extends MethodVisitor implements TreeVisitor, Opcodes {
      * @param name  The name of the field
      * @param load  whether we are reading or writing to the field
      */
-    private void accessStaticField(String owner, String name, boolean load) {
+    private void accessStaticField(final String owner, final String name, final boolean load) {
         VarDecl decl = SymbolMap.resolveField(ctx.getOwner(), owner, name);
 
         if (decl == null) {
@@ -715,7 +715,7 @@ public class Method extends MethodVisitor implements TreeVisitor, Opcodes {
      * @param var  The var definition
      * @param load whether we are reading or writing to the field
      */
-    private void accessVirtualField(VarDecl var, boolean load) {
+    private void accessVirtualField(final VarDecl var, final boolean load) {
         int idx = getLocal("this");
         if (idx != 0) {
             Errors.put(ctx.getOwner() + " line " + var.getName().getLineNumber() + " Cannot access field in non static context: " + var.getName());
@@ -735,7 +735,7 @@ public class Method extends MethodVisitor implements TreeVisitor, Opcodes {
      * @param names The names of the fields
      * @param load  whether we are reading or writing to the field
      */
-    private void accessVirtualField(String[] names, boolean load) {
+    private void accessVirtualField(final String[] names, final boolean load) {
         if (names.length == 0) {
             return;
         }
@@ -755,7 +755,7 @@ public class Method extends MethodVisitor implements TreeVisitor, Opcodes {
      * @param name The field name
      * @param load whether we are reading or writing to the field
      */
-    private void accessVirtualField(String name, boolean load) {
+    private void accessVirtualField(final String name, final boolean load) {
         if (load) {
             mv.visitInvokeDynamicInsn("get" + name, "(Lorg/raven/core/wrappers/TObject;)Lorg/raven/core/wrappers/TObject;",
                     GET_BOOTSTRAP);
@@ -770,7 +770,7 @@ public class Method extends MethodVisitor implements TreeVisitor, Opcodes {
      *
      * @param expressions The expressions to fill the array with
      */
-    private void createArray(Expression[] expressions) {
+    private void createArray(final Expression[] expressions) {
         visitLdcInsn(expressions.length);
         visitTypeInsn(ANEWARRAY, Constants.TOBJ_NAME);
         for (int i = 0; i < expressions.length; i++) {
@@ -782,7 +782,7 @@ public class Method extends MethodVisitor implements TreeVisitor, Opcodes {
     }
 
     @Override
-    public void visitBlock(Block block) {
+    public void visitBlock(final Block block) {
         scope.beginScope();
         block.getStatements().forEach(stmt -> stmt.accept(this));
         scope.endScope();
@@ -796,7 +796,7 @@ public class Method extends MethodVisitor implements TreeVisitor, Opcodes {
     }
 
     @Override
-    public void visitVarDecl(VarDecl decl) {
+    public void visitVarDecl(final VarDecl decl) {
         if (decl.getInitialValue() != null) {
             decl.getInitialValue().accept(this);
         } else {
@@ -811,12 +811,12 @@ public class Method extends MethodVisitor implements TreeVisitor, Opcodes {
     }
 
     @Override
-    public void visitImport(Import importStatement) {
+    public void visitImport(final Import importStatement) {
 
     }
 
     @Override
-    public void visitBinOp(BinOp op) {
+    public void visitBinOp(final BinOp op) {
         if (op.getOp() != Operator.ASSIGNMENT && op.getLeft() != null)
             op.getLeft().accept(this);
 
@@ -849,7 +849,7 @@ public class Method extends MethodVisitor implements TreeVisitor, Opcodes {
     }
 
     @Override
-    public void visitLiteral(Literal literal) {
+    public void visitLiteral(final Literal literal) {
         visitLine(literal);
         TObject obj = (literal.getValue());
         if (obj instanceof TReal) {
@@ -870,7 +870,7 @@ public class Method extends MethodVisitor implements TreeVisitor, Opcodes {
     }
 
     @Override
-    public void visitListDef(ListDef def) {
+    public void visitListDef(final ListDef def) {
         visitTypeInsn(NEW, getInternalName(TList.class));
         visitInsn(DUP);
 
@@ -884,7 +884,7 @@ public class Method extends MethodVisitor implements TreeVisitor, Opcodes {
     }
 
     @Override
-    public void visitListIdx(ListIndex idx) {
+    public void visitListIdx(final ListIndex idx) {
         idx.getPrecedingExpr().accept(this);
         for (Expression expression : idx.getIndex()) {
             expression.accept(this);
@@ -895,12 +895,12 @@ public class Method extends MethodVisitor implements TreeVisitor, Opcodes {
     }
 
     @Override
-    public void visitClassDef(ClassDef def) {
+    public void visitClassDef(final ClassDef def) {
         // inner class
     }
 
     @Override
-    public void visitDictDef(DictDef def) {
+    public void visitDictDef(final DictDef def) {
         visitTypeInsn(NEW, getInternalName(TDict.class));
         visitInsn(DUP);
         visitMethodInsn(INVOKESPECIAL, getInternalName(TDict.class), "<init>", "()V", false);
@@ -914,17 +914,17 @@ public class Method extends MethodVisitor implements TreeVisitor, Opcodes {
     }
 
     @Override
-    public void visitAnnotation(Annotation annotation) {
+    public void visitAnnotation(final Annotation annotation) {
         Warning.put("Annotations are not implemented");
     }
 
     @Override
-    public void visitAnnotationDef(AnnoDef def) {
+    public void visitAnnotationDef(final AnnoDef def) {
 
     }
 
     @Override
-    public void visitTryCatchFinally(TryCatchFinally tcf) {
+    public void visitTryCatchFinally(final TryCatchFinally tcf) {
         boolean hasFinally = tcf.getFinallyBlock() != null;
 
         // empty try; can optimize away
@@ -987,7 +987,7 @@ public class Method extends MethodVisitor implements TreeVisitor, Opcodes {
     }
 
     @Override
-    public void visitRaise(Raise raise) {
+    public void visitRaise(final Raise raise) {
         raise.getExpression().accept(this);
         visitMethodInsn(INVOKEVIRTUAL, getName(TObject.class), "toObject", getDesc(TObject.class, "toObject"), false);
         visitInsn(DUP);
@@ -1008,7 +1008,7 @@ public class Method extends MethodVisitor implements TreeVisitor, Opcodes {
         visitInsn(ATHROW);
     }
 
-    private void assignListIdx(ListIndex idx) {
+    private void assignListIdx(final ListIndex idx) {
         idx.getPrecedingExpr().accept(this);
         for (int i = 0; i < idx.getIndex().length - 1; i++) {
             Expression expression = idx.getIndex()[i];
@@ -1053,7 +1053,7 @@ public class Method extends MethodVisitor implements TreeVisitor, Opcodes {
         visitFieldInsn(PUTSTATIC, ctx.getOwner(), "__CONSTANTS__", getDesc(TObject[].class));
     }
 
-    private void getConstant(TObject obj) {
+    private void getConstant(final TObject obj) {
         int idx = ctx.getConstants().indexOf(obj);
         visitFieldInsn(GETSTATIC, ctx.getOwner(), "__CONSTANTS__", getDesc(TObject[].class));
 
@@ -1074,11 +1074,11 @@ public class Method extends MethodVisitor implements TreeVisitor, Opcodes {
         visitFieldInsn(GETSTATIC, getInternalName(TVoid.VOID), "VOID", getDesc(TVoid.VOID));
     }
 
-    private void putBoolean(TBoolean bool) {
+    private void putBoolean(final TBoolean bool) {
         visitFieldInsn(GETSTATIC, getInternalName(bool), bool.isTrue() ? "TRUE" : "FALSE", getDesc(bool));
     }
 
-    private void putString(TString str) {
+    private void putString(final TString str) {
         if (ctx.getName().equals("<clinit>") || disableConstantPool) {
             visitTypeInsn(NEW, getInternalName(str));
             visitInsn(DUP);
@@ -1089,7 +1089,7 @@ public class Method extends MethodVisitor implements TreeVisitor, Opcodes {
         }
     }
 
-    private void putReal(TReal real) {
+    private void putReal(final TReal real) {
         if (ctx.getName().equals("<clinit>") || disableConstantPool) {
             visitTypeInsn(NEW, getInternalName(real));
             visitInsn(DUP);
@@ -1100,7 +1100,7 @@ public class Method extends MethodVisitor implements TreeVisitor, Opcodes {
         }
     }
 
-    private void putInt(TInt integer) {
+    private void putInt(final TInt integer) {
         if (ctx.getName().equals("<clinit>") || disableConstantPool) {
             visitTypeInsn(NEW, getInternalName(integer));
             visitInsn(DUP);
@@ -1111,7 +1111,7 @@ public class Method extends MethodVisitor implements TreeVisitor, Opcodes {
         }
     }
 
-    private void putBigInt(TBigInt bigInt) {
+    private void putBigInt(final TBigInt bigInt) {
         if (ctx.getName().equals("<clinit>") || disableConstantPool) {
             visitTypeInsn(NEW, getInternalName(bigInt));
             visitInsn(DUP);
@@ -1122,31 +1122,31 @@ public class Method extends MethodVisitor implements TreeVisitor, Opcodes {
         }
     }
 
-    protected String getInternalName(Object obj) {
+    protected String getInternalName(final Object obj) {
         return Type.getType(obj.getClass()).getInternalName();
     }
 
-    protected String getDesc(Object obj) {
+    protected String getDesc(final Object obj) {
         return Type.getType(obj.getClass()).getDescriptor();
     }
 
-    String getInternalName(Class c) {
+    String getInternalName(final Class c) {
         return Type.getType(c).getInternalName();
     }
 
-    private String getDesc(Class c) {
+    private String getDesc(final Class c) {
         return Type.getType(c).getDescriptor();
     }
 
-    protected String getName(Class c) {
+    protected String getName(final Class c) {
         return Type.getType(c).getClassName().replace(".", "/");
     }
 
-    protected String getDesc(java.lang.reflect.Method m) {
+    protected String getDesc(final java.lang.reflect.Method m) {
         return Type.getMethodDescriptor(m);
     }
 
-    protected String getDesc(Class<?> c, String methodName, Class... params) {
+    protected String getDesc(final Class<?> c, final String methodName, final Class... params) {
         try {
             return Type.getMethodDescriptor(c.getMethod(methodName, params));
         } catch (NoSuchMethodException e) {
@@ -1156,7 +1156,7 @@ public class Method extends MethodVisitor implements TreeVisitor, Opcodes {
         return null;
     }
 
-    private String getInternalNameFromImports(String name) {
+    private String getInternalNameFromImports(final String name) {
         for (QualifiedName qualifiedName : ctx.getImports()) {
             String lastName = qualifiedName.getNames()[qualifiedName.getNames().length - 1];
             if (lastName.equals(name)) {
