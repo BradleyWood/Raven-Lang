@@ -2,6 +2,7 @@ package org.raven.compiler;
 
 import org.objectweb.asm.*;
 import org.raven.antlr.ast.*;
+import org.raven.core.Intrinsics;
 import org.raven.core.wrappers.TObject;
 import org.raven.error.Errors;
 
@@ -105,7 +106,7 @@ public class ClassConstructor extends Method {
             visitInsn(AASTORE);
         }
 
-        visitMethodInsn(INVOKESTATIC, getName(TObject.class), "getParams", getParamDesc, false);
+        visitMethodInsn(INVOKESTATIC, getName(Intrinsics.class), "getParams", getParamDesc, false);
         visitVarInsn(ASTORE, getLocal(" SUPER_PARAMS "));
 
         Label lb = new Label();
