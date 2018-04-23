@@ -181,58 +181,83 @@ public class Method extends MethodVisitor implements TreeVisitor, Opcodes {
     public void visitConstructor(final Constructor constructor) {
         scope.beginScope();
         scope.putVar("this");
+
+        // add parameters to local scope
         if (constructor.getParams() != null) {
             Arrays.stream(constructor.getParams()).forEach(p -> scope.putVar(p.getName().toString()));
         }
 
+        // initialize any instance fields that aren't initialized manually
         constructor.getInitBlock().getStatements().forEach(stmt -> stmt.accept(this));
 
+        // put this on stack
         visitVarInsn(ALOAD, 0);
 
         if (!hasSuperCall(constructor)) {
+            // no super call is manually provided
             int paramCount = 0;
 
             if (constructor.getSuperParams() != null) {
+                // put the parameters on the stack if the super class is a raven class
                 if (ctx.getClassDef().hasTlSuper())
                     Arrays.stream(constructor.getSuperParams()).forEach(param -> param.accept(this));
                 paramCount = constructor.getSuperParams().length;
             }
             if (paramCount == 0 || ctx.getClassDef().hasTlSuper()) {
+                // either the super constructor is default or the class is a raven class
                 visitMethodInsn(INVOKESPECIAL, ctx.getClassDef().getSuper().toString().replace(".", "/"),
                         "<init>", getDesc(paramCount), false);
             } else {
+                // super class is a java class and requires a special invocation
                 invokeJavaSuper(constructor.getSuperParams());
             }
         } else {
-            Call superCall = (Call) constructor.getBody().getStatements().get(0);
+            // super() call is provided and is the first statement in the body
+            final Call superCall = (Call) constructor.getBody().getStatements().get(0);
             constructor.getBody().getStatements().remove(0);
+
             int paramCount = 0;
+
             if (superCall.getParams() != null) {
+                // put the parameters on the stack if the super class is a raven class
                 if (ctx.getClassDef().hasTlSuper())
                     Arrays.stream(superCall.getParams()).forEach(param -> param.accept(this));
                 paramCount = superCall.getParams().length;
             }
 
             if (paramCount == 0 || ctx.getClassDef().hasTlSuper()) {
+                // either the super constructor is default or the class is a raven class
                 visitMethodInsn(INVOKESPECIAL, ctx.getClassDef().getSuper().toString().replace(".", "/"),
                         "<init>", getDesc(superCall.getParams().length), false);
             } else {
+                // super class is a java class and requires a special invocation
                 invokeJavaSuper(superCall.getParams());
             }
         }
+
+        // define the body of the constructor
         if (constructor.getBody() != null) {
             constructor.getBody().accept(this);
         }
+
+        // constructor has void return
         visitInsn(RETURN);
         scope.endScope();
     }
 
+    /**
+     * Invoke a super() call to a java class.This function inserts logic to find the best
+     * super constructor given that the parameters are dynamic. If type coercion is not possible
+     * the constructor will throw an illegal arguments exception
+     *
+     * @param params The parameters to pass in the super call
+     */
     private void invokeJavaSuper(final Expression[] params) {
         try {
-            Class clazz = Class.forName(ctx.getClassDef().getSuper().toString());
-            LinkedList<Class[]> candidates = new LinkedList<>();
+            final Class clazz = Class.forName(ctx.getClassDef().getSuper().toString());
+            final LinkedList<Class[]> candidates = new LinkedList<>();
 
-            for (java.lang.reflect.Constructor c : clazz.getConstructors()) {
+            for (final java.lang.reflect.Constructor c : clazz.getConstructors()) {
                 if (c.getParameterCount() == params.length) {
                     candidates.add(c.getParameterTypes());
                 }
@@ -243,39 +268,56 @@ public class Method extends MethodVisitor implements TreeVisitor, Opcodes {
 
             visitListDef(new ListDef(params));
             visitVarInsn(ASTORE, getLocal(" TL_PARAMS "));
+            // store the parameters as a list
 
             putSuperCalls(clazz, candidates, params);
 
         } catch (ClassNotFoundException | NoSuchMethodException e) {
             e.printStackTrace();
+            Errors.put("Cannot find super class");
         }
     }
 
+    /**
+     * Place super calls in the constructor. Since the variables are dynamic the super constructor
+     * is chosen at runtime based on the how coercible the arguments are
+     *
+     * @param clazz      The
+     * @param candidates The list of parameter types for each class constructor candidate
+     * @param params     The parameters to pass
+     * @throws NoSuchMethodException
+     */
     private void putSuperCalls(final Class clazz, final LinkedList<Class[]> candidates, final Expression[] params) throws NoSuchMethodException {
-        Class[] candidate = candidates.getFirst();
+        final Class[] candidate = candidates.getFirst();
 
-        String getParamDesc = "(Lorg/raven/core/wrappers/TObject;[Ljava/lang/Class;)[Ljava/lang/Object;";
+        final String getParamDesc = getDesc(Intrinsics.class, "getParams", TObject.class, Class[].class);
+
         visitVarInsn(ALOAD, getLocal(" TL_PARAMS "));
         visitLdcInsn(params.length);
 
         visitTypeInsn(ANEWARRAY, getName(Class.class));
 
         int i = 0;
-        for (Class cl : candidate) {
+        // put the types on the stack that we wish to coerce to
+        for (final Class cl : candidate) {
             visitInsn(DUP);
             visitLdcInsn(i++);
             putType(cl);
             visitInsn(AASTORE);
         }
 
+        // perform coercion
         visitMethodInsn(INVOKESTATIC, getName(Intrinsics.class), "getParams", getParamDesc, false);
         visitVarInsn(ASTORE, getLocal(" SUPER_PARAMS "));
 
-        Label lb = new Label();
+        final Label coercionFailedLabel = new Label();
         visitVarInsn(ALOAD, getLocal(" SUPER_PARAMS "));
-        visitJumpInsn(IFNULL, lb);
 
-        String superDesc = Type.getConstructorDescriptor(clazz.getConstructor(candidate));
+        // if coercion is impossible for this super constructor is not possible
+        // skip the super() call and try the next candidate
+        visitJumpInsn(IFNULL, coercionFailedLabel);
+
+        final String superDesc = Type.getConstructorDescriptor(clazz.getConstructor(candidate));
         for (int n = 0; n < params.length; n++) {
             visitVarInsn(ALOAD, getLocal(" SUPER_PARAMS "));
             visitLdcInsn(n);
@@ -290,10 +332,10 @@ public class Method extends MethodVisitor implements TreeVisitor, Opcodes {
         visitMethodInsn(INVOKESPECIAL, ctx.getClassDef().getSuper().toString().replace(".", "/"),
                 "<init>", superDesc, false);
 
-        Label after = new Label();
+        final Label after = new Label();
         visitJumpInsn(GOTO, after);
 
-        visitLabel(lb);
+        visitLabel(coercionFailedLabel);
 
         candidates.removeFirst();
         if (candidates.size() > 0) {
@@ -301,9 +343,17 @@ public class Method extends MethodVisitor implements TreeVisitor, Opcodes {
         } else {
             throwException(IllegalArgumentException.class, "Illegal parameters in super() call");
         }
+
+        // label to jump to the end
         visitLabel(after);
     }
 
+    /**
+     * Throw an exception with the given message
+     *
+     * @param ex The type of exception to throw
+     * @param message The message to leave
+     */
     private <T extends Throwable> void throwException(final Class<T> ex, final String message) {
         visitTypeInsn(NEW, ex.getTypeName().replace(".", "/"));
         visitInsn(DUP);
@@ -312,6 +362,11 @@ public class Method extends MethodVisitor implements TreeVisitor, Opcodes {
         visitInsn(ATHROW);
     }
 
+    /**
+     * Takes a boxed primitive and unwraps it. The primitive must be on the stack already.
+     *
+     * @param cl The type to unbox
+     */
     private void toPrimitive(final Class cl) {
         final Primitive primitive = Primitive.getPrimitiveType(cl);
 
@@ -322,6 +377,11 @@ public class Method extends MethodVisitor implements TreeVisitor, Opcodes {
         }
     }
 
+    /**
+     * Put type on the stack including primitve types
+     *
+     * @param c The type to put
+     */
     private void putType(final Class c) {
         final Primitive type = Primitive.getPrimitiveType(c);
         if (type != null) {
