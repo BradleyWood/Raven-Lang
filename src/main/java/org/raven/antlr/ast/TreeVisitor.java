@@ -11,6 +11,8 @@ public interface TreeVisitor {
 
     void visitReturn(Return ret);
 
+    void visitConstructor(Constructor constructor);
+
     void visitFun(Fun fun);
 
     void visitFunCall(Call call);

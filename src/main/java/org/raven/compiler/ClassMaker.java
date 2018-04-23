@@ -132,10 +132,14 @@ public class ClassMaker {
         for (Modifier modifier : constructor.getModifiers()) {
             modifiers += modifier.getModifier();
         }
-        ClassConstructor cc = new ClassConstructor(ctx, cw.visitMethod(modifiers, "<init>", constructor.getDesc(), null, null));
-        cc.visitCode();
-        cc.visitConstructor(constructor);
-        cc.visitEnd();
+        String xd = constructor.getDesc();
+
+        Method method = new Method(ctx, cw.visitMethod(modifiers, "<init>", constructor.getDesc(), null, null));
+        constructor.getAnnotations().forEach(method::visitAnnotation);
+
+        method.visitCode();
+        constructor.accept(method);
+        method.visitEnd();
     }
 
     private void defineMethod(final MethodContext context, final Fun fun, final int modifiers) {

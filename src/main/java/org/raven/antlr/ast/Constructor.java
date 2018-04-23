@@ -129,6 +129,11 @@ public class Constructor extends ModifiableStatement {
     }
 
     @Override
+    public void accept(final TreeVisitor visitor) {
+        visitor.visitConstructor(this);
+    }
+
+    @Override
     public boolean equals(final Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
