@@ -838,7 +838,7 @@ public class Method extends MethodVisitor implements TreeVisitor, Opcodes {
      * @param load whether we are reading or writing to the field
      */
     private void accessLocalField(final String name, final boolean load) {
-        VarDecl decl = SymbolMap.resolveField(ctx.getOwner(), ctx.getOwner(), name);
+        final VarDecl decl = SymbolMap.resolveField(ctx.getOwner(), ctx.getOwner(), name);
         if (ctx.isStatic()) {
             // static field access in the same class
             if (decl != null && decl.hasModifier(Modifier.STATIC)) {
@@ -849,10 +849,14 @@ public class Method extends MethodVisitor implements TreeVisitor, Opcodes {
                 Errors.put("Variable " + name + " has not been defined.");
             }
         } else {
-            // (potential virtual field access) in the same class
-            VarDecl var = ctx.getClassDef().findVar(name);
+            final VarDecl var = ctx.getClassDef().findVar(name);
             if (var != null) {
-                accessVirtualField(var, load);
+                accessVirtualField(decl, load);
+            } else if (decl != null) {
+                visitVarInsn(ALOAD, getLocal("this"));
+                visitMethodInsn(INVOKESTATIC, getInternalName(Intrinsics.class), "wrap", getDesc(Intrinsics.class, "wrap", Object.class), false);
+                visitTypeInsn(CHECKCAST, getInternalName(TObject.class));
+                accessVirtualField(name, load);
             } else {
                 Errors.put("Variable " + name + " has not been defined.");
             }
