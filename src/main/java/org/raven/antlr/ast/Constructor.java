@@ -9,7 +9,7 @@ import java.util.*;
 
 public class Constructor extends ModifiableStatement {
 
-    public static Constructor DEFAULT = new Constructor(new Modifier[]{Modifier.PUBLIC}, null);
+    public static final Constructor DEFAULT = new Constructor(new Modifier[]{Modifier.PUBLIC}, null);
 
     private Block initBlock = new Block();
     private Block body;
@@ -20,9 +20,9 @@ public class Constructor extends ModifiableStatement {
     /**
      * Long hand constructor definition with no-param super constructor
      *
-     * @param modifiers
-     * @param body
-     * @param params
+     * @param modifiers access modifiers for this constructor
+     * @param body      The block including all user defined statements
+     * @param params    The list of parameters this constructor may accept
      */
     public Constructor(final Modifier[] modifiers, final Block body, final VarDecl... params) {
         super(modifiers);
@@ -31,6 +31,12 @@ public class Constructor extends ModifiableStatement {
         this.superParams = null;
     }
 
+    /**
+     * Some instance variables may be defined and initialized outside the constructor. However,
+     * it is the job of the constructor to initialize these fields when the class is instantiated.
+     *
+     * @param decl The variable declaration that we need to initialize
+     */
     public void initializeVar(final VarDecl decl) {
         BinOp bop = new BinOp(decl.getName(), Operator.ASSIGNMENT, decl.getInitialValue());
         initBlock.append(bop);
@@ -38,6 +44,11 @@ public class Constructor extends ModifiableStatement {
 
     /**
      * Short hand non-default constructor definition
+     * <p>
+     * Shorthand constructors are provided in the class definition
+     * and only specify the parameters that will be passed to super()
+     *
+     * <code>class Point3D(x, y, z) extends Point2D(x,y) {}</code>
      *
      * @param params
      */
@@ -58,40 +69,61 @@ public class Constructor extends ModifiableStatement {
         return initBlock;
     }
 
+    /**
+     * @return The block containing each statement in the constructor
+     */
     public Block getBody() {
         return body;
     }
 
+    /**
+     * Set the new body for this constructor
+     *
+     * @param body The new constructor body
+     */
     public void setBody(final Block body) {
         this.body = body;
     }
 
+    /**
+     * @return The parameters passed to this constructor
+     */
     public VarDecl[] getParams() {
         return params;
     }
 
+    /**
+     * Each constructor in jvm must call super() or this(). This method provides the
+     * arguments that will be used in the super call. These arguments come either from
+     * and explicit super() call or from the shorthand constructor notation. If no
+     * super() call is provided in the constructor then this method returns null
+     *
+     * @return Parameters to be used in the super call or null if none are provided
+     */
     public Expression[] getSuperParams() {
         return superParams;
     }
 
+    /**
+     * Checks if the constructor was defined using shorthand notation.
+     *
+     * <code>class Point3D(x, y, z) extends Point2D(x,y) {}</code>
+     *
+     * @return Whether the constructor was defined with shorthand notation
+     */
     public boolean isShorthand() {
         return superParams != null;
     }
 
+    /**
+     * Calculates the method descriptor for this constructor
+     *
+     * @return The method descriptor of this constructor
+     */
     public String getDesc() {
         StringBuilder stringBuilder = new StringBuilder("(");
         for (VarDecl ignored : getParams()) {
             stringBuilder.append(Type.getType(TObject.class).getDescriptor());
-        }
-        return stringBuilder.append(")V").toString();
-    }
-
-    public String getSuperConstructorDesc() {
-        StringBuilder stringBuilder = new StringBuilder("(");
-        if (getSuperParams() != null) {
-            for (Expression ignored : getSuperParams()) {
-                stringBuilder.append(Type.getType(TObject.class).getDescriptor());
-            }
         }
         return stringBuilder.append(")V").toString();
     }
