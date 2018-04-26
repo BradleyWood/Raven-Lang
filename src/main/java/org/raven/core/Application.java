@@ -76,14 +76,12 @@ public class Application {
         Scanner scanner = new Scanner(System.in);
         while (true) {
             System.out.println();
-            System.out.print(">>> ");
             String line = scanner.nextLine();
             int comment = line.indexOf("//");
             if (comment > 0) {
                 line = line.substring(0, comment);
             }
             while (line.endsWith("\\")) {
-                System.out.print(">");
                 line = line.substring(0, line.length() - 1) + scanner.nextLine();
             }
             REPL.exec(line + ";");
