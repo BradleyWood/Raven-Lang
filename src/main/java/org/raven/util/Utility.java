@@ -88,10 +88,14 @@ public class Utility {
         for (File f : files) {
             if (!f.getAbsolutePath().endsWith(".tl"))
                 continue;
+
             RParser parser = new RParser(f.getPath());
             RavenTree tree = parser.parse();
-            Compiler compiler = new Compiler(f.getAbsolutePath(), f.getName().replace(".tl", ""), tree, new JvmMethodAnnotationProcessor());
-            classes.putAll(compiler.compile(save));
+
+            if (tree != null) {
+                Compiler compiler = new Compiler(f.getAbsolutePath(), f.getName().replace(".tl", ""), tree, new JvmMethodAnnotationProcessor());
+                classes.putAll(compiler.compile(save));
+            }
 
             if (Errors.getErrorCount() > 0) {
                 Errors.printErrors();

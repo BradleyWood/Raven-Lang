@@ -6,6 +6,7 @@ import org.antlr.v4.runtime.ConsoleErrorListener;
 import org.raven.antlr.ast.Statement;
 import org.raven.antlr.visitor.ToyFileVisitor;
 
+import java.util.LinkedList;
 import java.util.List;
 
 public class StatementParser {
@@ -18,7 +19,13 @@ public class StatementParser {
         parser.addErrorListener(new RavenErrorListener("<stdin>"));
 
         ToyFileVisitor tfv = new ToyFileVisitor();
-        return tfv.visitRavenFile(parser.ravenFile()).getStatements();
-    }
 
+        RavenParser.RavenFileContext ctx = parser.ravenFile();
+
+        if (parser.getNumberOfSyntaxErrors() > 0) {
+            return new LinkedList<>();
+        }
+
+        return tfv.visitRavenFile(ctx).getStatements();
+    }
 }

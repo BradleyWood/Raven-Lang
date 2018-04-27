@@ -62,6 +62,10 @@ public class Compiler {
                     try {
                         RParser parser = new RParser(file);
                         RavenTree tree = parser.parse();
+
+                        if (tree == null)
+                            continue;
+
                         trees.add(tree);
                         IMPORTS.add(tree.getPackage().add(tree.getName()).toString());
                     } catch (IOException e) {

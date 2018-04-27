@@ -25,7 +25,14 @@ public class RParser {
         parser.removeErrorListener(ConsoleErrorListener.INSTANCE);
         parser.addErrorListener(new RavenErrorListener(file));
         ToyFileVisitor fileVisitor = new ToyFileVisitor();
-        RavenTree tree = fileVisitor.visit(parser.ravenFile());
+
+        RavenParser.RavenFileContext ctx = parser.ravenFile();
+
+        if (parser.getNumberOfSyntaxErrors() > 0) {
+            return null;
+        }
+
+        RavenTree tree = fileVisitor.visit(ctx);
         tree.setSourceFile(file);
         String name = new File(file).getName();
         tree.setName(name.replaceAll(".tl", ""));
