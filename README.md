@@ -8,7 +8,7 @@ The runtime environment performs all type checking and coercions as well
 as dynamic linking.
 
 
-[Click here to try](http://bradleywood.me/projects/jvmlang.html)
+[Click here to try](http://bradleywood.me/tryraven.html)
 
 ## Building and Running
 
