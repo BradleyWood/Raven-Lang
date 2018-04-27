@@ -351,7 +351,7 @@ public class Method extends MethodVisitor implements TreeVisitor, Opcodes {
     /**
      * Throw an exception with the given message
      *
-     * @param ex The type of exception to throw
+     * @param ex      The type of exception to throw
      * @param message The message to leave
      */
     private <T extends Throwable> void throwException(final Class<T> ex, final String message) {
@@ -574,8 +574,14 @@ public class Method extends MethodVisitor implements TreeVisitor, Opcodes {
                     if (ctx.isStatic()) {
                         invokeStaticExact(funOwner, call.getName().toString(), desc, call.getParams());
                     } else {
-                        Fun fun = ctx.getClassDef().findFun(call.getName().toString(), call.getParams().length);
-                        if (fun != null && (fun.modifiers() & ACC_STATIC) == 0) {
+                        Fun fun = SymbolMap.resolveFun(ctx.getOwner(), ctx.getOwner(), call.getName().toString(), call.getParams().length);
+                        if (fun != null && (fun.modifiers() & ACC_STATIC) == 0 && fun.isJavaMethod()) {
+                            // todo; this can be done non-dynamically
+                            visitVarInsn(ALOAD, getLocal("this"));
+                            visitMethodInsn(INVOKESTATIC, getName(Intrinsics.class), "wrap",
+                                    getDesc(Intrinsics.class, "wrap", Object.class), false);
+                            invokeVirtualFun(fun.getName().toString(), call.getParams());
+                        } else if (fun != null && (fun.modifiers() & ACC_STATIC) == 0) {
                             visitVarInsn(ALOAD, getLocal("this"));
                             Arrays.stream(call.getParams()).forEach(param -> param.accept(this));
                             visitMethodInsn(INVOKEVIRTUAL, funOwner, call.getName().toString(), desc, false);
