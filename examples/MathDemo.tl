@@ -5,13 +5,13 @@ g(x) = 4 * x + 50;
 
 fog(x) = f(g(x));
 
-public fun factorial(num) {
+fun factorial(num) {
     if num <= 1
         return num;
     return num * factorial(num - 1);
 }
 
-public fun fib(n) {
+fun fib(n) {
     if n < 0
         return int((-1) ** (n + 1)) * fib(-n);
     if n == 0 || n == 1

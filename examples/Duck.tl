@@ -1,26 +1,26 @@
 
-public class Raven {
+class Raven {
 
-    public fun fly() {
+    fun fly() {
         println("Raven Flying");
     }
 }
 
-public class Airplane {
+class Airplane {
 
-    public fun fly() {
+    fun fly() {
         println("Airplane Flying");
     }
 }
 
-public class Dog {
+class Dog {
 
-    public fun woof() {
+    fun woof() {
         println("Woof!");
     }
 }
 
-public fun liftOff(flyable) {
+fun liftOff(flyable) {
     flyable.fly();
 }
 
