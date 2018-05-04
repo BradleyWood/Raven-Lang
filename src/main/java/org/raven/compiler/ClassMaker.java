@@ -5,12 +5,10 @@ import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.Type;
 import org.raven.antlr.Modifier;
 import org.raven.antlr.ast.*;
-import org.raven.core.wrappers.TNull;
 import org.raven.error.Errors;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static org.objectweb.asm.Opcodes.*;
 
@@ -69,6 +67,12 @@ public class ClassMaker {
             classCtx.setName(fun.getName().toString());
             classCtx.setStatic(fun.hasModifier(Modifier.STATIC));
             defineMethod(classCtx, fun, fun.modifiers());
+
+            Fun override = SymbolMap.resolveJavaFun(def.getSuper().toString(), fun.getName().toString(), fun.getParams().length);
+            if (override != null) {
+                Fun delegate = createDelegate(Type.getType(override.getDesc()), override.getName().toString());
+                defineMethod(classCtx, delegate, fun.getParams().length);
+            }
         }
 
         for (Fun fun : classCtx.getSyntheticFunctions()) {
@@ -92,14 +96,14 @@ public class ClassMaker {
                 } else if (!def.containsExact(name, desc)) {
                     classCtx.setStatic(false);
                     classCtx.setName(in.getNames()[i]);
-                    Fun delegate = createInterfaceDelegate(in.getMethodTypes()[i], in.getNames()[i]);
+                    Fun delegate = createDelegate(in.getMethodTypes()[i], in.getNames()[i]);
                     defineMethod(classCtx, delegate, delegate.modifiers());
                 }
             }
         }
     }
 
-    private Fun createInterfaceDelegate(final Type t, final String methodName) {
+    private Fun createDelegate(final Type t, final String methodName) {
         Block body = new Block();
         VarDecl[] params = new VarDecl[t.getArgumentTypes().length];
         for (int i = 0; i < params.length; i++) {
@@ -132,7 +136,6 @@ public class ClassMaker {
         for (Modifier modifier : constructor.getModifiers()) {
             modifiers += modifier.getModifier();
         }
-        String xd = constructor.getDesc();
 
         Method method = new Method(ctx, cw.visitMethod(modifiers, "<init>", constructor.getDesc(), null, null));
         constructor.getAnnotations().forEach(method::visitAnnotation);
