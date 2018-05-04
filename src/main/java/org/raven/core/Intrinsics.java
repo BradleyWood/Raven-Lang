@@ -64,7 +64,7 @@ public class Intrinsics {
             for (Constructor<?> constructor : constructors) {
                 if (constructor.getParameterCount() == argCount) {
                     MethodHandle ch = caller.unreflectConstructor(constructor);
-                    JMethod jMethod = new JMethod(ch, clazz, constructor.getParameterTypes());
+                    JMethod jMethod = new JMethod(ch, clazz, constructor.getModifiers(), constructor.getParameterTypes());
                     constructorList.add(jMethod);
                 }
             }
@@ -110,7 +110,7 @@ public class Intrinsics {
         if (mh != null) {
             for (Class<?> clazz : type.parameterArray()) {
                 if (!TObject.class.isAssignableFrom(clazz)) {
-                    JMethod jm = new JMethod(mh, superClass, type.parameterArray());
+                    JMethod jm = new JMethod(mh, superClass, clazz.getModifiers(), type.parameterArray());
                     methods.add(jm);
                     MethodHandle iv = caller.findStatic(Intrinsics.class, "invokeVirtual",
                             MethodType.methodType(TObject.class, JMethod.class, Object.class, TList.class));
@@ -141,7 +141,7 @@ public class Intrinsics {
         for (Constructor<?> constructor : clazz.getConstructors()) {
             if (constructor.getParameterCount() == paramCount) {
                 MethodHandle ch = caller.unreflectConstructor(constructor);
-                JMethod jMethod = new JMethod(ch, clazz, constructor.getParameterTypes());
+                JMethod jMethod = new JMethod(ch, clazz, constructor.getModifiers(), constructor.getParameterTypes());
                 methods.add(jMethod);
             }
         }
@@ -188,7 +188,7 @@ public class Intrinsics {
 
         if (methods.isEmpty()) {
             for (Field field : clazz.getFields()) {
-                if (field.getName().equals(name) && !Modifier.isStatic(field.getModifiers())) {
+                if (field.getName().equals(name)) {
                     field.setAccessible(true);
                     MethodHandle getter = caller.unreflectSetter(field);
                     JSetter jMethod = new JSetter(getter, clazz, field.getType());
@@ -232,10 +232,10 @@ public class Intrinsics {
 
         if (methods.isEmpty()) {
             for (Field field : clazz.getFields()) {
-                if (field.getName().equals(name) && !Modifier.isStatic(field.getModifiers())) {
+                if (field.getName().equals(name)) {
                     field.setAccessible(true);
                     MethodHandle getter = caller.unreflectGetter(field);
-                    JMethod jMethod = new JMethod(getter, clazz);
+                    JMethod jMethod = new JMethod(getter, clazz, field.getModifiers());
                     jmethods.addFirst(jMethod);
                     methods.add(jMethod);
                     break;
@@ -245,7 +245,11 @@ public class Intrinsics {
         if (methods.isEmpty()) {
             throw new NoSuchFieldException(name);
         }
-        return wrap(methods.get(0).methodHandle.bindTo(obj).invoke());
+        JMethod method = methods.get(0);
+        if (!Modifier.isStatic(method.modifiers)) {
+            return wrap(method.methodHandle.bindTo(obj).invoke());
+        }
+        return wrap(method.methodHandle.invoke());
     }
 
     public static CallSite bootstrapVirtual(final MethodHandles.Lookup caller, final String name, final MethodType type, final int paramCount) throws Throwable {
@@ -276,11 +280,10 @@ public class Intrinsics {
         List<JMethod> methods = jmethods.stream().filter(jm -> jm.owner.isAssignableFrom(clazz)).collect(Collectors.toList());
         if (methods.isEmpty()) {
             for (Method method : clazz.getMethods()) {
-                if (method.getName().equals(name) && method.getParameterCount() == paramCount
-                        && !Modifier.isStatic(method.getModifiers())) {
+                if (method.getName().equals(name) && method.getParameterCount() == paramCount) {
                     method.setAccessible(true);
                     MethodHandle mh = caller.unreflect(method);
-                    JMethod jm = new JMethod(mh, clazz, method.getParameterTypes());
+                    JMethod jm = new JMethod(mh, clazz, method.getModifiers(), method.getParameterTypes());
                     jmethods.add(jm);
                     methods.add(jm);
                 }
@@ -300,6 +303,8 @@ public class Intrinsics {
     }
 
     public static TObject invokeVirtual(final JMethod method, final Object instance, final TList args) throws Throwable {
+        if (Modifier.isStatic(method.modifiers))
+            return wrap(method.methodHandle.invokeWithArguments(getParams(args, method.types, 999)));
         return wrap(method.methodHandle.bindTo(instance).invokeWithArguments(getParams(args, method.types, 999)));
     }
 
@@ -310,7 +315,7 @@ public class Intrinsics {
                     Modifier.isStatic(method.getModifiers())) {
                 method.setAccessible(true);
                 MethodHandle mh = caller.unreflect(method);
-                JMethod jm = new JMethod(mh, clazz, method.getParameterTypes());
+                JMethod jm = new JMethod(mh, clazz, method.getModifiers(), method.getParameterTypes());
                 list.add(jm);
             }
         }
@@ -320,7 +325,7 @@ public class Intrinsics {
                 for (Constructor<?> constructor : klazz.getDeclaredConstructors()) {
                     if (constructor.getParameterCount() == paramCount) {
                         MethodHandle mh = caller.unreflectConstructor(constructor);
-                        JMethod jm = new JMethod(mh, clazz, constructor.getParameterTypes());
+                        JMethod jm = new JMethod(mh, clazz, constructor.getModifiers(), constructor.getParameterTypes());
                         list.add(jm);
                     }
                 }
@@ -490,12 +495,14 @@ public class Intrinsics {
         private MethodHandle methodHandle;
         private Class<?>[] types;
         private Class<?> owner;
+        private int modifiers;
         private int callCount = 0;
 
-        JMethod(final MethodHandle methodHandle, final Class<?> owner, final Class<?>... types) {
+        JMethod(final MethodHandle methodHandle, final Class<?> owner, final int modifers, final Class<?>... types) {
             this.methodHandle = methodHandle;
             this.owner = owner;
             this.types = types;
+            this.modifiers = modifers;
         }
 
         void incCount() {
