@@ -587,7 +587,19 @@ public class Method extends MethodVisitor implements TreeVisitor, Opcodes {
                             visitMethodInsn(INVOKEVIRTUAL, funOwner, call.getName().toString(), desc, false);
                         } else if (fun != null) {
                             Arrays.stream(call.getParams()).forEach(param -> param.accept(this));
-                            visitMethodInsn(INVOKESTATIC, funOwner, call.getName().toString(), desc, false);
+
+                            String funDesc = fun.isJavaMethod() ? fun.getDesc() : desc;
+                            visitMethodInsn(INVOKESTATIC, funOwner, call.getName().toString(), funDesc, false);
+
+                            if (fun.isJavaMethod()) {
+                                Type methodType = Type.getMethodType(funDesc);
+                                Primitive p = Primitive.getPrimitiveType(methodType.getReturnType().getDescriptor());
+                                if (p != null) {
+                                    p.wrap(this);
+                                }
+                                visitMethodInsn(INVOKESTATIC, getName(Intrinsics.class), "wrap",
+                                        getDesc(Intrinsics.class, "wrap", Object.class), false);
+                            }
                         } else {
                             Errors.put("Cannot find method " + call.getName());
                         }
