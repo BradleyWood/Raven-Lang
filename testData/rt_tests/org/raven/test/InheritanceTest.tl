@@ -4,6 +4,7 @@ import org.junit.Assert;
 
 import testclasses.Person;
 import testclasses.Container;
+import testclasses.FieldTestClass;
 
 class SpecialPerson(a, b) extends Person(a, b) {
 }
@@ -17,6 +18,32 @@ class HackedPerson(a, b) extends Person(a, b) {
     fun getAge() {
         return -1;
     }
+}
+
+class VirtualFieldInheritance extends FieldTestClass {
+
+    fun getVirtualField() {
+        return virtualPrimitiveInt;
+    }
+}
+
+class StaticFieldInheritance extends FieldTestClass {
+
+    fun getStaticField() {
+        return staticInt;
+    }
+}
+
+fun testStaticFieldInheritance() {
+    var obj = StaticFieldInheritance();
+    Assert.assertEquals(101, obj.staticInt);
+    Assert.assertEquals(101, obj.getStaticField());
+}
+
+fun testVirtualFieldInheritance() {
+    var obj = VirtualFieldInheritance();
+    Assert.assertEquals(50, obj.virtualPrimitiveInt);
+    Assert.assertEquals(50, obj.getVirtualField());
 }
 
 fun testOverride() {

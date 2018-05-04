@@ -10,4 +10,6 @@ public class FieldTestClass {
 
     public Integer virtualWrappedInt = 500;
 
+    public static int staticInt = 101;
+
 }
