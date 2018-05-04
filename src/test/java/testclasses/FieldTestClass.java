@@ -12,4 +12,8 @@ public class FieldTestClass {
 
     public static int staticInt = 101;
 
+    public static int aStaticMethod() {
+        return -1;
+    }
+
 }

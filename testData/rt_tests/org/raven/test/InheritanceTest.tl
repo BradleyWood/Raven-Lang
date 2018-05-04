@@ -32,6 +32,16 @@ class StaticFieldInheritance extends FieldTestClass {
     fun getStaticField() {
         return staticInt;
     }
+
+    fun delegate() {
+        return aStaticMethod();
+    }
+}
+
+fun testStaticMethodInheritance() {
+    var obj = StaticFieldInheritance();
+    Assert.assertEquals(-1, obj.aStaticMethod());
+    Assert.assertEquals(-1, obj.delegate());
 }
 
 fun testStaticFieldInheritance() {
