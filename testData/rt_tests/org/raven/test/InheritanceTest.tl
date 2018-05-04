@@ -8,6 +8,23 @@ import testclasses.Container;
 class SpecialPerson(a, b) extends Person(a, b) {
 }
 
+class HackedPerson(a, b) extends Person(a, b) {
+
+    fun getName() {
+        return "who";
+    }
+
+    fun getAge() {
+        return -1;
+    }
+}
+
+fun testOverride() {
+    var me = HackedPerson("Brad", 420);
+    Assert.assertEquals("who", me.getName());
+    Assert.assertEquals(-1, me.getAge());
+}
+
 fun testInheritedMethods() {
     // test super() selection
     var me = SpecialPerson("Brad", 420);
