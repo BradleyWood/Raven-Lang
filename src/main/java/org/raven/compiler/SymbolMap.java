@@ -18,10 +18,10 @@ public class SymbolMap {
         return INTERFACE_MAP.get(clazz);
     }
 
-    public static VarDecl resolveField(final String callingClass, final String funOwner, final String name) {
-        ClassDef def = CLASS_MAP.get(funOwner);
+    public static VarDecl resolveField(final String callingClass, final String fieldOwner, final String name) {
+        ClassDef def = CLASS_MAP.get(fieldOwner.replace(".", "/"));
         if (def != null) {
-            String clazz = funOwner;
+            String clazz = fieldOwner.replace(".", "/");
             while (!clazz.equals("java/lang/Object") && def != null) {
                 VarDecl decl = findField(callingClass, clazz, name);
                 if (decl != null) {
@@ -35,9 +35,9 @@ public class SymbolMap {
     }
 
     public static Fun resolveFun(final String callingClass, final String funOwner, final String name, final int paramCount) {
-        ClassDef def = CLASS_MAP.get(funOwner);
+        ClassDef def = CLASS_MAP.get(funOwner.replace(".", "/"));
         if (def != null) {
-            String clazz = funOwner;
+            String clazz = funOwner.replace(".", "/");
             while (!clazz.equals("java/lang/Object") && def != null) {
                 Fun decl = findFun(callingClass, clazz, name, paramCount);
                 if (decl != null) {
@@ -50,8 +50,24 @@ public class SymbolMap {
         return null;
     }
 
+    public static Fun resolveJavaFun(final String funOwner, final String name, final int paramCount) {
+        ClassDef def = CLASS_MAP.get(funOwner.replace(".", "/"));
+        if (def != null) {
+            String clazz = funOwner.replace(".", "/");
+            while (!clazz.equals("java/lang/Object") && def != null) {
+                Fun decl = findFun("", clazz, name, paramCount);
+                if (decl != null && decl.isJavaMethod()) {
+                    return decl;
+                }
+                clazz = def.getSuper().toString().replace(".", "/");
+                def = CLASS_MAP.get(clazz);
+            }
+        }
+        return null;
+    }
+
     private static VarDecl findField(final String callingClass, final String funOwner, final String name) {
-        ClassDef def = CLASS_MAP.get(funOwner);
+        ClassDef def = CLASS_MAP.get(funOwner.replace(".", "/"));
         if (def != null) {
             for (VarDecl field : def.getFields()) {
                 if (name.equals(field.getName().toString())) {
@@ -68,7 +84,7 @@ public class SymbolMap {
     }
 
     private static Fun findFun(final String callingClass, final String funOwner, final String name, final int paramCount) {
-        ClassDef def = CLASS_MAP.get(funOwner);
+        ClassDef def = CLASS_MAP.get(funOwner.replace(".", "/"));
         if (def != null) {
             for (Fun fun : def.getMethods()) {
                 if (fun.getParams().length == paramCount && name.equals(fun.getName().toString())) {
@@ -92,6 +108,11 @@ public class SymbolMap {
     }
 
     public static void map(final Class<?> clazz) {
+        final String name = clazz.getName().replace(".", "/");
+
+        if (CLASS_MAP.containsKey(name) || INTERFACE_MAP.containsKey(name))
+            return;
+
         if (clazz.isInterface()) {
             INTERFACE_MAP.put(clazz.getName().replace(".", "/"), Interface.valueOf(clazz));
             return;
@@ -119,10 +140,12 @@ public class SymbolMap {
             statements.add(decl);
         }
 
+        java.lang.reflect.Method[] gg = clazz.getDeclaredMethods();
+
         for (Method method : clazz.getDeclaredMethods()) {
             statements.add(Fun.valueOf(method));
         }
 
-        CLASS_MAP.put(clazz.getName().replace(".", "/"), def);
+        CLASS_MAP.put(name, def);
     }
 }
