@@ -2,11 +2,9 @@ package org.raven.compiler;
 
 import org.raven.antlr.Modifier;
 import org.raven.antlr.ast.*;
-import org.raven.core.wrappers.TObject;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.lang.reflect.Type;
 import java.util.*;
 
 public class SymbolMap {
@@ -18,8 +16,22 @@ public class SymbolMap {
         return INTERFACE_MAP.get(clazz);
     }
 
+    public static ClassDef resolveClass(final String clazz) {
+        ClassDef def = CLASS_MAP.get(clazz.replace(".", "/"));
+
+        if (def != null) {
+            return def;
+        }
+        try {
+            Class cl = Class.forName(clazz.replace("/", "."));
+            map(cl);
+        } catch (ClassNotFoundException ignored) {
+        }
+        return CLASS_MAP.get(clazz.replace(".", "/"));
+    }
+
     public static VarDecl resolveField(final String callingClass, final String fieldOwner, final String name) {
-        ClassDef def = CLASS_MAP.get(fieldOwner.replace(".", "/"));
+        ClassDef def = resolveClass(fieldOwner);
         if (def != null) {
             String clazz = fieldOwner.replace(".", "/");
             while (!clazz.equals("java/lang/Object") && def != null) {
@@ -28,14 +40,14 @@ public class SymbolMap {
                     return decl;
                 }
                 clazz = def.getSuper().toString().replace(".", "/");
-                def = CLASS_MAP.get(clazz);
+                def = resolveClass(clazz);
             }
         }
         return null;
     }
 
     public static Fun resolveFun(final String callingClass, final String funOwner, final String name, final int paramCount) {
-        ClassDef def = CLASS_MAP.get(funOwner.replace(".", "/"));
+        ClassDef def = resolveClass(funOwner);
         if (def != null) {
             String clazz = funOwner.replace(".", "/");
             while (!clazz.equals("java/lang/Object") && def != null) {
@@ -44,14 +56,14 @@ public class SymbolMap {
                     return decl;
                 }
                 clazz = def.getSuper().toString().replace(".", "/");
-                def = CLASS_MAP.get(clazz);
+                def = resolveClass(clazz);
             }
         }
         return null;
     }
 
     public static Fun resolveJavaFun(final String funOwner, final String name, final int paramCount) {
-        ClassDef def = CLASS_MAP.get(funOwner.replace(".", "/"));
+        ClassDef def = resolveClass(funOwner);
         if (def != null) {
             String clazz = funOwner.replace(".", "/");
             while (!clazz.equals("java/lang/Object") && def != null) {
@@ -60,14 +72,14 @@ public class SymbolMap {
                     return decl;
                 }
                 clazz = def.getSuper().toString().replace(".", "/");
-                def = CLASS_MAP.get(clazz);
+                def = resolveClass(clazz);
             }
         }
         return null;
     }
 
     private static VarDecl findField(final String callingClass, final String funOwner, final String name) {
-        ClassDef def = CLASS_MAP.get(funOwner.replace(".", "/"));
+        ClassDef def = resolveClass(funOwner);
         if (def != null) {
             for (VarDecl field : def.getFields()) {
                 if (name.equals(field.getName().toString())) {
@@ -84,7 +96,7 @@ public class SymbolMap {
     }
 
     private static Fun findFun(final String callingClass, final String funOwner, final String name, final int paramCount) {
-        ClassDef def = CLASS_MAP.get(funOwner.replace(".", "/"));
+        ClassDef def = resolveClass(funOwner);
         if (def != null) {
             for (Fun fun : def.getMethods()) {
                 if (fun.getParams().length == paramCount && name.equals(fun.getName().toString())) {
@@ -129,20 +141,23 @@ public class SymbolMap {
         List<Statement> statements = new ArrayList<>();
         ClassDef def = new ClassDef(new Modifier[0], clazz.getName(), inh, statements);
 
-        for (Field field : clazz.getDeclaredFields()) {
-            Modifier[] modifiers = new Modifier[0];
-            if (java.lang.reflect.Modifier.isPublic(field.getModifiers()))
-                modifiers = new Modifier[]{Modifier.PUBLIC};
-            if (java.lang.reflect.Modifier.isPrivate(field.getModifiers()))
-                modifiers = new Modifier[]{Modifier.PRIVATE};
-            VarDecl decl = new VarDecl(QualifiedName.valueOf(field.getName()), null, modifiers);
+        for (Field field : clazz.getFields()) {
+            VarDecl decl = new VarDecl(QualifiedName.valueOf(field.getName()), null);
+
+            if (java.lang.reflect.Modifier.isStatic(field.getModifiers())) {
+                decl.addModifier(Modifier.STATIC);
+            }
+            if (java.lang.reflect.Modifier.isPublic(field.getModifiers())) {
+                decl.addModifier(Modifier.PUBLIC);
+            } else if (java.lang.reflect.Modifier.isPrivate(field.getModifiers())) {
+                decl.addModifier(Modifier.PRIVATE);
+            }
+
             decl.setType("L" + field.getType().getName().replace(".", "/") + ";");
             statements.add(decl);
         }
 
-        java.lang.reflect.Method[] gg = clazz.getDeclaredMethods();
-
-        for (Method method : clazz.getDeclaredMethods()) {
+        for (Method method : clazz.getMethods()) {
             statements.add(Fun.valueOf(method));
         }
 
