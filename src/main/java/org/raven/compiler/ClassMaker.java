@@ -2,6 +2,7 @@ package org.raven.compiler;
 
 
 import org.objectweb.asm.ClassWriter;
+import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Type;
 import org.raven.antlr.Modifier;
 import org.raven.antlr.ast.*;
@@ -93,6 +94,7 @@ public class ClassMaker {
 
                 if (!def.containsMethod(name, in.getMethodTypes()[i].getArgumentTypes().length)) {
                     System.err.println("Warning: unimplemented interface method: " + name + " " + desc);
+                    createStub(in.getNames()[i], in.getMethodTypes()[i]);
                 } else if (!def.containsExact(name, desc)) {
                     classCtx.setStatic(false);
                     classCtx.setName(in.getNames()[i]);
@@ -101,6 +103,47 @@ public class ClassMaker {
                 }
             }
         }
+    }
+
+    /**
+     * Creates an empty stub method that does nothing
+     *
+     * @param name The name of the method
+     * @param type The method type
+     */
+    private void createStub(final String name, final Type type) {
+        MethodVisitor mv = cw.visitMethod(ACC_PUBLIC, name, type.getDescriptor(), null, new String[0]);
+        mv.visitCode();
+
+        Primitive p = Primitive.getPrimitiveType(type.getReturnType().getDescriptor());
+
+        if (p != null) {
+            switch (p) {
+                case INT:
+                case BYTE:
+                case SHORT:
+                case BOOLEAN:
+                case CHAR:
+                    mv.visitInsn(ICONST_0);
+                    break;
+                case LONG:
+                    mv.visitInsn(LCONST_0);
+                    break;
+                case FLOAT:
+                    mv.visitInsn(FCONST_0);
+                    break;
+                case DOUBLE:
+                    mv.visitInsn(FCONST_0);
+                    break;
+            }
+            p.ret(mv);
+        } else {
+            mv.visitInsn(ACONST_NULL);
+            mv.visitInsn(ARETURN);
+        }
+
+        mv.visitMaxs(0, 0);
+        mv.visitEnd();
     }
 
     private Fun createDelegate(final Type t, final String methodName) {

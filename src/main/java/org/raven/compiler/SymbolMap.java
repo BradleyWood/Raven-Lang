@@ -141,7 +141,7 @@ public class SymbolMap {
         List<Statement> statements = new ArrayList<>();
         ClassDef def = new ClassDef(new Modifier[0], clazz.getName(), inh, statements);
 
-        for (Field field : clazz.getFields()) {
+        for (Field field : clazz.getDeclaredFields()) {
             VarDecl decl = new VarDecl(QualifiedName.valueOf(field.getName()), null);
 
             if (java.lang.reflect.Modifier.isStatic(field.getModifiers())) {
@@ -157,7 +157,7 @@ public class SymbolMap {
             statements.add(decl);
         }
 
-        for (Method method : clazz.getMethods()) {
+        for (Method method : clazz.getDeclaredMethods()) {
             statements.add(Fun.valueOf(method));
         }
 
