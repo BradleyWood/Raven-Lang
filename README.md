@@ -8,17 +8,20 @@ The runtime environment performs all type checking and coercions as well
 as dynamic linking.
 
 
-[Click here to try](http://bradleywood.me/tryraven.html)
+### [Web Demo](http://bradleywood.me/tryraven.html)
+
+View multiple examples or try to create your own program using
+the web demo. The web demo also comes with a REPL (read-eval-print-loop)
+utility.
 
 ## Building and Running
 
 
 ```
-mvn clean install assembly:single
+mvn clean install
 ```
 
 To run a test script
-
 
 ```
 java -jar target/raven-1.0-SNAPSHOT-jar-with-dependencies.jar -r <path to script>.tl
@@ -26,17 +29,12 @@ java -jar target/raven-1.0-SNAPSHOT-jar-with-dependencies.jar -r <path to script
 
 ### Command line options
 
-Run in REPL (read-eval-print-loop) mode
-```
--repl
-```
-
-Run a script
-```
--r <path to script>
-```
+To run in REPL (read-eval-print-loop) mode use the command line option "-repl"
+and to execute a script with "-r path_to_script"
 
 ## Examples
+
+This example serves to illustrate java interoperability. 
 
 ``` Java
 import javax.swing.JOptionPane;
