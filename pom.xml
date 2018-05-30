@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <properties>
-		<maven.compiler.source>1.8</maven.compiler.source>
+        <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
@@ -72,27 +72,28 @@
                     </archive>
                 </configuration>
             </plugin>
-			<plugin>
-				<groupId>com.excelsiorjet</groupId>
-				<artifactId>excelsior-jet-maven-plugin</artifactId>
-                <version>1.1.0</version>
+            <plugin>
+                <artifactId>maven-assembly-plugin</artifactId>
                 <configuration>
-                    <mainClass>org.raven.core.Application</mainClass>
+                    <archive>
+                        <manifest>
+                            <mainClass>org.raven.core.Application</mainClass>
+                        </manifest>
+                    </archive>
+                    <descriptorRefs>
+                        <descriptorRef>jar-with-dependencies</descriptorRef>
+                    </descriptorRefs>
                 </configuration>
-			</plugin>
-			<plugin>
-			  <artifactId>maven-assembly-plugin</artifactId>
-			  <configuration>
-				<archive>
-				  <manifest>
-					<mainClass>org.raven.core.Application</mainClass>
-				  </manifest>
-				</archive>
-				<descriptorRefs>
-				  <descriptorRef>jar-with-dependencies</descriptorRef>
-				</descriptorRefs>
-			  </configuration>
-			</plugin>
+                <executions>
+                    <execution>
+                        <id>make-assembly</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
     </build>
 </project>
