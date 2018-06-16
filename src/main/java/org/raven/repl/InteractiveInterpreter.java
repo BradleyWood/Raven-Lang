@@ -24,7 +24,7 @@ import java.util.stream.Collectors;
 public class InteractiveInterpreter {
 
     private static final ExceptionHandler exceptionHandler = new ExceptionHandler();
-    private final ByteClassLoader classLoader = new ByteClassLoader(null, InteractiveInterpreter.class.getClassLoader(), new HashMap<>());
+    private final ByteClassLoader classLoader = new ByteClassLoader(InteractiveInterpreter.class.getClassLoader(), new HashMap<>());
     private final LinkedList<Import> imports = new LinkedList<>();
     private String lastLine = null;
     private Class parent = null;

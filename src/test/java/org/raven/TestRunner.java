@@ -17,7 +17,6 @@ import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -27,7 +26,7 @@ import java.util.stream.Collectors;
 @RunWith(Parameterized.class)
 public class TestRunner {
 
-    private static final ByteClassLoader byteClassLoader = new ByteClassLoader(new URL[0], TestRunner.class.getClassLoader(), new HashMap<>());
+    private static final ByteClassLoader byteClassLoader = new ByteClassLoader(TestRunner.class.getClassLoader(), new HashMap<>());
     private static final HashMap<String, Class<?>> classes = new HashMap<>();
 
     private final String cl;

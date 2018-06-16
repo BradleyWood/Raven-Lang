@@ -1,6 +1,5 @@
 package org.raven.core;
 
-import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -8,7 +7,7 @@ public class ByteClassLoader extends ClassLoader {
 
     private final Map<String, byte[]> extraClassDefs;
 
-    public ByteClassLoader(final URL[] urls, final ClassLoader parent, final Map<String, byte[]> extraClassDefs) {
+    public ByteClassLoader(final ClassLoader parent, final Map<String, byte[]> extraClassDefs) {
         super(parent);
         this.extraClassDefs = new HashMap<>(extraClassDefs);
     }

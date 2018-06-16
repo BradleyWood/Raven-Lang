@@ -47,7 +47,7 @@ public class Utility {
         try {
             HashMap<String, byte[]> classes = compile(path, true);
             if (Errors.getErrorCount() == 0) {
-                ByteClassLoader cl = new ByteClassLoader(null, Application.class.getClassLoader(), classes);
+                ByteClassLoader cl = new ByteClassLoader(Application.class.getClassLoader(), classes);
                 if (classes != null) {
                     for (String s : classes.keySet()) {
                         if (file.getAbsolutePath().endsWith(s.replace(".", "\\") + ".tl")) {
