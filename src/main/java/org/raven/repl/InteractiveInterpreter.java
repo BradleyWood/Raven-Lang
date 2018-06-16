@@ -21,10 +21,10 @@ import java.util.stream.Collectors;
 /**
  * Read-eval-print-loop utility
  */
-public class Repl {
+public class InteractiveInterpreter {
 
     private static final ExceptionHandler exceptionHandler = new ExceptionHandler();
-    private final ByteClassLoader classLoader = new ByteClassLoader(null, Repl.class.getClassLoader(), new HashMap<>());
+    private final ByteClassLoader classLoader = new ByteClassLoader(null, InteractiveInterpreter.class.getClassLoader(), new HashMap<>());
     private final LinkedList<Import> imports = new LinkedList<>();
     private String lastLine = null;
     private Class parent = null;
@@ -33,7 +33,7 @@ public class Repl {
     private static int instanceCount = 0;
     private int id;
 
-    public Repl() {
+    public InteractiveInterpreter() {
         id = instanceCount++;
     }
 
@@ -151,7 +151,7 @@ public class Repl {
         }
         imports.add(new Import(superClass));
 
-        String name = "Repl" + id + "_" + counter++;
+        String name = "InteractiveInterpreter" + id + "_" + counter++;
         ClassDef def = new ClassDef(new Modifier[]{Modifier.PUBLIC}, new QualifiedName("repl"), name, superClass,
                 new QualifiedName[0], new ArrayList<>());
 

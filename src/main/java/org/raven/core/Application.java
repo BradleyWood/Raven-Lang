@@ -3,7 +3,7 @@ package org.raven.core;
 import org.apache.commons.cli.*;
 import org.raven.build.AppBuilder;
 import org.raven.error.Errors;
-import org.raven.repl.Repl;
+import org.raven.repl.InteractiveInterpreter;
 import org.raven.util.Settings;
 
 import java.io.IOException;
@@ -72,7 +72,7 @@ public class Application {
     }
 
     private static void repl() {
-        Repl REPL = new Repl();
+        InteractiveInterpreter interactiveInterpreter = new InteractiveInterpreter();
         Scanner scanner = new Scanner(System.in);
         while (true) {
             System.out.println();
@@ -84,7 +84,7 @@ public class Application {
             while (line.endsWith("\\")) {
                 line = line.substring(0, line.length() - 1) + scanner.nextLine();
             }
-            REPL.exec(line + ";");
+            interactiveInterpreter.exec(line + ";");
         }
     }
 

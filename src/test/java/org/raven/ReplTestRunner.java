@@ -7,8 +7,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.raven.error.Errors;
-import org.raven.repl.Repl;
-import org.raven.util.Settings;
+import org.raven.repl.InteractiveInterpreter;
 
 import java.io.*;
 import java.nio.file.Files;
@@ -48,7 +47,7 @@ public class ReplTestRunner {
     public void doTest() {
         System.setErr(newOut);
         System.setOut(newOut);
-        Repl repl = new Repl();
+        InteractiveInterpreter repl = new InteractiveInterpreter();
 
         try {
             FileInputStream fis = new FileInputStream(path);
