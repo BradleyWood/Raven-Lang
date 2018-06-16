@@ -48,7 +48,8 @@ public class Intrinsics {
         }
     }
 
-    public static CallSite bootstrapConstructor(final MethodHandles.Lookup caller, final String name, final MethodType type, final Class<?> clazz, final int argCount) throws Throwable {
+    public static CallSite bootstrapConstructor(final MethodHandles.Lookup caller, final String name,
+                                                final MethodType type, final Class<?> clazz, final int argCount) throws Throwable {
 
         int hash = Objects.hash(clazz, argCount);
 
@@ -76,17 +77,20 @@ public class Intrinsics {
 
         MethodHandle mh;
         if (constructorList.size() == 1) {
-            mh = caller.findStatic(Intrinsics.class, "newInstance", MethodType.methodType(TObject.class, JMethod.class, TList.class));
+            mh = caller.findStatic(Intrinsics.class, "newInstance", MethodType.methodType(TObject.class,
+                    JMethod.class, TList.class));
             mh = mh.bindTo(constructorList.get(0));
         } else {
-            mh = caller.findStatic(Intrinsics.class, "invokeStatic", MethodType.methodType(TObject.class, LinkedList.class, String.class, TList.class));
+            mh = caller.findStatic(Intrinsics.class, "invokeStatic", MethodType.methodType(TObject.class,
+                    LinkedList.class, String.class, TList.class));
             mh = mh.bindTo(constructorList).bindTo(name);
         }
 
         return new ConstantCallSite(mh);
     }
 
-    public static CallSite bootstrapSpecial(final MethodHandles.Lookup caller, final String name, final MethodType type, final Class<?> superClass, final int argCount) throws Throwable {
+    public static CallSite bootstrapSpecial(final MethodHandles.Lookup caller, final String name, final MethodType type,
+                                            final Class<?> superClass, final int argCount) throws Throwable {
         int hash = Objects.hash(name, superClass);
 
         MethodHandle invokeSpecial = caller.findStatic(Intrinsics.class, "invokeSpecial",
@@ -136,7 +140,8 @@ public class Intrinsics {
         throw new NoSuchMethodException(name);
     }
 
-    private static List<JMethod> getConstructors(final MethodHandles.Lookup caller, final Class<?> clazz, final int paramCount) throws IllegalAccessException {
+    private static List<JMethod> getConstructors(final MethodHandles.Lookup caller, final Class<?> clazz,
+                                                 final int paramCount) throws IllegalAccessException {
         List<JMethod> methods = new LinkedList<>();
         for (Constructor<?> constructor : clazz.getConstructors()) {
             if (constructor.getParameterCount() == paramCount) {
@@ -148,7 +153,8 @@ public class Intrinsics {
         return methods;
     }
 
-    public static TObject invokeSpecial(final LinkedList<JMethod> methods, final Object instance, final TList arguments) throws Throwable {
+    public static TObject invokeSpecial(final LinkedList<JMethod> methods, final Object instance, final TList arguments)
+            throws Throwable {
         requireNonNull(instance);
 
         JMethod method = select(methods, arguments.size(), arguments);
@@ -162,7 +168,8 @@ public class Intrinsics {
         return wrap(constructor.methodHandle.invokeWithArguments(getParams(arguments, constructor.types)));
     }
 
-    public static CallSite bootstrapSetter(final MethodHandles.Lookup caller, final String name, final MethodType type) throws Throwable {
+    public static CallSite bootstrapSetter(final MethodHandles.Lookup caller, final String name, final MethodType type)
+            throws Throwable {
         int hash = Objects.hash(name);
         LinkedList<JSetter> virtualMethods = setterCache.getOrDefault(hash, new LinkedList<>());
 
@@ -171,13 +178,15 @@ public class Intrinsics {
         }
 
         MethodHandle mh = caller.findStatic(Intrinsics.class, "setField",
-                MethodType.methodType(TObject.class, MethodHandles.Lookup.class, LinkedList.class, String.class, TObject.class, TObject.class));
+                MethodType.methodType(TObject.class, MethodHandles.Lookup.class, LinkedList.class, String.class,
+                        TObject.class, TObject.class));
         mh = mh.bindTo(caller).bindTo(virtualMethods).bindTo(name.substring(3));
 
         return new ConstantCallSite(mh);
     }
 
-    public static TObject setField(final MethodHandles.Lookup caller, final LinkedList<JSetter> jmethods, final String name, final TObject object, final TObject value) throws Throwable {
+    public static TObject setField(final MethodHandles.Lookup caller, final LinkedList<JSetter> jmethods,
+                                   final String name, final TObject object, final TObject value) throws Throwable {
         Object obj = object.getObject();
         if (object == TNull.NULL || obj == null) {
             throw new NullPointerException();
@@ -207,7 +216,8 @@ public class Intrinsics {
         return TNull.NULL;
     }
 
-    public static CallSite bootstrapGetter(final MethodHandles.Lookup caller, final String name, final MethodType type) throws Throwable {
+    public static CallSite bootstrapGetter(final MethodHandles.Lookup caller, final String name, final MethodType type)
+            throws Throwable {
         int hash = Objects.hash(name);
         LinkedList<JMethod> virtualMethods = getterCache.getOrDefault(hash, new LinkedList<>());
 
@@ -216,12 +226,14 @@ public class Intrinsics {
         }
 
         MethodHandle mh = caller.findStatic(Intrinsics.class, "getField",
-                MethodType.methodType(TObject.class, MethodHandles.Lookup.class, LinkedList.class, String.class, TObject.class));
+                MethodType.methodType(TObject.class, MethodHandles.Lookup.class, LinkedList.class, String.class,
+                        TObject.class));
         mh = mh.bindTo(caller).bindTo(virtualMethods).bindTo(name.substring(3));
         return new ConstantCallSite(mh);
     }
 
-    public static TObject getField(final MethodHandles.Lookup caller, final LinkedList<JMethod> jmethods, final String name, final TObject object) throws Throwable {
+    public static TObject getField(final MethodHandles.Lookup caller, final LinkedList<JMethod> jmethods,
+                                   final String name, final TObject object) throws Throwable {
         Object obj = object.getObject();
         if (object == TNull.NULL || obj == null) {
             throw new NullPointerException();
@@ -252,7 +264,8 @@ public class Intrinsics {
         return wrap(method.methodHandle.invoke());
     }
 
-    public static CallSite bootstrapVirtual(final MethodHandles.Lookup caller, final String name, final MethodType type, final int paramCount) throws Throwable {
+    public static CallSite bootstrapVirtual(final MethodHandles.Lookup caller, final String name, final MethodType type,
+                                            final int paramCount) throws Throwable {
         int hash = Objects.hash(name, paramCount);
         LinkedList<JMethod> virtualMethods = virtualMethodCache.getOrDefault(hash, new LinkedList<>());
 
@@ -261,13 +274,16 @@ public class Intrinsics {
         }
 
         MethodHandle mh = caller.findStatic(Intrinsics.class, "invokeVirtual",
-                MethodType.methodType(TObject.class, MethodHandles.Lookup.class, LinkedList.class, String.class, Integer.class, TObject.class, TList.class));
+                MethodType.methodType(TObject.class, MethodHandles.Lookup.class, LinkedList.class, String.class,
+                        Integer.class, TObject.class, TList.class));
         mh = mh.bindTo(caller).bindTo(virtualMethods).bindTo(name).bindTo(paramCount);
 
         return new ConstantCallSite(mh);
     }
 
-    public static TObject invokeVirtual(final MethodHandles.Lookup caller, final LinkedList<JMethod> jmethods, final String name, final Integer paramCount, final TObject instance, final TList args) throws Throwable {
+    public static TObject invokeVirtual(final MethodHandles.Lookup caller, final LinkedList<JMethod> jmethods,
+                                        final String name, final Integer paramCount, final TObject instance,
+                                        final TList args) throws Throwable {
         Object v = instance.getObject();
 
         requireNonNull(instance);
@@ -308,7 +324,8 @@ public class Intrinsics {
         return wrap(method.methodHandle.bindTo(instance).invokeWithArguments(getParams(args, method.types, 999)));
     }
 
-    public static CallSite bootstrap(final MethodHandles.Lookup caller, final String name, final MethodType type, final Class<?> clazz, final int paramCount) throws Throwable {
+    public static CallSite bootstrap(final MethodHandles.Lookup caller, final String name, final MethodType type,
+                                     final Class<?> clazz, final int paramCount) throws Throwable {
         LinkedList<JMethod> list = new LinkedList<>();
         for (Method method : clazz.getDeclaredMethods()) {
             if (method.getName().equals(name) && method.getParameterCount() == paramCount &&
@@ -332,11 +349,13 @@ public class Intrinsics {
             }
         }
 
-        MethodHandle mh = caller.findStatic(Intrinsics.class, "invokeStatic", MethodType.methodType(TObject.class, LinkedList.class, String.class, TList.class));
+        MethodHandle mh = caller.findStatic(Intrinsics.class, "invokeStatic", MethodType.methodType(TObject.class,
+                LinkedList.class, String.class, TList.class));
         return new ConstantCallSite(mh.bindTo(list).bindTo(name));
     }
 
-    public static TObject invokeStatic(final LinkedList<JMethod> jm, final String name, final TList args) throws Throwable {
+    public static TObject invokeStatic(final LinkedList<JMethod> jm, final String name, final TList args)
+            throws Throwable {
         if (jm == null || jm.size() == 0) {
             throw new NoSuchMethodException(name);
         }
