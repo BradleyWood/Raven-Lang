@@ -17,7 +17,7 @@ import java.util.LinkedList;
 import java.util.stream.Collectors;
 
 @RunWith(Parameterized.class)
-public class ReplTestRunner {
+public class ReplTest {
 
     private static final String ANY = "*";
     private static final ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -28,7 +28,7 @@ public class ReplTestRunner {
 
     private final String path;
 
-    public ReplTestRunner(final String path) {
+    public ReplTest(final String path) {
         this.path = path;
     }
 
