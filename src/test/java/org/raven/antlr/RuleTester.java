@@ -7,7 +7,7 @@ import org.raven.antlr.ast.Import;
 import org.raven.antlr.ast.Range;
 import org.raven.antlr.ast.Statement;
 import org.raven.antlr.visitor.ParamDefVisitor;
-import org.raven.antlr.visitor.ToyFileVisitor;
+import org.raven.antlr.visitor.RavenFileVisitor;
 
 import static org.junit.Assert.assertEquals;
 
@@ -26,7 +26,7 @@ public class RuleTester {
         p.removeErrorListener(ConsoleErrorListener.INSTANCE);
 
         try {
-            new ToyFileVisitor().visit(p.ravenFile());
+            new RavenFileVisitor().visit(p.ravenFile());
         } catch (Exception e) {
             if (pass) {
                 Assert.fail();
