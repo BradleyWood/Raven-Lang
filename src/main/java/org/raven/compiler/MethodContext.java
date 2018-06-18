@@ -1,5 +1,6 @@
 package org.raven.compiler;
 
+import org.raven.antlr.Modifier;
 import org.raven.antlr.ast.*;
 import org.raven.core.wrappers.TObject;
 
@@ -9,10 +10,10 @@ import java.util.List;
 public class MethodContext {
 
     private final LinkedList<Fun> syntheticFunctions = new LinkedList<>();
-    private LinkedList<TObject> constants = new LinkedList<>();
+    private final LinkedList<TObject> constants = new LinkedList<>();
+    private final List<QualifiedName> imports;
     private final String owner;
     private String name;
-    private final List<QualifiedName> imports;
 
     private boolean isStatic = false;
 
@@ -59,11 +60,13 @@ public class MethodContext {
     }
 
     public void setConstants(final LinkedList<TObject> constants) {
-        this.constants = constants;
+        this.constants.clear();
+        this.constants.addAll(constants);
     }
 
     public void addSynthetic(final Fun fun) {
         syntheticFunctions.add(fun);
+        fun.addModifier(Modifier.SYNTHETIC);
     }
 
     public List<Fun> getSyntheticFunctions() {
