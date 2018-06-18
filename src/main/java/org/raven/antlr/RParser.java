@@ -4,7 +4,7 @@ package org.raven.antlr;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.ConsoleErrorListener;
-import org.raven.antlr.visitor.ToyFileVisitor;
+import org.raven.antlr.visitor.RavenFileVisitor;
 
 
 import java.io.File;
@@ -24,7 +24,7 @@ public class RParser {
         RavenParser parser = new RavenParser(tokenStream);
         parser.removeErrorListener(ConsoleErrorListener.INSTANCE);
         parser.addErrorListener(new RavenErrorListener(file));
-        ToyFileVisitor fileVisitor = new ToyFileVisitor();
+        RavenFileVisitor fileVisitor = new RavenFileVisitor();
 
         RavenParser.RavenFileContext ctx = parser.ravenFile();
 

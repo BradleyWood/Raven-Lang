@@ -4,7 +4,7 @@ import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.ConsoleErrorListener;
 import org.raven.antlr.ast.Statement;
-import org.raven.antlr.visitor.ToyFileVisitor;
+import org.raven.antlr.visitor.RavenFileVisitor;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -18,7 +18,7 @@ public class StatementParser {
         parser.removeErrorListener(ConsoleErrorListener.INSTANCE);
         parser.addErrorListener(new RavenErrorListener("<stdin>"));
 
-        ToyFileVisitor tfv = new ToyFileVisitor();
+        RavenFileVisitor tfv = new RavenFileVisitor();
 
         RavenParser.RavenFileContext ctx = parser.ravenFile();
 

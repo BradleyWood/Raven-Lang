@@ -8,7 +8,7 @@ import org.raven.antlr.ast.Statement;
 
 import java.util.ArrayList;
 
-public class ToyFileVisitor extends RavenBaseVisitor<RavenTree> {
+public class RavenFileVisitor extends RavenBaseVisitor<RavenTree> {
 
     @Override
     public RavenTree visitRavenFile(final RavenParser.RavenFileContext ctx) {
