@@ -33,8 +33,8 @@ public class ExpressionVisitor extends RavenBaseVisitor<Expression> {
             expr = ctx.dict().accept(DictDefVisitor.INSTANCE);
         } else if (ctx.list() != null) {
             expr = ctx.list().accept(ArrayDefVisitor.INSTANCE);
-        } else if (ctx.slice() != null) {
-            expr = ctx.slice().accept(SliceVisitor.INSTANCE);
+        } else if (ctx.lst != null) {
+            expr = getSlice(ctx);
         } else if (ctx.funCall() != null) {
             expr = ctx.funCall().accept(FunCallVisitor.INSTANCE);
         } else if (ctx.qualifiedName() != null) {
@@ -77,6 +77,22 @@ public class ExpressionVisitor extends RavenBaseVisitor<Expression> {
         }
 
         return expr;
+    }
+
+    private Expression getSlice(final RavenParser.ExpressionContext ctx) {
+        QualifiedName funName = new QualifiedName("subList");
+
+        Expression lst = ctx.lst.accept(this);
+        Expression start = new Literal(new TInt(0));
+
+        Expression end = new Call(lst, new QualifiedName("size"));
+        if (ctx.lhs != null) {
+            start = ctx.lhs.accept(ExpressionVisitor.INSTANCE);
+        }
+        if (ctx.rhs != null) {
+            end = ctx.rhs.accept(ExpressionVisitor.INSTANCE);
+        }
+        return new Call(lst, funName, start, end);
     }
 
     private static Operator getOperator(final RavenParser.ExpressionContext ctx) {

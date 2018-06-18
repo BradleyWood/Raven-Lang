@@ -22,7 +22,7 @@ public class SliceVisitorTest {
         Expression end = new Call((Expression) varName, new QualifiedName("size"));
         Call call = new Call((Expression) varName, SLICE_FUN,
                 start, end);
-        testStatement(SliceVisitor.INSTANCE, "lst[:];", call);
+        testStatement(ExpressionVisitor.INSTANCE, "lst[:];", call);
     }
 
     @Test
@@ -31,7 +31,7 @@ public class SliceVisitorTest {
         Expression end = new Call((Expression) varName, new QualifiedName("size"));
         Call call = new Call((Expression) varName, SLICE_FUN,
                 new Literal(new TInt(4)), end);
-        testStatement(SliceVisitor.INSTANCE, "lst[4:];", call);
+        testStatement(ExpressionVisitor.INSTANCE, "lst[4:];", call);
     }
 
     @Test
@@ -39,21 +39,32 @@ public class SliceVisitorTest {
         QualifiedName varName = new QualifiedName("lst");
         Call call = new Call((Expression) varName, SLICE_FUN,
                 start, new Literal(new TInt(4)));
-        testStatement(SliceVisitor.INSTANCE, "lst[:4];", call);
+        testStatement(ExpressionVisitor.INSTANCE, "lst[:4];", call);
     }
 
     @Test
     public void testSliceIntBounds() {
         Call call = new Call((Expression) new QualifiedName("lst"), SLICE_FUN,
                 start, new Literal(new TInt(4)));
-        testStatement(SliceVisitor.INSTANCE, "lst[0:4];", call);
+        testStatement(ExpressionVisitor.INSTANCE, "lst[0:4];", call);
     }
 
     @Test
     public void testSliceVarBounds() {
         Call call = new Call((Expression) new QualifiedName("lst"), SLICE_FUN,
                 new QualifiedName("a"), new QualifiedName("b"));
-        testStatement(SliceVisitor.INSTANCE, "lst[a:b];", call);
+        testStatement(ExpressionVisitor.INSTANCE, "lst[a:b];", call);
+    }
+
+    @Test
+    public void testSliceofSlice() {
+        Call innerSlice = new Call((Expression) new QualifiedName("lst"), SLICE_FUN,
+                new QualifiedName("a"), new QualifiedName("b"));
+
+        Call outerSlice = new Call(innerSlice, SLICE_FUN,
+                new QualifiedName("a"), new QualifiedName("b"));
+
+        testStatement(ExpressionVisitor.INSTANCE, "lst[a:b][a:b];", outerSlice);
     }
 
 }

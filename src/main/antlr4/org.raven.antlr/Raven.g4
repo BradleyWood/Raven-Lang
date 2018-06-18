@@ -132,11 +132,11 @@ expression
     |   goExpression
     |   qualifiedName
     |   expression listIdx
-    |   slice
     |   list
     |   dict
     |   (ADD|SUB|NOT) expression
     |   '(' expression ')'
+    |   lst=expression '[' lhs=expression? ':' rhs=expression? ']'
     |   expression (EXP) expression
     |   expression (MULT|DIV|MOD) expression
     |   expression (ADD|SUB)  expression
@@ -172,9 +172,6 @@ paramList
     ;
 listIdx
     :   ('[' expression ']')+
-    ;
-slice
-    :   qualifiedName '[' lhs=expression? ':' rhs=expression? ']'
     ;
 list
     :   '[' paramList? ']'
