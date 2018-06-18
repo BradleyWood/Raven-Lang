@@ -1,15 +1,10 @@
 package org.raven.antlr.visitor;
 
-import org.raven.antlr.Operator;
-import org.raven.error.Errors;
 import org.raven.antlr.RavenBaseVisitor;
 import org.raven.antlr.RavenParser;
 import org.raven.antlr.ast.*;
-import org.raven.util.Settings;
-
 
 public class StatementVisitor extends RavenBaseVisitor<Statement> {
-
 
     private StatementVisitor() {
     }
