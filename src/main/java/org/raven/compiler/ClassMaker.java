@@ -40,11 +40,13 @@ public class ClassMaker {
             interfaces[i] = def.getInterfaces()[i].toString().replace(".", "/");
         }
 
-        cw.visit(V1_7, modifiers, def.getFullName(), null, def.getSuper().toString().replace(".", "/"), interfaces);
+        cw.visit(V1_7, modifiers, def.getFullName(), null, def.getSuper().toString().replace(
+                ".", "/"), interfaces);
         cw.visitAnnotation(Constants.ANNOTATION_TLFILE_SIG, true).visitEnd();
         cw.visitSource(def.getSourceTree().getSourceFile(), null);
 
-        cw.visitField(ACC_PRIVATE + ACC_STATIC + ACC_FINAL, "__CONSTANTS__", "[" + Constants.TOBJ_SIG, null, null);
+        cw.visitField(ACC_PRIVATE + ACC_STATIC + ACC_SYNTHETIC + ACC_FINAL, "__CONSTANTS__",
+                "[" + Constants.TOBJ_SIG, null, null);
         for (VarDecl staticVariable : def.getFields()) {
             if (!staticVariable.isPrivate()) {
                 staticVariable.setPublic();
@@ -69,7 +71,8 @@ public class ClassMaker {
             classCtx.setStatic(fun.hasModifier(Modifier.STATIC));
             defineMethod(classCtx, fun, fun.modifiers());
 
-            Fun override = SymbolMap.resolveJavaFun(def.getSuper().toString(), fun.getName().toString(), fun.getParams().length);
+            Fun override = SymbolMap.resolveJavaFun(def.getSuper().toString(), fun.getName().toString(),
+                    fun.getParams().length);
             if (override != null) {
                 Fun delegate = createDelegate(Type.getType(override.getDesc()), override.getName().toString());
                 defineMethod(classCtx, delegate, fun.getParams().length);
@@ -106,7 +109,8 @@ public class ClassMaker {
     }
 
     /**
-     * Creates an empty stub method that does nothing
+     * Creates an empty stub method that does nothing, used as
+     * a placeholder for unimplemented interface methods
      *
      * @param name The name of the method
      * @param type The method type
@@ -180,7 +184,8 @@ public class ClassMaker {
             modifiers += modifier.getModifier();
         }
 
-        Method method = new Method(ctx, cw.visitMethod(modifiers, "<init>", constructor.getDesc(), null, null));
+        Method method = new Method(ctx, cw.visitMethod(modifiers, "<init>", constructor.getDesc(), null,
+                null));
         constructor.getAnnotations().forEach(method::visitAnnotation);
 
         method.visitCode();
@@ -194,9 +199,11 @@ public class ClassMaker {
         Method method;
 
         if (fun.isJavaMethod()) {
-            method = new AdaptorMethod(context, cw.visitMethod(modifiers, fun.getName().toString(), desc, null, fun.getExceptions()));
+            method = new AdaptorMethod(context, cw.visitMethod(modifiers, fun.getName().toString(), desc, null,
+                    fun.getExceptions()));
         } else {
-            method = new Method(context, cw.visitMethod(modifiers, fun.getName().toString(), desc, null, fun.getExceptions()));
+            method = new Method(context, cw.visitMethod(modifiers, fun.getName().toString(), desc, null,
+                    fun.getExceptions()));
         }
 
         fun.getAnnotations().forEach(annotation -> annotation.accept(method));
