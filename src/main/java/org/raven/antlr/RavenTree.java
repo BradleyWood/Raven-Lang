@@ -8,7 +8,7 @@ import java.util.List;
 /**
  * Root of the src
  */
-public class RavenTree extends AST {
+public class RavenTree extends Node {
 
     private List<Statement> statements = new ArrayList<>();
     private QualifiedName pack = new QualifiedName();

@@ -1,12 +1,12 @@
 package org.raven.antlr.ast;
 
-import org.raven.antlr.AST;
+import org.raven.antlr.Node;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-public class Statement extends AST {
+public class Statement extends Node {
 
     private final ArrayList<Annotation> annotations = new ArrayList<>();
 
