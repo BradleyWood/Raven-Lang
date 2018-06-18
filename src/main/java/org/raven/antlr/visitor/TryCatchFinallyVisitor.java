@@ -22,7 +22,13 @@ public class TryCatchFinallyVisitor extends RavenBaseVisitor<TryCatchFinally> {
             finallyBlock = ctx.block(2).accept(BlockVisitor.INSTANCE);
         }
 
-        return new TryCatchFinally(body, exName, handler, finallyBlock);
+        TryCatchFinally tcf = new TryCatchFinally(body, exName, handler, finallyBlock);
+
+        body.setParent(tcf);
+        handler.setParent(tcf);
+        exName.setParent(tcf);
+
+        return tcf;
     }
 
     public static final TryCatchFinallyVisitor INSTANCE = new TryCatchFinallyVisitor();

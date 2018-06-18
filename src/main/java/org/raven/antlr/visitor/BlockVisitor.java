@@ -14,6 +14,7 @@ public class BlockVisitor extends RavenBaseVisitor<Block> {
         Block block = new Block();
 
         ctx.statement().forEach(stmt -> block.append(stmt.accept(StatementVisitor.INSTANCE)));
+        block.getStatements().forEach(stmt -> stmt.setParent(block));
 
         return block;
     }

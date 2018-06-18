@@ -5,6 +5,8 @@ import org.raven.antlr.RavenParser;
 import org.raven.antlr.ast.Expression;
 import org.raven.antlr.ast.ListDef;
 
+import java.util.Arrays;
+
 public class ArrayDefVisitor extends RavenBaseVisitor<ListDef> {
 
     private ArrayDefVisitor() {
@@ -17,7 +19,11 @@ public class ArrayDefVisitor extends RavenBaseVisitor<ListDef> {
             for (int i = 0; i < expra.length; i++) {
                 expra[i] = ctx.paramList().param(i).accept(ExpressionVisitor.INSTANCE);
             }
-            return new ListDef(expra);
+
+            ListDef def = new ListDef(expra);
+            Arrays.stream(expra).forEach(e -> e.setParent(def));
+
+            return def;
         }
         return new ListDef();
     }

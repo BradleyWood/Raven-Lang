@@ -5,6 +5,8 @@ import org.raven.antlr.RavenParser;
 import org.raven.antlr.ast.DictDef;
 import org.raven.antlr.ast.Expression;
 
+import java.util.Arrays;
+
 public class DictDefVisitor extends RavenBaseVisitor<DictDef> {
 
     private DictDefVisitor() {
@@ -24,7 +26,13 @@ public class DictDefVisitor extends RavenBaseVisitor<DictDef> {
             keys[i] = ctx.dictParamList().dictParam(i).expression(0).accept(ExpressionVisitor.INSTANCE);
             values[i] = ctx.dictParamList().dictParam(i).expression(1).accept(ExpressionVisitor.INSTANCE);
         }
-        return new DictDef(keys, values);
+
+        DictDef def = new DictDef(keys, values);
+
+        Arrays.stream(keys).forEach(k -> k.setParent(def));
+        Arrays.stream(values).forEach(v -> v.setParent(def));
+
+        return def;
     }
 
     public static final DictDefVisitor INSTANCE = new DictDefVisitor();

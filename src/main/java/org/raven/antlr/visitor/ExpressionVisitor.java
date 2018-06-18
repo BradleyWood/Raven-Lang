@@ -44,29 +44,40 @@ public class ExpressionVisitor extends RavenBaseVisitor<Expression> {
         } else if (ctx.lhs != null && ctx.rhs != null && ctx.ASSIGNMENT() != null) {
             ListIndex lIdx = ctx.listIdx().accept(ListIndexVisitor.INSTANCE);
             lIdx.setPrecedingExpr(ctx.lhs.accept(ExpressionVisitor.INSTANCE));
-            expr = new BinOp(lIdx, Operator.ASSIGNMENT, ctx.rhs.accept(ExpressionVisitor.INSTANCE));
+            Expression rhs = ctx.rhs.accept(ExpressionVisitor.INSTANCE);
+
+            expr = new BinOp(lIdx, Operator.ASSIGNMENT, rhs);
+
+            lIdx.setParent(expr);
+            rhs.setParent(expr);
         } else if (ctx.listIdx() != null) {
             Expression preceding = ctx.expression(0).accept(ExpressionVisitor.INSTANCE);
             ListIndex lIdx = ctx.listIdx().accept(ListIndexVisitor.INSTANCE);
             lIdx.setPrecedingExpr(preceding);
+            preceding.setParent(lIdx);
             expr = lIdx;
         } else if (ctx.expression().size() == 1) {
-            expr = ctx.expression(0).accept(ExpressionVisitor.INSTANCE);
+            Expression val = ctx.expression(0).accept(ExpressionVisitor.INSTANCE);
             if (ctx.SUB() != null) {
-                expr = ctx.expression(0).accept(ExpressionVisitor.INSTANCE);
-                if (expr instanceof Literal) {
-                    expr = new Literal(((Literal) expr).getValue().not()); // negate numbers at compile time
+                if (val instanceof Literal) {
+                    expr = new Literal(((Literal) val).getValue().not()); // negate numbers at compile time
                 } else {
-                    expr = new BinOp(new Literal(new TInt(0)), Operator.SUB, expr);
+                    expr = new BinOp(new Literal(new TInt(0)), Operator.SUB, val);
                 }
+                val.setParent(expr);
             } else if (ctx.NOT() != null) {
-                expr = new BinOp(null, Operator.NOT, expr);
+                expr = new BinOp(null, Operator.NOT, val);
+                val.setParent(expr);
+            } else {
+                expr = val;
             }
         } else if (ctx.expression().size() == 2) {
             Expression left = ctx.expression(0).accept(ExpressionVisitor.INSTANCE);
             Expression right = ctx.expression(1).accept(ExpressionVisitor.INSTANCE);
-            Operator operator = getOperator(ctx);
-            expr = new BinOp(left, operator, right);
+            expr = new BinOp(left, getOperator(ctx), right);
+
+            left.setParent(expr);
+            right.setParent(expr);
         } else {
             Errors.put("Unsupported expression: " + ctx.getText());
         }
@@ -92,7 +103,15 @@ public class ExpressionVisitor extends RavenBaseVisitor<Expression> {
         if (ctx.rhs != null) {
             end = ctx.rhs.accept(ExpressionVisitor.INSTANCE);
         }
-        return new Call(lst, funName, start, end);
+
+        Call call = new Call(lst, funName, start, end);
+
+        lst.setParent(call);
+        funName.setParent(call);
+        start.setParent(call);
+        end.setParent(call);
+
+        return call;
     }
 
     private static Operator getOperator(final RavenParser.ExpressionContext ctx) {

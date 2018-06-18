@@ -6,6 +6,8 @@ import org.raven.antlr.ast.Call;
 import org.raven.antlr.ast.Expression;
 import org.raven.antlr.ast.QualifiedName;
 
+import java.util.Arrays;
+
 public class FunCallVisitor extends RavenBaseVisitor<Expression> {
 
     private FunCallVisitor() {
@@ -27,7 +29,13 @@ public class FunCallVisitor extends RavenBaseVisitor<Expression> {
         for (int i = 0; i < expressions.length; i++) {
             expressions[i] = ctx.paramList().param(i).accept(ExpressionVisitor.INSTANCE);
         }
-        return new Call(name, expressions);
+
+        Call call = new Call(name, expressions);
+
+        Arrays.stream(expressions).forEach(e -> e.setParent(call));
+        name.setParent(call);
+
+        return call;
     }
 
     public static FunCallVisitor INSTANCE = new FunCallVisitor();

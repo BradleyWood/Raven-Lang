@@ -17,7 +17,11 @@ public class ReturnVisitor extends RavenBaseVisitor<Return> {
         if (ctx.expression() != null)
             expression = ctx.expression().accept(ExpressionVisitor.INSTANCE);
 
-        return new Return(expression);
+        Return ret = new Return(expression);
+        if (expression != null)
+            expression.setParent(ret);
+
+        return ret;
     }
 
     public static final ReturnVisitor INSTANCE = new ReturnVisitor();

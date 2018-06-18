@@ -25,7 +25,14 @@ public class AssignmentVisitor extends RavenBaseVisitor<BinOp> {
             value = new BinOp(lhs, operator, value);
         }
 
-        return new BinOp(lhs, Operator.ASSIGNMENT, value);
+        BinOp bop = new BinOp(lhs, Operator.ASSIGNMENT, value);
+
+        if (lhs != null)
+            lhs.setParent(bop);
+
+        value.setParent(bop);
+
+        return bop;
     }
 
     private Operator getOperator(final RavenParser.VarAssignmentContext ctx) {

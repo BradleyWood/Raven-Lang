@@ -1,5 +1,7 @@
 package org.raven.antlr.ast;
 
+import org.raven.antlr.Node;
+
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
@@ -25,6 +27,7 @@ public class Block extends Statement {
 
     /**
      * Append a statement to the end of this block
+     *
      * @param statement The statement or expression
      */
     public void append(final Statement statement) {
@@ -33,6 +36,7 @@ public class Block extends Statement {
 
     /**
      * Add a statement to the beginning of this block
+     *
      * @param statement The statement or expression
      */
     public void addBefore(final Statement statement) {
@@ -41,6 +45,7 @@ public class Block extends Statement {
 
     /**
      * Get the list of statements in this block
+     *
      * @return A list of statements
      */
     public List<Statement> getStatements() {
@@ -66,6 +71,12 @@ public class Block extends Statement {
 
         Block block = (Block) o;
         return Objects.equals(statements, block.statements);
+    }
+
+    @Override
+    public void setParent(final Node parent) {
+        super.setParent(parent);
+        statements.forEach(stmt -> stmt.setParent(parent));
     }
 
     @Override

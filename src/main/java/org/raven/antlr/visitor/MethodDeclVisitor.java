@@ -42,10 +42,15 @@ public class MethodDeclVisitor extends RavenBaseVisitor<Fun> {
 
         Fun fun = new Fun(name, body, modArray, new String[0], params.toArray(new VarDecl[params.size()]));
 
+        params.forEach(param -> param.setParent(fun));
+        name.setParent(fun);
+        body.setParent(fun);
+
         if (ctx.annotation() != null) {
             for (RavenParser.AnnotationContext annotationContext : ctx.annotation()) {
                 Annotation anno = annotationContext.accept(AnnotationVisitor.INSTANCE);
                 fun.addAnnotation(anno);
+                anno.setParent(fun);
             }
         }
 

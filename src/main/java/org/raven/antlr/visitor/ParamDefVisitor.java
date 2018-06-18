@@ -12,7 +12,12 @@ public class ParamDefVisitor extends RavenBaseVisitor<VarDecl> {
 
     @Override
     public VarDecl visitParamDef(final RavenParser.ParamDefContext ctx) {
-        return new VarDecl(new QualifiedName(ctx.IDENTIFIER().getText()), null);
+        QualifiedName name = new QualifiedName(ctx.IDENTIFIER().getText());
+
+        VarDecl declaration = new VarDecl(new QualifiedName(ctx.IDENTIFIER().getText()), null);
+        name.setParent(declaration);
+
+        return declaration;
     }
 
     public static final ParamDefVisitor INSTANCE = new ParamDefVisitor();

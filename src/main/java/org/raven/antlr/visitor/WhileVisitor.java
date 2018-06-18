@@ -16,7 +16,12 @@ public class WhileVisitor extends RavenBaseVisitor<While> {
         Expression condition = ctx.expression().accept(ExpressionVisitor.INSTANCE);
         Statement body = ctx.statement().accept(StatementVisitor.INSTANCE);
 
-        return new While(condition, body, ctx.DO() != null);
+        While whileStatement = new While(condition, body, ctx.DO() != null);
+
+        condition.setParent(whileStatement);
+        body.setParent(whileStatement);
+
+        return whileStatement;
     }
 
     public static final WhileVisitor INSTANCE = new WhileVisitor();

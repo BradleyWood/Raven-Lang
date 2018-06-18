@@ -7,6 +7,7 @@ import org.raven.antlr.ast.*;
 import org.raven.compiler.ClassMaker;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -46,7 +47,17 @@ public class ClassDefVisitor extends RavenBaseVisitor<ClassDef> {
         List<Statement> statementList = new ArrayList<>(block.getStatements());
 
         ClassDef def = new ClassDef(modifiers, name, inh, statementList);
+
         def.setVarParams(varParams);
+        block.setParent(def);
+
+        inh.getSuperClass().setParent(def);
+        Arrays.stream(inh.getInterfaces()).forEach(iFace -> iFace.setParent(def));
+
+        Expression[] superParams = inh.getSuperParams();
+        if (superParams != null)
+            Arrays.stream(superParams).forEach(sp -> sp.setParent(def));
+
         return def;
     }
 

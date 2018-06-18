@@ -33,6 +33,8 @@ public class ToyFileVisitor extends RavenBaseVisitor<RavenTree> {
             }
         });
         statements.addAll(functions);
+        statements.forEach(stmt -> stmt.setParent(tree));
+
         return tree;
     }
 }

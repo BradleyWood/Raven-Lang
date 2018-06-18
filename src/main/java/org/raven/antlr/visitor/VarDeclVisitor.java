@@ -28,7 +28,13 @@ public class VarDeclVisitor extends RavenBaseVisitor<VarDecl> {
             }
         }
 
-        return new VarDecl(name, expr, modArray);
+        VarDecl declaration = new VarDecl(name, expr, modArray);
+        name.setParent(declaration);
+
+        if (expr != null)
+            expr.setParent(declaration);
+
+        return declaration;
     }
 
     public static final VarDeclVisitor INSTANCE = new VarDeclVisitor();

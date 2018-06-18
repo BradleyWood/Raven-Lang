@@ -9,6 +9,7 @@ import org.raven.antlr.ast.Constructor;
 import org.raven.antlr.ast.VarDecl;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 public class ConstructorVisitor extends RavenBaseVisitor<Constructor> {
 
@@ -17,7 +18,6 @@ public class ConstructorVisitor extends RavenBaseVisitor<Constructor> {
 
     @Override
     public Constructor visitConstructor(final RavenParser.ConstructorContext ctx) {
-
         Annotation[] annotations = new Annotation[0];
         if (ctx.annotation() != null) {
             annotations = new Annotation[ctx.annotation().size()];
@@ -41,7 +41,13 @@ public class ConstructorVisitor extends RavenBaseVisitor<Constructor> {
             ctx.paramDef().forEach(pd -> params.add(pd.accept(ParamDefVisitor.INSTANCE)));
         }
 
-        return new Constructor(modifiers, body, params.toArray(new VarDecl[params.size()]));
+        Constructor constructor = new Constructor(modifiers, body, params.toArray(new VarDecl[params.size()]));
+
+        Arrays.stream(annotations).peek(constructor::setParent).forEach(constructor::addAnnotation);
+        params.forEach(p -> p.setParent(constructor));
+        body.setParent(constructor);
+
+        return constructor;
     }
 
     public static final ConstructorVisitor INSTANCE = new ConstructorVisitor();

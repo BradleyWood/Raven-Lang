@@ -6,6 +6,8 @@ import org.raven.antlr.ast.Annotation;
 import org.raven.antlr.ast.Literal;
 import org.raven.antlr.ast.QualifiedName;
 
+import java.util.Arrays;
+
 public class AnnotationVisitor extends RavenBaseVisitor<Annotation> {
 
     private AnnotationVisitor() {
@@ -25,7 +27,14 @@ public class AnnotationVisitor extends RavenBaseVisitor<Annotation> {
                 params[i] = (Literal) ctx.annotationParamList().annotationParam(i).literal().accept(LiteralVisitor.INSTANCE);
             }
         }
-        return new Annotation(name.toString(), names, params);
+
+        Annotation annotation = new Annotation(name.toString(), names, params);
+
+        name.setParent(annotation);
+        Arrays.stream(names).forEach(qn -> qn.setParent(annotation));
+        Arrays.stream(params).forEach(p -> p.setParent(annotation));
+
+        return annotation;
     }
 
     public static final AnnotationVisitor INSTANCE = new AnnotationVisitor();
