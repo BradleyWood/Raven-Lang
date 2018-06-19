@@ -96,6 +96,8 @@ public class JvmMethodAnnotationProcessor implements AnnotationProcessor {
                 return "D";
             case "String":
                 return "Ljava/lang/String;";
+            case "Object":
+                return "Ljava/lang/Object;";
             case "void":
                 return "V";
             default:
