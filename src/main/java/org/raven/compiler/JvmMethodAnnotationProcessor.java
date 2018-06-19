@@ -5,6 +5,8 @@ import org.raven.antlr.ast.*;
 import org.raven.core.wrappers.TString;
 import org.raven.error.Errors;
 
+import java.util.LinkedList;
+
 public class JvmMethodAnnotationProcessor implements AnnotationProcessor {
 
     private final Literal DEFAULT_PARAMS = new Literal(new TString(""));
@@ -18,21 +20,27 @@ public class JvmMethodAnnotationProcessor implements AnnotationProcessor {
         }
         if (annotation.getName().equalsIgnoreCase("JvmMethod")) {
             Fun method = createJavaMethod((Fun) stmt, annotation);
-
             if (stmt.getParent() instanceof ClassDef) {
                 ((ClassDef) stmt.getParent()).getStatements().add(method);
             } else if (stmt.getParent() instanceof RavenTree) {
                 ((RavenTree) stmt.getParent()).getStatements().add(method);
+            } else {
+                Errors.put("line " + annotation.getLineNumber() + ": Annotation: " + annotation.getName() +
+                        " only applies to methods.");
             }
         }
     }
 
     private Fun createJavaMethod(final Fun fun, final Annotation annotation) {
         Block body = new Block();
-        Fun javaMethod = new Fun(fun.getName(), body, fun.getModifiers(), fun.getExceptions(), fun.getParams());
+
+        Fun javaMethod = new Fun(fun.getName(), body, new LinkedList<>(), fun.getExceptions(), fun.getParams());
+        fun.getModifiers().forEach(javaMethod::addModifier);
+
         if (annotation.get("name") != null) {
             javaMethod.setName(annotation.get("name").getValue().toString());
         }
+
         Literal params = annotation.getOrDefault("params", DEFAULT_PARAMS);
         Literal ret = annotation.getOrDefault("ret", DEFAULT_RET);
         updateDesc(javaMethod, params.getValue().toString(),
@@ -42,6 +50,7 @@ public class JvmMethodAnnotationProcessor implements AnnotationProcessor {
         for (int i = 0; i < jParams.length; i++) {
             jParams[i] = new QualifiedName(fun.getParams()[i].getName().toString());
         }
+
         Call call = new Call(fun.getName(), jParams);
 
         if (ret.equals(DEFAULT_RET))
