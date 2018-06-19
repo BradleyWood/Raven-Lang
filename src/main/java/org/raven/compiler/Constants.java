@@ -1,10 +1,6 @@
 package org.raven.compiler;
 
 import org.raven.antlr.ast.QualifiedName;
-import org.raven.core.wrappers.TObject;
-
-import java.util.LinkedList;
-import java.util.List;
 
 public class Constants {
 
