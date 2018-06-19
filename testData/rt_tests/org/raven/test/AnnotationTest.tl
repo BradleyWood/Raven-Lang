@@ -31,9 +31,14 @@ fun testPrimitive() {
     Assert.assertEquals((100 + 200 + 300 + 400) / 4, ave);
 }
 
+fun testAnnotatedFunInClass() {
+    var obj = AnnotatedClass(10, 10, 10);
+    Assert.assertEquals(1000.0, obj.doubleProduct(), 0.001);
+}
+
 class AnnotatedClass(x, y, z) {
 
-    @JvmMethod(ret="double")
+    @JvmMethod(name="doubleProduct", ret="double")
     public fun product() {
         return x * y * z;
     }

@@ -1,10 +1,9 @@
 package org.raven.compiler;
 
-import org.raven.antlr.RavenTree;
-import org.raven.antlr.ast.Statement;
+import org.raven.antlr.ast.Annotation;
 
 public interface AnnotationProcessor {
 
-    void process(RavenTree file, Statement stmt);
+    void process(Annotation annotation);
 
 }

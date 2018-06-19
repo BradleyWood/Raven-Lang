@@ -85,12 +85,6 @@ public class Compiler {
     }
 
     public HashMap<String, byte[]> compile(final boolean save) throws IOException {
-        int max = tree.getStatements().size();
-        for (int i = 0; i < max; i++) {
-            Statement statement = tree.getStatements().get(i);
-            processors.forEach(processors -> processors.process(tree, statement));
-        }
-
         parse();
 
         if (Errors.getErrorCount() > 0) {
@@ -114,6 +108,9 @@ public class Compiler {
             SymbolMap.map(classDef);
             tree.addImport(tree.getPackage().add(classDef.getName()));
             classDef.setSourceTree(tree);
+
+            LinkedList<Statement> statements = new LinkedList<>(classDef.getStatements());
+            statements.forEach(stmt -> stmt.getAnnotations().forEach(a -> processors.forEach(p -> p.process(a))));
         }
 
         for (ClassDef classDef : tree.getClasses()) {
@@ -169,6 +166,7 @@ public class Compiler {
                 fun.addModifier(Modifier.STATIC);
                 def.getStatements().add(statement);
             }
+            statement.setParent(def);
         }
         def.getStatements().add(clinit);
         tree.getStatements().add(def);

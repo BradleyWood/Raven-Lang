@@ -11,20 +11,18 @@ public class JvmMethodAnnotationProcessor implements AnnotationProcessor {
     private final Literal DEFAULT_RET = new Literal(new TString("void"));
 
     @Override
-    public void process(final RavenTree file, final Statement stmt) {
+    public void process(final Annotation annotation) {
+        Statement stmt = (Statement) annotation.getParent();
         if (!(stmt instanceof Fun)) {
             return;
         }
-        for (Annotation annotation : stmt.getAnnotations()) {
-            if (annotation.getName().equalsIgnoreCase("JvmMethod")) {
-                if (file.getStatements().contains(stmt)) {
-                    file.getStatements().add(createJavaMethod((Fun) stmt, annotation));
-                }
-                for (ClassDef classDef : file.getClasses()) {
-                    if (classDef.getMethods().contains(stmt)) {
-                        classDef.getStatements().add(createJavaMethod((Fun) stmt, annotation));
-                    }
-                }
+        if (annotation.getName().equalsIgnoreCase("JvmMethod")) {
+            Fun method = createJavaMethod((Fun) stmt, annotation);
+
+            if (stmt.getParent() instanceof ClassDef) {
+                ((ClassDef) stmt.getParent()).getStatements().add(method);
+            } else if (stmt.getParent() instanceof RavenTree) {
+                ((RavenTree) stmt.getParent()).getStatements().add(method);
             }
         }
     }
