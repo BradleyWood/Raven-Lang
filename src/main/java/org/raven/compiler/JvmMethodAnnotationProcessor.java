@@ -15,18 +15,21 @@ public class JvmMethodAnnotationProcessor implements AnnotationProcessor {
     @Override
     public void process(final Annotation annotation) {
         Statement stmt = (Statement) annotation.getParent();
-        if (!(stmt instanceof Fun)) {
-            return;
-        }
+
         if (annotation.getName().equalsIgnoreCase("JvmMethod")) {
+            if (!(stmt instanceof Fun)) {
+                Errors.put("line " + annotation.getLineNumber() + ": Annotation: " + annotation.getName() +
+                        " only applies to methods.");
+                return;
+            }
             Fun method = createJavaMethod((Fun) stmt, annotation);
             if (stmt.getParent() instanceof ClassDef) {
                 ((ClassDef) stmt.getParent()).getStatements().add(method);
             } else if (stmt.getParent() instanceof RavenTree) {
                 ((RavenTree) stmt.getParent()).getStatements().add(method);
             } else {
-                Errors.put("line " + annotation.getLineNumber() + ": Annotation: " + annotation.getName() +
-                        " only applies to methods.");
+                Errors.put("line " + annotation.getLineNumber() + ": invalid parent for function: "
+                        + stmt.getParent().getClass());
             }
         }
     }
