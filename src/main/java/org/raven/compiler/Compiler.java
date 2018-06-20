@@ -53,7 +53,7 @@ public class Compiler {
         return compile(true);
     }
 
-    private void parse() {
+    private void parseImports() {
         for (QualifiedName qualifiedName : tree.getImports()) {
             if (!IMPORTS.contains(qualifiedName.toString())) {
                 String file = findFile(qualifiedName);
@@ -85,7 +85,7 @@ public class Compiler {
     }
 
     public HashMap<String, byte[]> compile(final boolean save) throws IOException {
-        parse();
+        parseImports();
 
         if (Errors.getErrorCount() > 0) {
             // syntax errors
@@ -94,10 +94,6 @@ public class Compiler {
 
         // no errors... generate code
         HashMap<String, ClassMaker> classBuilders = new HashMap<>();
-
-        for (ClassDef classDef : tree.getClasses()) {
-            classDef.setPackage(tree.getPackage());
-        }
 
         modifyTree(tree);
 
@@ -125,11 +121,11 @@ public class Compiler {
         }
 
         for (String s : classBuilders.keySet()) {
-            String file = Settings.getOrDefault("OUT", DEFUALT_OUTPUT)
-                    + "/" + s.replace(".", "/") + ".class";
             byte[] data = classBuilders.get(s).getBytes();
             classMap.put(s, data);
             if (save) {
+                String file = Settings.getOrDefault("OUT", DEFUALT_OUTPUT) + "/" +
+                        s.replace(".", "/") + ".class";
                 File f = new File(file).getParentFile();
                 f.mkdirs();
                 FileOutputStream fos = new FileOutputStream(file);
@@ -141,18 +137,24 @@ public class Compiler {
         return classMap;
     }
 
+    /**
+     * Places any non-static fields and functions into a synthetic class with
+     * the same name as the containing file. Adds class initializer to any
+     * class that does not have one.
+     *
+     * @param tree The ast
+     */
     private void modifyTree(final RavenTree tree) {
-        String name = tree.getPackage().add(tree.getName().toString()).toString().replace(".", "/");
-        boolean exists = tree.getClasses().stream().filter(cd -> cd.getFullName().equals(name)).count() == 1;
-        ClassDef def;
-        if (exists) {
-            def = tree.getClasses().stream().filter(cd -> cd.getFullName().equals(name)).collect(Collectors.toList()).get(0);
-        } else {
-            def = new ClassDef(new Modifier[]{Modifier.PUBLIC}, tree.getPackage(), tree.getName().toString(),
-                    new QualifiedName("java", "lang", "Object"), new QualifiedName[0], new ArrayList<>());
-        }
+        String className = tree.getPackage().add(tree.getName().toString()).toString().replace(".", "/");
+
+        ClassDef def = tree.getClasses().stream().filter(cd -> cd.getFullName().equals(className)).findFirst().orElse(
+                new ClassDef(new Modifier[]{Modifier.PUBLIC}, tree.getPackage(), tree.getName().toString(),
+                        new QualifiedName("java", "lang", "Object"), new QualifiedName[0], new ArrayList<>())
+        );
+
         Block b = new Block();
         Fun clinit = new Fun(new QualifiedName("<clinit>"), b, new Modifier[]{Modifier.STATIC}, null);
+        // add the functions and fields to the synthetic class
         for (Statement statement : tree.getStatements()) {
             if (statement instanceof VarDecl) {
                 VarDecl decl = (VarDecl) statement;
@@ -160,6 +162,7 @@ public class Compiler {
                 def.getStatements().add(statement);
             }
             if (!(statement instanceof Fun)) {
+                // place dangling statements into the class initializer block
                 b.append(statement);
             } else {
                 Fun fun = (Fun) statement;
@@ -168,13 +171,16 @@ public class Compiler {
             }
             statement.setParent(def);
         }
+
         def.getStatements().add(clinit);
         tree.getStatements().add(def);
 
         for (ClassDef classDef : tree.getClasses()) {
+            classDef.setPackage(tree.getPackage());
             if (!classDef.equals(def)) {
-                Fun clinit_ = new Fun(new QualifiedName("<clinit>"), new Block(), new Modifier[]{Modifier.STATIC}, null);
-                classDef.getStatements().add(clinit_);
+                // add class initializer if one does not exist
+                clinit = new Fun(new QualifiedName("<clinit>"), new Block(), new Modifier[]{Modifier.STATIC}, null);
+                classDef.getStatements().add(clinit);
             }
         }
     }
