@@ -430,8 +430,12 @@ public class Intrinsics {
 
     @Hidden
     public static int rate(final TObject params, final Class<?>[] types) {
-        if (!(params instanceof TList) || params.size() != types.length)
+        if (params.size() != types.length)
+            return TObject.COERCE_IMPOSSIBLE;
+
+        if (!(params instanceof TList))
             throw new IllegalArgumentException();
+
         List<TObject> lst = ((TList) params).getList();
 
         int rating = 0;
