@@ -7,6 +7,7 @@ import org.raven.antlr.RavenTree;
 import org.raven.antlr.ast.*;
 import org.raven.compiler.ClassMaker;
 import org.raven.compiler.SymbolMap;
+import org.raven.core.Adaptor;
 import org.raven.core.ByteClassLoader;
 import org.raven.core.ExceptionHandler;
 import org.raven.core.wrappers.TObject;
@@ -16,6 +17,7 @@ import org.raven.util.Settings;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /**
@@ -67,6 +69,14 @@ public class InteractiveInterpreter {
             lastLine = null;
         }
         return null;
+    }
+
+    public <T, R> Function<T, R> getFunction(final String methodName, final Class<R> returnType)
+            throws Throwable {
+        if (parent == null)
+            throw new NoSuchMethodException(methodName);
+
+        return Adaptor.getFunction(parent.getDeclaredMethod(methodName, TObject.class), returnType);
     }
 
     private TObject eval(final Class<?> clazz) {
