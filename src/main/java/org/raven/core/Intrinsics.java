@@ -63,7 +63,7 @@ public class Intrinsics {
             }
             constructorList = new LinkedList<>();
             for (Constructor<?> constructor : constructors) {
-                if (constructor.getParameterCount() == argCount) {
+                if (constructor.getParameterCount() == argCount || argCount < 0) {
                     MethodHandle ch = caller.unreflectConstructor(constructor);
                     JMethod jMethod = new JMethod(ch, clazz, constructor.getModifiers(), constructor.getParameterTypes());
                     constructorList.add(jMethod);
@@ -327,8 +327,9 @@ public class Intrinsics {
     public static CallSite bootstrap(final MethodHandles.Lookup caller, final String name, final MethodType type,
                                      final Class<?> clazz, final int paramCount) throws Throwable {
         LinkedList<JMethod> list = new LinkedList<>();
-        for (Method method : clazz.getDeclaredMethods()) {
-            if (method.getName().equals(name) && method.getParameterCount() == paramCount &&
+
+        for (Method method : clazz.getMethods()) {
+            if (method.getName().equals(name) && (paramCount < 0 || method.getParameterCount() == paramCount) &&
                     Modifier.isStatic(method.getModifiers())) {
                 method.setAccessible(true);
                 MethodHandle mh = caller.unreflect(method);
@@ -340,7 +341,7 @@ public class Intrinsics {
         for (Class<?> klazz : clazz.getClasses()) {
             if (klazz.getSimpleName().equals(name)) {
                 for (Constructor<?> constructor : klazz.getDeclaredConstructors()) {
-                    if (constructor.getParameterCount() == paramCount) {
+                    if (constructor.getParameterCount() == paramCount || paramCount < 0) {
                         MethodHandle mh = caller.unreflectConstructor(constructor);
                         JMethod jm = new JMethod(mh, clazz, constructor.getModifiers(), constructor.getParameterTypes());
                         list.add(jm);

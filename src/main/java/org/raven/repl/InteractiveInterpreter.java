@@ -73,10 +73,15 @@ public class InteractiveInterpreter {
 
     public <T, R> Function<T, R> getFunction(final String methodName, final Class<R> returnType)
             throws Throwable {
+        return getFunction(methodName, returnType, -1);
+    }
+
+    public <T, R> Function<T, R> getFunction(final String methodName, final Class<R> returnType, final int paramCount)
+            throws Throwable {
         if (parent == null)
             throw new NoSuchMethodException(methodName);
 
-        return Adaptor.getFunction(parent.getDeclaredMethod(methodName, TObject.class), returnType);
+        return Adaptor.getFunction(parent, methodName, returnType, paramCount);
     }
 
     private TObject eval(final Class<?> clazz) {
