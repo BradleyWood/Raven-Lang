@@ -7,6 +7,10 @@ import org.raven.error.Errors;
 
 import java.util.LinkedList;
 
+/**
+ * Creates an adaptor to a raven method with specified types
+ * and performs coercion
+ */
 public class JvmMethodAnnotationProcessor implements AnnotationProcessor {
 
     private final Literal DEFAULT_PARAMS = new Literal(new TString(""));
