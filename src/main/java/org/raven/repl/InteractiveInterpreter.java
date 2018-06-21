@@ -108,9 +108,9 @@ public class InteractiveInterpreter {
     }
 
     private Class build(final String line) {
-        List<Statement> statementList = StatementParser.parseStatements(line);
+        RavenTree tree = StatementParser.parseStatements(line);
 
-        if (Errors.getErrorCount() > 0) {
+        if (Errors.getErrorCount() > 0 || tree == null) {
             Errors.printErrors();
             Errors.reset();
             return null;
@@ -120,33 +120,36 @@ public class InteractiveInterpreter {
         LinkedList<Fun> functions = new LinkedList<>();
         LinkedList<Statement> statements = new LinkedList<>();
 
-        for (Statement statement : statementList) {
-            if (statement instanceof Import) {
-                if (!imports.contains(statement)) {
-                    try {
-                        Class clazz = Class.forName(((Import) statement).getName().toString());
-                        SymbolMap.map(clazz);
-                        imports.add((Import) statement);
-                    } catch (ClassNotFoundException e) {
-                        System.err.println("Class not found: " + statement);
-                    }
+        for (QualifiedName statement : tree.getImports()) {
+            if (!imports.contains(statement)) {
+                try {
+                    Class clazz = Class.forName(statement.toString());
+                    SymbolMap.map(clazz);
+                    imports.add(new Import(statement));
+                } catch (ClassNotFoundException e) {
+                    System.err.println("Class not found: " + statement);
                 }
-            } else if (statement instanceof VarDecl) {
+            }
+        }
+
+        for (Statement statement : tree.getStatements()) {
+            if (statement instanceof VarDecl) {
                 VarDecl decl = (VarDecl) statement;
                 decl.getModifiers().clear();
                 decl.addModifier(Modifier.PUBLIC);
                 decl.addModifier(Modifier.STATIC);
                 variables.add(decl);
                 statements.add(new BinOp(decl.getName(), Operator.ASSIGNMENT, decl.getInitialValue()));
-            } else if (statement instanceof Fun) {
-                Fun fun = (Fun) statement;
-                fun.getModifiers().clear();
-                fun.addModifier(Modifier.PUBLIC);
-                fun.addModifier(Modifier.STATIC);
-                functions.add((Fun) statement);
             } else {
                 statements.add(statement);
             }
+        }
+
+        for (Fun fun : tree.getFunctions()) {
+            fun.getModifiers().clear();
+            fun.addModifier(Modifier.PUBLIC);
+            fun.addModifier(Modifier.STATIC);
+            functions.add(fun);
         }
 
         if (!statements.isEmpty()) {
@@ -167,10 +170,11 @@ public class InteractiveInterpreter {
         imports.add(new Import(superClass));
 
         String name = "InteractiveInterpreter" + id + "_" + counter++;
+
         ClassDef def = new ClassDef(new Modifier[]{Modifier.PUBLIC}, new QualifiedName("repl"), name, superClass,
                 new QualifiedName[0], new ArrayList<>());
 
-        RavenTree tree = new RavenTree(Collections.singletonList(def));
+        tree.addClass(def);
         tree.setSourceFile("<stdin>");
         def.setSourceTree(tree);
 

@@ -1,6 +1,7 @@
 package org.raven.compiler;
 
 import org.raven.antlr.Modifier;
+import org.raven.antlr.Operator;
 import org.raven.antlr.RParser;
 import org.raven.antlr.RavenTree;
 import org.raven.antlr.ast.*;
@@ -11,7 +12,6 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class Compiler {
 
@@ -97,6 +97,8 @@ public class Compiler {
 
         modifyTree(tree);
 
+        List<ClassDef> gga = tree.getClasses();
+
         for (ClassDef classDef : tree.getClasses()) {
             if (!classDef.isPrivate()) {
                 classDef.setPublic();
@@ -155,25 +157,27 @@ public class Compiler {
         Block b = new Block();
         Fun clinit = new Fun(new QualifiedName("<clinit>"), b, new Modifier[]{Modifier.STATIC}, null);
         // add the functions and fields to the synthetic class
+
         for (Statement statement : tree.getStatements()) {
             if (statement instanceof VarDecl) {
                 VarDecl decl = (VarDecl) statement;
                 decl.addModifier(Modifier.STATIC);
                 def.getStatements().add(statement);
-            }
-            if (!(statement instanceof Fun)) {
-                // place dangling statements into the class initializer block
-                b.append(statement);
+                b.append(new BinOp(decl.getName(), Operator.ASSIGNMENT, decl.getInitialValue()));
             } else {
-                Fun fun = (Fun) statement;
-                fun.addModifier(Modifier.STATIC);
-                def.getStatements().add(statement);
+                b.append(statement);
             }
             statement.setParent(def);
         }
 
+        for (Fun fun : tree.getFunctions()) {
+            fun.addModifier(Modifier.STATIC);
+            def.getStatements().add(fun);
+            fun.setParent(def);
+        }
+
         def.getStatements().add(clinit);
-        tree.getStatements().add(def);
+        tree.addClass(def);
 
         for (ClassDef classDef : tree.getClasses()) {
             classDef.setPackage(tree.getPackage());

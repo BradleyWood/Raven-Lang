@@ -3,19 +3,21 @@ package org.raven.antlr.visitor;
 import org.raven.antlr.RavenBaseVisitor;
 import org.raven.antlr.RavenParser;
 import org.raven.antlr.RavenTree;
+import org.raven.antlr.ast.ClassDef;
 import org.raven.antlr.ast.Fun;
 import org.raven.antlr.ast.Statement;
 
-import java.util.ArrayList;
+import java.util.LinkedList;
 
 public class RavenFileVisitor extends RavenBaseVisitor<RavenTree> {
 
     @Override
     public RavenTree visitRavenFile(final RavenParser.RavenFileContext ctx) {
-        ArrayList<Statement> statements = new ArrayList<>();
-        ArrayList<Statement> functions = new ArrayList<>(); // functions at bottom
+        LinkedList<Statement> statements = new LinkedList<>();
+        LinkedList<Fun> functions = new LinkedList<>();
+        LinkedList<ClassDef> classes = new LinkedList<>();
 
-        RavenTree tree = new RavenTree(statements);
+        RavenTree tree = new RavenTree();
 
         if (ctx.packageDef() != null) {
             tree.setPackage(ctx.packageDef().qualifiedName().accept(QualifiedNameVisitor.INSTANCE));
@@ -26,14 +28,23 @@ public class RavenFileVisitor extends RavenBaseVisitor<RavenTree> {
         ctx.statement().forEach(stmtCtx -> {
             Statement s = stmtCtx.accept(StatementVisitor.INSTANCE);
             if (s != null) {
-                if (s instanceof Fun)
-                    functions.add(s);
-                else
+                if (s instanceof Fun) {
+                    functions.add((Fun) s);
+                } else if (s instanceof ClassDef) {
+                    classes.add((ClassDef) s);
+                } else {
                     statements.add(s);
+                }
             }
         });
-        statements.addAll(functions);
+
         statements.forEach(stmt -> stmt.setParent(tree));
+        functions.forEach(fun -> fun.setParent(tree));
+        classes.forEach(clazz -> clazz.setParent(tree));
+
+        tree.addStatements(statements);
+        tree.addFunctions(functions);
+        tree.addClasses(classes);
 
         return tree;
     }

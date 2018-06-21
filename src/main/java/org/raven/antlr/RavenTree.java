@@ -3,6 +3,7 @@ package org.raven.antlr;
 import org.raven.antlr.ast.*;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -11,16 +12,14 @@ import java.util.List;
 public class RavenTree extends Node {
 
     private List<Statement> statements = new ArrayList<>();
+    private List<ClassDef> classes = new ArrayList<>();
+    private List<Fun> functions = new ArrayList<>();
     private QualifiedName pack = new QualifiedName();
     private List<QualifiedName> imports = new ArrayList<>();
     private QualifiedName name = null;
     private String sourceFile = "";
 
     public RavenTree() {
-    }
-
-    public RavenTree(final List<Statement> statements) {
-        this.statements = statements;
     }
 
     public String getSourceFile() {
@@ -37,7 +36,6 @@ public class RavenTree extends Node {
 
     public void addImport(final QualifiedName name) {
         imports.add(name);
-        statements.add(new Import(name));
     }
 
     public void setName(final String name) {
@@ -67,6 +65,38 @@ public class RavenTree extends Node {
         return statements;
     }
 
+    public void addClass(final ClassDef def) {
+        classes.add(def);
+    }
+
+    public void addStatement(final Statement statement) {
+        statements.add(statement);
+    }
+
+    public void addFunction(final Fun fun) {
+        functions.add(fun);
+    }
+
+    public void addFunctions(final Collection<Fun> functions) {
+        this.functions.addAll(functions);
+    }
+
+    public void addStatements(final Collection<Statement> statements) {
+        this.statements.addAll(statements);
+    }
+
+    public void addClasses(final Collection<ClassDef> classes) {
+        this.classes.addAll(classes);
+    }
+
+    public List<ClassDef> getClasses() {
+        return classes;
+    }
+
+    public List<Fun> getFunctions() {
+        return functions;
+    }
+
     public void accept(final TreeVisitor visitor) {
         for (Statement statement : statements) {
             statement.accept(visitor);
@@ -82,16 +112,6 @@ public class RavenTree extends Node {
             }
         }
         return null;
-    }
-
-    public List<ClassDef> getClasses() {
-        List<ClassDef> classes = new ArrayList<>();
-        for (Statement statement : statements) {
-            if (statement instanceof ClassDef) {
-                classes.add((ClassDef) statement);
-            }
-        }
-        return classes;
     }
 
     public Fun findFun(final String name) {

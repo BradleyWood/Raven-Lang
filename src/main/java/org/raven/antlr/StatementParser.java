@@ -11,7 +11,7 @@ import java.util.List;
 
 public class StatementParser {
 
-    public static List<Statement> parseStatements(final String line) {
+    public static RavenTree parseStatements(final String line) {
         RavenLexer lexer = new RavenLexer(CharStreams.fromString(line));
         CommonTokenStream tokenStream = new CommonTokenStream(lexer);
         org.raven.antlr.RavenParser parser = new org.raven.antlr.RavenParser(tokenStream);
@@ -23,9 +23,9 @@ public class StatementParser {
         RavenParser.RavenFileContext ctx = parser.ravenFile();
 
         if (parser.getNumberOfSyntaxErrors() > 0) {
-            return new LinkedList<>();
+            return null;
         }
 
-        return tfv.visitRavenFile(ctx).getStatements();
+        return tfv.visitRavenFile(ctx);
     }
 }
