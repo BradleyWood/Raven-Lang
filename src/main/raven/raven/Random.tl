@@ -34,4 +34,4 @@ fun nextBoolean() {
 
 fun nextGaussian() {
     return rand.nextGaussian()
-1}
+}
