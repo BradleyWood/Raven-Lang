@@ -1,14 +1,10 @@
-// a very early version of the grammar
-
 grammar Raven;
-
-// PARSER
-
 
 ravenFile
     :   ((packageDef semi) | (packageDef EOF))? ((importStatement semi) | (SEMI | NL+))* ((importStatement semi?) EOF)?
     ((statement semi) | (SEMI | NL+))* (statement semi?)? EOF
     ;
+
 statement
     :   block
     |   tryCatchFinally
@@ -26,105 +22,135 @@ statement
     |   CONTINUE
     |   BREAK
     ;
+
 packageDef
     :   PACK NL* qualifiedName
     ;
+
 raiseStatement
     :   RAISE NL* expression
     ;
+
 returnStatement
     :   RETURN NL* expression
     |   RETURN
     ;
+
 ifStatement
     :   IF NL* expression NL* statement (NL* ELSE NL* statement SEMI?)?
     ;
+
 tryCatchFinally
     :   TRY NL* block NL* CATCH NL* boxedId NL* block (NL* FINALLY NL* block)?
     ;
+
 boxedId
     :   '(' NL* boxedId NL* ')'
     |   IDENTIFIER
     ;
+
 whileStatement
     :   WHILE NL* expression NL* statement
     |   DO NL* statement NL* WHILE NL* expression
     ;
+
 forStatement
     :   FOR NL* '(' NL* forControl NL* ')' NL* statement
     ;
+
 forControl
     :   IDENTIFIER NL* COLON NL* expression
     |   IDENTIFIER NL* range
     |   (decl=varDeclaration? | (init=expression?)) SEMI cond=expression? SEMI after=paramList?
     ;
+
 range
     :   'range' NL* expression NL* (inc|dec) NL* expression
     ;
+
 inc
     :   'upto'
     |   'to'
     ;
+
 dec :   'downto'
     ;
+
 importStatement
     :  'import' NL* qualifiedName (NL* '.' NL* '*')?
     ;
+
 qualifiedName
     :   (THIS NL* '.' NL*)? IDENTIFIER (NL* '.' NL* IDENTIFIER)*
     |   (SUPER NL* '.'NL* )? IDENTIFIER (NL* '.' NL* IDENTIFIER)*
     |   THIS
     |   SUPER
     ;
+
 modifier
     :   (PUB|PRIV)
     ;
+
 annotation
     :   AT NL* qualifiedName (NL* annotationParamList)?
     ;
+
 annotationParamList
     :   '(' NL* annotationParam (NL* ',' NL* annotationParam)* NL* ')'
     ;
+
 annotationParam
     :   paramDef NL* '=' NL* (literal)
     ;
+
 annotationDeclaration
     :   AT NL* INTER NL* IDENTIFIER NL* '{' (NL* paramDef (NL* ',' NL* paramDef)*)? NL* '}'
     ;
+
 methodDeclaration
     :   (annotation NL*)* (modifier NL*)* FUN IDENTIFIER '(' (paramDef (',' paramDef)*)? ')' block
     |   FUN? IDENTIFIER '(' (paramDef (',' paramDef)*)? ')' ASSIGNMENT expression
     ;
+
 constructor
     :   (annotation NL*)* (modifier NL*)* CONSTRUCTOR '(' (paramDef (',' paramDef)*)? ')' block
     ;
+
 paramDef
     :   IDENTIFIER
     ;
+
 block
     :   '{' NL* ((statement semi) | (SEMI | NL+))* (statement semi?)? '}'
     ;
+
 varDeclaration
     :   (modifier NL*)* VAR NL* IDENTIFIER NL* ASSIGNMENT NL* expression
     |   (modifier NL*)* VAR NL* IDENTIFIER
     ;
+
 classDef
     :   (modifier NL*)* CLASS NL* IDENTIFIER NL* ('(' NL* (fields=paramList NL*)? ')' NL*)? inheritance? NL* block
     ;
+
 inheritance
     :   impl
     |   ext
     |   ext NL* impl
     ;
+
 ext
     :   EXTENDS NL* qualifiedName (NL* '(' NL* paramList NL* ')')?
     ;
+
 impl
     :   IMPL NL* interfaceList
     ;
+
 interfaceList
     :   qualifiedName (NL* ',' NL* qualifiedName)*
     ;
+
 expression
     :   literal
     |   expression NL* DOT NL* qualifiedName
@@ -160,65 +186,81 @@ varAssignment
         )
         NL* expression
     ;
+
 funCall
     :   IDENTIFIER '(' NL* (paramList NL*)? ')'
     |   SUPER   '(' NL* (paramList NL*)? ')'
     |   THIS '(' NL* (paramList NL*)? ')'
     ;
+
 goExpression
     :   GO (NL* expression  NL* '.')?  NL* funCall
     ;
+
 paramList
     :   param (NL* ',' NL* param)*
     ;
+
 listIdx
     :   ('[' NL* expression NL* ']')+
     ;
+
 list
     :   '[' NL* (paramList NL*)? ']'
     ;
+
 dict
     :   '{' NL* (dictParamList NL*)? '}'
     ;
+
 dictParamList
     :   dictParam (NL* ',' NL* dictParam)*
     ;
+
 dictParam
     :   expression NL* ':' NL* expression
     ;
+
 param
     :   expression
     ;
+
 literal
     :   number
     |   booleanLiteral
     |   stringLiteral
     |   'null'
     ;
+
 stringLiteral
     :   StringLiteral
     ;
+
 booleanLiteral
     :   TRUE
     |   FALSE
     ;
+
 number
     : INT | HEX | FLOAT | HEX_FLOAT
     ;
-// LEXER
+
+
 StringLiteral
     :   '"' StringCharacters? '"'
     ;
+
 fragment
 StringCharacters
     :   StringCharacter+
     ;
+
 fragment
 StringCharacter
     :   ~["\\]
     |   EscapeSequence
     ;
-// §3.10.6 Escape Sequences for Character and String Literals
+
 fragment
 EscapeSequence
     :   '\\' [btnfr"'\\]
@@ -232,10 +274,12 @@ OctalEscape
     |   '\\' OctalDigit OctalDigit
     |   '\\' ZeroToThree OctalDigit OctalDigit
     ;
+
 fragment
 OctalDigit
     :   [0-7]
     ;
+
 fragment
 UnicodeEscape
     :   '\\' 'u' HexDigit HexDigit HexDigit HexDigit
