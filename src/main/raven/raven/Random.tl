@@ -1,37 +1,37 @@
-package raven;
+package raven
 
-import java.util.Random;
+import java.util.Random
 
-private var rand = Random();
+private var rand = Random()
 
 fun seed(seed) {
-    rand.setSeed(seed);
+    rand.setSeed(seed)
 }
 
 fun nextInt() {
-    return rand.nextInt();
+    return rand.nextInt()
 }
 
 fun nextInt(bound) {
-    return rand.nextInt(bound);
+    return rand.nextInt(bound)
 }
 
 fun nextInt(min, max) {
-    return min + rand.nextInt(max - min);
+    return min + rand.nextInt(max - min)
 }
 
 fun nextReal() {
-    return rand.nextDouble();
+    return rand.nextDouble()
 }
 
 fun nextReal(min, max) {
-    return min + (max - min) * nextReal();
+    return min + (max - min) * nextReal()
 }
 
 fun nextBoolean() {
-    return rand.nextBoolean();
+    return rand.nextBoolean()
 }
 
 fun nextGaussian() {
-    return rand.nextGaussian();
-}
+    return rand.nextGaussian()
+1}
