@@ -1,29 +1,29 @@
-package org.raven.test;
+package org.raven.test
 
-import org.junit.Assert;
+import org.junit.Assert
 
-import java.lang.Thread;
-import java.lang.Runnable;
+import java.lang.Thread
+import java.lang.Runnable
 
 public class SomeRunnableClass implements Runnable {
-    private var someValue = 0;
+    private var someValue = 0
 
 
     @Override
     public fun run() {
-        someValue = 100;
+        someValue = 100
     }
 
     public fun getValue() {
-        return someValue;
+        return someValue
     }
 }
 
 fun testRunnable() {
-    var runnable = SomeRunnableClass();
-    var thread = Thread(runnable);
-    Assert.assertEquals(0, runnable.getValue());
-    thread.start();
-    thread.join();
-    Assert.assertEquals(100, runnable.getValue());
+    var runnable = SomeRunnableClass()
+    var thread = Thread(runnable)
+    Assert.assertEquals(0, runnable.getValue())
+    thread.start()
+    thread.join()
+    Assert.assertEquals(100, runnable.getValue())
 }

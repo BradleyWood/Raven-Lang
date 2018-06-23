@@ -1,13 +1,13 @@
-package org.raven.test;
+package org.raven.test
 
-import org.junit.Assert;
-import java.lang.NullPointerException;
+import org.junit.Assert
+import java.lang.NullPointerException
 
 fun testRaise() {
     try {
-        raise NullPointerException();
+        raise NullPointerException()
     } catch e {
-        return;
+        return
     }
-    Assert.fail("Exception not caught");
+    Assert.fail("Exception not caught")
 }

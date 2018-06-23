@@ -1,35 +1,35 @@
-package org.raven.test;
+package org.raven.test
 
-import org.junit.Assert;
+import org.junit.Assert
 
 fun testTryCatch() {
     try {
-        Assert.fail();
+        Assert.fail()
     } catch (e) {
-        return;
+        return
     }
-    Assert.fail("Exception not caught");
+    Assert.fail("Exception not caught")
 }
 
 fun testTryCatch2() {
     try {
-        Assert.fail("a message");
+        Assert.fail("a message")
     } catch (((e))) {
-        Assert.assertEquals("a message", e.getMessage());
-        return;
+        Assert.assertEquals("a message", e.getMessage())
+        return
     }
-    Assert.fail("Exception not caught");
+    Assert.fail("Exception not caught")
 }
 
 // test finally with exception thrown
 fun testTryCatchFinally() {
     try {
-        Assert.fail();
+        Assert.fail()
     } catch e {
     } finally {
-        return;
+        return
     }
-    Assert.fail("Finally not executed");
+    Assert.fail("Finally not executed")
 }
 
 // test finally without exception thrown
@@ -37,37 +37,37 @@ fun testTryCatchFinally2() {
     try {
     } catch e {
     } finally {
-        return;
+        return
     }
-    Assert.fail("Finally not executed");
+    Assert.fail("Finally not executed")
 }
 
 fun testNestedTryCatch() {
     try {
         try {
-            Assert.fail();
+            Assert.fail()
         } catch e {
-            return;
+            return
         }
-        Assert.fail("Exception not caught");
+        Assert.fail("Exception not caught")
     } catch e {
-        Assert.fail("Exception should not be caught here");
+        Assert.fail("Exception should not be caught here")
     }
-    Assert.fail("No branch executed");
+    Assert.fail("No branch executed")
 }
 
 fun testNestedTryCatchFinally() {
     try {
         try {
-            Assert.fail("abc");
+            Assert.fail("abc")
         } catch e {
-            return;
+            return
         } finally {
         }
-        Assert.fail("Exception not caught");
+        Assert.fail("Exception not caught")
     } catch e {
-        Assert.fail("Exception should not be caught here");
+        Assert.fail("Exception should not be caught here")
     } finally {
     }
-    Assert.fail("No branch executed");
+    Assert.fail("No branch executed")
 }

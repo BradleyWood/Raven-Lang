@@ -1,47 +1,47 @@
-package org.raven.test;
+package org.raven.test
 
-import org.junit.Assert;
+import org.junit.Assert
 
 fun ifTest1() {
     if(false) {
-        Assert.fail("false is not equal to true");
+        Assert.fail("false is not equal to true")
     }
 }
 
 fun ifTest2() {
     if(false) {
-        Assert.fail("false is not equal to true");
+        Assert.fail("false is not equal to true")
     } else {
-        return;
+        return
     }
-    Assert.fail("else block did not run");
+    Assert.fail("else block did not run")
 }
 
 fun ifTest3() {
-    var i = 3;
+    var i = 3
 
     if(i == 1) {
-        Assert.fail();
+        Assert.fail()
     } else if(i == 2) {
-        Assert.fail();
+        Assert.fail()
     } else if(i == 3) {
-        return;
+        return
     } else if(i == 4) {
-        Assert.fail();
+        Assert.fail()
     } else {
-        Assert.fail();
+        Assert.fail()
     }
-    Assert.fail("no branch executed");
+    Assert.fail("no branch executed")
 }
 
 fun ifTest4() {
-    var i = 4;
+    var i = 4
     if(i == 1) {
-        Assert.fail();
+        Assert.fail()
     } else {
-        return;
+        return
     }
-    Assert.fail("no branch executed");
+    Assert.fail("no branch executed")
 }
 
 fun ifTest5() {
