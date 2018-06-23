@@ -141,6 +141,20 @@ public class SyntaxTest {
     }
 
     @Test
+    public void testBlock() {
+        testSyntax("{;;;;;}", true);
+        testSyntax("{;;;\r\n;;}", true);
+        testSyntax("{\r\n\r\n;;;;;}", true);
+        testSyntax("{;;\n\n;;;}", true);
+        testSyntax("{\r\n;;;;;}", true);
+        testSyntax("{;;;;;\r\n}", true);
+        testSyntax("{;;;;;\n}", true);
+        testSyntax("{;;;;;call()}", true);
+        testSyntax("{;;;;;call();;;;}", true);
+        testSyntax("{;;;;;call();;call();;;\r\n\r\n;;;\ncall();var a = 100}", true);
+    }
+
+    @Test
     public void testVarDecl() {
         testSyntax("var a;", true);
         testSyntax("var a = 10;", true);
@@ -223,6 +237,16 @@ public class SyntaxTest {
 
         testSyntax("import ", false);
         testSyntax("import ;", false);
+    }
+
+    @Test
+    public void testTopLevel() {
+        testSyntax(";;;;;;;", true);
+        testSyntax(";;;;\r\n\r\n;;\n;\r\n  \r\n \n;;;", true);
+        testSyntax(";;;;;;;import a\r\n;;;import b", true);
+        testSyntax("package g;;;;import a;;;import b\r\n\r\nimport c", true);
+
+        testSyntax(";package g;;;;import a;;;import b\r\n\r\nimport c", false);
     }
 
     @Test

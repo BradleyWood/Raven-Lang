@@ -6,7 +6,8 @@ grammar Raven;
 
 
 ravenFile
-    :   ((packageDef semi) | (packageDef EOF))? (importStatement semi)* ((importStatement semi?) EOF)? (statement semi)* (statement semi?)? EOF
+    :   ((packageDef semi) | (packageDef EOF))? ((importStatement semi) | (SEMI | NL+))* ((importStatement semi?) EOF)?
+    ((statement semi) | (SEMI | NL+))* (statement semi?)? EOF
     ;
 statement
     :   block
@@ -101,7 +102,7 @@ paramDef
     :   IDENTIFIER
     ;
 block
-    :   '{' NL* (statement semi)* (statement semi?)? NL* '}'
+    :   '{' NL* ((statement semi) | (SEMI | NL+))* (statement semi?)? '}'
     ;
 varDeclaration
     :   (modifier NL*)* VAR NL* IDENTIFIER NL* ASSIGNMENT NL* expression
