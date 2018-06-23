@@ -51,7 +51,7 @@ fun appendTest() {
 
 fun getTest() {
     var lst = [9, 8, 7, 6, 5, 4, 3, 2, 1, 0];
-    for i range 0 to len(lst) {
+    for (i range 0 to len(lst)) {
         Assert.assertEquals(i, lst[len(lst) - i - 1]);
     }
 }

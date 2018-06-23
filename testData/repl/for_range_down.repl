@@ -1,4 +1,4 @@
-> for i range 5 downto 0 println(i)
+> for (i range 5 downto 0) println(i)
 5
 4
 3
@@ -7,8 +7,8 @@
 
 > var a = 5
 > var b = 3
-> for i range a downto b println(i)
+> for (i range a downto b) println(i)
 5
 4
 
-> for i range b downto a println(i)
+> for (i range b downto a) println(i)

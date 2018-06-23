@@ -33,7 +33,7 @@ fun realConversionTest() {
 fun sortTest() {
     var numbers = [120, 10, 441, 122, 21, 45, 184, 1233, 512, 1224, 864];
     sort(numbers);
-    for i range 0 to len(numbers) - 1 {
+    for (i range 0 to len(numbers) - 1) {
         Assert.assertTrue(numbers[i] < numbers[i + 1]);
     }
 }

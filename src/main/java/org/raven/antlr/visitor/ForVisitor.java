@@ -25,10 +25,6 @@ public class ForVisitor extends RavenBaseVisitor<For> {
 
         RavenParser.ForControlContext forControl = ctx.forControl();
 
-        while (forControl.forControl() != null) {
-            forControl = forControl.forControl();
-        }
-
         if (forControl.COLON() != null) {
             // foreach
             QualifiedName placeholderName = new QualifiedName(String.valueOf(++count));

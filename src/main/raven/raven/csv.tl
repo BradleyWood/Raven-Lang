@@ -25,7 +25,7 @@ class CSVWriter(bufferedWriter, delim) {
 
     fun write(arg) {
         if type(arg) == TList.TYPE {
-            for a : arg {
+            for (a : arg) {
                 write(a);
             }
             return;

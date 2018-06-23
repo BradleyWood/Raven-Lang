@@ -8,6 +8,7 @@ import org.raven.antlr.ast.Range;
 import org.raven.antlr.ast.Statement;
 import org.raven.antlr.visitor.ParamDefVisitor;
 import org.raven.antlr.visitor.RavenFileVisitor;
+import org.raven.error.Errors;
 
 import static org.junit.Assert.assertEquals;
 
@@ -36,9 +37,9 @@ public class RuleTester {
         }
 
         if (pass) {
-            Assert.assertEquals(0, p.getNumberOfSyntaxErrors());
+            Assert.assertEquals("Syntax Errors for: " + txt, 0, p.getNumberOfSyntaxErrors());
         } else {
-            Assert.assertNotEquals(0, p.getNumberOfSyntaxErrors());
+            Assert.assertNotEquals("Expected syntax errors: " + txt, 0, p.getNumberOfSyntaxErrors());
         }
     }
 

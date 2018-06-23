@@ -46,7 +46,7 @@ fun ifTest4() {
 
 fun ifTest5() {
     if (5==5)
-        return;
+        return
     else
-        Assert.fail("Wrong branch");
+        Assert.fail("Wrong branch")
 }

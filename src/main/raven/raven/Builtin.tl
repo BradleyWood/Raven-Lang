@@ -82,7 +82,7 @@ fun reverse(lst) {
     }
     var n = len(lst);
     var tmp;
-    for i range 0 to n/2 {
+    for (i range 0 to n/2) {
         tmp = lst[i];
         lst[i] = lst[n - i - 1];
         lst[n - i - 1] = tmp;
@@ -95,7 +95,7 @@ fun sum(lst) {
         return null;
     var sum = lst[0];
     var n = len(lst);
-    for i range 1 to n {
+    for (i range 1 to n) {
         sum += lst[i];
     }
     return sum;

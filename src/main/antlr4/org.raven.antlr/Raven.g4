@@ -6,7 +6,7 @@ grammar Raven;
 
 
 ravenFile
-    :   packageDef? (importStatement*) statement* EOF
+    :   ((packageDef semi) | (packageDef EOF))? (importStatement semi)* ((importStatement semi?) EOF)? (statement semi)* (statement semi?)? EOF
     ;
 statement
     :   block
@@ -21,46 +21,44 @@ statement
     |   whileStatement
     |   returnStatement
     |   classDef
-    |   expression SEMI
-    |   CONTINUE SEMI
-    |   BREAK SEMI
-    |   SEMI
+    |   expression
+    |   CONTINUE
+    |   BREAK
     ;
 packageDef
-    :   PACK qualifiedName SEMI
+    :   PACK NL* qualifiedName
     ;
 raiseStatement
-    :   RAISE expression SEMI
+    :   RAISE NL* expression
     ;
 returnStatement
-    :   RETURN expression SEMI
-    |   RETURN SEMI
+    :   RETURN NL* expression
+    |   RETURN
     ;
 ifStatement
-    :   IF expression statement (ELSE statement)?
+    :   IF NL* expression NL* statement (NL* ELSE NL* statement SEMI?)?
     ;
 tryCatchFinally
-    :   TRY block CATCH boxedId block (FINALLY block)?
+    :   TRY NL* block NL* CATCH NL* boxedId NL* block (NL* FINALLY NL* block)?
     ;
 boxedId
-    :   '(' boxedId ')'
+    :   '(' NL* boxedId NL* ')'
     |   IDENTIFIER
     ;
 whileStatement
-    :   WHILE expression statement
-    |   DO statement WHILE expression SEMI
+    :   WHILE NL* expression NL* statement
+    |   DO NL* statement NL* WHILE NL* expression
     ;
 forStatement
-    :   FOR forControl statement
+    :   FOR NL* '(' NL* forControl NL* ')' NL* statement
     ;
 forControl
-    :   '(' forControl ')'
-    |   IDENTIFIER COLON expression
-    |   IDENTIFIER range
-    |   (decl=varDeclaration? | (init=expression? SEMI)) cond=expression? SEMI after=paramList?
+    :   IDENTIFIER NL* COLON NL* expression
+    |   IDENTIFIER NL* range
+    |   (decl=varDeclaration? | (init=expression?)) SEMI cond=expression? SEMI after=paramList?
     ;
 range
-    :   'range' expression (inc|dec) expression
+    :   'range' NL* expression NL* (inc|dec) NL* expression
     ;
 inc
     :   'upto'
@@ -69,11 +67,11 @@ inc
 dec :   'downto'
     ;
 importStatement
-    :  'import' qualifiedName ('.' '*')? SEMI
+    :  'import' NL* qualifiedName (NL* '.' NL* '*')?
     ;
 qualifiedName
-    :   (THIS '.')? IDENTIFIER ('.' IDENTIFIER)*
-    |   (SUPER '.')? IDENTIFIER ('.' IDENTIFIER)*
+    :   (THIS NL* '.' NL*)? IDENTIFIER (NL* '.' NL* IDENTIFIER)*
+    |   (SUPER NL* '.'NL* )? IDENTIFIER (NL* '.' NL* IDENTIFIER)*
     |   THIS
     |   SUPER
     ;
@@ -81,74 +79,76 @@ modifier
     :   (PUB|PRIV)
     ;
 annotation
-    :   AT qualifiedName (annotationParamList)?
+    :   AT NL* qualifiedName (NL* annotationParamList)?
     ;
 annotationParamList
-    :   '(' annotationParam (',' annotationParam)* ')'
+    :   '(' NL* annotationParam (NL* ',' NL* annotationParam)* NL* ')'
     ;
 annotationParam
-    :   paramDef '=' (literal)
+    :   paramDef NL* '=' NL* (literal)
     ;
 annotationDeclaration
-    :   AT INTER IDENTIFIER '{' (paramDef (',' paramDef)*)? '}'
+    :   AT NL* INTER NL* IDENTIFIER NL* '{' (NL* paramDef (NL* ',' NL* paramDef)*)? NL* '}'
     ;
 methodDeclaration
-    :   (annotation*) (modifier*) FUN IDENTIFIER '(' (paramDef (',' paramDef)*)? ')' block
-    |   FUN? IDENTIFIER '(' (paramDef (',' paramDef)*)? ')' ASSIGNMENT expression SEMI
+    :   (annotation NL*)* (modifier NL*)* FUN IDENTIFIER '(' (paramDef (',' paramDef)*)? ')' block
+    |   FUN? IDENTIFIER '(' (paramDef (',' paramDef)*)? ')' ASSIGNMENT expression
     ;
 constructor
-    :   (annotation*) (modifier*) CONSTRUCTOR '(' (paramDef (',' paramDef)*)? ')' block
+    :   (annotation NL*)* (modifier NL*)* CONSTRUCTOR '(' (paramDef (',' paramDef)*)? ')' block
     ;
 paramDef
     :   IDENTIFIER
     ;
 block
-    :   '{' statement* '}'
+    :   '{' NL* (statement semi)* (statement semi?)? NL* '}'
     ;
 varDeclaration
-    :   (modifier*) VAR IDENTIFIER ASSIGNMENT expression SEMI
-    |   (modifier*) VAR IDENTIFIER SEMI
+    :   (modifier NL*)* VAR NL* IDENTIFIER NL* ASSIGNMENT NL* expression
+    |   (modifier NL*)* VAR NL* IDENTIFIER
     ;
 classDef
-    :   (modifier*) CLASS IDENTIFIER ('(' fields=paramList? ')')? inheritance block
+    :   (modifier NL*)* CLASS NL* IDENTIFIER NL* ('(' NL* (fields=paramList NL*)? ')' NL*)? inheritance? NL* block
     ;
 inheritance
-    :   ext? impl?
+    :   impl
+    |   ext
+    |   ext NL* impl
     ;
 ext
-    :   EXTENDS qualifiedName ('(' paramList ')')?
+    :   EXTENDS NL* qualifiedName (NL* '(' NL* paramList NL* ')')?
     ;
 impl
-    :   IMPL interfaceList
+    :   IMPL NL* interfaceList
     ;
 interfaceList
-    :   qualifiedName (',' qualifiedName)*
+    :   qualifiedName (NL* ',' NL* qualifiedName)*
     ;
 expression
     :   literal
-    |   expression DOT qualifiedName
-    |   expression DOT funCall
+    |   expression NL* DOT NL* qualifiedName
+    |   expression NL* DOT NL* funCall
     |   funCall
     |   goExpression
     |   qualifiedName
-    |   expression listIdx
+    |   expression NL* listIdx
     |   list
     |   dict
-    |   (ADD|SUB|NOT) expression
-    |   '(' expression ')'
-    |   lst=expression '[' lhs=expression? ':' rhs=expression? ']'
-    |   expression (EXP) expression
-    |   expression (MULT|DIV|MOD) expression
-    |   expression (ADD|SUB)  expression
-    |   expression (GT|LT|GTE|LTE|EQUALS|NOT_EQUAL) expression
-    |   expression (AND|OR) expression
+    |   (ADD|SUB|NOT) NL* expression
+    |   '(' NL* expression NL* ')'
+    |   lst=expression NL* '[' NL* lhs=expression? ':' rhs=expression? NL* ']'
+    |   expression NL* (EXP) NL* expression
+    |   expression NL* (MULT|DIV|MOD) NL* expression
+    |   expression NL* (ADD|SUB) NL* expression
+    |   expression NL* (GT|LT|GTE|LTE|EQUALS|NOT_EQUAL) NL* expression
+    |   expression NL* (AND|OR) NL* expression
     |   varAssignment
     |   <assoc=right> lhs=expression listIdx ASSIGNMENT rhs=expression
     ;
 
 varAssignment
     :   <assoc=right>
-        qualifiedName
+        qualifiedName NL*
         (   ASSIGNMENT
         |   ADD_ASSIGNMENT
         |   SUB_ASSIGNMENT
@@ -157,33 +157,33 @@ varAssignment
         |   MOD_ASSIGNMENT
         |   EXP_ASSIGNMENT
         )
-        expression
+        NL* expression
     ;
 funCall
-    :   IDENTIFIER '(' paramList? ')'
-    |   SUPER   '(' paramList? ')'
-    |   THIS '(' paramList? ')'
+    :   IDENTIFIER '(' NL* (paramList NL*)? ')'
+    |   SUPER   '(' NL* (paramList NL*)? ')'
+    |   THIS '(' NL* (paramList NL*)? ')'
     ;
 goExpression
-    :   GO (expression '.')? funCall
+    :   GO (NL* expression  NL* '.')?  NL* funCall
     ;
 paramList
-    :   param (',' param)*
+    :   param (NL* ',' NL* param)*
     ;
 listIdx
-    :   ('[' expression ']')+
+    :   ('[' NL* expression NL* ']')+
     ;
 list
-    :   '[' paramList? ']'
+    :   '[' NL* (paramList NL*)? ']'
     ;
 dict
-    :   '{' dictParamList? '}'
+    :   '{' NL* (dictParamList NL*)? '}'
     ;
 dictParamList
-    :   dictParam (',' dictParam)*
+    :   dictParam (NL* ',' NL* dictParam)*
     ;
 dictParam
-    :   expression ':' expression
+    :   expression NL* ':' NL* expression
     ;
 param
     :   expression
@@ -282,15 +282,15 @@ IMPORT  :   'import';
 SEMI    :   ';';
 
 
-
-
 IDENTIFIER
     : [a-zA-Z_][a-zA-Z_0-9]*
     ;
 
-WS  :  [ \t\r\n\u000C]+ -> skip
-    ;
+WS  : [\u0020\u0009\u000C] -> skip;
 
+NL: '\u000A' | '\u000D' '\u000A' ;
+
+semi: NL+ | SEMI | SEMI NL+;
 
 COMMENT
     :   '/*' .*? '*/' -> channel(HIDDEN)

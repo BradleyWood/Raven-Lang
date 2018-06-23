@@ -38,7 +38,7 @@ public class ClassDefVisitor extends RavenBaseVisitor<ClassDef> {
                 varParams.add(decl);
             }
         }
-        Inheritance inh = new Inheritance(super_, null, null);
+        Inheritance inh = new Inheritance(super_, new Expression[0], new QualifiedName[0]);
         if (ctx.inheritance() != null) {
             inh = ctx.inheritance().accept(InheritanceVisitor.INSTANCE);
         }

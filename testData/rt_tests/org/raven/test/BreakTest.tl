@@ -4,7 +4,7 @@ import org.junit.Assert;
 
 fun breakTest() {
     var j = 0;
-    for i range 0 to 100 {
+    for (i range 0 to 100) {
         if(i == 50)
             break;
         j += 1;
@@ -14,10 +14,10 @@ fun breakTest() {
 
 fun breakTest2() {
     var sum = 0;
-    for i range 0 to 100 {
+    for (i range 0 to 100) {
         if i == 25
             break;
-        for j range 0 to 100 {
+        for (j range 0 to 100) {
             if j == 50
                 break;
             sum += 1;

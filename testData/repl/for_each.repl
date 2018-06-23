@@ -1,5 +1,5 @@
 > var lst = [1, 2, 3, 4, 5, 6]
-> for a : lst println(a)
+> for (a : lst) println(a)
 1
 2
 3
@@ -8,9 +8,9 @@
 6
 
 > lst = []
-> for a : lst println(a)
+> for (a : lst) println(a)
 
-> for a : [5, 4, 3] println(a)
+> for (a : [5, 4, 3]) println(a)
 5
 4
 3

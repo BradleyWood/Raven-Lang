@@ -4,7 +4,7 @@ import org.junit.Assert;
 
 fun continueTest() {
     var gg = 0;
-    for i range 0 to 10 {
+    for (i range 0 to 10) {
         if(i == 5) {
             continue;
         }
@@ -15,7 +15,7 @@ fun continueTest() {
 
 fun continueTest2() {
     var gg = 0;
-    for i range 0 to 10 {
+    for (i range 0 to 10) {
         continue;
         gg += 1;
     }
@@ -23,8 +23,8 @@ fun continueTest2() {
 }
 
 fun continueTest3() {
-    for i range 0 to 100 {
-        for j range 0 to 100 {
+    for (i range 0 to 100) {
+        for (j range 0 to 100) {
             if (i == j)
                 continue;
             if (i == j)

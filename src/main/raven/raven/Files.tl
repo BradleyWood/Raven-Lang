@@ -30,7 +30,7 @@ fun writeLines(path, lines) {
     var writer = OutputStreamWriter(fos);
     var bw = BufferedWriter(writer);
 
-    for i range 0 to len(lines) {
+    for (i range 0 to len(lines)) {
         bw.write(lines[i]);
         bw.newLine();
     }

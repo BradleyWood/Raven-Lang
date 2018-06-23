@@ -63,7 +63,7 @@ public class ReplTest {
                     if (comment > 0) {
                         line = line.substring(0, comment);
                     }
-                    inputLines.add(line + ";");
+                    inputLines.add(line);
                 } else if (line.length() > 0) {
                     output.add(line.trim());
                 }
@@ -81,7 +81,7 @@ public class ReplTest {
             }
             baos.reset();
 
-            Assert.assertEquals("Wrong number of output lines", output.size(), actualOutput.size());
+            Assert.assertEquals("Wrong number of output lines: " + actualOutput.toString(), output.size(), actualOutput.size());
 
             for (int i = 0; i < actualOutput.size() && i < output.size(); i++) {
                 if (ANY.equals(output.get(i)))

@@ -26,10 +26,7 @@ public class WhileVisitorTest {
 
     @Test
     public void testLoopNoBody() {
-        While whileLoop = new While(new Literal(TBoolean.TRUE), new Statement());
-        testStatement(WhileVisitor.INSTANCE, "while (true);", whileLoop);
-
-        whileLoop = new While(new Literal(TBoolean.TRUE), EMPTY_BLOCK);
+        While whileLoop = new While(new Literal(TBoolean.TRUE), EMPTY_BLOCK);
         testStatement(WhileVisitor.INSTANCE, "while (true) {}", whileLoop);
     }
 

@@ -19,6 +19,6 @@ public class ForVisitorTest {
 
         For forLoop = new For(init, condition, new Block(body), new Block(after));
 
-        testStatement(ForVisitor.INSTANCE, "for i range 0 to 10 {}", forLoop);
+        testStatement(ForVisitor.INSTANCE, "for (i range 0 to 10) {}", forLoop);
     }
 }

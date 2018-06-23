@@ -25,7 +25,7 @@ fun scopeTest2() {
 }
 
 fun scopeTest3() {
-    for (i range 0 to 10);
+    for (i range 0 to 10) {}
 
     var i = 20;
     Assert.assertEquals(20, i);
@@ -44,7 +44,7 @@ fun scopeTest4() {
 fun scopeTest5() {
     var i = 100;
     // no redeclaration should occur
-    for (i range 10 to 20);
+    for (i range 10 to 20) {}
     Assert.assertEquals(20, i);
 }
 

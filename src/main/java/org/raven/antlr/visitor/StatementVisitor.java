@@ -42,9 +42,6 @@ public class StatementVisitor extends RavenBaseVisitor<Statement> {
         } else if (ctx.expression() != null) {
             stmt = ctx.expression().accept(ExpressionVisitor.INSTANCE);
             ((Expression) stmt).setPop(true);
-        } else if (ctx.SEMI() != null) {
-            // empty statement
-            stmt = new Statement();
         } else {
             //System.err.println("Unimplemented parser rule for statement: " + ctx.getText());
         }

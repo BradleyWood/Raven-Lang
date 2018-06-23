@@ -215,7 +215,7 @@ public class ClassDef extends ModifiableStatement {
         }
         statements.removeAll(constructors);
 
-        if (superParams != null) {
+        if (superParams != null && superParams.length > 0) {
             Constructor con = new Constructor(superParams);
             initFieldsInConstructor(con);
             constructors.add(con);
@@ -238,7 +238,7 @@ public class ClassDef extends ModifiableStatement {
             constructors.add(con);
         }
 
-        if (constructors.size() == 0) {
+        if (constructors.isEmpty()) {
             Constructor defaultConstructor = new Constructor(new Modifier[]{Modifier.PUBLIC}, new Block());
             initFieldsInConstructor(defaultConstructor);
             constructors.add(defaultConstructor);

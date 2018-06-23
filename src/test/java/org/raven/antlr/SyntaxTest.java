@@ -8,17 +8,17 @@ public class SyntaxTest {
 
     @Test
     public void testIf() {
-        testSyntax("if a < b ;", true);
+        testSyntax("if a < b b = a", true);
 
-        testSyntax("{if a < b ;}", true);
+        testSyntax("{if a < b b = a}", true);
 
         testSyntax("if a < b {}", true);
 
         testSyntax("if (a < b) {}", true);
 
-        testSyntax("if (a < b) ;", true);
+        testSyntax("if (a < b) b = a", true);
 
-        testSyntax("if (((a < b))) ;", true);
+        testSyntax("if (((a < b))) a = b - a;", true);
 
         // no statement or block
         testSyntax("if (a < b)", false);
@@ -54,20 +54,20 @@ public class SyntaxTest {
         testSyntax("raise NullPointerException();", true);
         testSyntax("raise hell;", true);
         testSyntax("raise abc.d.e.f();", true);
+        testSyntax("raise hell", true);
+        testSyntax("raise []", true);
 
         testSyntax("raise ;", false);
-        testSyntax("raise {}", false);
-        testSyntax("raise hell", false);
-        testSyntax("raise NullPointerException()", false);
+        testSyntax("raise NullPointerException()", true);
     }
 
     @Test
     public void testWhile() {
-        testSyntax("while true ;", true);
-        testSyntax("while a > b ;", true);
+        testSyntax("while true call()\n", true);
+        testSyntax("while a > b a-=2;", true);
         testSyntax("while a > b {}", true);
-        testSyntax("while (a > b) ;", true);
-        testSyntax("while (((a > b))) ;", true);
+        testSyntax("while (a > b) a-=1\r\n", true);
+        testSyntax("while (((a > b))) if (a > b) b = -1\r\n", true);
         testSyntax("while (((a > b))) {}", true);
         testSyntax("{while (((a > b))) {}}", true);
 
@@ -86,17 +86,22 @@ public class SyntaxTest {
 
     @Test
     public void testFor() {
-        testSyntax(" for ;; ;", true);
-        testSyntax(" for ;; {}", true);
-        testSyntax(" for (;;) ;", true);
+        testSyntax(" for (;;) call()", true);
         testSyntax(" for (;;) {}", true);
-        testSyntax(" for (i = 0; i < 10; i += 2) ;", true);
+        testSyntax(" for (i = 0; i < 10; i += 2) \r\n\r\ni-=1;\r\n\r\n", true);
         testSyntax(" for (i = 0; i < 10; i += 2) {}", true);
-        testSyntax(" for i = 0; i < 10; i += 2 ;", true);
-        testSyntax(" for i = 0; i < 10; i += 2 {}", true);
-        testSyntax(" for i = 0; i < 10; i += 2, j +=1 {}", true);
-        testSyntax(" for i = 0; i < 10; i += 2, j +=1, k += 3;", true);
+        testSyntax(" for(i = 0; i < 10; i += 2, j += 2) funCall()\n", true);
+        testSyntax(" for (i = 0; i < 10; i += 2, j += 2) {}", true);
+        testSyntax("for (var i = 0; i < 100; i += 1) {}", true);
+        testSyntax("for(var i = 0; i < 100; i += 1) {}", true);
 
+        testSyntax(" for i = 0; i < 10; i += 2 ;", false);
+        testSyntax(" for i = 0; i < 10; i += 2 {}", false);
+        testSyntax(" for i = 0; i < 10; i += 2, j +=1 {}", false);
+        testSyntax(" for i = 0; i < 10; i += 2, j +=1, k += 3;", false);
+
+        testSyntax(" for ;; ;", false);
+        testSyntax(" for ;; {}", false);
         testSyntax("for ;", false);
         testSyntax("for (;;)", false);
         testSyntax("for (;;;)", false);
@@ -105,11 +110,9 @@ public class SyntaxTest {
 
     @Test
     public void testForRanges() {
-        testSyntax("for i range 0 to 0 ;", true);
-        testSyntax("for (i range 0 to 0) ;", true);
-        testSyntax("for i range 0 upto 0 ;", true);
-        testSyntax("for i range 0 downto 0 ;", true);
-        testSyntax("for i range 0 to 0 {}", true);
+        testSyntax("for (i range 0 to 0) {}", true);
+        testSyntax("for (i range 0 downto 0) a = i\n", true);
+        testSyntax("for (i range 0 to 0) {}", true);
 
         testSyntax("for range 0 to 0 ;", false);
         testSyntax("for i range (0 to 0) ;", false);
@@ -124,10 +127,10 @@ public class SyntaxTest {
 
     @Test
     public void testForEach() {
-        testSyntax("for a : b ;", true);
-        testSyntax("for a : b {}", true);
-        testSyntax("for ((a : b)) ;", true);
-        testSyntax("for ((a : b)) {}", true);
+        testSyntax("for (a : b) g = a\n", true);
+        testSyntax("for (a : b) {}", true);
+        testSyntax("for (a : b) g = a;", true);
+        testSyntax("for (a : b) {}", true);
         testSyntax("for (a : b) {}", true);
 
         testSyntax("for a : b range a to b;", false);
@@ -145,13 +148,16 @@ public class SyntaxTest {
         testSyntax("var a = true;", true);
         testSyntax("var a = false;", true);
         testSyntax("var a = b;", true);
+        testSyntax("var a", true);
+        testSyntax("var a = 100", true);
+        testSyntax("var a = true", true);
+        testSyntax("var a = b", true);
+        testSyntax("var a = 0; var b = 0;", true);
+        testSyntax("var a = 0\nvar b = 0\n", true);
+        testSyntax("var a = 0\r\nvar b = 0", true);
 
-        testSyntax("var a", false);
         testSyntax("var a =", false);
         testSyntax("var a = ;", false);
-        testSyntax("var a = 100", false);
-        testSyntax("var a = true", false);
-        testSyntax("var a = b", false);
         testSyntax("var true = b;", false);
     }
 
@@ -207,14 +213,16 @@ public class SyntaxTest {
     @Test
     public void testImport() {
         testSyntax("import javax.swing.JFrame;", true);
+        testSyntax("import javax.swing.JFrame", true);
+        testSyntax("import a \n import b\n", true);
+        testSyntax("import a \r\n import b\n", true);
+        testSyntax("import a ; import b\n", true);
 
         testSyntax("import a..b.c.d;", false);
         testSyntax("import a.....b.c..d;", false);
 
         testSyntax("import ", false);
         testSyntax("import ;", false);
-
-        testSyntax("import javax.swing.JFrame", false);
     }
 
     @Test
@@ -225,7 +233,6 @@ public class SyntaxTest {
 
         testSyntax("fun f() {}", true);
         testSyntax("fun f(x) {}", true);
-        testSyntax("fun f() {;;;;;;;;}", true);
 
         testSyntax("fun f() ;", false);
         testSyntax("fun f(x,y,z) ;", false);
@@ -257,14 +264,14 @@ public class SyntaxTest {
     public void testBreak() {
         testSyntax("break;", true);
 
-        testSyntax("break", false);
+        testSyntax("break", true);
     }
 
     @Test
     public void testContinue() {
         testSyntax("continue;", true);
 
-        testSyntax("continue", false);
+        testSyntax("continue", true);
     }
 
     @Test
@@ -272,9 +279,10 @@ public class SyntaxTest {
         testSyntax("[1, 50, 100, 2000, 50000];", true);
         testSyntax("[1, \"str\", 100, 2000, 50000];", true);
         testSyntax("var a = [1, 50, 100, 2000, 50000];", true);
+        testSyntax("[1, 50, 100, 2000, 50000]", true);
 
-        testSyntax("[1, 50, 100, 2000, 50000]", false);
         testSyntax("[1, 50, 100, 2000, 50000,,,,];", false);
+        testSyntax("[for, if, while, 2000, 50000];", false);
     }
 
     @Test
@@ -282,8 +290,8 @@ public class SyntaxTest {
         testSyntax("a[5];", true);
         testSyntax("a[5];", true);
         testSyntax("a[5][5][\"5\"][5][\"str\"];", true);
+        testSyntax("a[5]", true);
 
-        testSyntax("a[5]", false);
         testSyntax("a[];", false);
         testSyntax("a[5][\"str\"][5][5][][5];", false);
     }
@@ -310,9 +318,9 @@ public class SyntaxTest {
         testSyntax("a[a:];", true);
         testSyntax("a[:b];", true);
         testSyntax("a[a:b];", true);
+        testSyntax("a[1:2]", true);
 
         testSyntax("a[1:5:10];", false);
-        testSyntax("a[1:2]", false);
         testSyntax("a[]", false);
     }
 
@@ -322,9 +330,9 @@ public class SyntaxTest {
         testSyntax("testFun(a);", true);
         testSyntax("testFun(a,b,c,d,e,f,g,h,i);", true);
         testSyntax("testFun(1,2,4,true,false,\"str\", a,b);", true);
+        testSyntax("test()", true);
+        testSyntax("testFun(a, b)", true);
 
-        testSyntax("test()", false);
-        testSyntax("testFun(a, b)", false);
         testSyntax("testFun(a,, b);", false);
         testSyntax("testFun(a, b,,);", false);
         testSyntax("testFun(,,a, b);", false);
@@ -337,10 +345,10 @@ public class SyntaxTest {
         testSyntax("go toHell(a,b,c,d);", true);
         testSyntax("go toHell(1,2,3,4);", true);
         testSyntax("go id.toHell();", true);
+        testSyntax("go toHell()", true);
 
         testSyntax("go true;", false);
         testSyntax("go 412;", false);
-        testSyntax("go toHell()", false);
         testSyntax("go toHell(,);", false);
         testSyntax("go toHell(1,);", false);
         testSyntax("go toHell(1,,4);", false);
@@ -395,6 +403,16 @@ public class SyntaxTest {
 
         testSyntax("@SomeAnnotation(a=5, b=\"c\"\n" +
                 "fun anAnnotatedMethod() {}", false);
+    }
+
+    @Test
+    public void testPackage() {
+        testSyntax("package g\r\n", true);
+        testSyntax("package g\nimport a", true);
+        testSyntax("package g\r\nimport a", true);
+        testSyntax("package g;import a", true);
+
+        testSyntax("packge 5;", false);
     }
 
 }
