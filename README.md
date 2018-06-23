@@ -40,7 +40,7 @@ This example serves to illustrate java interoperability.
 import javax.swing.JOptionPane;
 
 fun main() {
-    JOptionPane.showMessageDialog(null, "Hello World.");
+    JOptionPane.showMessageDialog(null, "Hello World.")
 }
 ```
 
@@ -82,9 +82,9 @@ import org.junit.Assert;
 import testclasses.FieldTestClass;
 
 fun testVirtualField() {
-    var obj = FieldTestClass("world", 500);
-    Assert.assertEquals("world", obj.virtualString);
-    Assert.assertEquals(500, obj.virtualWrappedInt);
+    var obj = FieldTestClass("world", 500)
+    Assert.assertEquals("world", obj.virtualString)
+    Assert.assertEquals(500, obj.virtualWrappedInt)
 }
 ```
 
