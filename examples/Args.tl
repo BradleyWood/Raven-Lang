@@ -1,5 +1,5 @@
 
 fun main(args) {
-    for a : args
-        println(a);
+    for (a : args)
+        println(a)
 }

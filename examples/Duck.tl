@@ -2,32 +2,32 @@
 class Raven {
 
     fun fly() {
-        println("Raven Flying");
+        println("Raven Flying")
     }
 }
 
 class Airplane {
 
     fun fly() {
-        println("Airplane Flying");
+        println("Airplane Flying")
     }
 }
 
 class Dog {
 
     fun woof() {
-        println("Woof!");
+        println("Woof!")
     }
 }
 
 fun liftOff(flyable) {
-    flyable.fly();
+    flyable.fly()
 }
 
 fun main() {
-    liftOff(Raven());
-    liftOff(Airplane());
-    liftOff(Dog()); // Dog has no attribute fly
+    liftOff(Raven())
+    liftOff(Airplane())
+    liftOff(Dog()) // Dog has no attribute fly
 }
 
 // OUTPUT
