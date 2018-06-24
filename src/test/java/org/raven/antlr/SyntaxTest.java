@@ -8,27 +8,17 @@ public class SyntaxTest {
 
     @Test
     public void testIf() {
-        testSyntax("if a < b b = a", true);
-
-        testSyntax("{if a < b b = a}", true);
-
-        testSyntax("if a < b {}", true);
-
-        testSyntax("if (a < b) {}", true);
-
         testSyntax("if (a < b) b = a", true);
-
+        testSyntax("if (a < b) {}", true);
+        testSyntax("if (a < b) {}", true);
+        testSyntax("if (a < b) b = a", true);
         testSyntax("if (((a < b))) a = b - a;", true);
 
-        // no statement or block
         testSyntax("if (a < b)", false);
-
+        testSyntax("if a < b {}", false);
+        testSyntax("{if a < b b = a}", false);
         testSyntax("( if (a < b) ; )", false);
-
-        // random bracket - fail
         testSyntax("if a( < b ;", false);
-
-        // no condition - fail
         testSyntax("if (());", false);
     }
 

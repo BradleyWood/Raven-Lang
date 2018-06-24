@@ -13,7 +13,7 @@ fun getWriter(out, header) {
     var bw = BufferedWriter(OutputStreamWriter(out))
     var writer = CSVWriter(bw, ",")
 
-    if header != null
+    if (header != null)
         writer.printRecord(header)
 
     return writer
@@ -24,13 +24,13 @@ class CSVWriter(bufferedWriter, delim) {
     private var newRecord = true
 
     fun write(arg) {
-        if type(arg) == TList.TYPE {
+        if (type(arg) == TList.TYPE) {
             for (a : arg) {
                 write(a)
             }
             return
         }
-        if !newRecord
+        if (!newRecord)
             bufferedWriter.write(str(delim))
         bufferedWriter.write(str(arg))
         newRecord = false

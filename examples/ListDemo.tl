@@ -11,7 +11,7 @@ fun main() {
 
     while (true) {
         var line = readLine()
-        if line == "done"
+        if (line == "done")
             break
         numbers += int(line)
     }

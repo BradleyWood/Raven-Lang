@@ -37,7 +37,7 @@ returnStatement
     ;
 
 ifStatement
-    :   IF NL* expression NL* statement (NL* ELSE NL* statement SEMI?)?
+    :   IF NL* '(' expression ')' NL* statement (NL* ELSE NL* statement SEMI?)?
     ;
 
 tryCatchFinally

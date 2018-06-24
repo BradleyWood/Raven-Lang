@@ -15,10 +15,10 @@ fun breakTest() {
 fun breakTest2() {
     var sum = 0
     for (i range 0 to 100) {
-        if i == 25
+        if (i == 25)
             break
         for (j range 0 to 100) {
-            if j == 50
+            if (j == 50)
                 break
             sum += 1
         }
