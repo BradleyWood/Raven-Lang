@@ -10,6 +10,7 @@
 
     <artifactId>raven-maven-plugin</artifactId>
     <version>1.0-SNAPSHOT</version>
+    <packaging>maven-plugin</packaging>
 
     <name>raven-maven-plugin</name>
 
@@ -40,5 +41,27 @@
     </dependencies>
 
     <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-plugin-plugin</artifactId>
+                <version>3.5.1</version>
+                <configuration>
+                    <goalPrefix>raven</goalPrefix>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>default-descriptor</id>
+                        <phase>process-classes</phase>
+                    </execution>
+                    <execution>
+                        <id>generated-helpmojo</id>
+                        <goals>
+                            <goal>helpmojo</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
     </build>
 </project>
