@@ -12,9 +12,12 @@ import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.net.URL;
+import java.net.URLClassLoader;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -68,6 +71,11 @@ public class Utility {
     }
 
     public static HashMap<String, byte[]> compile(final String relativePath, final boolean save) throws IOException {
+        return compile(relativePath, new LinkedList<>(), save);
+    }
+
+    public static HashMap<String, byte[]> compile(final String relativePath, List<String> classpath, final boolean save)
+            throws IOException {
         File file = new File(relativePath);
         if (!file.isAbsolute()) {
             file = new File(new File(".").getAbsolutePath(), relativePath);
@@ -84,6 +92,11 @@ public class Utility {
                 .map(p -> new File(p.toString()))
                 .collect(Collectors.toList());
 
+        for (String path : classpath) {
+            if (!addToClasspath(path)) {
+                return classes;
+            }
+        }
 
         for (File f : files) {
             if (!f.getAbsolutePath().endsWith(".rvn"))
@@ -99,4 +112,38 @@ public class Utility {
         }
         return classes;
     }
+
+    private static boolean addToClasspath(final String s) throws IOException {
+        return addToClasspath(new File(s).toURI().toURL());
+    }
+
+    private static boolean addToClasspath(final URL u) {
+        if (!(ClassLoader.getSystemClassLoader() instanceof URLClassLoader)) {
+            Errors.put("Invalid Class Loader");
+            return false;
+        } else if (addUrlMethod == null) {
+            try {
+                addUrlMethod = URLClassLoader.class.getDeclaredMethod("addURL", URL.class);
+                addUrlMethod.setAccessible(true);
+            } catch (NoSuchMethodException e) {
+                Errors.put("Invalid Class Loader");
+                return false;
+            }
+        }
+        if (addUrlMethod == null) {
+            Errors.put("Invalid Class Loader");
+            return false;
+        }
+
+        try {
+            addUrlMethod.invoke(ClassLoader.getSystemClassLoader(), u);
+        } catch (IllegalAccessException | InvocationTargetException e) {
+            Errors.put("Failed to add URL: " + u + " to classpath");
+            return false;
+        }
+        return true;
+    }
+
+    private static Method addUrlMethod = null;
+
 }
