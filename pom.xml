@@ -4,11 +4,11 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.github.bradleywood</groupId>
-    <artifactId>raven-lang</artifactId>
+    <artifactId>raven</artifactId>
     <version>1.0-SNAPSHOT</version>
     <packaging>pom</packaging>
 
-    <name>raven-lang</name>
+    <name>raven</name>
     <description>An experimental language for the jvm</description>
     <url>https://github.com/BradleyWood/Raven-Lang</url>
 
@@ -52,8 +52,9 @@
     </distributionManagement>
 
     <modules>
-        <module>raven</module>
+        <module>raven-compiler</module>
         <module>raven-maven-plugin</module>
+        <module>raven-core</module>
         <module>raven-rt</module>
     </modules>
 

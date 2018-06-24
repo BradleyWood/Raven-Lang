@@ -32,11 +32,6 @@ public class ReplTest {
         this.path = path;
     }
 
-    @BeforeClass
-    public static void before() {
-        org.raven.util.Utility.buildBuiltins();
-    }
-
     @AfterClass
     public static void after() {
         System.setOut(sout);

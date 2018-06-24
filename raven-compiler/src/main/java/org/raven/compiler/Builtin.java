@@ -1,5 +1,7 @@
 package org.raven.compiler;
 
+import org.raven.antlr.RavenTree;
+import org.raven.antlr.ast.Fun;
 import org.raven.antlr.ast.QualifiedName;
 
 import java.lang.reflect.Method;
@@ -26,6 +28,14 @@ public class Builtin {
                 return true;
         }
         return false;
+    }
+
+    public static void addBuiltins(final RavenTree tree) {
+        if (builtins.isEmpty()) {
+            for (final Fun fun : tree.getFunctions()) {
+                builtins.add(new Builtin(fun.getName().toString(), fun.getParams().length));
+            }
+        }
     }
 
     private static void loadBuiltins() {
