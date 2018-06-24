@@ -50,7 +50,7 @@ public class Utility {
                 ByteClassLoader cl = new ByteClassLoader(Application.class.getClassLoader(), classes);
                 if (classes != null) {
                     for (String s : classes.keySet()) {
-                        if (file.getAbsolutePath().endsWith(s.replace(".", "\\") + ".tl")) {
+                        if (file.getAbsolutePath().endsWith(s.replace(".", "\\") + ".rvn")) {
                             Class<?> app = cl.loadClass(s);
                             Method m = app.getMethod("main", String[].class);
                             m.setAccessible(true);
@@ -80,20 +80,20 @@ public class Utility {
         }
 
         List<File> files = Files.walk(Paths.get(file.getAbsolutePath()))
-                .filter(p -> p.toString().endsWith(".tl"))
+                .filter(p -> p.toString().endsWith(".rvn"))
                 .map(p -> new File(p.toString()))
                 .collect(Collectors.toList());
 
 
         for (File f : files) {
-            if (!f.getAbsolutePath().endsWith(".tl"))
+            if (!f.getAbsolutePath().endsWith(".rvn"))
                 continue;
 
             RParser parser = new RParser(f.getPath());
             RavenTree tree = parser.parse();
 
             if (tree != null) {
-                Compiler compiler = new Compiler(f.getAbsolutePath(), f.getName().replace(".tl", ""), tree, new JvmMethodAnnotationProcessor());
+                Compiler compiler = new Compiler(f.getAbsolutePath(), f.getName().replace(".rvn", ""), tree, new JvmMethodAnnotationProcessor());
                 classes.putAll(compiler.compile(save));
             }
 

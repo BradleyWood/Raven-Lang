@@ -69,7 +69,7 @@ public class TestRunner {
         try {
             RParser parser = new RParser(f.getPath());
             RavenTree tree = parser.parse();
-            Compiler compiler = new Compiler(f.getAbsolutePath(), f.getName().replace(".tl", ""), tree, new JvmMethodAnnotationProcessor());
+            Compiler compiler = new Compiler(f.getAbsolutePath(), f.getName().replace(".rvn", ""), tree, new JvmMethodAnnotationProcessor());
             HashMap<String, byte[]> clazzes = compiler.compile(false);
             Errors.printErrors();
             Errors.reset();
@@ -90,7 +90,7 @@ public class TestRunner {
     @Parameterized.Parameters(name = "{0} {1}()")
     public static Collection getTests() throws IOException {
         List<String> paths = Files.walk(Paths.get("testData/rt_tests/"))
-                .filter(p -> p.toString().endsWith(".tl"))
+                .filter(p -> p.toString().endsWith(".rvn"))
                 .map(Path::toString).collect(Collectors.toList());
 
         List<Object[]> tests = new LinkedList<>();

@@ -35,7 +35,7 @@ public class RParser {
         RavenTree tree = fileVisitor.visit(ctx);
         tree.setSourceFile(file);
         String name = new File(file).getName();
-        tree.setName(name.replaceAll(".tl", ""));
+        tree.setName(name.replaceAll(".rvn", ""));
         return tree;
     }
 }

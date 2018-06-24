@@ -95,7 +95,7 @@ public class Application {
         }
         String mainClass = null;
         for (String s : classes.keySet()) {
-            if (buildOptions[0].replace("/", "\\").endsWith(s.replace(".", "\\") + ".tl")) {
+            if (buildOptions[0].replace("/", "\\").endsWith(s.replace(".", "\\") + ".rvn")) {
                 mainClass = s;
             }
         }

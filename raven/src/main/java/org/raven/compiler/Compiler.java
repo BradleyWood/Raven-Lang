@@ -197,7 +197,7 @@ public class Compiler {
                 basePath = basePath.getParentFile();
             }
         }
-        String str = basePath.getPath() + "/" + (name.toString().replace('.', '/')) + ".tl";
+        String str = basePath.getPath() + "/" + (name.toString().replace('.', '/')) + ".rvn";
         if (!new File(str).exists())
             return null;
         return str;
