@@ -97,8 +97,6 @@ public class Compiler {
 
         modifyTree(tree);
 
-        List<ClassDef> gga = tree.getClasses();
-
         for (ClassDef classDef : tree.getClasses()) {
             if (!classDef.isPrivate()) {
                 classDef.setPublic();
