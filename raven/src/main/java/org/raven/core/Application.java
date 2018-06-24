@@ -1,7 +1,6 @@
 package org.raven.core;
 
 import org.apache.commons.cli.*;
-import org.raven.build.AppBuilder;
 import org.raven.error.Errors;
 import org.raven.repl.InteractiveInterpreter;
 import org.raven.util.Settings;
@@ -24,10 +23,6 @@ public class Application {
         options.addOption("s", true, "Check files for correctness");
         options.addOption("repl", false, "Run in REPL mode");
 
-        Option buildOption = new Option("b", true, "Build program into executable jar");
-        buildOption.setArgs(2);
-        options.addOption(buildOption);
-
         options.addOption("r", true, "Run program");
 
         Option programArgs = new Option("args", true, "Specify command line arguments for your program");
@@ -43,11 +38,10 @@ public class Application {
             }
 
             boolean correctness = cmd.hasOption("s");
-            boolean build = cmd.hasOption("b");
             boolean run = cmd.hasOption("r");
             boolean REPL = cmd.hasOption("repl");
 
-            if (!onlyOneTrue(correctness, build, run, REPL)) {
+            if (!onlyOneTrue(correctness, run, REPL)) {
                 cmdError(options);
                 return;
             }
@@ -55,9 +49,6 @@ public class Application {
             if (correctness) {
                 String[] values = cmd.getOptionValues("s");
                 compile(values[0], false);
-            } else if (build) {
-                String[] buildOptions = cmd.getOptionValues("b");
-                build(buildOptions);
             } else if (run) {
                 String[] values = cmd.getOptionValues("r");
                 compileAndRun(values[0], cmd.hasOption("args") ? cmd.getOptionValues("args") : new String[0]);
@@ -85,27 +76,6 @@ public class Application {
                 line = line.substring(0, line.length() - 1) + scanner.nextLine();
             }
             interactiveInterpreter.exec(line + ";");
-        }
-    }
-
-    private static void build(final String[] buildOptions) throws IOException {
-        HashMap<String, byte[]> classes = compile(buildOptions[0], false);
-        if (Errors.getErrorCount() > 0) {
-            return;
-        }
-        String mainClass = null;
-        for (String s : classes.keySet()) {
-            if (buildOptions[0].replace("/", "\\").endsWith(s.replace(".", "\\") + ".rvn")) {
-                mainClass = s;
-            }
-        }
-        if (mainClass == null) {
-            System.err.println("Could not determine main class.");
-            return;
-        }
-        boolean b = AppBuilder.build(classes, mainClass, buildOptions[1]);
-        if (!b) {
-            System.err.println("Failed to build executable jarfile");
         }
     }
 
