@@ -53,6 +53,7 @@
 
     <modules>
         <module>raven</module>
+        <module>raven-maven-plugin</module>
     </modules>
 
     <build>
