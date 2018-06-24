@@ -96,11 +96,6 @@ public class Utility {
                 Compiler compiler = new Compiler(f.getAbsolutePath(), f.getName().replace(".rvn", ""), tree, new JvmMethodAnnotationProcessor());
                 classes.putAll(compiler.compile(save));
             }
-
-            if (Errors.getErrorCount() > 0) {
-                Errors.printErrors();
-                Errors.reset();
-            }
         }
         return classes;
     }
