@@ -26,7 +26,6 @@ public class Compiler {
 
     private LinkedList<AnnotationProcessor> processors = new LinkedList<>();
     private ArrayList<RavenTree> trees = new ArrayList<>();
-    private ArrayList<String> classPath;
 
     public Compiler(final String file, final String name, final RavenTree tree, final AnnotationProcessor... annotationProcessors) {
         this.file = new File(file);
