@@ -1,7 +1,6 @@
 package org.raven.core;
 
 import org.raven.core.wrappers.*;
-import org.raven.util.Settings;
 
 import java.lang.invoke.*;
 import java.lang.reflect.*;
@@ -489,7 +488,7 @@ public class Intrinsics {
                 list.clear();
                 skip = false;
             }
-            if (Settings.getBoolean("REPL") && element.getMethodName().equals("exec")
+            if (element.getMethodName().equals("exec")
                     || element.getMethodName().equals("main")) {
                 break;
             }

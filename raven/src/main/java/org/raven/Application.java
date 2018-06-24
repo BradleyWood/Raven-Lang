@@ -1,7 +1,7 @@
-package org.raven.core;
+package org.raven;
 
 import org.apache.commons.cli.*;
-import org.raven.error.Errors;
+import org.raven.core.WebSecurityManager;
 import org.raven.repl.InteractiveInterpreter;
 import org.raven.util.Settings;
 

@@ -5,7 +5,7 @@ import org.raven.antlr.RavenTree;
 import org.raven.compiler.Compiler;
 import org.raven.error.Errors;
 import org.raven.compiler.JvmMethodAnnotationProcessor;
-import org.raven.core.Application;
+import org.raven.Application;
 import org.raven.core.ByteClassLoader;
 
 import java.io.File;
