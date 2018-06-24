@@ -35,8 +35,8 @@ fun doWhileTest() {
 
 fun doWhileTest2() {
     var counter = 0
-        do {
-            counter += 1
-        } while (false)
+    do {
+        counter += 1
+    } while (false)
     Assert.assertEquals(1, counter)
 }

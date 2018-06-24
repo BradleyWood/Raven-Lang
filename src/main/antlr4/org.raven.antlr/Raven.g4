@@ -50,8 +50,8 @@ boxedId
     ;
 
 whileStatement
-    :   WHILE NL* expression NL* statement
-    |   DO NL* statement NL* WHILE NL* expression
+    :   WHILE NL* '(' expression ')' NL* statement
+    |   DO NL* statement NL* WHILE NL* '(' expression ')'
     ;
 
 forStatement

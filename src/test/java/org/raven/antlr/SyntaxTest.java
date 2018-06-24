@@ -53,9 +53,6 @@ public class SyntaxTest {
 
     @Test
     public void testWhile() {
-        testSyntax("while true call()\n", true);
-        testSyntax("while a > b a-=2;", true);
-        testSyntax("while a > b {}", true);
         testSyntax("while (a > b) a-=1\r\n", true);
         testSyntax("while (((a > b))) if (a > b) b = -1\r\n", true);
         testSyntax("while (((a > b))) {}", true);
@@ -65,6 +62,9 @@ public class SyntaxTest {
 
         // mismatched brackets
         testSyntax("while (true ;", false);
+        testSyntax("while true call()\n", false);
+        testSyntax("while a > b a-=2;", false);
+        testSyntax("while a > b {}", false);
         // no condition
         testSyntax("while () ;", false);
         testSyntax("while ;", false);
