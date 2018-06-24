@@ -27,6 +27,10 @@ public class Errors {
         }
     }
 
+    public static LinkedList<Error> getErrors() {
+        return ERRORS;
+    }
+
     public static void reset() {
         ERRORS.clear();
     }
