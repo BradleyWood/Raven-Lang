@@ -16,8 +16,6 @@ import java.util.List;
 @Mojo(name = "compile", defaultPhase = LifecyclePhase.COMPILE, requiresDependencyResolution = ResolutionScope.COMPILE)
 public class RavenCompileMojo extends AbstractMojo {
 
-    private static String LS = System.lineSeparator();
-
     @Parameter(name = "sourceDirectory", defaultValue = "${project.basedir}/src/main/raven")
     private String sourceDirectory;
 
