@@ -2,6 +2,7 @@ package org.raven.util;
 
 import org.raven.antlr.RParser;
 import org.raven.antlr.RavenTree;
+import org.raven.compiler.Builtin;
 import org.raven.compiler.Compiler;
 import org.raven.error.Errors;
 import org.raven.compiler.JvmMethodAnnotationProcessor;
@@ -24,19 +25,19 @@ import java.util.stream.Collectors;
 public class Utility {
 
 
-    public static void buildBuiltins() {
-        try {
-            Class.forName("raven.Builtin");
-        } catch (ClassNotFoundException e) {
-            try {
-                Errors.reset();
-                Utility.compile("src/main/raven/raven/", true);
-                Class.forName("raven.Builtin");
-            } catch (Exception e1) {
-                e1.printStackTrace();
-            }
-        }
-    }
+//    public static void buildBuiltins() {
+//        try {
+//            Class.forName("raven.Builtin");
+//        } catch (ClassNotFoundException e) {
+//            try {
+//                Errors.reset();
+//                Utility.compile("src/main/raven/raven/", true);
+//                Class.forName("raven.Builtin");
+//            } catch (Exception e1) {
+//                e1.printStackTrace();
+//            }
+//        }
+//    }
 
     public static void compileAndRun(String path, final String[] args) {
         path = path.replace("/", "\\");
@@ -51,15 +52,13 @@ public class Utility {
             HashMap<String, byte[]> classes = compile(path, true);
             if (Errors.getErrorCount() == 0) {
                 ByteClassLoader cl = new ByteClassLoader(Application.class.getClassLoader(), classes);
-                if (classes != null) {
-                    for (String s : classes.keySet()) {
-                        if (file.getAbsolutePath().endsWith(s.replace(".", "\\") + ".rvn")) {
-                            Class<?> app = cl.loadClass(s);
-                            Method m = app.getMethod("main", String[].class);
-                            m.setAccessible(true);
-                            m.invoke(null, (Object) args);
-                            break;
-                        }
+                for (String s : classes.keySet()) {
+                    if (file.getAbsolutePath().endsWith(s.replace(".", "\\") + ".rvn")) {
+                        Class<?> app = cl.loadClass(s);
+                        Method m = app.getMethod("main", String[].class);
+                        m.setAccessible(true);
+                        m.invoke(null, (Object) args);
+                        break;
                     }
                 }
             }
@@ -98,6 +97,7 @@ public class Utility {
             }
         }
 
+        LinkedList<RavenTree> trees = new LinkedList<>();
         for (File f : files) {
             if (!f.getAbsolutePath().endsWith(".rvn"))
                 continue;
@@ -105,11 +105,21 @@ public class Utility {
             RParser parser = new RParser(f.getPath());
             RavenTree tree = parser.parse();
 
+            trees.add(tree);
+
+            if (tree.getFullName().toString().equalsIgnoreCase("raven.Builtin")) {
+                Builtin.addBuiltins(tree);
+            }
+        }
+
+        for (RavenTree tree : trees) {
             if (tree != null) {
-                Compiler compiler = new Compiler(f.getAbsolutePath(), f.getName().replace(".rvn", ""), tree, new JvmMethodAnnotationProcessor());
+                Compiler compiler = new Compiler(tree.getSourceFile(), new File(tree.getSourceFile()).getName()
+                        .replace(".rvn", ""), tree, new JvmMethodAnnotationProcessor());
                 classes.putAll(compiler.compile(save));
             }
         }
+
         return classes;
     }
 

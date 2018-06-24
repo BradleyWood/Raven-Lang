@@ -59,7 +59,7 @@ public class TestRunner {
     }
 
     private static Class<?> loadClass(final String file) {
-        Utility.buildBuiltins();
+//        Utility.buildBuiltins();
         File f = new File(file);
         if (f.isDirectory()) {
             return null;
