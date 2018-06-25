@@ -3,6 +3,7 @@ package org.raven.antlr.visitor;
 import org.junit.Test;
 import org.raven.antlr.Modifier;
 import org.raven.antlr.ast.*;
+import org.raven.core.wrappers.TBoolean;
 import org.raven.core.wrappers.TInt;
 
 import java.util.Collections;
@@ -55,5 +56,28 @@ public class ClassDefVisitorTest {
 
         testStatement(ClassDefVisitor.INSTANCE, "class aClass { var a = 5\r\nfun aFun() { return 100 } }", def);
         testStatement(ClassDefVisitor.INSTANCE, "class aClass { var a = 5;fun aFun() { return 100 } }", def);
+    }
+
+    @Test
+    public void testSuperParams() {
+        Inheritance inh = new Inheritance(new QualifiedName("a", "b", "c"), new Expression[]{
+                new Literal(new TInt(1)),
+                new QualifiedName("b")
+        }, new QualifiedName[0]);
+
+        ClassDef def = new ClassDef(new Modifier[0], "aClass", inh, Collections.emptyList());
+
+        testStatement(ClassDefVisitor.INSTANCE, "class aClass extends a.b.c(1, b) {}", def);
+
+        inh = new Inheritance(new QualifiedName("a", "b", "c"), new Expression[]{
+                new Literal(TBoolean.TRUE),
+                new QualifiedName("b")
+        }, new QualifiedName[] {
+                new QualifiedName("def"),
+                new QualifiedName("g", "h", "i")
+        });
+        def = new ClassDef(new Modifier[0], "aClass", inh, Collections.emptyList());
+
+        testStatement(ClassDefVisitor.INSTANCE, "class aClass extends a.b.c(true, b) implements def, g.h.i {}", def);
     }
 }
