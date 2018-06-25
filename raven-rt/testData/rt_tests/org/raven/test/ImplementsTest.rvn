@@ -4,6 +4,7 @@ import org.junit.Assert
 
 import java.lang.Thread
 import java.lang.Runnable
+import java.lang.Override;
 
 public class SomeRunnableClass implements Runnable {
     private var someValue = 0
