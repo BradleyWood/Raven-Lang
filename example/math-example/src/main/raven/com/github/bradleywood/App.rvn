@@ -1,0 +1,11 @@
+package com.github.bradleywood
+
+import com.github.bradleywood.Functions
+
+fun main() {
+    print("Enter a number: ")
+    var x = int(readLine())
+    println();
+    println("x = "+x + ", f(x) = " + Functions.f(x) + ", g(x) = " + Functions.g(x) + ", fog(x) = " + Functions.fog(x))
+    println("x! = " + Functions.factorial(x) + ", fib(x) = " + Functions.fib(x))
+}

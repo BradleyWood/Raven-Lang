@@ -1,0 +1,24 @@
+package com.github.bradleywood
+
+import com.github.bradleywood.Functions
+
+import org.junit.Assert
+import org.junit.Test
+
+@Test
+fun testFib() {
+    Assert.assertEquals(0, Functions.fib(0))
+    Assert.assertEquals(1, Functions.fib(1))
+    Assert.assertEquals(1, Functions.fib(2))
+    Assert.assertEquals(2, Functions.fib(3))
+    Assert.assertEquals(34, Functions.fib(9))
+    Assert.assertEquals(6765, Functions.fib(20))
+}
+
+@Test
+fun testFactorial() {
+    Assert.assertEquals(1, Functions.factorial(1))
+
+    Assert.assertEquals(720, Functions.factorial(6))
+    Assert.assertEquals(362880, Functions.factorial(9))
+}
