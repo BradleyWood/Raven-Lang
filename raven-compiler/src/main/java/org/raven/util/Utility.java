@@ -96,6 +96,10 @@ public class Utility {
             RParser parser = new RParser(f.getPath());
             RavenTree tree = parser.parse();
 
+            if (tree == null) {
+                continue;
+            }
+
             trees.add(tree);
 
             if (tree.getFullName().toString().equalsIgnoreCase("raven.Builtin")) {
