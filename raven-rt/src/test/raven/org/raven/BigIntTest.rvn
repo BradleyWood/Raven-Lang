@@ -1,0 +1,85 @@
+package org.raven
+
+import org.junit.Assert
+import org.junit.Test
+
+import org.raven.core.wrappers.TInt
+import org.raven.core.wrappers.TBigInt
+
+@Test
+fun bigIntMultTest() {
+    Assert.assertEquals(100000000000000, 10000000000000 * 10)
+
+    Assert.assertEquals(100000000000000, 10 * 10000000000000)
+}
+
+@Test
+fun bigIntDivTest() {
+    Assert.assertEquals(10000000000000, 100000000000000 / 10)
+    Assert.assertEquals(0, 10 / 100000000000000)
+}
+
+@Test
+fun bigIntSubTest() {
+    Assert.assertEquals(0, 100000000000000 - 100000000000000)
+    Assert.assertEquals(100000000000000, 100000000000000 - 0)
+}
+
+@Test
+fun bigIntAddTest() {
+    Assert.assertEquals(200000000000000, 100000000000000 + 100000000000000)
+    Assert.assertEquals(100000000000000, 100000000000000 + 0)
+    Assert.assertEquals(100000000000000, 0 + 100000000000000)
+    Assert.assertEquals(100000000000000, 0 + 100000000000000 + 0)
+}
+
+@Test
+fun bigIntPowTest() {
+    var bigInt = 10000000000000
+    var result = 100000000000000000000000000
+    bigInt = bigInt ** 2
+    Assert.assertEquals(result, bigInt)
+
+    var a = 0
+    a = bigInt ** a
+    Assert.assertEquals(a, 1)
+}
+
+@Test
+fun bigIntModTest() {
+    Assert.assertEquals(10, 10 % 10000000000000)
+    Assert.assertEquals(2, bigInt(10) % 8)
+}
+
+@Test
+fun intAddOverflowTest() {
+    var i = 2**30
+    var sum = i + i
+    Assert.assertEquals(TInt.TYPE, type(i))
+    Assert.assertEquals(TBigInt.TYPE, type(sum))
+    Assert.assertTrue(sum > i)
+}
+
+@Test
+fun intSubOverflowTest() {
+    var i = -(2**30)
+    var diff = i - (2**30 + 11)
+    Assert.assertEquals(TInt.TYPE, type(i))
+    Assert.assertEquals(TBigInt.TYPE, type(diff))
+    Assert.assertTrue(diff < i)
+}
+
+@Test
+fun intMultOverflowTest() {
+    var i = 2**30
+    var product = i * 10
+    Assert.assertEquals(TInt.TYPE, type(i))
+    Assert.assertEquals(TBigInt.TYPE, type(product))
+    Assert.assertTrue(product > i)
+    Assert.assertEquals(10737418240, product)
+}
+
+@Test
+fun intPowOverflowTest() {
+    Assert.assertEquals(10000000000, 10 ** 10)
+}

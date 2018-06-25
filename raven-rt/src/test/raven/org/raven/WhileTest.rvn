@@ -1,0 +1,48 @@
+package org.raven
+
+import org.junit.Assert
+import org.junit.Test
+
+@Test
+fun whileTest1() {
+    var i = 0
+    while(i < 10) i+=1
+
+    Assert.assertEquals(i, 10)
+}
+
+@Test
+fun whileTest2() {
+    var i = 0
+    while(i < 10) {
+        i += 1
+    }
+    Assert.assertEquals(i, 10)
+}
+
+@Test
+fun whileTest3() {
+    var str = ""
+    while(str != "aaaa") {
+        str += "a"
+    }
+    Assert.assertEquals(str, "aaaa")
+}
+
+@Test
+fun doWhileTest() {
+    var counter = 0
+    do {
+        counter += 1
+    } while (counter < 10)
+    Assert.assertEquals(10, counter)
+}
+
+@Test
+fun doWhileTest2() {
+    var counter = 0
+    do {
+        counter += 1
+    } while (false)
+    Assert.assertEquals(1, counter)
+}

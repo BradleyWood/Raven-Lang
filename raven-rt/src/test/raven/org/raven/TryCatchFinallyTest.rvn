@@ -1,0 +1,80 @@
+package org.raven
+
+import org.junit.Assert
+import org.junit.Test
+
+@Test
+fun testTryCatch() {
+    try {
+        Assert.fail()
+    } catch (e) {
+        return
+    }
+    Assert.fail("Exception not caught")
+}
+
+@Test
+fun testTryCatch2() {
+    try {
+        Assert.fail("a message")
+    } catch (((e))) {
+        Assert.assertEquals("a message", e.getMessage())
+        return
+    }
+    Assert.fail("Exception not caught")
+}
+
+// test finally with exception thrown
+@Test
+fun testTryCatchFinally() {
+    try {
+        Assert.fail()
+    } catch e {
+    } finally {
+        return
+    }
+    Assert.fail("Finally not executed")
+}
+
+// test finally without exception thrown
+@Test
+fun testTryCatchFinally2() {
+    try {
+    } catch e {
+    } finally {
+        return
+    }
+    Assert.fail("Finally not executed")
+}
+
+@Test
+fun testNestedTryCatch() {
+    try {
+        try {
+            Assert.fail()
+        } catch e {
+            return
+        }
+        Assert.fail("Exception not caught")
+    } catch e {
+        Assert.fail("Exception should not be caught here")
+    }
+    Assert.fail("No branch executed")
+}
+
+@Test
+fun testNestedTryCatchFinally() {
+    try {
+        try {
+            Assert.fail("abc")
+        } catch e {
+            return
+        } finally {
+        }
+        Assert.fail("Exception not caught")
+    } catch e {
+        Assert.fail("Exception should not be caught here")
+    } finally {
+    }
+    Assert.fail("No branch executed")
+}

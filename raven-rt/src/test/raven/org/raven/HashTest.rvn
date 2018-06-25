@@ -1,0 +1,12 @@
+package org.raven
+
+import org.junit.Assert
+import org.junit.Test
+
+@Test
+fun hashTest1() {
+    var str = "an error"
+    var error = error(str)
+    Assert.assertEquals(hash(str), hash(error))
+    Assert.assertEquals(error.hashCode(), hash(error))
+}

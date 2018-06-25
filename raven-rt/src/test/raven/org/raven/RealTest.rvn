@@ -1,0 +1,95 @@
+package org.raven
+
+import org.junit.Assert
+import org.junit.Test
+
+@Test
+fun addTest() {
+    var i = 0.0
+    i = i + 10.0
+    i += 10.0
+    Assert.assertEquals(i, 20, 0.00000001)
+}
+
+@Test
+fun subTest() {
+    var i = 0.0
+    i = i - 10.0
+    i -= 10.0
+    Assert.assertEquals(i, -20.0, 0.00000001)
+}
+
+@Test
+fun multTest() {
+    var i = 10.0
+    i = i * 10.0
+    i *= 10.0
+    Assert.assertEquals(i, 1000.0, 0.00000001)
+}
+
+@Test
+fun divTest() {
+    var i = 1000.0
+    i = i / 10.0
+    i /= 10.0
+    Assert.assertEquals(i, 10.0, 0.00000001)
+}
+
+@Test
+fun modTest() {
+    var i = 13.0
+    Assert.assertEquals(i % 10, 3.0, 0.00000001)
+    i %= 10.0
+    Assert.assertEquals(i, 3.0, 0.00000001)
+}
+
+@Test
+fun powTest() {
+    var i = 10.0
+    i = i**2.0
+    Assert.assertEquals(i, 100.0, 0.00000001)
+    i **= 2.0
+    Assert.assertEquals(i, 100.0 * 100.0, 0.00000001)
+}
+
+@Test
+fun gtTest() {
+    Assert.assertEquals(10.0 > 9.0, true)
+    Assert.assertEquals(10.0 > 10.0, false)
+    Assert.assertEquals(9.0 > 10.0, false)
+}
+
+@Test
+fun gteTest() {
+    Assert.assertEquals(10.0 >= 9.0, true)
+    Assert.assertEquals(10.0 >= 10.0, true)
+    Assert.assertEquals(9.0 >= 10.0, false)
+}
+
+@Test
+fun ltTest() {
+    Assert.assertEquals(10.0 < 9.0, false)
+    Assert.assertEquals(10.0 < 10.0, false)
+    Assert.assertEquals(9.0 < 10.0, true)
+}
+
+@Test
+fun lteTest() {
+    Assert.assertEquals(10.0 <= 9.0, false)
+    Assert.assertEquals(10.0 <= 10.0, true)
+    Assert.assertEquals(9.0 <= 10.0, true)
+}
+
+@Test
+fun eqTest() {
+    Assert.assertEquals(10.0 == 10.0, true)
+    Assert.assertEquals(10.0 == 11.0, false)
+    Assert.assertEquals(-10.0 == 10.0, false)
+}
+
+@Test
+fun neTest() {
+    Assert.assertEquals(10.0 != 10.0, false)
+    Assert.assertEquals(10.0 != 11.0, true)
+    Assert.assertEquals(-10.0 != 10.0, true)
+}

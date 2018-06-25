@@ -1,0 +1,28 @@
+package org.raven
+
+import org.junit.Assert
+import org.junit.Test
+
+@Test
+fun boolTest1() {
+    Assert.assertEquals(true, true)
+}
+
+@Test
+fun boolTest2() {
+    Assert.assertEquals(false, false)
+}
+
+@Test
+fun boolTest3() {
+    Assert.assertNotEquals(true, false)
+    Assert.assertNotEquals(false, true)
+}
+
+@Test
+fun boolNotTest() {
+    Assert.assertEquals(!true, false)
+    Assert.assertEquals(!false, true)
+    Assert.assertEquals(!!true, true)
+    Assert.assertEquals(!!false, false)
+}

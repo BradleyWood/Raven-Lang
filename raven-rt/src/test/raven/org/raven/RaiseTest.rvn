@@ -1,0 +1,15 @@
+package org.raven
+
+import org.junit.Assert
+import org.junit.Test
+import java.lang.NullPointerException
+
+@Test
+fun testRaise() {
+    try {
+        raise NullPointerException()
+    } catch e {
+        return
+    }
+    Assert.fail("Exception not caught")
+}

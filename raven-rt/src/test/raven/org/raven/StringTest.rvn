@@ -1,0 +1,180 @@
+package org.raven
+
+import org.junit.Assert
+import org.junit.Test
+
+@Test
+fun strTest1() {
+    Assert.assertEquals("abc", "abc")
+}
+
+@Test
+fun strTest2() {
+    Assert.assertNotEquals("abcd", "abc")
+}
+
+@Test
+fun strTest3() {
+    Assert.assertEquals("abc", str("abc"))
+}
+
+@Test
+fun strTest4() {
+    Assert.assertEquals("21", str(21))
+}
+
+@Test
+fun strTest5() {
+    Assert.assertEquals("true", str(true))
+}
+
+@Test
+fun strTest6() {
+    Assert.assertEquals("null", str(null))
+}
+
+@Test
+fun strTest7() {
+    Assert.assertEquals("3.14", str(3.14))
+}
+
+@Test
+fun strAddTest() {
+    var result = "abcdef"
+    Assert.assertEquals(result, "abc" + "def")
+}
+
+@Test
+fun strAddTest2() {
+    var result = "abc123"
+    Assert.assertEquals(result, "abc" + 123)
+}
+
+@Test
+fun strAddTest3() {
+    var result = "123abc"
+    Assert.assertEquals(result, 123 + "abc")
+}
+
+@Test
+fun strGTTest() {
+    var str1 = "aba"
+    var str2 = "abz"
+    Assert.assertEquals(true, str1 > str2)
+    Assert.assertEquals(false, str2 > str1)
+}
+
+@Test
+fun strLTTest() {
+    var str1 = "aba"
+    var str2 = "abz"
+    Assert.assertEquals(false, str1 < str2)
+    Assert.assertEquals(true, str2 < str1)
+}
+
+@Test
+fun strGTETest() {
+    var str1 = "aba"
+    var str2 = "abz"
+    var str3 = "aba"
+    Assert.assertEquals(true, str1 >= str2)
+    Assert.assertEquals(true, str1 >= str3)
+    Assert.assertEquals(false, str2 >= str3)
+}
+
+@Test
+fun strLTETest() {
+    var str1 = "aba"
+    var str2 = "abz"
+    var str3 = "aba"
+    Assert.assertEquals(false, str1 <= str2)
+    Assert.assertEquals(true, str1 <= str3)
+    Assert.assertEquals(true, str2 <= str3)
+}
+
+@Test
+fun strEQTest() {
+    var str1 = "aba"
+    var str2 = "abz"
+    var str3 = "aba"
+    Assert.assertEquals(true, str1 == str1)
+    Assert.assertEquals(false, str1 == str2)
+    Assert.assertEquals(true, str1 == str3)
+    Assert.assertEquals(false, str2 == str3)
+}
+
+@Test
+fun strNETest() {
+    var str1 = "aba"
+    var str2 = "abz"
+    var str3 = "aba"
+    Assert.assertEquals(false, str1 != str1)
+    Assert.assertEquals(true, str1 != str2)
+    Assert.assertEquals(false, str1 != str3)
+    Assert.assertEquals(true, str2 != str3)
+}
+
+@Test
+fun strContainsTest() {
+    var str = "abcdefghi"
+    Assert.assertTrue(str.contains("def"))
+}
+
+@Test
+fun strSubstringTest() {
+    var str = "abcdefghi"
+    Assert.assertTrue(str.substring(1) == "bcdefghi")
+    Assert.assertTrue(str.substring(1, str.size() - 1) == "bcdefgh")
+}
+
+@Test
+fun strEndsWithTest() {
+    var str = "abcdefghi"
+    Assert.assertTrue(str.endsWith("ghi"))
+    Assert.assertTrue(!str.endsWith("abc"))
+}
+
+@Test
+fun strStarssWithTest() {
+    var str = "abcdefghi"
+    Assert.assertTrue(!str.startsWith("ghi"))
+    Assert.assertTrue(str.startsWith("abc"))
+}
+
+@Test
+fun strUppercaseTest() {
+    var str = "abc"
+    Assert.assertTrue(str.toUpperCase() == "ABC")
+    Assert.assertTrue(str.toUpperCase() != "abc")
+}
+
+@Test
+fun strLowercaseTest() {
+    var str = "ABC"
+    Assert.assertTrue(str.toLowerCase() != "ABC")
+    Assert.assertTrue(str.toLowerCase() == "abc")
+}
+
+@Test
+fun strReplaceTest() {
+    var str = "ABCdefGHI"
+    Assert.assertTrue(str.replace("def", "") == "ABCGHI")
+    Assert.assertTrue(str.replace("def", "") != "def")
+}
+
+@Test
+fun strIndexOfTest() {
+    var str = "ABCdefGHI"
+    Assert.assertEquals(3, str.indexOf("def"))
+}
+
+@Test
+fun testEqualsIgnoreCase() {
+    Assert.assertTrue("AbCdEF".equalsIgnoreCase("abcdef"))
+}
+
+@Test
+fun testIsEmpty() {
+    Assert.assertTrue("".isEmpty())
+    Assert.assertTrue(!("abc".isEmpty()))
+}
