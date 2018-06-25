@@ -13,6 +13,7 @@ import org.raven.util.Utility;
 
 import java.io.IOException;
 import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
 
 @Mojo(name = "test-compile", defaultPhase = LifecyclePhase.TEST_COMPILE, requiresDependencyResolution = ResolutionScope.COMPILE)
@@ -24,6 +25,9 @@ public class RavenTestCompileMojo extends AbstractMojo {
     @Parameter(defaultValue = "${project.compileClasspathElements}", required = true, readonly = true)
     private List<String> classpath;
 
+    @Parameter(defaultValue = "${project.testClasspathElements}", required = true, readonly = true)
+    private List<String> testClasspath;
+
     @Parameter(defaultValue = "${project.build.testOutputDirectory}", required = true, readonly = true)
     private String outputDirectory;
 
@@ -31,6 +35,10 @@ public class RavenTestCompileMojo extends AbstractMojo {
     public void execute() throws CompilationFailureException {
         Settings.set("OUT", outputDirectory);
         try {
+            final LinkedList<String> classpath = new LinkedList<>();
+            classpath.addAll(this.classpath);
+            classpath.addAll(this.testClasspath);
+
             Utility.compile(testSourceDirectory, classpath, Collections.singletonList(new JUnitAnnotationProcessor()),
                     true);
         } catch (IOException e) {
