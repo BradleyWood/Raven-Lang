@@ -3,6 +3,9 @@ package org.raven.repl;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.raven.core.wrappers.TInt;
+import org.raven.core.wrappers.TString;
+import org.raven.core.wrappers.TVoid;
 
 import java.util.function.Function;
 
@@ -30,5 +33,15 @@ public class InteractiveInterpreterTest {
     @Test(expected = Throwable.class)
     public void testFailureOnIllegalParams() {
         fun.apply("invalid argument");
+    }
+
+    @Test
+    public void testEval() {
+        final InteractiveInterpreter interpreter = new InteractiveInterpreter();
+        Assert.assertEquals(new TInt(45), interpreter.eval("5 * 9"));
+        Assert.assertEquals(new TString("literal"), interpreter.eval("\"literal\""));
+
+        Assert.assertEquals(TVoid.VOID, interpreter.eval("f(x) = 100"));
+        Assert.assertEquals(TVoid.VOID, interpreter.eval("for (i range 0 to 10) {}"));
     }
 }
