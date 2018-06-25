@@ -10,8 +10,11 @@ import org.raven.core.wrappers.*;
 import org.raven.error.CompilationError;
 import org.raven.error.Errors;
 
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
 import java.lang.reflect.Field;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class Method extends MethodVisitor implements TreeVisitor, Opcodes {
 
@@ -1152,7 +1155,91 @@ public class Method extends MethodVisitor implements TreeVisitor, Opcodes {
 
     @Override
     public void visitAnnotation(final Annotation annotation) {
-        Warning.put("Annotations are not implemented");
+        final Class clazz = getClass(annotation.getName());
+        if (clazz == null) {
+            Errors.put("Cannot resolve annotation: " + annotation.getName());
+            return;
+        }
+
+        if (!clazz.isAnnotation()) {
+            Errors.put("line " + annotation.getLineNumber() + ": type " + clazz.getTypeName() + " is not an" +
+                    "annotation.");
+            return;
+        }
+
+        final Map<String, Boolean> requirements = getAnnotationRequirements(clazz);
+
+        final List<String> keys = Arrays.stream(annotation.getKeys()).map(QualifiedName::toString)
+                .collect(Collectors.toList());
+        final List<Literal> values = Arrays.asList(annotation.getValues());
+
+        final boolean valid = requirements.entrySet().stream().filter(Map.Entry::getValue)
+                .allMatch((e) -> keys.contains(e.getKey()));
+
+        if (!valid) {
+            Errors.put("line " + annotation.getLineNumber() + ": missing non-default annotation parameters");
+            return;
+        }
+
+        final boolean visible = isRuntimeRetention(clazz);
+        final AnnotationVisitor av = visitAnnotation(Type.getType(clazz).getDescriptor(), visible);
+        for (int i = 0; i < keys.size(); i++) {
+            final String name = keys.get(i);
+            final Boolean required = requirements.get(name);
+
+            if (required != null) {
+                for (java.lang.reflect.Method m : clazz.getMethods()) {
+                    if (m.getName().equals(name)) {
+                        try {
+                            Object value = values.get(i).getValue().coerce(m.getReturnType());
+                            av.visit(name, value);
+                        } catch (final UnsupportedOperationException e) {
+                            Errors.put("line " + annotation.getLineNumber() + ": invalid annotation " +
+                                    "parameter value name=" + name + " value=" + values.get(i) + " expected type=" +
+                                    m.getReturnType());
+                        }
+                    }
+                }
+            } else {
+                Errors.put("line " + annotation.getLineNumber() + ": Invalid annotation parameter: " +
+                        keys.get(i));
+            }
+        }
+        av.visitEnd();
+    }
+
+    private boolean isRuntimeRetention(Class<? extends Annotation> annotation) {
+        Retention retentionPolicy = annotation.getDeclaredAnnotation(Retention.class);
+
+        if (retentionPolicy != null) {
+            return retentionPolicy.value() == RetentionPolicy.RUNTIME;
+        }
+
+        return false;
+    }
+
+    private Map<String, Boolean> getAnnotationRequirements(final Class clazz) {
+        final Map<String, Boolean> requirements = new HashMap<>();
+
+        for (final java.lang.reflect.Method method : clazz.getDeclaredMethods()) {
+            requirements.put(method.getName(), method.getDefaultValue() == null);
+        }
+
+        return requirements;
+    }
+
+    private Class getClass(final String name) {
+        try {
+            for (final QualifiedName imp : ctx.getImports()) {
+                final String lastName = imp.getNames()[imp.getNames().length - 1];
+                if (lastName.equals(name)) {
+                    return Class.forName(imp.toString());
+                }
+            }
+            return Class.forName(name);
+        } catch (final ClassNotFoundException ignored) {
+        }
+        return null;
     }
 
     @Override
