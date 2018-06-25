@@ -11,7 +11,6 @@ import org.raven.compiler.Compiler;
 import org.raven.error.Errors;
 import org.raven.compiler.JvmMethodAnnotationProcessor;
 import org.raven.core.ByteClassLoader;
-import org.raven.util.Utility;
 
 import java.io.File;
 import java.io.IOException;
@@ -59,7 +58,6 @@ public class TestRunner {
     }
 
     private static Class<?> loadClass(final String file) {
-//        Utility.buildBuiltins();
         File f = new File(file);
         if (f.isDirectory()) {
             return null;
@@ -73,11 +71,15 @@ public class TestRunner {
             HashMap<String, byte[]> clazzes = compiler.compile(false);
             Errors.printErrors();
             Errors.reset();
+
             for (Map.Entry<String, byte[]> entry : clazzes.entrySet()) {
                 byteClassLoader.addDef(entry.getKey(), entry.getValue());
             }
             Class<?> clazz = byteClassLoader.loadClass(tree.getFullName().toString());
-            clazz.getMethods(); // force verifier to run
+
+            if (clazz != null)
+                clazz.getMethods(); // force verifier to run
+
             classes.put(file, clazz);
             return clazz;
         } catch (Exception | VerifyError e) {
