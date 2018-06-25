@@ -13,6 +13,7 @@ public class Constants {
     public static final QualifiedName[] COMMON_IMPORTS = {
             new QualifiedName("java", "lang", "Math"),
             new QualifiedName("java", "lang", "System"),
+            new QualifiedName("org", "raven", "core", "JvmMethod")
     };
 
     static {

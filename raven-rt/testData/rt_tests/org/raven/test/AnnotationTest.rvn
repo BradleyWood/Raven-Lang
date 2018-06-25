@@ -4,9 +4,6 @@ import javax.swing.JOptionPane
 import org.junit.Assert
 import org.raven.test.AnnotationTest
 
-@interface JvmMethod { name, params, ret }
-
-
 @JvmMethod(name="jSum", params="java/lang/Integer, java/lang/Integer, java/lang/Integer, java/lang/Integer", ret="java/lang/Integer")
 public fun sumTl(a, b, c, d) {
     var sum = a + b + c + d
