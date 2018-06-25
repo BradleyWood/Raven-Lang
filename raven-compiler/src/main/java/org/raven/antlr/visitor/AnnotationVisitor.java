@@ -34,6 +34,8 @@ public class AnnotationVisitor extends RavenBaseVisitor<Annotation> {
         Arrays.stream(names).forEach(qn -> qn.setParent(annotation));
         Arrays.stream(params).forEach(p -> p.setParent(annotation));
 
+        annotation.setLineNumber(ctx.start.getLine());
+
         return annotation;
     }
 
