@@ -262,6 +262,11 @@ public class SyntaxTest {
         testSyntax("class SoMeClAsS() {}", true);
         testSyntax("class SoMeClAsS { constructor(a,b,c){} }", true);
         testSyntax("class SoMeClAsS extends AnOtHeRcLaSs {}", true);
+        testSyntax("class SoMeClAsS extends a.b.c(d) {}", true);
+        testSyntax("class SoMeClAsS extends a.b.c(d,e,f,0,true,null) {}", true);
+        testSyntax("class SoMeClAsS extends a.b.c(d) implements e, f, g {}", true);
+        testSyntax("class SoMeClAsS implements a, b, c {}", true);
+        testSyntax("class SoMeClAsS implements a.b.c, d, e {}", true);
         testSyntax("class SoMeClAsS extends AnOtHeRcLaSs implements GG {}", true);
         testSyntax("class SoMeClAsS(a,b) extends AnOtHeRcLaSs implements GG { constructor(a,b,c){} }", true);
         testSyntax("class SoMeClAsS(a,b) extends AnOtHeRcLaSs implements GG {}", true);
