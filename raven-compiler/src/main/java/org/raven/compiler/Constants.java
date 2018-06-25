@@ -16,6 +16,10 @@ public class Constants {
             new QualifiedName("org", "raven", "core", "JvmMethod")
     };
 
+    public static final AnnotationProcessor[] DEFAULT_ANNOTATION_PROCESSORS = {
+            new JvmMethodAnnotationProcessor()
+    };
+
     static {
         for (QualifiedName commonImport : COMMON_IMPORTS) {
             try {

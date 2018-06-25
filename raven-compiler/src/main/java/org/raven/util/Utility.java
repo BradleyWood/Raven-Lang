@@ -2,10 +2,9 @@ package org.raven.util;
 
 import org.raven.antlr.RParser;
 import org.raven.antlr.RavenTree;
-import org.raven.compiler.Builtin;
+import org.raven.compiler.*;
 import org.raven.compiler.Compiler;
 import org.raven.error.Errors;
-import org.raven.compiler.JvmMethodAnnotationProcessor;
 import org.raven.Application;
 import org.raven.core.ByteClassLoader;
 
@@ -17,6 +16,7 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -58,7 +58,13 @@ public class Utility {
         return compile(relativePath, new LinkedList<>(), save);
     }
 
-    public static HashMap<String, byte[]> compile(final String relativePath, List<String> classpath, final boolean save)
+    public static HashMap<String, byte[]> compile(final String relativePath, final List<String> classpath,
+                                                  final boolean save) throws IOException {
+        return compile(relativePath, classpath, new LinkedList<>(), save);
+    }
+
+    public static HashMap<String, byte[]> compile(final String relativePath, final List<String> classpath,
+                                                  final List<AnnotationProcessor> processors, final boolean save)
             throws IOException {
         File file = new File(relativePath);
         if (!file.isAbsolute()) {
@@ -97,10 +103,13 @@ public class Utility {
             }
         }
 
+        final LinkedList<AnnotationProcessor> annotationProcessors = new LinkedList<>(processors);
+        annotationProcessors.addAll(Arrays.asList(Constants.DEFAULT_ANNOTATION_PROCESSORS));
+
         for (RavenTree tree : trees) {
             if (tree != null) {
                 Compiler compiler = new Compiler(tree.getSourceFile(), new File(tree.getSourceFile()).getName()
-                        .replace(".rvn", ""), tree, new JvmMethodAnnotationProcessor());
+                        .replace(".rvn", ""), tree, annotationProcessors.toArray(new AnnotationProcessor[0]));
                 classes.putAll(compiler.compile(save));
             }
         }

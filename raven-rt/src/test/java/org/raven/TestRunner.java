@@ -8,6 +8,7 @@ import org.junit.runners.Parameterized;
 import org.raven.antlr.RParser;
 import org.raven.antlr.RavenTree;
 import org.raven.compiler.Compiler;
+import org.raven.compiler.Constants;
 import org.raven.error.Errors;
 import org.raven.compiler.JvmMethodAnnotationProcessor;
 import org.raven.core.ByteClassLoader;
@@ -67,7 +68,9 @@ public class TestRunner {
         try {
             RParser parser = new RParser(f.getPath());
             RavenTree tree = parser.parse();
-            Compiler compiler = new Compiler(f.getAbsolutePath(), f.getName().replace(".rvn", ""), tree, new JvmMethodAnnotationProcessor());
+
+            Compiler compiler = new Compiler(f.getAbsolutePath(), f.getName().replace(".rvn", ""),
+                    tree, Constants.DEFAULT_ANNOTATION_PROCESSORS);
             HashMap<String, byte[]> clazzes = compiler.compile(false);
             Errors.printErrors();
             Errors.reset();
