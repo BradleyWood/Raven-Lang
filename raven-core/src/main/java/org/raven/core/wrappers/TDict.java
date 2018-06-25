@@ -19,7 +19,9 @@ public class TDict extends TObject implements Map<TObject, TObject> {
     @Override
     public Object coerce(final Class clazz) {
         if (Map.class.isAssignableFrom(clazz)) {
-            return map;
+            final HashMap<Object, Object> ret = new HashMap<>();
+            map.forEach((key, value) -> ret.put(key.toObject(), value.toObject()));
+            return ret;
         }
         return super.coerce(clazz);
     }
