@@ -7,10 +7,12 @@ import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.raven.error.Errors;
+import org.raven.maven.test.JUnitAnnotationProcessor;
 import org.raven.util.Settings;
 import org.raven.util.Utility;
 
 import java.io.IOException;
+import java.util.Collections;
 import java.util.List;
 
 @Mojo(name = "test-compile", defaultPhase = LifecyclePhase.TEST_COMPILE, requiresDependencyResolution = ResolutionScope.COMPILE)
@@ -29,7 +31,8 @@ public class RavenTestCompileMojo extends AbstractMojo {
     public void execute() throws CompilationFailureException {
         Settings.set("OUT", outputDirectory);
         try {
-            Utility.compile(testSourceDirectory, classpath, true);
+            Utility.compile(testSourceDirectory, classpath, Collections.singletonList(new JUnitAnnotationProcessor()),
+                    true);
         } catch (IOException e) {
             throw new CompilationFailureException(e.getMessage());
         } finally {
