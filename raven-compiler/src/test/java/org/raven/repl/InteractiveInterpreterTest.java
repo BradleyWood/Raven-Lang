@@ -1,9 +1,8 @@
-package org.raven;
+package org.raven.repl;
 
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.raven.repl.InteractiveInterpreter;
 
 import java.util.function.Function;
 
