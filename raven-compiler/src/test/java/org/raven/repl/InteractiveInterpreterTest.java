@@ -44,4 +44,24 @@ public class InteractiveInterpreterTest {
         Assert.assertEquals(TVoid.VOID, interpreter.eval("f(x) = 100"));
         Assert.assertEquals(TVoid.VOID, interpreter.eval("for (i range 0 to 10) {}"));
     }
+
+    @Test
+    public void testEvalWCoercion() {
+        final InteractiveInterpreter interpreter = new InteractiveInterpreter();
+        Assert.assertEquals((Integer) 45, interpreter.eval("5 * 9", Integer.class));
+        Assert.assertEquals("abc", interpreter.eval("\"abc\"", String.class));
+        Assert.assertEquals(true, interpreter.eval("true", boolean.class));
+    }
+
+    @Test(expected = UnsupportedOperationException.class)
+    public void testEvalWCoercionFail() {
+        final InteractiveInterpreter interpreter = new InteractiveInterpreter();
+        interpreter.eval("5 * 9", String.class);
+    }
+
+    @Test(expected = UnsupportedOperationException.class)
+    public void testEvalWCoercionFail2() {
+        final InteractiveInterpreter interpreter = new InteractiveInterpreter();
+        interpreter.eval("for (i range 0 to 10) {}", String.class);
+    }
 }

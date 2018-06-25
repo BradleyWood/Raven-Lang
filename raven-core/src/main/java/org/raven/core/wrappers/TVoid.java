@@ -14,6 +14,11 @@ public class TVoid extends TObject {
     }
 
     @Override
+    public <T> T coerce(final Class<T> clazz) {
+        throw new UnsupportedOperationException("Cannot cast void type to " + clazz.getName());
+    }
+
+    @Override
     public int coerceRating(final Class<?> clazz) {
         return COERCE_IMPOSSIBLE;
     }
