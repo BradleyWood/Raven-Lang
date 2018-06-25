@@ -172,13 +172,27 @@ public class Method extends MethodVisitor implements TreeVisitor, Opcodes {
             visitInsn(RETURN);
             return;
         }
+
+        boolean isVoid = isVoid();
+
         if (ret.getValue() != null) {
+            if (isVoid) {
+                Errors.put("line " + ret.getLineNumber() + ": Illegal return statement");
+            }
             ret.getValue().accept(this);
             visitInsn(ARETURN);
         } else {
-            putVoid();
-            visitInsn(ARETURN);
+            if (isVoid) {
+                visitInsn(RETURN);
+            } else {
+                putVoid();
+                visitInsn(ARETURN);
+            }
         }
+    }
+
+    private boolean isVoid() {
+        return Type.getType(ctx.getDesc()).getReturnType().getDescriptor().equals("V");
     }
 
     @Override
@@ -448,7 +462,8 @@ public class Method extends MethodVisitor implements TreeVisitor, Opcodes {
         if (idx != -1)
             stmt = fun.getBody().getStatements().get(idx);
         if (!(stmt instanceof Return)) { // last stmt isnt return so add one
-            if (ctx.getName().equals("main") || ctx.getName().equals("<clinit>") || ctx.getName().endsWith("<init>")) {
+            if (ctx.getName().equals("main") || ctx.getName().equals("<clinit>") || ctx.getName().endsWith("<init>")
+                    || isVoid()) {
                 visitInsn(RETURN);
             } else {
                 putVoid();

@@ -18,6 +18,7 @@ public class Fun extends ModifiableStatement {
     private final String[] exceptions;
     private VarDecl[] params;
     private String javaDesc = null;
+    private boolean isAdaptor = false;
 
     public Fun(final QualifiedName name, final Block body, final Modifier[] modifiers, final String[] exceptions, final VarDecl... params) {
         super(modifiers);
@@ -44,7 +45,12 @@ public class Fun extends ModifiableStatement {
     }
 
     public void forceDescriptor(final String desc) {
+        forceDescriptor(desc, true);
+    }
+
+    public void forceDescriptor(final String desc, final boolean isAdaptor) {
         this.javaDesc = desc;
+        this.isAdaptor = isAdaptor;
     }
 
     public QualifiedName getName() {
@@ -64,7 +70,7 @@ public class Fun extends ModifiableStatement {
     }
 
     public boolean isJavaMethod() {
-        return javaDesc != null;
+        return javaDesc != null && isAdaptor;
     }
 
     @Override
