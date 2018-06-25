@@ -38,6 +38,7 @@
 
     <modules>
         <module>math-example</module>
+        <module>java-interop-example</module>
     </modules>
 
     <build>

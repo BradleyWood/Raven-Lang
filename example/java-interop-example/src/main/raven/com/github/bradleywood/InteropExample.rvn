@@ -1,0 +1,23 @@
+package com.github.bradleywood
+
+import com.github.bradleywood.Sorting
+
+fun main() {
+    var listA = [10, 90, 20, 30, 50, 40, 60, 80, 70, 100]
+    var listB = [100, 10, 80, 30, 40, 70, 20, 60, 50, 90]
+
+    println("Before:")
+    println(listA)
+    println(listB)
+
+    listA = Sorting.selectionSort(listA)
+    listB = sort(listB)
+
+    println()
+
+    println("After:")
+    println(listA)
+    println(listB)
+
+    println("ListA == ListB: " + (listA == listB))
+}

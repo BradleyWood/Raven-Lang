@@ -1,0 +1,24 @@
+package com.github.bradleywood
+
+import com.github.bradleywood.Sorting
+
+import org.junit.Assert
+import org.junit.Test
+
+import raven.Random
+
+
+@Test
+fun testSelectionSort() {
+    var lst = []
+
+    for (i range 0 to 100) {
+        lst += Random.nextInt(0, 200)
+    }
+
+    lst = Sorting.selectionSort(lst)
+
+    for (i range 1 to 100) {
+        Assert.assertTrue(lst[i] >= lst[i - 1])
+    }
+}
