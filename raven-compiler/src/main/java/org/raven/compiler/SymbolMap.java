@@ -153,7 +153,13 @@ public class SymbolMap {
                 decl.addModifier(Modifier.PRIVATE);
             }
 
-            decl.setType("L" + field.getType().getName().replace(".", "/") + ";");
+            Primitive pType = Primitive.getPrimitiveType(field.getType());
+            if (pType != null) {
+                decl.setType(pType.getDesc());
+            } else {
+                decl.setType("L" + field.getType().getName().replace(".", "/") + ";");
+            }
+
             statements.add(decl);
         }
 
