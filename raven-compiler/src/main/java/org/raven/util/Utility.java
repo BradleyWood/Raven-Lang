@@ -24,21 +24,6 @@ import java.util.stream.Collectors;
 
 public class Utility {
 
-
-//    public static void buildBuiltins() {
-//        try {
-//            Class.forName("raven.Builtin");
-//        } catch (ClassNotFoundException e) {
-//            try {
-//                Errors.reset();
-//                Utility.compile("src/main/raven/raven/", true);
-//                Class.forName("raven.Builtin");
-//            } catch (Exception e1) {
-//                e1.printStackTrace();
-//            }
-//        }
-//    }
-
     public static void compileAndRun(String path, final String[] args) {
         path = path.replace("/", "\\");
         File file = new File(path);
