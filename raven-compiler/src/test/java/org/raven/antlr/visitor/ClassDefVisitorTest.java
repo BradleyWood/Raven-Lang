@@ -24,7 +24,8 @@ public class ClassDefVisitorTest {
 
     @Test
     public void testInheritance() {
-        final Inheritance inh = new Inheritance(new QualifiedName("a", "b", "c"), null, new QualifiedName[0]);
+        final Inheritance inh = new Inheritance(new QualifiedName("a", "b", "c"), new QualifiedName[0],
+                new QualifiedName[0]);
         final ClassDef def = new ClassDef(new Modifier[0], "aClass", inh, Collections.emptyList());
 
         testStatement(ClassDefVisitor.INSTANCE, "class aClass extends a.b.c {}", def);
@@ -32,7 +33,7 @@ public class ClassDefVisitorTest {
 
     @Test
     public void testInterfaces() {
-        final Inheritance inh = new Inheritance(OBJECT, null, new QualifiedName[] {
+        final Inheritance inh = new Inheritance(OBJECT, new QualifiedName[0], new QualifiedName[]{
                 new QualifiedName("a", "b", "c"),
                 new QualifiedName("d", "e", "f")
         });

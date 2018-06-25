@@ -33,8 +33,8 @@ public class InheritanceVisitor extends RavenBaseVisitor<Inheritance> {
                 ctx.impl().interfaceList().qualifiedName().forEach(q -> interfaces.add(q.accept(QualifiedNameVisitor.INSTANCE)));
             }
         }
-        return new Inheritance(superClass, superParams.size() == 0 ? null : superParams.toArray(new Expression[superParams.size()]),
-                interfaces.toArray(new QualifiedName[interfaces.size()]));
+        return new Inheritance(superClass, superParams.toArray(new Expression[0]),
+                interfaces.toArray(new QualifiedName[0]));
     }
 
     public static InheritanceVisitor INSTANCE = new InheritanceVisitor();
