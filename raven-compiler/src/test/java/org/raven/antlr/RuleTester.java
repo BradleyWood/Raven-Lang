@@ -6,6 +6,7 @@ import org.raven.antlr.ast.Expression;
 import org.raven.antlr.ast.Import;
 import org.raven.antlr.ast.Range;
 import org.raven.antlr.ast.Statement;
+import org.raven.antlr.visitor.InheritanceVisitor;
 import org.raven.antlr.visitor.ParamDefVisitor;
 import org.raven.antlr.visitor.RavenFileVisitor;
 import org.raven.error.Errors;
@@ -49,20 +50,22 @@ public class RuleTester {
      * @param txt The input text
      * @param expected The expected output
      */
-    public static void testStatement(final RavenBaseVisitor v, final String txt, final Statement expected) {
+    public static void testStatement(final RavenBaseVisitor v, final String txt, final Object expected) {
         RavenLexer lexer = new RavenLexer(CharStreams.fromString(txt));
         CommonTokenStream tokenStream = new CommonTokenStream(lexer);
         RavenParser parser = new RavenParser(tokenStream);
         parser.removeErrorListener(ConsoleErrorListener.INSTANCE);
-        Statement stmt;
+        Object stmt;
         if (expected instanceof Range) {
-            stmt = (Statement) v.visit(parser.range());
+            stmt = v.visit(parser.range());
         } else if (expected instanceof Import) {
-            stmt = (Statement) v.visit(parser.importStatement());
+            stmt = v.visit(parser.importStatement());
         } else if (expected instanceof Expression) {
-            stmt = (Statement) v.visit(parser.expression());
+            stmt = v.visit(parser.expression());
         } else if (v instanceof ParamDefVisitor) {
-            stmt = (Statement) v.visit(parser.paramDef());
+            stmt = v.visit(parser.paramDef());
+        } else if (v instanceof InheritanceVisitor) {
+            stmt = v.visitInheritance(parser.inheritance());
         } else {
             stmt = (Statement) v.visit(parser.statement());
         }
