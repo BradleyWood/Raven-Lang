@@ -188,6 +188,8 @@ public class ClassMaker {
                 null));
         constructor.getAnnotations().forEach(method::visitAnnotation);
 
+        ctx.setDesc(constructor.getDesc());
+
         method.visitCode();
         constructor.accept(method);
         method.visitEnd();
@@ -205,6 +207,8 @@ public class ClassMaker {
             method = new Method(context, cw.visitMethod(modifiers, fun.getName().toString(), desc, null,
                     fun.getExceptions()));
         }
+
+        context.setDesc(fun.getDesc());
 
         fun.getAnnotations().forEach(annotation -> annotation.accept(method));
 

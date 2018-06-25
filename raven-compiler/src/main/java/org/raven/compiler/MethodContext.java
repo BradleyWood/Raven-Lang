@@ -13,6 +13,7 @@ public class MethodContext {
     private final LinkedList<TObject> constants = new LinkedList<>();
     private final List<QualifiedName> imports;
     private final String owner;
+    private String desc;
     private String name;
 
     private boolean isStatic = false;
@@ -37,6 +38,14 @@ public class MethodContext {
 
     public String getName() {
         return name;
+    }
+
+    public String getDesc() {
+        return desc;
+    }
+
+    public void setDesc(final String desc) {
+        this.desc = desc;
     }
 
     public void setStatic(final boolean isStatic) {
