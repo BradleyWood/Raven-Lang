@@ -9,7 +9,6 @@ public class Container {
 
     public Container(List list) {
         this.list = list;
-        System.out.println("a");
     }
 
     public Container(Object[] oa) {
