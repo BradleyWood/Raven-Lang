@@ -71,6 +71,10 @@ public class InteractiveInterpreter {
         return null;
     }
 
+    public <T> T eval(final String input, final Class<T> type) {
+        return eval(input).coerce(type);
+    }
+
     public <T, R> Function<T, R> getFunction(final String methodName, final Class<R> returnType)
             throws Throwable {
         return getFunction(methodName, returnType, -1);

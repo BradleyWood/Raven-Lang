@@ -210,11 +210,11 @@ public class TObject implements Comparable<TObject> {
         throw new UnsupportedOperationException(this + " cannot be converted to array");
     }
 
-    public Object coerce(final Class<?> clazz) {
+    public <T> T coerce(final Class<T> clazz) {
         if (obj != null && clazz.isAssignableFrom(obj.getClass()) || clazz.equals(Object.class)) {
-            return toObject();
+            return clazz.cast(toObject());
         } else if (TObject.class.isAssignableFrom(clazz)) {
-            return this;
+            return clazz.cast(this);
         }
         throw new UnsupportedOperationException("type " + getType().toString() + " is not coercible to " + clazz);
     }
