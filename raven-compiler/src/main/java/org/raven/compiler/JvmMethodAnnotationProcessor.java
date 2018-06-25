@@ -64,6 +64,7 @@ public class JvmMethodAnnotationProcessor implements AnnotationProcessor {
             call.setPop(true);
 
         body.addBefore(call);
+        fun.getAnnotations().forEach(javaMethod::addAnnotation);
 
         return javaMethod;
     }
