@@ -517,7 +517,7 @@ public class Method extends MethodVisitor implements TreeVisitor, Opcodes {
             params[i] = new VarDecl(new QualifiedName(String.valueOf(i)), new Literal(TNull.NULL));
         }
         Fun lambda = new Fun(new QualifiedName(lambdaName), new Block(goFun),
-                new Modifier[]{Modifier.PRIVATE, Modifier.SYNTHETIC}, new String[0], params);
+                new Modifier[]{Modifier.PRIVATE, Modifier.STATIC, Modifier.SYNTHETIC}, new String[0], params);
         if (ctx.isStatic()) {
             lambda.addModifier(Modifier.STATIC);
         }
@@ -876,6 +876,8 @@ public class Method extends MethodVisitor implements TreeVisitor, Opcodes {
      */
     private void accessLocalField(final String name, final boolean load) {
         final VarDecl decl = SymbolMap.resolveField(ctx.getOwner(), ctx.getOwner(), name);
+        final VarDecl var = ctx.getClassDef().findVar(name);
+
         if (ctx.isStatic()) {
             // static field access in the same class
             if (decl != null && decl.hasModifier(Modifier.STATIC)) {
@@ -885,8 +887,11 @@ public class Method extends MethodVisitor implements TreeVisitor, Opcodes {
             } else {
                 Errors.put("Variable " + name + " has not been defined.");
             }
+        } else if ((decl != null && decl.hasModifier(Modifier.STATIC))) {
+            accessStaticField(ctx.getOwner(), decl.getName().toString(), load);
+        } else if (var != null && var.hasModifier(Modifier.STATIC)) {
+            accessStaticField(var.getTypeDesc(), var.getName().toString(), load);
         } else {
-            final VarDecl var = ctx.getClassDef().findVar(name);
             if (var != null) {
                 accessVirtualField(decl, load);
             } else if (decl != null) {
@@ -941,16 +946,9 @@ public class Method extends MethodVisitor implements TreeVisitor, Opcodes {
         }
 
         if (decl.isJavaField()) {
-            Primitive p = null;
             if (load) {
-                String type = getInternalName(Object.class);
-                try {
-                    Field f = Class.forName(owner.replace("/", ".")).getField(name);
-                    type = getDesc(f.getType());
-                    p = Primitive.getUnboxedPrimitive(f.getType());
-                } catch (ClassNotFoundException | NoSuchFieldException e) {
-                    e.printStackTrace();
-                }
+                String type = decl.getTypeDesc();
+                final Primitive p = Primitive.getPrimitiveType(type);
                 visitFieldInsn(GETSTATIC, owner, name, type);
                 if (p != null) {
                     p.wrap(this);
