@@ -21,6 +21,8 @@ public class Application {
 
     private static final Option CLASSPATH = new Option("cp", "classpath", true,
             "Specify the classpath of any external class files");
+    private static final Option OUTPUT_PATH = new Option("o", "out", true,
+            "Specify the location to save output classes");
     private static final Option HELP = new Option("h", "help", false,
             "Displays the command line usage options");
     private static final Option BUILD = new Option("b", "build", false,
@@ -33,10 +35,11 @@ public class Application {
 
     public static void main(final String[] args) {
         final Options options = new Options();
-        options.addOption(SECURE);
         options.addOption(HELP);
         options.addOption(BUILD);
+        options.addOption(SECURE);
         options.addOption(CLASSPATH);
+        options.addOption(OUTPUT_PATH);
 
         final CommandLineParser parser = new DefaultParser();
 
@@ -54,7 +57,7 @@ public class Application {
                 } else {
                     final LinkedList<String> classpath = new LinkedList<>();
                     final String srcFile = commandLine.getArgList().get(0);
-                    final boolean save = commandLine.hasOption("b");
+                    final boolean save = commandLine.hasOption("b") || commandLine.hasOption("o");
                     final SecurityManager securityManager = commandLine.hasOption("s") ? new SecurityManager() : null;
                     final String[] arguments = commandLine.getArgList().subList(1, commandLine.getArgList().size()).toArray(new String[0]);
 
@@ -62,6 +65,15 @@ public class Application {
                         classpath.addAll(Arrays.asList(commandLine.getOptionValue("cp").split(";")));
                     }
 
+                    if (commandLine.hasOption("o")) {
+                        final File outputDir = new File(commandLine.getOptionValue("o")).getAbsoluteFile();
+                        if (outputDir.isDirectory() || outputDir.mkdirs()) {
+                            Settings.set("OUT", outputDir.getAbsolutePath());
+                        } else {
+                            System.err.println("Invalid output directory: " + outputDir);
+                            return;
+                        }
+                    }
                     compileAndRun(srcFile, classpath, securityManager, save, arguments);
                 }
             } else {
@@ -101,12 +113,12 @@ public class Application {
 
     private static boolean verifyArguments(final CommandLine commandLine) {
         if (commandLine.hasOption("help") && (commandLine.hasOption("cp") || commandLine.hasOption("b") ||
-                commandLine.hasOption("s"))) {
+                commandLine.hasOption("s") || commandLine.hasOption("o"))) {
             return false;
         }
 
         return commandLine.getArgList().size() != 0 || (!commandLine.hasOption("s") &&
-                !commandLine.hasOption("build") && !commandLine.hasOption("cp"));
+                !commandLine.hasOption("build") && !commandLine.hasOption("cp") && !commandLine.hasOption("o"));
     }
 
     private static void repl() {
