@@ -1,5 +1,7 @@
 # Raven-Lang
 
+## What is this?
+
 This is an experimental programming language built for the JVM platform. The main
 goal of this project is to create a fast jvm language that lacks the verbosity
 of java while maintaining interoperability. Antlr is used to perform parsing
@@ -14,30 +16,35 @@ View multiple examples or try to create your own program using
 the web demo. The web demo also comes with a REPL (read-eval-print-loop)
 utility.
 
-## Building and Running
-
-
-```
-mvn clean install
-```
-
-To run a test script
+## Build
 
 ```
-java -jar target/raven-1.0-SNAPSHOT-jar-with-dependencies.jar -r <path to script>.tl
+git clone https://github.com/BradleyWood/Raven-Lang.git
 ```
 
-### Command line options
+```
+mvn install
+```
 
-To run in REPL (read-eval-print-loop) mode use the command line option "-repl"
-and to execute a script with "-r path_to_script"
+## Project Layout
+
+- [raven-core](raven-core/src/main/java/org/raven/core) - the core runtime environment
+
+- [raven-compiler](raven-compiler/src/main/java/org/raven) - code compilation
+
+- [raven-maven-plugin](raven-maven-plugin/src/main/java/org/raven/maven) - maven compatibility - compilation and test compilation
+
+- [raven-stdlib](raven-stdlib/src/main/raven/raven) - raven stdlib
+
+- [raven-example](example) - example maven projects
+
 
 ## Examples
 
 This example serves to illustrate java interoperability. 
 
 ``` Java
-import javax.swing.JOptionPane;
+import javax.swing.JOptionPane
 
 fun main() {
     JOptionPane.showMessageDialog(null, "Hello World.")
@@ -46,46 +53,26 @@ fun main() {
 
 [View more examples](https://github.com/BradleyWood/TlDemo)
 
+
 ## Tests
 
-Each test from the "testData" folder will always be run during the test phase
-of the build. If a test file fails to compile it will be marked as a test failure.
-
-### REPL Tests
-
-Tests for the REPL (read-eval-print-loop) utility are located in the "testData/repl/"
-folder and will run as long as the file has a ".repl" extension. A REPL test defines
-the expected output for the given input. Lines containing the specified input are 
-prefixed with ">". Lines containing only a "*" will denote that we will allow any
-output for that given line. All other lines are assumed to be the expected output.
-
-#### Example
-```java
-> 5 + 21
-26
-> 100
-*
-```
-
-### Normal Tests
-
-Regular unit tests are stored under the "testData/rt_tests" folder with the ".tl"
-file extension. These tests are written directly in the Raven language. Inorder
-for a function to be registered as a test it must have the word "test" (case insensitive) 
-in the function name. Tests that throw uncaught exceptions are said to fail.
-
+Many Raven tests are written in Raven and are compiled using the
+[raven-maven-plugin](raven-maven-plugin/src/main/java/org/raven/maven).
+To achieve Junit compatibility we add an annotation processor for the
+@Test annotation to ensure that test methods are compiled as non-static
+void methods.
 
 #### Example
 
 ```java
-import org.junit.Assert;
-import testclasses.FieldTestClass;
+import org.junit.Assert
+import org.junit.Test
+import testclasses.FieldTestClass
 
-fun testVirtualField() {
-    var obj = FieldTestClass("world", 500)
-    Assert.assertEquals("world", obj.virtualString)
-    Assert.assertEquals(500, obj.virtualWrappedInt)
+@Test
+fun testAddition() {
+    var a = 100
+    var b = 200
+    Assert.assertEquals(300, a + b)
 }
 ```
-
-This example will test access to virtual fields of a class written in Java
