@@ -1,12 +1,12 @@
-package org.raven.core;
+package org.raven;
 
 import java.io.FileDescriptor;
 import java.net.InetAddress;
 import java.security.Permission;
 
-public class WebSecurityManager extends SecurityManager {
+public class SecurityManager extends java.lang.SecurityManager {
 
-    public WebSecurityManager() {
+    public SecurityManager() {
         super();
     }
 

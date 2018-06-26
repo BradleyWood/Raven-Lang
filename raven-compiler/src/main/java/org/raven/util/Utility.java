@@ -5,7 +5,6 @@ import org.raven.antlr.RavenTree;
 import org.raven.compiler.*;
 import org.raven.compiler.Compiler;
 import org.raven.error.Errors;
-import org.raven.Application;
 import org.raven.core.ByteClassLoader;
 
 import java.io.File;
@@ -34,10 +33,10 @@ public class Utility {
         }
 
         try {
-            HashMap<String, byte[]> classes = compile(path, true);
+            final HashMap<String, byte[]> classes = compile(path, false);
             if (Errors.getErrorCount() == 0) {
-                ByteClassLoader cl = new ByteClassLoader(Application.class.getClassLoader(), classes);
-                for (String s : classes.keySet()) {
+                final ByteClassLoader cl = new ByteClassLoader(Utility.class.getClassLoader(), classes);
+                for (final String s : classes.keySet()) {
                     if (file.getAbsolutePath().endsWith(s.replace(".", "\\") + ".rvn")) {
                         Class<?> app = cl.loadClass(s);
                         Method m = app.getMethod("main", String[].class);

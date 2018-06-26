@@ -1,7 +1,8 @@
 package org.raven;
 
 import org.apache.commons.cli.*;
-import org.raven.core.WebSecurityManager;
+import org.raven.core.wrappers.TObject;
+import org.raven.core.wrappers.TVoid;
 import org.raven.repl.InteractiveInterpreter;
 import org.raven.util.Settings;
 
@@ -34,7 +35,7 @@ public class Application {
             CommandLine cmd = parser.parse(options, args);
 
             if (cmd.hasOption("secure")) {
-                System.setSecurityManager(new WebSecurityManager());
+                System.setSecurityManager(new SecurityManager());
             }
 
             boolean correctness = cmd.hasOption("s");
@@ -66,16 +67,11 @@ public class Application {
         InteractiveInterpreter interactiveInterpreter = new InteractiveInterpreter();
         Scanner scanner = new Scanner(System.in);
         while (true) {
-            System.out.println();
-            String line = scanner.nextLine();
-            int comment = line.indexOf("//");
-            if (comment > 0) {
-                line = line.substring(0, comment);
+            System.out.print(">>> ");
+            TObject result = interactiveInterpreter.eval(scanner.nextLine());
+            if (result != TVoid.VOID) {
+                System.out.println(result);
             }
-            while (line.endsWith("\\")) {
-                line = line.substring(0, line.length() - 1) + scanner.nextLine();
-            }
-            interactiveInterpreter.exec(line + ";");
         }
     }
 
