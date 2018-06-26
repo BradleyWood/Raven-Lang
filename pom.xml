@@ -54,7 +54,7 @@
         <module>raven-compiler</module>
         <module>raven-maven-plugin</module>
         <module>raven-core</module>
-        <module>raven-rt</module>
+        <module>raven-stdlib</module>
     <module>example</module>
   </modules>
 

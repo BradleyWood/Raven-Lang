@@ -29,7 +29,7 @@
         </dependency>
         <dependency>
             <groupId>com.github.bradleywood</groupId>
-            <artifactId>raven-rt</artifactId>
+            <artifactId>raven-stdlib</artifactId>
         </dependency>
     </dependencies>
 
