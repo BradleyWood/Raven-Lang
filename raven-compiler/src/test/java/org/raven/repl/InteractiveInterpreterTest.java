@@ -64,4 +64,10 @@ public class InteractiveInterpreterTest {
         final InteractiveInterpreter interpreter = new InteractiveInterpreter();
         interpreter.eval("for (i range 0 to 10) {}", String.class);
     }
+
+    @Test
+    public void testEvalWithCompilationFailure() {
+        final InteractiveInterpreter interpreter = new InteractiveInterpreter();
+        Assert.assertNull(interpreter.eval("for (i range 0 to 10 {}", String.class));
+    }
 }
