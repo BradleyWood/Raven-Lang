@@ -42,7 +42,7 @@
                 <configuration>
                     <archive>
                         <manifest>
-                            <mainClass>com.github.bradleywood.App</mainClass>
+                            <mainClass>org.raven.App</mainClass>
                         </manifest>
                     </archive>
                 </configuration>

@@ -49,7 +49,7 @@
                 <configuration>
                     <archive>
                         <manifest>
-                            <mainClass>com.github.bradleywood.InteropExample</mainClass>
+                            <mainClass>org.raven.InteropExample</mainClass>
                         </manifest>
                     </archive>
                 </configuration>
