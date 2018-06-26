@@ -1,91 +1,124 @@
 package org.raven;
 
 import org.apache.commons.cli.*;
+import org.raven.core.ByteClassLoader;
 import org.raven.core.wrappers.TObject;
 import org.raven.core.wrappers.TVoid;
+import org.raven.error.Errors;
 import org.raven.repl.InteractiveInterpreter;
 import org.raven.util.Settings;
+import org.raven.util.Utility;
 
+import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.*;
-
-import static org.raven.util.Utility.compile;
-import static org.raven.util.Utility.compileAndRun;
 
 public class Application {
 
+    private static final HelpFormatter HELP_FORMATTER = new HelpFormatter();
+
+    private static final Option CLASSPATH = new Option("cp", "classpath", true,
+            "Specify the classpath of any external class files");
+    private static final Option HELP = new Option("h", "help", false,
+            "Displays the command line usage options");
+    private static final Option BUILD = new Option("b", "build", false,
+            "Save the class file output");
+    private static final Option SECURE = new Option("s", "Run a script with the security manager");
+
     static {
-        Settings.set("OUT", "target/classes");
+        Settings.set("OUT", new File(".").getAbsolutePath());
     }
 
     public static void main(final String[] args) {
-        Options options = new Options();
-        options.addOption("secure", false, "Run with security manager");
-        options.addOption("s", true, "Check files for correctness");
-        options.addOption("repl", false, "Run in REPL mode");
+        final Options options = new Options();
+        options.addOption(SECURE);
+        options.addOption(HELP);
+        options.addOption(BUILD);
+        options.addOption(CLASSPATH);
 
-        options.addOption("r", true, "Run program");
+        final CommandLineParser parser = new DefaultParser();
 
-        Option programArgs = new Option("args", true, "Specify command line arguments for your program");
-        programArgs.setArgs(Option.UNLIMITED_VALUES);
-        options.addOption(programArgs);
-
-        CommandLineParser parser = new DefaultParser();
         try {
-            CommandLine cmd = parser.parse(options, args);
+            final CommandLine commandLine = parser.parse(options, args);
 
-            if (cmd.hasOption("secure")) {
-                System.setSecurityManager(new SecurityManager());
+            if (verifyArguments(commandLine)) {
+                if (commandLine.hasOption("help")) {
+                    HELP_FORMATTER.printHelp("ant", options);
+                    return;
+                }
+
+                if (commandLine.getArgList().isEmpty()) {
+                    repl();
+                } else {
+                    final LinkedList<String> classpath = new LinkedList<>();
+                    final String srcFile = commandLine.getArgList().get(0);
+                    final boolean save = commandLine.hasOption("b");
+                    final SecurityManager securityManager = commandLine.hasOption("s") ? new SecurityManager() : null;
+                    final String[] arguments = commandLine.getArgList().subList(1, commandLine.getArgList().size()).toArray(new String[0]);
+
+                    if (commandLine.hasOption("cp")) {
+                        classpath.addAll(Arrays.asList(commandLine.getOptionValue("cp").split(";")));
+                    }
+
+                    compileAndRun(srcFile, classpath, securityManager, save, arguments);
+                }
+            } else {
+                System.err.println("Invalid usage");
+                HELP_FORMATTER.printHelp("ant", options);
             }
-
-            boolean correctness = cmd.hasOption("s");
-            boolean run = cmd.hasOption("r");
-            boolean REPL = cmd.hasOption("repl");
-
-            if (!onlyOneTrue(correctness, run, REPL)) {
-                cmdError(options);
-                return;
-            }
-
-            if (correctness) {
-                String[] values = cmd.getOptionValues("s");
-                compile(values[0], false);
-            } else if (run) {
-                String[] values = cmd.getOptionValues("r");
-                compileAndRun(values[0], cmd.hasOption("args") ? cmd.getOptionValues("args") : new String[0]);
-            } else if (REPL) {
-                repl();
-            }
-        } catch (ParseException e) {
-            cmdError(options);
-        } catch (IOException e) {
-            e.printStackTrace();
+        } catch (Exception e) {
+            System.err.println(e.getMessage());
         }
     }
 
+    private static void compileAndRun(final String srcFile, final List<String> classpath, final SecurityManager manager,
+                                      final boolean save, final String[] args)
+            throws IOException, ClassNotFoundException, NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+
+        final HashMap<String, byte[]> classMap = Utility.compile(srcFile, classpath, save);
+        final File file = new File(srcFile);
+
+        if (Errors.getErrorCount() == 0) {
+            final ByteClassLoader cl = new ByteClassLoader(Utility.class.getClassLoader(), classMap);
+            for (final String s : classMap.keySet()) {
+                final Class<?> app = cl.loadClass(s);
+                if (file.getAbsolutePath().endsWith(app.getName().replace(".", File.separator) + ".rvn")) {
+                    final Method m = app.getMethod("main", String[].class);
+
+                    if (manager != null) {
+                        System.setSecurityManager(manager);
+                    }
+
+                    m.setAccessible(true);
+                    m.invoke(null, (Object) args);
+                    return;
+                }
+            }
+        }
+    }
+
+    private static boolean verifyArguments(final CommandLine commandLine) {
+        if (commandLine.hasOption("help") && (commandLine.hasOption("cp") || commandLine.hasOption("b") ||
+                commandLine.hasOption("s"))) {
+            return false;
+        }
+
+        return commandLine.getArgList().size() != 0 || (!commandLine.hasOption("s") &&
+                !commandLine.hasOption("build") && !commandLine.hasOption("cp"));
+    }
+
     private static void repl() {
-        InteractiveInterpreter interactiveInterpreter = new InteractiveInterpreter();
-        Scanner scanner = new Scanner(System.in);
+        final InteractiveInterpreter interactiveInterpreter = new InteractiveInterpreter();
+        final Scanner scanner = new Scanner(System.in);
+
         while (true) {
             System.out.print(">>> ");
-            TObject result = interactiveInterpreter.eval(scanner.nextLine());
+            final TObject result = interactiveInterpreter.eval(scanner.nextLine());
             if (result != TVoid.VOID) {
                 System.out.println(result);
             }
         }
-    }
-
-    private static void cmdError(final Options options) {
-        System.err.println("Invalid usage");
-        HelpFormatter formatter = new HelpFormatter();
-        formatter.printHelp("ant", options);
-    }
-
-    private static boolean onlyOneTrue(final boolean... booleans) {
-        int c = 0;
-        for (boolean b : booleans) {
-            c += b ? 1 : 0;
-        }
-        return c == 1;
     }
 }
