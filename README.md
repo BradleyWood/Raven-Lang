@@ -36,6 +36,8 @@ mvn install
 
 - [raven-stdlib](raven-stdlib/src/main/raven/raven) - raven stdlib
 
+- [raven-cli](raven-cli/src/main/java/org/raven) - cli
+
 - [raven-example](example) - example maven projects
 
 
