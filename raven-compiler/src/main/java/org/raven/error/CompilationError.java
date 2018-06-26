@@ -25,7 +25,7 @@ public class CompilationError extends Error {
     @Override
     public void printError(final PrintStream printStream) {
         printStream.println("Error at "+ file.getName() + ": " + klass + " on line: " + statement.getLineNumber());
-        System.err.println("\"" + statement.getText() + "\"");
-        System.err.println(getMessage());
+        printStream.println("\"" + statement.getText() + "\"");
+        printStream.println(getMessage());
     }
 }
