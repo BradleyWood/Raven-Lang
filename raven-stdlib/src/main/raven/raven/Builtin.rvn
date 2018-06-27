@@ -76,6 +76,10 @@ fun exit(code) {
     System.exit(code)
 }
 
+fun exit() {
+    exit(0)
+}
+
 fun reverse(lst) {
     if (type(lst) != TList.TYPE) {
         return error("Illegal arguments of type: " + type(lst) + " expected: " + TList.TYPE)
