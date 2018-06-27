@@ -165,7 +165,7 @@ public class TList extends TObject implements List {
         if (element instanceof TObject) {
             return list.set(index, (TObject) element);
         } else {
-            return list.set(index, new TObject(element));
+            return list.set(index, Intrinsics.wrap(element));
         }
     }
 
@@ -175,7 +175,7 @@ public class TList extends TObject implements List {
         if (element instanceof TObject) {
             tobj = (TObject) element;
         } else {
-            tobj = new TObject(element);
+            tobj = Intrinsics.wrap(element);
         }
         list.add(index, tobj);
         checkType((TType) tobj.getType());
