@@ -12,7 +12,7 @@ public class TList extends TObject implements List {
     public static TType TYPE = new TType(TList.class);
 
     @Hidden
-    private ArrayList<TObject> list;
+    protected ArrayList<TObject> list;
 
     private boolean allSameType = true;
     private TType componentType = null;
