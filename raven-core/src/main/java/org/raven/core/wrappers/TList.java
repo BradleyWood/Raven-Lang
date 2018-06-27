@@ -10,6 +10,7 @@ public class TList extends TObject implements List {
 
     @Hidden
     public static TType TYPE = new TType(TList.class);
+
     @Hidden
     private ArrayList<TObject> list;
 
@@ -70,7 +71,7 @@ public class TList extends TObject implements List {
     }
 
     @Override
-    public Iterator iterator() {
+    public Iterator<TObject> iterator() {
         return list.iterator();
     }
 
@@ -198,18 +199,18 @@ public class TList extends TObject implements List {
 
     @Hidden
     @Override
-    public ListIterator listIterator() {
+    public ListIterator<TObject> listIterator() {
         return list.listIterator();
     }
 
     @Hidden
     @Override
-    public ListIterator listIterator(final int index) {
+    public ListIterator<TObject> listIterator(final int index) {
         return list.listIterator(index);
     }
 
     @Override
-    public List subList(final int fromIndex, final int toIndex) {
+    public List<TObject> subList(final int fromIndex, final int toIndex) {
         return list.subList(fromIndex, toIndex);
     }
 
