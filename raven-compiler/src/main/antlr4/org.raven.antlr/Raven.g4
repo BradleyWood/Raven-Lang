@@ -103,6 +103,16 @@ annotationParam
     :   paramDef NL* '=' NL* (literal)
     ;
 
+constant
+    :   literal
+    |   qualifiedName NL* '.' NL* CLASS
+    |   '[' NL* (constantList NL*)? ']'
+    ;
+
+constantList
+    :   constant (NL* ',' NL* constant)*
+    ;
+
 annotationDeclaration
     :   AT NL* INTER NL* IDENTIFIER NL* '{' (NL* paramDef (NL* ',' NL* paramDef)*)? NL* '}'
     ;
