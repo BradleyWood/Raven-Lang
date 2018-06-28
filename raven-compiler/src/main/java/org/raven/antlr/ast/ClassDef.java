@@ -218,6 +218,7 @@ public class ClassDef extends ModifiableStatement {
         if (superParams != null && superParams.length > 0) {
             Constructor con = new Constructor(superParams);
             initFieldsInConstructor(con);
+            con.setParent(this);
             constructors.add(con);
             varParams.clear();
             return constructors;
@@ -234,12 +235,14 @@ public class ClassDef extends ModifiableStatement {
         }
         if (autoGenerate && varParams.size() > 0) {
             Constructor con = createConstructor();
+            con.setParent(this);
             initFieldsInConstructor(con);
             constructors.add(con);
         }
 
         if (constructors.isEmpty()) {
             Constructor defaultConstructor = new Constructor(new Modifier[]{Modifier.PUBLIC}, new Block());
+            defaultConstructor.setParent(this);
             initFieldsInConstructor(defaultConstructor);
             constructors.add(defaultConstructor);
         }
