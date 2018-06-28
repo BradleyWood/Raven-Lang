@@ -167,7 +167,7 @@ public class Method extends MethodVisitor implements TreeVisitor, Opcodes {
 
         if (ctx.getName().equals("main")) {
             if (ret.getValue() != null) {
-                Errors.put("Cannot return value in main");
+                error(ret, "Main method cannot return a value");
             }
             visitInsn(RETURN);
             return;
@@ -177,7 +177,7 @@ public class Method extends MethodVisitor implements TreeVisitor, Opcodes {
 
         if (ret.getValue() != null) {
             if (isVoid) {
-                Errors.put("line " + ret.getLineNumber() + ": Illegal return statement");
+                error(ret, "Illegal return statement");
             }
             ret.getValue().accept(this);
             visitInsn(ARETURN);
@@ -227,7 +227,8 @@ public class Method extends MethodVisitor implements TreeVisitor, Opcodes {
                         "<init>", getDesc(paramCount), false);
             } else {
                 // super class is a java class and requires a special invocation
-                invokeJavaSuper(constructor.getSuperParams());
+                ClassDef definingClass = constructor.getParentByType(ClassDef.class);
+                invokeJavaSuper(definingClass.getSuper(), constructor.getSuperParams());
             }
         } else {
             // super() call is provided and is the first statement in the body
@@ -249,7 +250,7 @@ public class Method extends MethodVisitor implements TreeVisitor, Opcodes {
                         "<init>", getDesc(superCall.getParams().length), false);
             } else {
                 // super class is a java class and requires a special invocation
-                invokeJavaSuper(superCall.getParams());
+                invokeJavaSuper(superCall, superCall.getParams());
             }
         }
 
@@ -270,7 +271,7 @@ public class Method extends MethodVisitor implements TreeVisitor, Opcodes {
      *
      * @param params The parameters to pass in the super call
      */
-    private void invokeJavaSuper(final Expression[] params) {
+    private void invokeJavaSuper(final Statement call, final Expression[] params) {
         try {
             final Class clazz = Class.forName(ctx.getClassDef().getSuper().toString());
             final LinkedList<Class[]> candidates = new LinkedList<>();
@@ -292,7 +293,7 @@ public class Method extends MethodVisitor implements TreeVisitor, Opcodes {
 
         } catch (ClassNotFoundException | NoSuchMethodException e) {
             e.printStackTrace();
-            Errors.put("Cannot find super class");
+            error(call, "Cannot resolve super()");
         }
     }
 
@@ -620,7 +621,7 @@ public class Method extends MethodVisitor implements TreeVisitor, Opcodes {
                                         getDesc(Intrinsics.class, "wrap", Object.class), false);
                             }
                         } else {
-                            Errors.put("Cannot find method " + call.getName());
+                            error(call, "Cannot resolve method");
                         }
                     }
                 }
