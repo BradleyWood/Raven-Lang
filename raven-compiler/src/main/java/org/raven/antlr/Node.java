@@ -15,4 +15,16 @@ public abstract class Node {
     public void setParent(final Node parent) {
         this.parent = parent;
     }
+
+    public <T extends Node> T getParentByType(final Class<T> type) {
+        Node parent = getParent();
+        while (parent != null) {
+            if (type.isAssignableFrom(parent.getClass()))
+                return (T) parent;
+
+            parent = parent.getParent();
+        }
+
+        return null;
+    }
 }
