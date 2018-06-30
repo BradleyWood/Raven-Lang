@@ -108,6 +108,8 @@ public class Application {
                     return;
                 }
             }
+        } else {
+            Errors.printErrors();
         }
     }
 
@@ -126,9 +128,8 @@ public class Application {
         final Scanner scanner = new Scanner(System.in);
 
         while (true) {
-            System.out.print(">>> ");
             final TObject result = interactiveInterpreter.eval(scanner.nextLine());
-            if (result != TVoid.VOID) {
+            if (result != TVoid.VOID && result != null) {
                 System.out.println(result);
             }
         }
