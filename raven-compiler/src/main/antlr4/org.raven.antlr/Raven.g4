@@ -118,12 +118,12 @@ annotationDeclaration
     ;
 
 methodDeclaration
-    :   (annotation NL*)* (modifier NL*)* FUN IDENTIFIER '(' (paramDef (',' paramDef)*)? ')' block
-    |   FUN? IDENTIFIER '(' (paramDef (',' paramDef)*)? ')' ASSIGNMENT expression
+    :   (annotation NL*)* (modifier NL*)* FUN IDENTIFIER '(' (NL* paramDef (NL* ',' NL* paramDef)*)? NL* ')' NL* block
+    |   FUN? IDENTIFIER '(' (NL* paramDef (NL* ',' NL* paramDef)*)? NL* ')' NL* ASSIGNMENT NL* expression
     ;
 
 constructor
-    :   (annotation NL*)* (modifier NL*)* CONSTRUCTOR '(' (paramDef (',' paramDef)*)? ')' block
+    :   (annotation NL*)* (modifier NL*)* CONSTRUCTOR '(' (NL* paramDef (NL* ',' NL* paramDef)*)? NL* ')' NL* block
     ;
 
 paramDef
