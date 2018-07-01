@@ -341,7 +341,7 @@ IDENTIFIER
     : [a-zA-Z_][a-zA-Z_0-9]*
     ;
 
-WS  : [\u0020\u0009\u000C] -> skip;
+WS  : [\u0020\u0009\u000C] -> channel(HIDDEN);
 
 NL: '\u000A' | '\u000D' '\u000A' ;
 
