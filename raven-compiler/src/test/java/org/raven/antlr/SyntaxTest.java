@@ -23,6 +23,19 @@ public class SyntaxTest {
     }
 
     @Test
+    public void testDefer() {
+        testSyntax("defer somewhere();", true);
+        testSyntax("defer a.b();", true);
+        testSyntax("defer a.b.c.d(e, f, g, 10+20, \"abc\")", true);
+        testSyntax("for (i range 0 to 10) { defer call() }", true);
+
+        testSyntax("defer", false);
+        testSyntax("defer 10 + 10", false);
+        testSyntax("defer someField", false);
+        testSyntax("defer go toHell()", false);
+    }
+
+    @Test
     public void testTryCatchFinally() {
         testSyntax("try {} catch e {}", true);
         testSyntax("try {} catch (e) {}", true);
