@@ -38,7 +38,7 @@ returnStatement
     ;
 
 deferStatement
-    :   DEFER NL* funCall
+    :   DEFER NL* (expression NL* '.' NL*)? funCall
     ;
 
 ifStatement
