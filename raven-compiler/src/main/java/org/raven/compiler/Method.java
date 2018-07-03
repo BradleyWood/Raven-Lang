@@ -26,6 +26,7 @@ public class Method extends MethodVisitor implements TreeVisitor, Opcodes {
     private final List<Defer> deferments = new LinkedList<>();
 
     private boolean hasDeferment = false;
+    private final Label defermentLabel = new Label();
 
     final Scope scope = new Scope();
 
@@ -169,29 +170,22 @@ public class Method extends MethodVisitor implements TreeVisitor, Opcodes {
         if (ret.getValue() != null)
             visitLine(ret.getValue());
 
-        if (ctx.getName().equals("main")) {
-            if (ret.getValue() != null) {
-                error(ret, "Main method cannot return a value");
-            }
-            visitInsn(RETURN);
-            return;
+        final boolean isVoid = isVoid();
+
+        if (!isVoid && ret.getValue() == null) {
+            putVoid();
+        } else if (!isVoid) {
+            ret.getValue().accept(this);
+        } else if (ret.getValue() != null) {
+            error(ret, "Illegal return statement");
         }
 
-        boolean isVoid = isVoid();
-
-        if (ret.getValue() != null) {
-            if (isVoid) {
-                error(ret, "Illegal return statement");
-            }
-            ret.getValue().accept(this);
-            visitInsn(ARETURN);
+        if (hasDeferment) {
+            visitJumpInsn(GOTO, defermentLabel);
+        } else if (isVoid) {
+            visitInsn(RETURN);
         } else {
-            if (isVoid) {
-                visitInsn(RETURN);
-            } else {
-                putVoid();
-                visitInsn(ARETURN);
-            }
+            visitInsn(ARETURN);
         }
     }
 
@@ -456,6 +450,58 @@ public class Method extends MethodVisitor implements TreeVisitor, Opcodes {
         visitVarInsn(ASTORE, scope.findVar(DEFERMENT_STACK_NAME));
     }
 
+    private void putByte(final byte val) {
+        if (val >= 0 && val <= 5) {
+            visitInsn(ICONST_0 + val);
+        } else {
+            visitIntInsn(BIPUSH, val);
+        }
+    }
+
+    /**
+     * Evaluate all deferred expression
+     */
+    private void execDeferredStatements() {
+        final Label end = new Label();
+
+        visitLabel(defermentLabel);
+
+        scope.putVar(" __DEFER_ID__ ");
+
+        int defermentStk = getLocal(DEFERMENT_STACK_NAME);
+        int defermentId = getLocal(" __DEFER_ID__ ");
+
+        visitVarInsn(ALOAD, defermentStk);
+
+        visitMethodInsn(INVOKEVIRTUAL, getInternalName(DefermentStack.class), "nextDeferment", "()I", false);
+        visitInsn(DUP);
+        visitVarInsn(ISTORE, defermentId);
+        visitJumpInsn(IFLT, end);
+
+        for (final Defer deferment : deferments) {
+            int id = (byte) deferments.indexOf(deferment);
+
+            if (id != (byte) id) {
+                Errors.put("Too many deferment statements in " + ctx.getOwner() + "." + ctx.getName() + "()");
+            }
+
+            visitVarInsn(ILOAD, defermentId);
+            putByte((byte) id);
+
+            Label next = new Label();
+            visitJumpInsn(IF_ICMPNE, next);
+
+            // INVOKE FUNCTION
+            deferment.getCall().accept(this);
+
+            visitLabel(next);
+
+        }
+        visitJumpInsn(GOTO, defermentLabel);
+
+        visitLabel(end);
+    }
+
     @Override
     public void visitFun(final Fun fun) {
         scope.beginScope();
@@ -476,19 +522,25 @@ public class Method extends MethodVisitor implements TreeVisitor, Opcodes {
         }
 
         fun.getBody().accept(this);
+
         Statement stmt = null;
         int idx = fun.getBody().getStatements().size() - 1;
         if (idx != -1)
             stmt = fun.getBody().getStatements().get(idx);
         if (!(stmt instanceof Return)) { // last stmt isnt return so add one
-            if (ctx.getName().equals("main") || ctx.getName().equals("<clinit>") || ctx.getName().endsWith("<init>")
-                    || isVoid()) {
-                visitInsn(RETURN);
-            } else {
-                putVoid();
-                visitInsn(ARETURN);
-            }
+            visitReturn(new Return(null));
         }
+
+        if (hasDeferment) {
+            execDeferredStatements();
+        }
+
+        if (isVoid()) {
+            visitInsn(RETURN);
+        } else {
+            visitInsn(ARETURN);
+        }
+
         scope.endScope();
     }
 
@@ -1381,33 +1433,42 @@ public class Method extends MethodVisitor implements TreeVisitor, Opcodes {
 
         boolean objOnStack = false;
 
+        for (int i = expressions.length - 1; i >= 0; i--) {
+            visitVarInsn(ALOAD, getLocal(DEFERMENT_STACK_NAME));
+            expressions[i].accept(this);
+
+            visitMethodInsn(INVOKEVIRTUAL, getInternalName(DefermentStack.class), "push",
+                    getDesc(DefermentStack.class, "push", TObject.class), false);
+            // inject facade to maintain compatibility
+            expressions[i] = popExpression();
+        }
+
         if (precedingExpr instanceof QualifiedName && getInternalNameFromImports(precedingExpr.toString()) == null
                 || precedingExpr != null) {
             visitVarInsn(ALOAD, getLocal(DEFERMENT_STACK_NAME));
-            objOnStack = true;
             precedingExpr.accept(this);
 
             visitMethodInsn(INVOKEVIRTUAL, getInternalName(DefermentStack.class), "push",
                     getDesc(DefermentStack.class, "push", TObject.class), false);
 
-            if (expressions.length > 0) {
-                visitInsn(DUP);
+            call.setPrecedingExpr(popExpression());
+        }
+
+        call.setPop(true);
+    }
+
+    /**
+     * Represents a facade expression. Pulls pre-evaluated value from the deferment stack
+     */
+    private Expression popExpression() {
+        return new Expression() {
+            @Override
+            public void accept(final TreeVisitor visitor) {
+                visitVarInsn(ALOAD, getLocal(DEFERMENT_STACK_NAME));
+                visitMethodInsn(INVOKEVIRTUAL, getInternalName(DefermentStack.class), "pop",
+                        getDesc(DefermentStack.class, "pop"), false);
             }
-        }
-
-        if (!objOnStack) {
-            visitVarInsn(ALOAD, getLocal(DEFERMENT_STACK_NAME));
-        }
-
-        for (int i = 0; i < expressions.length; i++) {
-            expressions[i].accept(this);
-
-            if (i + 1 < expressions.length)
-                visitInsn(DUP);
-            visitMethodInsn(INVOKEVIRTUAL, getInternalName(DefermentStack.class), "push",
-                    getDesc(DefermentStack.class, "push", TObject.class), false);
-        }
-
+        };
     }
 
     private boolean hasSuperCall(final Constructor constructor) {
