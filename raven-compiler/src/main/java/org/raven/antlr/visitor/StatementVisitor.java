@@ -37,6 +37,8 @@ public class StatementVisitor extends RavenBaseVisitor<Statement> {
             stmt = ctx.whileStatement().accept(WhileVisitor.INSTANCE);
         } else if (ctx.forStatement() != null) {
             stmt = ctx.forStatement().accept(ForVisitor.INSTANCE);
+        } else if(ctx.deferStatement() != null) {
+            stmt = ctx.deferStatement().accept(DeferVisitor.INSTANCE);
         } else if (ctx.returnStatement() != null) {
             stmt = ctx.returnStatement().accept(ReturnVisitor.INSTANCE);
         } else if (ctx.expression() != null) {
