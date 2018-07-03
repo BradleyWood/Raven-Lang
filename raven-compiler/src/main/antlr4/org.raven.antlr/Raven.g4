@@ -16,6 +16,7 @@ statement
     |   constructor
     |   ifStatement
     |   whileStatement
+    |   deferStatement
     |   returnStatement
     |   classDef
     |   expression
@@ -34,6 +35,10 @@ raiseStatement
 returnStatement
     :   RETURN NL* expression
     |   RETURN
+    ;
+
+deferStatement
+    :   DEFER NL* funCall
     ;
 
 ifStatement
@@ -319,6 +324,7 @@ BREAK   :   'break';
 FALSE   :   'false';
 SUPER   :   'super';
 CLASS   :   'class';
+DEFER   :   'defer';
 RETURN  :   'return';
 PUB     :   'public';
 FINALLY :   'finally';
