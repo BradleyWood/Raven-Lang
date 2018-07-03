@@ -51,3 +51,28 @@ fun loopedDeferment() {
 fun testLoopedDeferment() {
     Assert.assertEquals([1, 2, 3, 4, 5], loopedDeferment())
 }
+
+fun multiDefer() {
+    defer setNum(100)
+    Assert.assertEquals(0, num)
+    num = 1000
+
+    var lst = []
+
+    // occurs after the list is populated so the result should be sorted
+    defer sort(lst)
+
+    // added to the list backwards 4..3..2..1..0
+    for (i range 0 upto 5) {
+        defer lst.add(i + 0)
+    }
+    return lst
+}
+
+@Test
+fun testMultipleDefer() {
+    num = 0
+    var lst = multiDefer()
+    Assert.assertEquals(100, num)
+    Assert.assertEquals([0, 1, 2, 3, 4], lst)
+}
