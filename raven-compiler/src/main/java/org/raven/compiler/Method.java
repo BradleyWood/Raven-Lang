@@ -4,6 +4,7 @@ import org.objectweb.asm.*;
 import org.raven.antlr.Modifier;
 import org.raven.antlr.Operator;
 import org.raven.antlr.ast.*;
+import org.raven.core.DefermentStack;
 import org.raven.core.Hidden;
 import org.raven.core.Intrinsics;
 import org.raven.core.wrappers.*;
@@ -12,16 +13,19 @@ import org.raven.error.Errors;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
-import java.lang.reflect.Field;
 import java.util.*;
 import java.util.stream.Collectors;
 
 public class Method extends MethodVisitor implements TreeVisitor, Opcodes {
 
+    private static final String DEFERMENT_STACK_NAME = " __DEFERMENT__ ";
     private final ArrayList<Integer> lineNumbers = new ArrayList<>();
 
     private final Stack<Label> continueLabels = new Stack<>();
     private final Stack<Label> breakLabels = new Stack<>();
+    private final List<Defer> deferments = new LinkedList<>();
+
+    private boolean hasDeferment = false;
 
     final Scope scope = new Scope();
 
@@ -444,6 +448,14 @@ public class Method extends MethodVisitor implements TreeVisitor, Opcodes {
         }
     }
 
+    private void createDefermentStack() {
+        scope.putVar(DEFERMENT_STACK_NAME);
+        visitTypeInsn(NEW, getInternalName(DefermentStack.class));
+        visitInsn(DUP);
+        visitMethodInsn(INVOKESPECIAL, getInternalName(DefermentStack.class), "<init>", "()V", false);
+        visitVarInsn(ASTORE, scope.findVar(DEFERMENT_STACK_NAME));
+    }
+
     @Override
     public void visitFun(final Fun fun) {
         scope.beginScope();
@@ -455,6 +467,12 @@ public class Method extends MethodVisitor implements TreeVisitor, Opcodes {
 
         if (fun.getName().toString().equals("main") && fun.getParams().length < 2) {
             visitMethodInsn(INVOKESTATIC, getInternalName(Intrinsics.class), "useSanitizedExceptionHandler", "()V", false);
+        }
+
+        hasDeferment = fun.getBody().hasChildOfType(Defer.class);
+
+        if (hasDeferment) {
+            createDefermentStack();
         }
 
         fun.getBody().accept(this);
@@ -596,7 +614,6 @@ public class Method extends MethodVisitor implements TreeVisitor, Opcodes {
                     } else {
                         Fun fun = SymbolMap.resolveFun(ctx.getOwner(), ctx.getOwner(), call.getName().toString(), call.getParams().length);
                         if (fun != null && (fun.modifiers() & ACC_STATIC) == 0 && fun.isJavaMethod()) {
-                            // todo; this can be done non-dynamically
                             visitVarInsn(ALOAD, getLocal("this"));
                             visitMethodInsn(INVOKESTATIC, getName(Intrinsics.class), "wrap",
                                     getDesc(Intrinsics.class, "wrap", Object.class), false);
@@ -1347,7 +1364,49 @@ public class Method extends MethodVisitor implements TreeVisitor, Opcodes {
     }
 
     @Override
-    public void visitDefer(Defer defer) {
+    public void visitDefer(final Defer defer) {
+        if (!deferments.contains(defer)) {
+            deferments.add(defer);
+        }
+
+        visitVarInsn(ALOAD, getLocal(DEFERMENT_STACK_NAME));
+        visitIntInsn(BIPUSH, deferments.indexOf(defer));
+        visitMethodInsn(INVOKEVIRTUAL, getInternalName(DefermentStack.class), "defer",
+                getDesc(DefermentStack.class, "defer", int.class), false);
+
+
+        final Call call = defer.getCall();
+        final Expression[] expressions = call.getParams();
+        final Expression precedingExpr = call.getPrecedingExpr();
+
+        boolean objOnStack = false;
+
+        if (precedingExpr instanceof QualifiedName && getInternalNameFromImports(precedingExpr.toString()) == null
+                || precedingExpr != null) {
+            visitVarInsn(ALOAD, getLocal(DEFERMENT_STACK_NAME));
+            objOnStack = true;
+            precedingExpr.accept(this);
+
+            visitMethodInsn(INVOKEVIRTUAL, getInternalName(DefermentStack.class), "push",
+                    getDesc(DefermentStack.class, "push", TObject.class), false);
+
+            if (expressions.length > 0) {
+                visitInsn(DUP);
+            }
+        }
+
+        if (!objOnStack) {
+            visitVarInsn(ALOAD, getLocal(DEFERMENT_STACK_NAME));
+        }
+
+        for (int i = 0; i < expressions.length; i++) {
+            expressions[i].accept(this);
+
+            if (i + 1 < expressions.length)
+                visitInsn(DUP);
+            visitMethodInsn(INVOKEVIRTUAL, getInternalName(DefermentStack.class), "push",
+                    getDesc(DefermentStack.class, "push", TObject.class), false);
+        }
 
     }
 
