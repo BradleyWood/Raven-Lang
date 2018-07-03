@@ -1346,6 +1346,11 @@ public class Method extends MethodVisitor implements TreeVisitor, Opcodes {
         visitInsn(ATHROW);
     }
 
+    @Override
+    public void visitDefer(Defer defer) {
+
+    }
+
     private boolean hasSuperCall(final Constructor constructor) {
         Block block = constructor.getBody();
         if (block != null) {

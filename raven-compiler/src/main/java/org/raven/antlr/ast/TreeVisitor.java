@@ -47,6 +47,8 @@ public interface TreeVisitor {
 
     void visitRaise(Raise raise);
 
+    void visitDefer(Defer defer);
+
     void visitGo(Go go);
 
     void visitContinue();
