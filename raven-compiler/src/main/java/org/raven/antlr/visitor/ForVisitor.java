@@ -36,7 +36,7 @@ public class ForVisitor extends RavenBaseVisitor<For> {
             QualifiedName iterableName;
 
             if (!(iterable instanceof QualifiedName)) {
-                iterableName = new QualifiedName("iterator_"+String.valueOf(count));
+                iterableName = new QualifiedName("iterator_" + String.valueOf(count));
                 VarDecl decl = new VarDecl(iterableName, iterable);
                 body.append(decl);
             } else {
@@ -60,7 +60,7 @@ public class ForVisitor extends RavenBaseVisitor<For> {
 
             body.append(ctx.statement().accept(StatementVisitor.INSTANCE));
 
-            after.append(new BinOp(name, Operator.ASSIGNMENT, new BinOp(null, inc ? Operator.INC : Operator.DEC, name)));
+            after.append(new BinOp(name, Operator.ASSIGNMENT, new BinOp(name, inc ? Operator.ADD : Operator.SUB, new Literal(new TInt(1)))));
         } else if (ctx.statement() != null) {
             // for (init; condition; after...)
             init = new Block();

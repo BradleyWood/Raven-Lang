@@ -14,7 +14,7 @@ public class ForVisitorTest {
         VarDecl init = new VarDecl(new QualifiedName("i"), new Literal(new TInt(0)));
         BinOp condition = new BinOp(new QualifiedName("i"), Operator.LT, new Literal(new TInt(10)));
         BinOp after = new BinOp(new QualifiedName("i"), Operator.ASSIGNMENT,
-                new BinOp(null, Operator.INC, new QualifiedName("i")));
+                new BinOp(new QualifiedName("i"), Operator.ADD, new Literal(new TInt(1))));
         Statement body = new Block();
 
         For forLoop = new For(init, condition, new Block(body), new Block(after));
