@@ -1,0 +1,53 @@
+package org.raven
+
+import org.junit.Assert
+import org.junit.Test
+
+var num = 0;
+
+fun setNum(v) {
+    num = v
+}
+
+fun singleDeferment() {
+    Assert.assertEquals(0, num)
+    defer setNum(10)
+    Assert.assertEquals(0, num)
+    return num
+}
+
+@Test
+fun singleDefermentTest() {
+    num = 0
+    Assert.assertEquals(0,  singleDeferment())
+    Assert.assertEquals(10, num)
+}
+
+fun doubleDeferment() {
+    Assert.assertEquals(0, num)
+    defer setNum(10)
+    defer setNum(20)
+    Assert.assertEquals(0, num)
+    return num
+}
+
+@Test
+fun doubleDefermentTest() {
+    num = 0
+    Assert.assertEquals(0,  doubleDeferment())
+    Assert.assertEquals(10, num)
+}
+
+
+fun loopedDeferment() {
+    var lst = []
+    for (i range 5 downto 0) {
+        defer lst.add(i + 0)
+    }
+    return lst
+}
+
+@Test
+fun testLoopedDeferment() {
+    Assert.assertEquals([1, 2, 3, 4, 5], loopedDeferment())
+}
