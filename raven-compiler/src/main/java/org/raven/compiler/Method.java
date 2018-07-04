@@ -1417,16 +1417,6 @@ public class Method extends MethodVisitor implements TreeVisitor, Opcodes {
 
     @Override
     public void visitDefer(final Defer defer) {
-        if (!deferments.contains(defer)) {
-            deferments.add(defer);
-        }
-
-        visitVarInsn(ALOAD, getLocal(DEFERMENT_STACK_NAME));
-        visitIntInsn(BIPUSH, deferments.indexOf(defer));
-        visitMethodInsn(INVOKEVIRTUAL, getInternalName(DefermentStack.class), "defer",
-                getDesc(DefermentStack.class, "defer", int.class), false);
-
-
         final Call call = defer.getCall();
         final Expression[] expressions = call.getParams();
         final Expression precedingExpr = call.getPrecedingExpr();
@@ -1455,6 +1445,15 @@ public class Method extends MethodVisitor implements TreeVisitor, Opcodes {
         }
 
         call.setPop(true);
+
+        if (!deferments.contains(defer)) {
+            deferments.add(defer);
+        }
+
+        visitVarInsn(ALOAD, getLocal(DEFERMENT_STACK_NAME));
+        visitIntInsn(BIPUSH, deferments.indexOf(defer));
+        visitMethodInsn(INVOKEVIRTUAL, getInternalName(DefermentStack.class), "defer",
+                getDesc(DefermentStack.class, "defer", int.class), false);
     }
 
     /**
