@@ -27,6 +27,10 @@ public class QualifiedName extends Expression {
         return names;
     }
 
+    public boolean isEmpty() {
+        return names.length == 0;
+    }
+
     @Override
     public String toString() {
         if (names == null || names.length == 0)

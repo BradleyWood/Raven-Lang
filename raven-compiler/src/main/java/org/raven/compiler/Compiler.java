@@ -29,7 +29,7 @@ public class Compiler {
 
     public Compiler(final String file, final String name, final RavenTree tree, final AnnotationProcessor... annotationProcessors) {
         this.file = new File(file);
-        if (tree.getPackage() != null) {
+        if (tree.getPackage() != null && !tree.getPackage().isEmpty()) {
             this.name = tree.getPackage().toString() + "." + name;
         } else {
             this.name = name;
