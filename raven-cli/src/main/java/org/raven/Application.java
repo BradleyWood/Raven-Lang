@@ -80,8 +80,18 @@ public class Application {
                 System.err.println("Invalid usage");
                 HELP_FORMATTER.printHelp("ant", options);
             }
-        } catch (Exception e) {
+        } catch (ParseException e) {
+            System.err.println("Invalid usage");
+            HELP_FORMATTER.printHelp("ant", options);
+        } catch (IOException e) {
             System.err.println(e.getMessage());
+        } catch (InvocationTargetException e) {
+            Thread.getDefaultUncaughtExceptionHandler().uncaughtException(Thread.currentThread(), e.getCause());
+        } catch (NoSuchMethodException e) {
+            System.err.println("Error in thread: " + Thread.currentThread().getName());
+            System.err.println("NoSuchMethodException: No main method");
+        } catch (IllegalAccessException | ClassNotFoundException e) {
+            e.printStackTrace();
         }
     }
 
