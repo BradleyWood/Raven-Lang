@@ -1,0 +1,21 @@
+package org.raven
+
+import org.junit.Assert
+import org.junit.Test
+
+@Test
+fun testTernaryOp() {
+    var result = 10 > 9 ? 100 : 4
+    Assert.assertEquals(100, result)
+}
+
+f(x) = 100 * x
+testFun() = true
+
+@Test
+fun testTernaryOp2() {
+    Assert.assertEquals(10, testFun() ? 10 : 0)
+    Assert.assertEquals(10, testFun() == true ? 10 : 0)
+    Assert.assertEquals(0, testFun() != true ? 10 : 0)
+    Assert.assertEquals(-900, f(10) > 80 ? f(-10) + 100 : f(1000) * f(-10))
+}
