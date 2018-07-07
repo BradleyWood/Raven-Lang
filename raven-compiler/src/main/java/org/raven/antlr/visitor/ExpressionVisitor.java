@@ -39,6 +39,9 @@ public class ExpressionVisitor extends RavenBaseVisitor<Expression> {
             expr = ctx.funCall().accept(FunCallVisitor.INSTANCE);
         } else if (ctx.qualifiedName() != null) {
             expr = ctx.qualifiedName().accept(QualifiedNameVisitor.INSTANCE);
+        } else if (ctx.ternary != null) {
+            expr = new TernaryOp(ctx.expression(0).accept(this), ctx.expression(1).accept(this),
+                    ctx.expression(2).accept(this));
         } else if (ctx.varAssignment() != null) {
             expr = ctx.varAssignment().accept(AssignmentVisitor.INSTANCE);
         } else if (ctx.lhs != null && ctx.rhs != null && ctx.ASSIGNMENT() != null) {
