@@ -175,7 +175,6 @@ expression
     |   qualifiedName
     |   expression NL* listIdx
     |   list
-    |   expression NL* ternary='?' expression NL* ':' NL* expression
     |   dict
     |   (ADD|SUB|NOT) NL* expression
     |   '(' NL* expression NL* ')'
@@ -185,6 +184,7 @@ expression
     |   expression NL* (ADD|SUB) NL* expression
     |   expression NL* (GT|LT|GTE|LTE|EQUALS|NOT_EQUAL) NL* expression
     |   expression NL* (AND|OR) NL* expression
+    |   expression NL* ternary='?' expression NL* ':' NL* expression
     |   varAssignment
     |   <assoc=right> lhs=expression listIdx ASSIGNMENT rhs=expression
     ;
