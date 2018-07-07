@@ -282,8 +282,11 @@ public abstract class Node {
         }
 
         @Override
-        public void visitTernaryOp(TernaryOp ternaryOp) {
-
+        public void visitTernaryOp(final TernaryOp stmt) {
+            children.add(stmt);
+            stmt.getCondition().accept(this);
+            stmt.getLhs().accept(this);
+            stmt.getRhs().accept(this);
         }
 
         @Override
