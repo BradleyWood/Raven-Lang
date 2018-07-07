@@ -69,7 +69,6 @@ void methods.
 ```java
 import org.junit.Assert
 import org.junit.Test
-import testclasses.FieldTestClass
 
 @Test
 fun testAddition() {
