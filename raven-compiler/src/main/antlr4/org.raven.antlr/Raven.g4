@@ -175,6 +175,7 @@ expression
     |   qualifiedName
     |   expression NL* listIdx
     |   list
+    |   expression NL* ternary='?' expression NL* ':' NL* expression
     |   dict
     |   (ADD|SUB|NOT) NL* expression
     |   '(' NL* expression NL* ')'
