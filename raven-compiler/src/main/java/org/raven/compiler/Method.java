@@ -1394,6 +1394,11 @@ public class Method extends MethodVisitor implements TreeVisitor, Opcodes {
     }
 
     @Override
+    public void visitTernaryOp(TernaryOp ternaryOp) {
+
+    }
+
+    @Override
     public void visitRaise(final Raise raise) {
         raise.getExpression().accept(this);
         visitMethodInsn(INVOKEVIRTUAL, getName(TObject.class), "toObject", getDesc(TObject.class, "toObject"), false);

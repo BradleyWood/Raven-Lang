@@ -45,6 +45,8 @@ public interface TreeVisitor {
 
     void visitTryCatchFinally(TryCatchFinally tcf);
 
+    void visitTernaryOp(final TernaryOp ternaryOp);
+
     void visitRaise(Raise raise);
 
     void visitDefer(Defer defer);

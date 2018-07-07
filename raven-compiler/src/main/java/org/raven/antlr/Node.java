@@ -282,6 +282,11 @@ public abstract class Node {
         }
 
         @Override
+        public void visitTernaryOp(TernaryOp ternaryOp) {
+
+        }
+
+        @Override
         public void visitRaise(final Raise stmt) {
             children.add(stmt);
             stmt.getExpression().accept(this);
