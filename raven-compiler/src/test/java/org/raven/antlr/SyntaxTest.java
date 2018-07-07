@@ -23,6 +23,18 @@ public class SyntaxTest {
     }
 
     @Test
+    public void testTernaryOp() {
+        testSyntax("a ? b : c", true);
+        testSyntax("var a = b ? c : d", true);
+        testSyntax("var a = 10 > 10 ? 50 : 10", true);
+
+        testSyntax("var a = 10 > 20 ? ", false);
+        testSyntax("var a = 10 > 20 ? :", false);
+        testSyntax("var a = 10 > 20 ? 10 :", false);
+        testSyntax("var a = 10 > 20 : 10", false);
+    }
+
+    @Test
     public void testDefer() {
         testSyntax("defer somewhere();", true);
         testSyntax("defer a.b();", true);
