@@ -24,6 +24,11 @@ public class TVoid extends TObject {
     }
 
     @Override
+    public String toString() {
+        return "Void";
+    }
+
+    @Override
     public boolean equals(final Object o) {
         return o == VOID;
     }
