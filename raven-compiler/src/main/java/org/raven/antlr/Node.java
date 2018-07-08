@@ -290,6 +290,11 @@ public abstract class Node {
         }
 
         @Override
+        public void visitWhen(final When when) {
+
+        }
+
+        @Override
         public void visitRaise(final Raise stmt) {
             children.add(stmt);
             stmt.getExpression().accept(this);

@@ -23,4 +23,9 @@ public class When extends Expression {
     public Block getElseCase() {
         return elseBlock;
     }
+
+    @Override
+    public void accept(final TreeVisitor visitor) {
+        visitor.visitWhen(this);
+    }
 }

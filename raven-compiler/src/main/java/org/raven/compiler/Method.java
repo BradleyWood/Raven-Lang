@@ -1418,6 +1418,11 @@ public class Method extends MethodVisitor implements TreeVisitor, Opcodes {
     }
 
     @Override
+    public void visitWhen(final When when) {
+
+    }
+
+    @Override
     public void visitRaise(final Raise raise) {
         raise.getExpression().accept(this);
         visitMethodInsn(INVOKEVIRTUAL, getName(TObject.class), "toObject", getDesc(TObject.class, "toObject"), false);
