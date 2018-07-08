@@ -290,8 +290,14 @@ public abstract class Node {
         }
 
         @Override
-        public void visitWhen(final When when) {
-
+        public void visitWhen(final When stmt) {
+            children.add(stmt);
+            stmt.getCondition().accept(this);
+            for (final Case aCase : stmt.getCases()) {
+                aCase.getCaseExpr().accept(this);
+                aCase.getBlock().accept(this);
+            }
+            stmt.getElseCase().accept(this);
         }
 
         @Override
