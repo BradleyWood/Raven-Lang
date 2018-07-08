@@ -28,8 +28,8 @@ public class RuleTester {
         p.removeErrorListener(ConsoleErrorListener.INSTANCE);
 
         try {
-            new RavenFileVisitor().visit(p.ravenFile());
-        } catch (Exception e) {
+            p.ravenFile();
+        } catch (Exception ignored) {
             if (pass) {
                 Assert.fail();
             } else {
