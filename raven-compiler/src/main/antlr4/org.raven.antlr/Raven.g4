@@ -173,6 +173,7 @@ expression
     |   funCall
     |   goExpression
     |   qualifiedName
+    |   whenExpression
     |   expression NL* listIdx
     |   list
     |   dict
@@ -187,6 +188,18 @@ expression
     |   expression NL* ternary='?' expression NL* ':' NL* expression
     |   varAssignment
     |   <assoc=right> lhs=expression listIdx ASSIGNMENT rhs=expression
+    ;
+
+whenExpression
+    :   WHEN NL* '(' NL* expression NL* ')' NL* '{' NL* (whenCase semi NL*)* whenElse semi? '}'
+    ;
+
+whenCase
+    :   expression NL* '->' NL* (expression | block)
+    ;
+
+whenElse
+    :   ELSE NL* '->' NL* (expression | block)
     ;
 
 varAssignment
@@ -316,6 +329,7 @@ ELSE    :   'else';
 FOR     :   'for';
 TRY     :   'try';
 VAR     :   'var';
+WHEN    :   'when';
 THIS    :   'this';
 TRUE    :   'true';
 CATCH   :   'catch';
