@@ -1419,7 +1419,35 @@ public class Method extends MethodVisitor implements TreeVisitor, Opcodes {
 
     @Override
     public void visitWhen(final When when) {
+        final Label end = new Label();
 
+        when.getCondition().accept(this);
+        visitInsn(DUP);
+
+        for (final Case aCase : when.getCases()) {
+            final Label next = new Label();
+
+            aCase.getCaseExpr().accept(this);
+
+            visitMethodInsn(INVOKEVIRTUAL, Constants.TOBJ_NAME, "EQ", getDesc(TObject.class, "EQ", TObject.class), false);
+            visitMethodInsn(Opcodes.INVOKEVIRTUAL, Constants.TOBJ_NAME, "isTrue", "()Z", false);
+            visitJumpInsn(IFEQ, next);
+
+            aCase.getBlock().accept(this);
+            visitJumpInsn(GOTO, end);
+
+            visitLabel(next);
+            visitInsn(DUP);
+        }
+
+        visitInsn(POP);
+        when.getElseCase().accept(this);
+
+        visitLabel(end);
+
+        if (when.pop()) {
+            visitInsn(POP);
+        }
     }
 
     @Override
