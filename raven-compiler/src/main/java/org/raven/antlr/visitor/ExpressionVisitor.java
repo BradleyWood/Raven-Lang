@@ -35,6 +35,8 @@ public class ExpressionVisitor extends RavenBaseVisitor<Expression> {
             expr = ctx.list().accept(ArrayDefVisitor.INSTANCE);
         } else if (ctx.lst != null) {
             expr = getSlice(ctx);
+        } else if(ctx.whenExpression() != null) {
+            expr = ctx.whenExpression().accept(WhenVisitor.INSTANCE);
         } else if (ctx.funCall() != null) {
             expr = ctx.funCall().accept(FunCallVisitor.INSTANCE);
         } else if (ctx.qualifiedName() != null) {
