@@ -23,6 +23,21 @@ public class SyntaxTest {
     }
 
     @Test
+    public void testWhen() {
+        testSyntax("when (x) { else -> 100 }", true);
+        testSyntax("when (x) { 50 -> 100\nelse ->0 }", true);
+        testSyntax("when (x) { \"hello\" -> \"world\"\nelse ->\"abc\" }", true);
+        testSyntax("when (x) { 50 -> 100;100->50;51->49\nelse ->0 }", true);
+        testSyntax("when (a+6) { 50 -> 100;100->50;51->49\nelse ->0 }", true);
+        testSyntax("var test = when (x) { 50 -> 100;100->50;51->49\nelse ->0 }", true);
+
+        testSyntax("when (x) { 50 -> 100\nelse 10->0 }", false);
+        testSyntax("when (x) { 50 -> 100 }", false);
+        testSyntax("when () { else -> 100 }", false);
+        testSyntax("when (x) {}", false);
+    }
+
+    @Test
     public void testTernaryOp() {
         testSyntax("a ? b : c", true);
         testSyntax("var a = b ? c : d", true);
