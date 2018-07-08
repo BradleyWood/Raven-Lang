@@ -43,14 +43,52 @@ mvn install
 
 ## Examples
 
-This example serves to illustrate java interoperability. 
+#### Interoperability
 
-``` Java
+```kotlin
 import javax.swing.JOptionPane
 
 fun main() {
     JOptionPane.showMessageDialog(null, "Hello World.")
 }
+```
+
+#### Defer
+
+Function calls can be deferred in a last in first out order. Parameters
+are evaluated immediately and are stored until the deferred statement is executed.
+
+```kotlin
+fun main() {
+    for (i range 0 to 10) {
+    	defer println(i)
+    }
+    defer println("World!")
+    defer print("Hello, ")
+}
+```
+
+#### When
+
+```kotlin
+fun func(name, param) = when(name) {
+    "println" -> println(param)
+    "sin"     -> Math.sin(param)
+    "cos"     -> Math.cos(param)
+    "PI"      -> Math.PI / param
+    else      -> {}
+}
+
+fun main() {
+    println("Sin(PI) = " + func("cos", Math.PI))
+}
+```
+
+#### Go routines
+
+
+```go
+go aFunction();
 ```
 
 [View more examples](https://github.com/BradleyWood/TlDemo)
@@ -66,7 +104,7 @@ void methods.
 
 #### Example
 
-```java
+```kotlin
 import org.junit.Assert
 import org.junit.Test
 
