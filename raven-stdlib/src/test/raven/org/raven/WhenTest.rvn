@@ -1,0 +1,45 @@
+package org.raven
+
+import org.junit.Assert
+import org.junit.Test
+
+
+whenFunc(a, b) = when (a + b) { 20 -> false; else -> true }
+
+@Test
+fun testWhenReturn() {
+    Assert.assertEquals(false, whenFunc(10, 10))
+    Assert.assertEquals(true, whenFunc(10, 100))
+}
+
+@Test
+fun whenTest1() {
+    var ret = when (20) {
+        10 -> 20
+        20 -> 10
+        else -> {}
+    }
+    Assert.assertEquals(10, ret)
+}
+
+@Test
+fun testWhenMultiStmtBlock() {
+    var x = 100;
+    var ret = when (x) {
+        10 -> {
+            whenFunc(x + 100, x - 100)
+            -100
+        }
+        100 -> {
+            x
+            -9
+            true
+        }
+        else -> {
+            -100
+            200
+            false
+        }
+    }
+    Assert.assertTrue(ret)
+}
