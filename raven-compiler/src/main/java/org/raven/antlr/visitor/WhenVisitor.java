@@ -14,14 +14,19 @@ public class WhenVisitor extends RavenBaseVisitor<When> {
 
     @Override
     public When visitWhenExpression(final RavenParser.WhenExpressionContext ctx) {
-        final Expression conditon = ctx.expression().accept(ExpressionVisitor.INSTANCE);
+        Expression conditon = null;
+
+        if (ctx.expression() != null)
+            conditon = ctx.expression().accept(ExpressionVisitor.INSTANCE);
 
         final Case[] cases = ctx.whenCase().stream().map(c -> c.accept(CaseVisitor.INSTANCE)).toArray(Case[]::new);
         final Block elseBlock = ctx.whenElse().accept(CaseVisitor.INSTANCE).getBlock();
 
         final When when = new When(conditon, cases, elseBlock);
 
-        conditon.setParent(when);
+        if (conditon != null)
+            conditon.setParent(when);
+
         elseBlock.setParent(when);
 
         return when;

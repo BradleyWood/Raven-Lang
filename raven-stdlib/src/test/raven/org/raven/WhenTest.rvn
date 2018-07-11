@@ -6,6 +6,18 @@ import org.junit.Test
 
 whenFunc(a, b) = when (a + b) { 20 -> false; else -> true }
 
+abs(x) = when {
+    x < 0 -> -x
+    else  -> x
+}
+
+@Test
+fun testWhenAsIfChain() {
+    Assert.assertEquals(0, abs(0));
+    Assert.assertEquals(10, abs(-10));
+    Assert.assertEquals(10, abs(10));
+}
+
 @Test
 fun testWhenReturn() {
     Assert.assertEquals(false, whenFunc(10, 10))

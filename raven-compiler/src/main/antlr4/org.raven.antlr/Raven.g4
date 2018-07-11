@@ -191,7 +191,7 @@ expression
     ;
 
 whenExpression
-    :   WHEN NL* '(' NL* expression NL* ')' NL* '{' NL* (whenCase semi NL*)* whenElse semi? '}'
+    :   WHEN NL* ('(' NL* expression NL* ')')? NL* '{' NL* (whenCase semi NL*)* whenElse semi? '}'
     ;
 
 whenCase

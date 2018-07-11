@@ -52,4 +52,14 @@ public class WhenVisitorTest {
 
         testStatement(WhenVisitor.INSTANCE, "when (x) { 10->{} \n else -> {} }", when);
     }
+
+    @Test
+    public void testWhenNoCondition() {
+        final Case[] cases = new Case[2];
+        cases[0] = new Case(new Literal(new TInt(10)), new Block(new Literal(TNull.NULL)));
+
+        final When when = new When(null, cases, new Block(new Literal(TNull.NULL)));
+
+        testStatement(WhenVisitor.INSTANCE, "when { 10->{} \n else -> {} }", when);
+    }
 }

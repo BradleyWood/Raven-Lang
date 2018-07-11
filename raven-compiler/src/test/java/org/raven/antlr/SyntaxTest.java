@@ -28,8 +28,11 @@ public class SyntaxTest {
         testSyntax("when (x) { 50 -> 100\nelse ->0 }", true);
         testSyntax("when (x) { \"hello\" -> \"world\"\nelse ->\"abc\" }", true);
         testSyntax("when (x) { 50 -> 100;100->50;51->49\nelse ->0 }", true);
+        testSyntax("when { 50 -> 100;100->50;51->49\nelse ->0 }", true);
         testSyntax("when (a+6) { 50 -> 100;100->50;51->49\nelse ->0 }", true);
+        testSyntax("when { else -> 100 }", true);
         testSyntax("var test = when (x) { 50 -> 100;100->50;51->49\nelse ->0 }", true);
+        testSyntax("var test = when { 50 -> 100;100->50;51->49\nelse ->0 }", true);
 
         testSyntax("when (x) { 50 -> 100\nelse 10->0 }", false);
         testSyntax("when (x) { 50 -> 100 }", false);
