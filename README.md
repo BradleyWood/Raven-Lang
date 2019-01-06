@@ -10,7 +10,7 @@ The runtime environment performs all type checking and coercions as well
 as dynamic linking.
 
 
-### [Web Demo](http://bradleywood.me/tryraven.html)
+### [Web Demo](http://bradleyjwood.me/raven)
 
 View multiple examples or try to create your own program using
 the web demo. The web demo also comes with a REPL (read-eval-print-loop)
